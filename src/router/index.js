@@ -7,10 +7,10 @@ Vue.use(Router)
 import Layout from '@/views/layout/Layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+// import componentsRouter from './modules/components'
+// import chartsRouter from './modules/charts'
+// import tableRouter from './modules/table'
+// import nestedRouter from './modules/nested'
 
 /** note: Submenu only appear when children.length>=1
  *  detail see  https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -65,6 +65,105 @@ export const constantRouterMap = [
   {
     path: '',
     component: Layout,
+    redirect: 'home',
+    children: [
+      {
+        path: 'home',
+        component: () => import('@/views/dashboard/index'),
+        name: '',
+        meta: { title: '首页', icon: 'dashboard', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        component: () => import('@/views/dashboard/index'),
+        name: '',
+        meta: { title: '佣金管理', icon: 'commission', noCache: true }
+      }
+    ]
+  },
+
+  {
+    path: '/insurance',
+    component: Layout,
+    redirect: 'insurance',
+    meta: { title: '保险管理', icon: 'insurance', noCache: true },
+    children: [
+      {
+        path: 'company',
+        component: () => import('@/views/dashboard/index'),
+        name: '公司管理',
+        meta: { title: '公司管理', icon: 'company', noCache: true }
+      },
+      {
+        path: 'guarantee',
+        component: () => import('@/views/dashboard/index'),
+        name: '保单管理',
+        meta: { title: '保单管理', icon: 'guarantee', noCache: true }
+      },
+      {
+        path: 'channel',
+        component: () => import('@/views/dashboard/index'),
+        name: '渠道管理',
+        meta: { title: '渠道管理', icon: 'channel', noCache: true }
+      },
+      {
+        path: 'product',
+        component: () => import('@/views/dashboard/index'),
+        name: '产品管理',
+        meta: { title: '产品管理', icon: 'product', noCache: true }
+      },
+      {
+        path: 'premiumPlan',
+        component: () => import('@/views/dashboard/index'),
+        name: '缴费管理',
+        meta: { title: '缴费管理', icon: 'premiumPlan', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'document',
+    children: [
+      {
+        path: 'document',
+        component: () => import('@/views/dashboard/index'),
+        name: '',
+        meta: { title: '文档管理', icon: 'document', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/system',
+    component: Layout,
+    redirect: 'system',
+    name: '系统管理',
+    meta: { title: '系统管理', icon: 'system', noCache: true },
+    children: [
+      {
+        path: 'user',
+        component: () => import('@/views/dashboard/index'),
+        name: '用户管理',
+        meta: { title: '用户管理', icon: 'user', noCache: true }
+      },
+      {
+        path: 'role',
+        component: () => import('@/views/dashboard/index'),
+        name: '角色管理',
+        meta: { title: '角色管理', icon: 'role', noCache: true }
+      }
+    ]
+  }
+/*  {
+    path: '',
+    component: Layout,
     redirect: 'dashboard',
     children: [
       {
@@ -100,7 +199,7 @@ export const constantRouterMap = [
         meta: { title: 'guide', icon: 'guide', noCache: true }
       }
     ]
-  }
+  }*/
 ]
 
 export default new Router({
@@ -110,6 +209,7 @@ export default new Router({
 })
 
 export const asyncRouterMap = [
+/*
   {
     path: '/permission',
     component: Layout,
@@ -155,7 +255,7 @@ export const asyncRouterMap = [
     ]
   },
 
-  /** When your routing table is too long, you can split it into small modules**/
+  /!** When your routing table is too long, you can split it into small modules**!/
   componentsRouter,
   chartsRouter,
   nestedRouter,
@@ -344,5 +444,6 @@ export const asyncRouterMap = [
     ]
   },
 
+*/
   { path: '*', redirect: '/404', hidden: true }
 ]
