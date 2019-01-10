@@ -36,8 +36,8 @@ export default {
         }
       })
       const first = matched[0]
-      if (first && first.name.trim().toLocaleLowerCase() !== 'Dashboard'.toLocaleLowerCase()) {
-        matched = [{ path: '/dashboard', meta: { title: 'dashboard' }}].concat(matched)
+      if (first && first.name.trim().toLocaleLowerCase() !== 'Home'.toLocaleLowerCase()) {
+        matched = [{ path: '/home', meta: { title: '首页' }}].concat(matched)
       }
       this.levelList = matched
     },

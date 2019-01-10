@@ -79,6 +79,7 @@ export default {
   white-space: nowrap;
   position: relative;
   overflow: hidden;
+  background-color: #f2f2f2;
   width: 100%;
   /deep/ {
     .el-scrollbar__bar {

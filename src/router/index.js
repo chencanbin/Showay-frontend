@@ -68,9 +68,9 @@ export const constantRouterMap = [
     redirect: 'home',
     children: [
       {
-        path: 'home',
+        path: '/home',
         component: () => import('@/views/dashboard/index'),
-        name: '',
+        name: '首页',
         meta: { title: '首页', icon: 'dashboard', noCache: true }
       }
     ]
@@ -78,12 +78,12 @@ export const constantRouterMap = [
   {
     path: '',
     component: Layout,
-    redirect: 'dashboard',
+    redirect: 'noredirect',
     children: [
       {
-        path: 'dashboard',
+        path: '/commission',
         component: () => import('@/views/dashboard/index'),
-        name: '',
+        name: '佣金管理',
         meta: { title: '佣金管理', icon: 'commission', noCache: true }
       }
     ]
@@ -128,7 +128,7 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '',
+    path: '/',
     component: Layout,
     redirect: 'document',
     children: [
@@ -143,13 +143,13 @@ export const constantRouterMap = [
   {
     path: '/system',
     component: Layout,
-    redirect: 'system',
+    redirect: 'user',
     name: '系统管理',
     meta: { title: '系统管理', icon: 'system', noCache: true },
     children: [
       {
         path: 'user',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/system/user/index'),
         name: '用户管理',
         meta: { title: '用户管理', icon: 'user', noCache: true }
       },
