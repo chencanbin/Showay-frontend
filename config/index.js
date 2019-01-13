@@ -9,7 +9,12 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api': {
+        target: 'http://23.102.227.229',//设置你调用的接口域名 别忘了加http
+        changeOrigin: true
+      }
+    },
 
     // Various Dev Server settings
 

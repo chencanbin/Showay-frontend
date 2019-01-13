@@ -2,7 +2,9 @@
   <div class="dashboard-editor-container">
 
     <panel-group @handleSetLineChartData="handleSetLineChartData"/>
-
+    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+      <g2-line :char-data="serverData" :id="'c1'"/>
+    </el-row>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData"/>
     </el-row>
@@ -49,6 +51,7 @@ import BarChart from './components/BarChart'
 import TransactionTable from './components/TransactionTable'
 import TodoList from './components/TodoList'
 import BoxCard from './components/BoxCard'
+import G2Line from '@/components/Charts/G2Line'
 
 const lineChartData = {
   newVisitis: {
@@ -72,6 +75,7 @@ const lineChartData = {
 export default {
   name: 'DashboardAdmin',
   components: {
+    G2Line,
     PanelGroup,
     LineChart,
     RaddarChart,
@@ -83,6 +87,31 @@ export default {
   },
   data() {
     return {
+      serverData: [
+        { time: '2016-10-25 00:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 00:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 01:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 01:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 02:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 02:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 03:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 03:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 04:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 04:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 05:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 05:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 06:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 06:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 07:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 07:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 08:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 08:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 09:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 09:30:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 10:00:00', runCount: Math.random() * 100 },
+        { time: '2016-10-25 10:30:00', runCount: 97 },
+        { time: '2016-10-25 11:00:00', runCount: 97 }
+      ],
       lineChartData: lineChartData.newVisitis
     }
   },
@@ -95,13 +124,13 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.dashboard-editor-container {
-  padding: 32px;
-  background-color: rgb(240, 242, 245);
-  .chart-wrapper {
-    background: #fff;
-    padding: 16px 16px 0;
-    margin-bottom: 32px;
+  .dashboard-editor-container {
+    padding: 32px;
+    background-color: rgb(240, 242, 245);
+    .chart-wrapper {
+      background: #fff;
+      padding: 16px 16px 0;
+      margin-bottom: 32px;
+    }
   }
-}
 </style>

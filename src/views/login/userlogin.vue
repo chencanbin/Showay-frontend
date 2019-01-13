@@ -1,151 +1,148 @@
 <template>
-  <el-form class="login-form"
-           status-icon
-           :rules="loginRules"
-           ref="loginForm"
-           :model="loginForm"
-           label-width="0">
-    <el-form-item prop="username">
-      <el-input @keyup.enter.native="handleLogin"
-                v-model="loginForm.username"
-                auto-complete="off"
-                placeholder="请输入用户名">
-        <svg-icon icon-class="user" slot="prefix" className="icon-wrapper"/>
+  <el-form
+    ref="loginForm"
+    :rules="loginRules"
+    :model="loginForm"
+    class="login-form"
+    status-icon
+    label-width="0">
+    <el-form-item prop="id">
+      <el-input
+        v-model="loginForm.id"
+        auto-complete="off"
+        placeholder="请输入用户名"
+        @keyup.enter.native="handleLogin">
+        <svg-icon slot="prefix" icon-class="user"/>
       </el-input>
     </el-form-item>
     <el-form-item prop="password">
-      <el-input @keyup.enter.native="handleLogin"
-                :type="passwordType"
-                v-model="loginForm.password"
-                auto-complete="off"
-                placeholder="请输入密码">
-        <i class="el-icon-view el-input__icon"
-           slot="suffix"
-           @click="showPassword"></i>
-        <svg-icon icon-class="password" slot="prefix" className="icon-wrapper"/>
+      <el-input
+        v-model="loginForm.password"
+        :type="passwordType"
+        auto-complete="off"
+        placeholder="请输入密码"
+        @keyup.enter.native="handleLogin">
+        <i slot="suffix" class="el-icon-view el-input__icon" @click="showPassword" />
+        <svg-icon slot="prefix" icon-class="password"/>
       </el-input>
     </el-form-item>
     <el-form-item prop="code">
       <el-row :span="24">
         <el-col :span="16">
-          <el-input @keyup.enter.native="handleLogin"
-                    :maxlength="code.len"
-                    v-model="loginForm.code"
-                    auto-complete="off"
-                    placeholder="请输入验证码">
-            <svg-icon icon-class="code" slot="prefix" className="icon-wrapper" />
+          <el-input
+            :maxlength="code.len"
+            v-model="loginForm.code"
+            auto-complete="off"
+            placeholder="请输入验证码"
+            @keyup.enter.native="handleLogin">
+            <svg-icon slot="prefix" icon-class="code"/>
           </el-input>
         </el-col>
         <el-col :span="8">
           <div class="login-code">
-            <span class="login-code-img"
-                  @click="refreshCode"
-                  v-if="code.type == 'text'">{{code.value}}</span>
-            <img :src="code.src"
-                 class="login-code-img"
-                 @click="refreshCode"
-                 v-else />
-            <!-- <i class="icon-shuaxin login-code-icon" @click="refreshCode"></i> -->
+            <img :src="code.src" class="login-code-img" @click="refreshCode">
           </div>
         </el-col>
       </el-row>
-
     </el-form-item>
-    <el-checkbox v-model="checked">记住账号</el-checkbox>
+    <!--<el-checkbox v-model="checked">记住账号</el-checkbox>-->
     <el-form-item>
-      <el-button type="primary"
-                 size="small"
-                 @click.native.prevent="handleLogin"
-                 class="login-submit">登录</el-button>
+      <el-button
+        v-loading="loading"
+        type="primary"
+        size="small"
+        class="login-submit"
+        @click.native.prevent="handleLogin">登录
+      </el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-import { randomLenNum } from "@/utils/util";
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
+
 export default {
-  name: "userlogin",
-  data () {
+  name: 'UserLogin',
+  data() {
     const validateCode = (rule, value, callback) => {
-      if (this.code.value != value) {
-        this.loginForm.code = "";
-        this.refreshCode();
-        callback(new Error("请输入正确的验证码"));
+      if (this.loginForm.code !== value) {
+        this.loginForm.code = ''
+        this.refreshCode()
+        callback(new Error('请输入正确的验证码'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       loginForm: {
-        username: "admin",
-        password: "123456",
-        code: "",
-        redomStr: ""
+        id: '',
+        password: '',
+        code: ''
       },
       checked: false,
       code: {
-        src: "",
-        value: "",
+        src: '',
         len: 4,
-        type: "text"
+        value: ''
       },
       loginRules: {
-        username: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
+        id: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, message: "密码长度最少为6位", trigger: "blur" }
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, message: '密码长度最少为6位', trigger: 'blur' }
         ],
         code: [
-          { required: true, message: "请输入验证码", trigger: "blur" },
-          { min: 4, max: 4, message: "验证码长度为4位", trigger: "blur" },
-          { required: true, trigger: "blur", validator: validateCode }
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { min: 4, max: 4, message: '验证码长度为4位', trigger: 'blur' },
+          { required: true, trigger: 'blur', validator: validateCode }
         ]
       },
-      passwordType: "password"
-    };
+      passwordType: 'password'
+    }
   },
-  created () {
-    this.refreshCode();
-  },
-  mounted () { },
   computed: {
-    ...mapGetters(["tagWel"])
+    ...mapGetters(['loading'])
   },
-  props: [],
+  created() {
+    this.refreshCode()
+  },
   methods: {
-    refreshCode () {
-      this.loginForm.redomStr = randomLenNum(this.code.len, true);
-      this.code.type == "text"
-        ? (this.code.value = randomLenNum(this.code.len))
-        : (this.code.src = `${this.codeUrl}/${this.loginForm.redomStr}`);
-      this.loginForm.code = this.code.value;
+    refreshCode() {
+      this.$api.login.generateCode().then(res => {
+        this.code.src = 'data:image/png;base64,' + res.data
+      })
     },
-    showPassword () {
-      this.passwordType == ""
-        ? (this.passwordType = "password")
-        : (this.passwordType = "");
+    showPassword() {
+      this.passwordType === ''
+        ? (this.passwordType = 'password')
+        : (this.passwordType = '')
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
-            this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
-            this.loading = false
+          this.$store.commit('SHOW_LOADING')
+          this.$store.dispatch('LoginByUsername', this.loginForm).then(_ => {
+            this.$store.commit('HIDE_LOADING')
+            this.$router.push({ path: this.redirect || '/home' })
+          }).catch(_ => {
+            this.$store.commit('HIDE_LOADING')
           })
+          // this.$api.login.loginByUsername(this.loginForm).then(() => {
+          //   this.$store.commit('HIDE_LOADING')
+          //   setLoginStatus(true)
+          //   this.$router.push({ path: this.redirect || '/' })
+          // }).catch(() => {
+          //   this.$store.commit('HIDE_LOADING')
+          // })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
     }
   }
-};
+}
 </script>
 
 <style>

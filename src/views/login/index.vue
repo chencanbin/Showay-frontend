@@ -1,72 +1,52 @@
 <template>
-  <div class="login-container pull-height"
-       @keyup.enter.native="handleLogin">
-<!--    <div class="login-logo animated fadeIn">
-      <img src="../../assets/images/logo.png" alt="">
-    </div>-->
-    <div class="login-weaper">
+  <div
+    class="login-container pull-height"
+    @keyup.enter.native="handleLogin">
+    <div class="login-wrapper">
       <div class="login-left animated fadeInLeft">
         <div class="login-info">
           <img class="login-info-title" src="../../assets/images/logo.png" alt="" width="420px" height="80px">
           <ul class="login-info-list">
-            <li class="login-info-item"
-                v-for="(item,index) in website.info.list"
-                :key="index">
-              <i class="el-icon-check"></i>&nbsp;{{item}}
+            <li v-for="(item,index) in website.info.list" :key="index" class="login-info-item">
+              <i class="el-icon-check"/>&nbsp;{{ item }}
             </li>
           </ul>
         </div>
       </div>
       <div class="login-border  animated fadeInRight">
         <div class="login-main">
-          <h4 class="login-title">登录 {{website.title}}</h4>
-          <userLogin v-if="activeName==='user'"></userLogin>
-          <codeLogin v-else-if="activeName==='code'"></codeLogin>
-          <thirdLogin v-else-if="activeName==='third'"></thirdLogin>
+          <h4 class="login-title">登录 {{ website.title }}</h4>
+          <userLogin />
         </div>
-<!--        <div class="login-menu">
-          <a href="#"
-             @click.stop="activeName='user'">账号密码</a>
-          <a href="#"
-             @click.stop="activeName='code'">手机号登录</a>
-          <a href="#"
-             @click.stop="activeName='third'">第三方登录</a>
-        </div>-->
       </div>
     </div>
   </div>
 </template>
 <script>
-import userLogin from "./userlogin";
-import codeLogin from "./codelogin";
-import thirdLogin from "./thirdlogin";
-import { mapGetters } from "vuex";
+import userLogin from './userlogin'
 import { validatenull } from '@/utils/validate'
 export default {
-  name: "login",
+  name: 'Login',
   components: {
-    userLogin,
-    codeLogin,
-    thirdLogin
+    userLogin
   },
-  data () {
+  data() {
     return {
-      activeName: "user",
       website: {
-        title: "宏鑫资产",
+        title: '宏鑫资产',
         info: {
-          title: "宏鑫资产管理系统",
+          title: '宏鑫资产管理系统',
           list: [
             '可视化的数据界面',
             '高效数据整理',
-            '可定制',
+            '提高团队协同效率'
           ]
         }
       }
-    };
+    }
   },
   watch: {
-    $route () {
+    $route() {
       const params = this.$route.query
       this.socialForm.state = params.state
       this.socialForm.code = params.code
@@ -79,15 +59,10 @@ export default {
         setTimeout(() => {
           loading.close()
         }, 2000)
-
       }
     }
-  },
-  created () { },
-  mounted () { },
-  props: [],
-  methods: {}
-};
+  }
+}
 </script>
 
 <style lang="scss">
@@ -100,7 +75,7 @@ export default {
   width: 100%;
   margin: 0 auto;
 }
-.login-weaper {
+.login-wrapper {
   position: absolute;
   top: 50%;
   left: 0;

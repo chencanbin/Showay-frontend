@@ -8,7 +8,8 @@ const app = {
     },
     device: 'desktop',
     language: Cookies.get('language') || 'en',
-    size: Cookies.get('size') || 'medium'
+    size: Cookies.get('size') || 'medium',
+    loading: false
   },
   mutations: {
     TOGGLE_SIDEBAR: state => {
@@ -35,6 +36,12 @@ const app = {
     SET_SIZE: (state, size) => {
       state.size = size
       Cookies.set('size', size)
+    },
+    SHOW_LOADING: (state) => {
+      state.loading = true
+    },
+    HIDE_LOADING: (state) => {
+      state.loading = false
     }
   },
   actions: {

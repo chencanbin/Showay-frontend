@@ -34,6 +34,7 @@
     "url": "https://github.com/PanJiaChen/vue-element-admin/issues"
   },
   "dependencies": {
+    "@antv/g2": "^3.4.9",
     "@smallwei/avue": "^1.5.0",
     "animate.css": "^3.7.0",
     "axios": "0.18.0",

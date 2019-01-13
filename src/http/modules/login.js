@@ -1,21 +1,24 @@
-import request from '@/utils/request'
+import request from '../axios'
 
-export function loginByUsername(username, password) {
-  const data = {
-    username,
-    password
-  }
+export function loginByUsername(loginForm) {
   return request({
-    url: '/login/login',
+    url: '/login',
     method: 'post',
-    data
+    data: { ...loginForm }
   })
 }
 
 export function logout() {
   return request({
-    url: '/login/logout',
+    url: '/logout',
     method: 'post'
+  })
+}
+
+export function generateCode() {
+  return request({
+    url: '/verification',
+    method: 'get'
   })
 }
 

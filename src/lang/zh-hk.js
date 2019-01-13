@@ -1,21 +1,21 @@
 export default {
   route: {
-    home: '首页',
-    product: '产品',
+    home: '首頁',
+    product: '產品',
     commission: '佣金',
-    client: '客户',
+    client: '客戶',
     channel: '渠道',
-    document: '文档',
-    report: '报表',
-    system: '系统',
-    user: '用户',
+    document: '文檔',
+    report: '報表',
+    system: '系統',
+    user: '用戶',
     role: '角色'
   },
   navbar: {
-    logOut: '退出登录',
+    logOut: '退出登錄',
     screenfull: '全屏',
-    theme: '换肤',
-    size: '布局大小'
+    theme: '換膚',
+    size: '佈局大小'
   },
   login: {
     title: '系统登录',

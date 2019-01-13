@@ -7,6 +7,7 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import Element from 'element-ui'
 import basicContainer from './components/basic-container/main'
+import api from './http'
 // import 'element-ui/lib/theme-chalk/index.css'
 import '../theme/index.css'
 import '@/styles/index.scss' // global css
@@ -29,7 +30,7 @@ Vue.use(Element, {
   i18n: (key, value) => i18n.t(key, value)
 })
 Vue.use(Avue)
-
+Vue.use(api)
 // 注册全局容器
 Vue.component('basicContainer', basicContainer)
 

@@ -1,12 +1,11 @@
-import { loginByUsername, logout, getUserInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { logout, getUserInfo, loginByUsername } from '@/http/modules/login'
+import { setLoginStatus, removeLoginStatus } from '@/utils/auth'
 
 const user = {
   state: {
     user: '',
     status: '',
     code: '',
-    token: getToken(),
     name: '',
     avatar: '',
     introduction: '',
@@ -19,9 +18,6 @@ const user = {
   mutations: {
     SET_CODE: (state, code) => {
       state.code = code
-    },
-    SET_TOKEN: (state, token) => {
-      state.token = token
     },
     SET_INTRODUCTION: (state, introduction) => {
       state.introduction = introduction
@@ -40,25 +36,25 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_VERIFICATION_IMAGE: (state, verificationImage) => {
+      state.verificationImage = verificationImage
     }
   },
 
   actions: {
     // 用户名登录
     LoginByUsername({ commit }, userInfo) {
-      const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        loginByUsername(username, userInfo.password).then(response => {
-          const data = response.data
-          commit('SET_TOKEN', data.token)
-          setToken(response.data.token)
-          resolve()
+        loginByUsername(userInfo).then(res => {
+          setLoginStatus(true)
+          resolve(res)
         }).catch(error => {
+          console.log(error) // For Debug
           reject(error)
         })
       })
     },
-
     // 获取用户信息
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
@@ -83,28 +79,11 @@ const user = {
         })
       })
     },
-
-    // 第三方验证登录
-    // LoginByThirdparty({ commit, state }, code) {
-    //   return new Promise((resolve, reject) => {
-    //     commit('SET_CODE', code)
-    //     loginByThirdparty(state.status, state.email, state.code).then(response => {
-    //       commit('SET_TOKEN', response.data.token)
-    //       setToken(response.data.token)
-    //       resolve()
-    //     }).catch(error => {
-    //       reject(error)
-    //     })
-    //   })
-    // },
-
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
+        logout().then(() => {
+          removeLoginStatus()
           resolve()
         }).catch(error => {
           reject(error)
@@ -115,8 +94,7 @@ const user = {
     // 前端 登出
     FedLogOut({ commit }) {
       return new Promise(resolve => {
-        commit('SET_TOKEN', '')
-        removeToken()
+        removeLoginStatus()
         resolve()
       })
     },
@@ -125,7 +103,6 @@ const user = {
     ChangeRoles({ commit, dispatch }, role) {
       return new Promise(resolve => {
         commit('SET_TOKEN', role)
-        setToken(role)
         getUserInfo(role).then(response => {
           const data = response.data
           commit('SET_ROLES', data.roles)
