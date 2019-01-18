@@ -18,7 +18,7 @@ import Layout from '@/views/layout/Layout'
 * redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
 * name:'router-name'             the name is used by <keep-alive> (must set!!!)
 * meta : {
-    roles: ['admin','editor']     will control the page roles (you can set multiple roles)
+    roles: ['admin','editor']     will control the page roles (you can set multiple roles) id === 1 表示管理员 id === 2 表示签单员
     title: 'title'               the name show in submenu and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar,
     noCache: true                if true ,the page will no be cached(default is false)
@@ -55,6 +55,19 @@ export const constantRouterMap = [
     path: '/401',
     component: () => import('@/views/errorPage/401'),
     hidden: true
+  }
+]
+
+export default new Router({
+  // mode: 'history', // require service support
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap
+})
+
+export const asyncRouterMap = [
+  {
+    path: '/',
+    redirect: '/home'
   },
   {
     path: '/home',
@@ -162,20 +175,11 @@ export const constantRouterMap = [
       },
       {
         path: 'role',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/system/role'),
         name: 'role',
         meta: { title: 'role', icon: 'role', noCache: true }
       }
     ]
-  }
-]
-
-export default new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
-})
-
-export const asyncRouterMap = [
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]

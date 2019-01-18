@@ -75,9 +75,9 @@ export default {
     }
     return {
       loginForm: {
-        id: '',
-        password: '',
-        code: ''
+        id: 'admin',
+        password: '888888',
+        code: 'ABCD'
       },
       checked: false,
       code: {

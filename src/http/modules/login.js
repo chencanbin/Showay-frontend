@@ -22,11 +22,10 @@ export function generateCode() {
   })
 }
 
-export function getUserInfo(token) {
+export function getUserInfo() {
   return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
+    url: '/info',
+    method: 'get'
   })
 }
 

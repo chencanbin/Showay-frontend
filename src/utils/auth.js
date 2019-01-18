@@ -17,13 +17,13 @@ export function removeToken() {
 }
 
 export function setLoginStatus(status) {
-  return Cookies.set(IsLogin, status)
+  return sessionStorage.setItem(IsLogin, status)
 }
 
 export function getLoginStatus() {
-  return Cookies.get(IsLogin)
+  return sessionStorage.getItem(IsLogin)
 }
 
 export function removeLoginStatus() {
-  return Cookies.remove(IsLogin)
+  return sessionStorage.removeItem(IsLogin)
 }

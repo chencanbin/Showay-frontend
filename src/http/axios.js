@@ -3,10 +3,11 @@ import config from './config'
 import router from '@/router'
 import { Message, MessageBox, Notification } from 'element-ui'
 // 使用vuex做全局loading时使用
-// import store from '@/store'
+import store from '@/store'
 
 export default function $axios(options) {
   return new Promise((resolve, reject) => {
+    // 初始化参数配置
     const instance = axios.create({
       baseURL: config.baseUrl,
       headers: config.headers,
@@ -17,12 +18,11 @@ export default function $axios(options) {
     // request 拦截器
     instance.interceptors.request.use(
       config => {
+        store.commit('SHOW_LOADING')
         return config
       },
-
       error => {
         // 请求错误时
-        console.log('request:', error)
         // 1. 判断请求超时
         if (error.code === 'ECONNABORTED' && error.message.indexOf('timeout') !== -1) {
           console.log('timeout请求超时')
@@ -30,7 +30,6 @@ export default function $axios(options) {
         }
         // 2. 需要重定向到错误页面
         const errorInfo = error.response
-        console.log(errorInfo)
         if (errorInfo) {
           error = errorInfo.data //  页面那边catch的时候就能拿到详细的错误信息,看最下边的Promise.reject
           const errorStatus = errorInfo.status // 404 403 500 ...
@@ -45,6 +44,7 @@ export default function $axios(options) {
     // response 拦截器
     instance.interceptors.response.use(
       response => {
+        store.commit('HIDE_LOADING')
         let data
         // IE9时response.data是undefined，因此需要使用response.request.responseText(Stringify后的字符串)
         if (response.data === undefined) {
@@ -53,30 +53,32 @@ export default function $axios(options) {
           data = response.data
         }
         if (data.status !== 0) {
-          Message({
-            message: data.message,
-            type: 'error',
-            duration: 5 * 1000
-          })
-          // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
-          if (data.status === 50008 || data.status === 50012 || data.status === 50014) {
+          // 4003 :令牌超时;
+          if (data.status === 4003 || data.status === 50012 || data.status === 50014) {
             // 请自行在引入 MessageBox
             MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
               confirmButtonText: '重新登录',
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              this.store.dispatch('FedLogOut').then(() => {
+              store.dispatch('FedLogOut').then(() => {
                 location.reload() // 为了重新实例化vue-router对象 避免bug
               })
             })
+          } else {
+            Message({
+              message: data.message,
+              type: 'error',
+              duration: 5 * 1000
+            })
           }
-          return Promise.reject('error')
+          return Promise.reject(data.message)
         } else {
           return data
         }
       },
       err => {
+        store.commit('HIDE_LOADING')
         if (err && err.response) {
           switch (err.response.status) {
             case 400:
@@ -95,7 +97,7 @@ export default function $axios(options) {
               err.message = '请求超时'
               break
             case 500:
-              err.message = '服务器内部错误'
+              err.message = `服务器内部错误: ${err.response.config.url}`
               break
             case 501:
               err.message = '服务未实现'
@@ -127,8 +129,6 @@ export default function $axios(options) {
     instance(options).then(res => {
       resolve(res)
       return false
-    }).catch(error => {
-      reject(error)
     })
   })
 }

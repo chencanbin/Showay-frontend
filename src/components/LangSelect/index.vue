@@ -5,7 +5,7 @@
     </div>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item :disabled="language==='zhHk'" command="zhHk">繁體中文</el-dropdown-item>
-      <el-dropdown-item :disabled="language==='zh'" command="zh">簡體中文</el-dropdown-item>
+      <el-dropdown-item :disabled="language==='zh'" command="zh">简体中文</el-dropdown-item>
       <el-dropdown-item :disabled="language==='en'" command="en">English</el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
