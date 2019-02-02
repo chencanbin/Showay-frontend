@@ -11,7 +11,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'https://23.102.227.229',//设置你调用的接口域名 别忘了加http
+        target: 'https://13.75.70.13',//设置你调用的接口域名 别忘了加http
+        //target: 'http://192.168.1.105:8080',
         secure: false,
         changeOrigin: true
       }

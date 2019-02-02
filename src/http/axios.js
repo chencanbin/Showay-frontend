@@ -37,7 +37,7 @@ export default function $axios(options) {
             path: `/error/${errorStatus}`
           })
         }
-        return Promise.reject(error) // 在调用的那边可以拿到(catch)你想返回的错误信息
+        return reject(error) // 在调用的那边可以拿到(catch)你想返回的错误信息
       }
     )
 
@@ -71,8 +71,8 @@ export default function $axios(options) {
               type: 'error',
               duration: 5 * 1000
             })
+            return reject(data)
           }
-          return Promise.reject(data.message)
         } else {
           return data
         }
@@ -121,7 +121,7 @@ export default function $axios(options) {
           title: '错误',
           message: err.message
         })
-        return Promise.reject(err) // 返回接口返回的错误信息
+        return reject(err.response) // 返回接口返回的错误信息
       }
     )
 

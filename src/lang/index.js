@@ -5,8 +5,8 @@ import elementEnLocale from 'element-ui/lib/locale/lang/en' // element-ui lang
 import elementZhLocale from 'element-ui/lib/locale/lang/zh-CN'// element-ui lang
 import elementZhHkLocale from 'element-ui/lib/locale/lang/zh-TW'// element-ui lang
 import enLocale from './en'
-import zhLocale from './zh'
-import zhHkLocale from './zh-hk'
+import zhLocale from './zh_CN'
+import zhHkLocale from './zh_TW'
 
 Vue.use(VueI18n)
 
@@ -15,11 +15,11 @@ const messages = {
     ...enLocale,
     ...elementEnLocale
   },
-  zh: {
+  'zh-CN': {
     ...zhLocale,
     ...elementZhLocale
   },
-  zhHk: {
+  'zh-TW': {
     ...zhHkLocale,
     ...elementZhHkLocale
   }
@@ -27,7 +27,7 @@ const messages = {
 
 const i18n = new VueI18n({
   // set locale
-  // options: en | zh | zh-hk
+  // options: en | zh_CN | zh_TW
   locale: Cookies.get('language') || 'en',
   // set locale messages
   messages

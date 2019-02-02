@@ -1,8 +1,6 @@
 import Vue from 'vue'
 
 import Cookies from 'js-cookie'
-import Avue from '@smallwei/avue/lib/index.js'
-import '@smallwei/avue/lib/theme-chalk/index.css'
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import Element from 'element-ui'
@@ -29,7 +27,6 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)
 })
-Vue.use(Avue)
 Vue.use(api)
 // 注册全局容器
 Vue.component('basicContainer', basicContainer)

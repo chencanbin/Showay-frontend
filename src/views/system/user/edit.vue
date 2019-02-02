@@ -1,16 +1,16 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">编辑</el-button>
+    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="编辑账号"
+      :title="$t('user.dialog_title.edit')"
       width="500px">
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="80px">
-        <el-form-item label="姓名" prop="name">
+        <el-form-item :label="$t('user.form_label.name')" prop="name">
           <el-input v-model="account.name"/>
         </el-form-item>
-        <el-form-item label="角色" prop="roles">
+        <el-form-item :label="$t('user.form_label.role')" prop="roles">
           <el-select
             v-model="account.roles"
             placeholder="请选择账户角色"

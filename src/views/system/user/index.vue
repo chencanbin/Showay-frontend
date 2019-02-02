@@ -3,10 +3,10 @@
     <basic-container>
       <add/>
       <el-table v-loading="loading" :data="users.list" stripe>
-        <el-table-column prop="id" label="ID" width="50px"/>
-        <el-table-column prop="name" label="姓名"/>
-        <el-table-column prop="login" label="账号"/>
-        <el-table-column prop="roles" label="权限" min-width="150px">
+        <el-table-column label="ID" prop="id" width="50px"/>
+        <el-table-column :label="$t('user.table_header.name')" prop="name"/>
+        <el-table-column :label="$t('user.table_header.account')" prop="login"/>
+        <el-table-column :label="$t('user.table_header.role')" prop="roles" min-width="150px">
           <template slot-scope="scope">
             <el-tag
               v-for="role in scope.row.roles"
@@ -18,16 +18,17 @@
         </el-table-column>
         <el-table-column
           :formatter="dateFormat"
+          :label="$t('user.table_header.create_time')"
           prop="creationDay"
-          label="创建时间"
           min-width="100px"/>
-        <el-table-column label="操作">
+        <el-table-column :label="$t('user.table_header.action')">
           <template slot-scope="scope">
-            <edit :user="scope.row"/>
+            <edit v-if="!scope.row.isBuiltin" :user="scope.row"/>
             <el-button
+              v-if="!scope.row.isBuiltin"
               type="text"
               icon="el-icon-delete"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              @click="handleDelete(scope.$index, scope.row)">{{ $t('action.del') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

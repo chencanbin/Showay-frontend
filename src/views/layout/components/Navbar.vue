@@ -8,32 +8,50 @@
       <template v-if="device!=='mobile'">
         <error-log class="errLog-container right-menu-item"/>
 
-        <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
+        <el-tooltip
+          :content="$t('navbar.screenfull')"
+          effect="dark"
+          placement="bottom">
           <screenfull class="screenfull right-menu-item"/>
         </el-tooltip>
 
-        <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
+        <el-tooltip
+          :content="$t('navbar.size')"
+          effect="dark"
+          placement="bottom">
           <size-select class="international right-menu-item"/>
         </el-tooltip>
 
         <lang-select class="international right-menu-item"/>
 
-        <el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">
+        <el-tooltip
+          :content="$t('navbar.theme')"
+          effect="dark"
+          placement="bottom">
           <theme-picker class="theme-switch right-menu-item"/>
         </el-tooltip>
       </template>
-
-      <el-dropdown class="avatar-container right-menu-item" trigger="click">
-        <div class="avatar-wrapper">
-          <img src="../../../assets/images/admin.png" class="user-avatar">
-          <i class="el-icon-caret-bottom"/>
-        </div>
+      <el-tooltip
+        effect="dark"
+        content="用户头像"
+        placement="bottom">
+        <img
+          class="top-bar__img"
+          src="../../../assets/images/admin.png">
+      </el-tooltip>
+      <el-dropdown class="avatar-container right-menu-item">
+        <span class="el-dropdown-link">
+          {{ name }}
+          <i class="el-icon-arrow-down el-icon--right"/>
+        </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>
-            <span style="display:block;" @click="logout">修改密码</span>
+            <span style="display:block;" @click="logout">
+              <svg-icon icon-class="password" style="margin-right: 5px"/>修改密码
+            </span>
           </el-dropdown-item>
-          <el-dropdown-item>
-            <span style="display:block;" @click="logout">{{ $t('navbar.logOut') }}</span>
+          <el-dropdown-item divided @click.native="logout">
+            <svg-icon icon-class="logout" style="margin-right: 5px"/>退出系统
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -120,24 +138,18 @@ export default {
     }
     .avatar-container {
       height: 50px;
-      margin-right: 30px;
-      .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-        }
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
-        }
-      }
+      margin-left: 0;
+      margin-right: 10px;
+      vertical-align: text-bottom;
+    }
+    .top-bar__img {
+      padding: 2px;
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+      box-sizing: border-box;
+      border: 1px solid #eee;
+      vertical-align: baseline;
     }
   }
 }

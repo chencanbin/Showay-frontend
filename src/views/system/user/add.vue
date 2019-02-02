@@ -1,21 +1,21 @@
 <template>
   <span>
     <el-row style="margin-bottom: 10px">
-      <el-button type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>
+      <el-button :loading="loading" icon="el-icon-plus" type="primary" size="small" @click="initForm">{{ $t('action.add') }}</el-button>
     </el-row>
     <el-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="添加账号"
+      :title="$t('user.dialog_title.add')"
       width="500px">
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="80px">
-        <el-form-item label="账号" prop="name">
+        <el-form-item :label="$t('user.form_label.name')" prop="name">
           <el-input v-model="account.name"/>
         </el-form-item>
-        <el-form-item label="姓名" prop="login">
+        <el-form-item :label="$t('user.form_label.account')" prop="login">
           <el-input v-model="account.login"/>
         </el-form-item>
-        <el-form-item label="角色" prop="roles">
+        <el-form-item :label="$t('user.form_label.role')" prop="roles">
           <el-select
             v-model="account.roles"
             placeholder="请选择账户角色"

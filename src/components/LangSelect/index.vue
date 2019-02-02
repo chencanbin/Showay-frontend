@@ -4,8 +4,8 @@
       <svg-icon class-name="international-icon" icon-class="language" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item :disabled="language==='zhHk'" command="zhHk">繁體中文</el-dropdown-item>
-      <el-dropdown-item :disabled="language==='zh'" command="zh">简体中文</el-dropdown-item>
+      <el-dropdown-item :disabled="language==='zh-TW'" command="zh-TW">繁體中文</el-dropdown-item>
+      <el-dropdown-item :disabled="language==='zh-CN'" command="zh-CN">简体中文</el-dropdown-item>
       <el-dropdown-item :disabled="language==='en'" command="en">English</el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>

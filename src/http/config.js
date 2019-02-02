@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie'
 
 export default {
   method: 'get',
@@ -5,7 +6,9 @@ export default {
   baseUrl: process.env.BASE_API,
   // 请求头信息
   headers: {
-    'Content-Type': 'application/json;charset=UTF-8'
+    'Content-Type': 'application/json;charset=UTF-8',
+    'Accept-Language': Cookies.get('language') || 'en',
+    'content-language': Cookies.get('language') || 'en'
   },
   // 参数
   data: {},

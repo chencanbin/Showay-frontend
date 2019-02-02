@@ -86,25 +86,25 @@ export const asyncRouterMap = [
     path: '/product',
     component: Layout,
     redirect: 'product',
+    meta: { title: 'product', icon: 'product' },
     children: [
       {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
-        name: 'product',
-        meta: { title: 'product', icon: 'product', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/commission',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
+        path: '/company',
+        component: () => import('@/views/product/company'),
+        name: 'company',
+        meta: { title: '合作机构', icon: 'company', noCache: true, roles: [3] }
+      },
       {
-        path: '',
+        path: '/commission',
+        component: () => import('@/views/commission/index'),
+        name: '产品佣金',
+        meta: { title: '产品佣金', icon: 'commission', noCache: true }
+      },
+      {
+        path: '/policy',
         component: () => import('@/views/dashboard/index'),
-        name: 'commission',
-        meta: { title: 'commission', icon: 'commission', noCache: true }
+        name: '渠道策略',
+        meta: { title: '渠道策略', icon: 'client', noCache: true }
       }
     ]
   },
@@ -112,12 +112,39 @@ export const asyncRouterMap = [
     path: '/client',
     component: Layout,
     redirect: 'noredirect',
+    meta: { title: 'client', icon: 'client', noCache: true },
     children: [
       {
         path: '',
         component: () => import('@/views/dashboard/index'),
-        name: 'client',
-        meta: { title: 'client', icon: 'client', noCache: true }
+        name: '保单',
+        meta: { title: '保单', icon: 'client', noCache: true }
+      },
+      {
+        path: '',
+        component: () => import('@/views/dashboard/index'),
+        name: '客户资料',
+        meta: { title: '客户资料', icon: 'client', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/yongjin',
+    component: Layout,
+    redirect: 'noredirect',
+    meta: { title: '佣金', icon: 'channel', noCache: true },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/dashboard/index'),
+        name: '到账记录',
+        meta: { title: '到账记录', icon: 'channel', noCache: true }
+      },
+      {
+        path: '',
+        component: () => import('@/views/dashboard/index'),
+        name: '发放记录',
+        meta: { title: '发放记录', icon: 'channel', noCache: true }
       }
     ]
   },
@@ -125,12 +152,25 @@ export const asyncRouterMap = [
     path: '/channel',
     component: Layout,
     redirect: 'noredirect',
+    meta: { title: 'channel', icon: 'channel', noCache: true },
     children: [
       {
         path: '',
         component: () => import('@/views/dashboard/index'),
-        name: 'channel',
+        name: '资料',
         meta: { title: 'channel', icon: 'channel', noCache: true }
+      },
+      {
+        path: '',
+        component: () => import('@/views/dashboard/index'),
+        name: '佣金率检索',
+        meta: { title: '佣金率检索', icon: 'channel', noCache: true }
+      },
+      {
+        path: '',
+        component: () => import('@/views/dashboard/index'),
+        name: '支票发放记录',
+        meta: { title: '支票发放记录', icon: 'channel', noCache: true }
       }
     ]
   },
@@ -138,12 +178,19 @@ export const asyncRouterMap = [
     path: '/document',
     component: Layout,
     redirect: 'document',
+    meta: { title: '文档', icon: 'document', noCache: true },
     children: [
       {
         path: '',
         component: () => import('@/views/dashboard/index'),
-        name: 'document',
-        meta: { title: 'document', icon: 'document', noCache: true }
+        name: '内部',
+        meta: { title: '内部文档', icon: 'document', noCache: true }
+      },
+      {
+        path: '',
+        component: () => import('@/views/dashboard/index'),
+        name: '保险公司',
+        meta: { title: '保险公司', icon: 'channel', noCache: true }
       }
     ]
   },
@@ -165,7 +212,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: 'user',
     name: 'system',
-    meta: { title: 'system', icon: 'system', noCache: true },
+    meta: { title: 'system', icon: 'system', noCache: true, roles: [1] },
     children: [
       {
         path: 'user',
