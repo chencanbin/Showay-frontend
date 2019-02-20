@@ -1,9 +1,8 @@
 <template>
   <span>
-    <el-row style="margin-bottom: 10px">
-      <el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>
-    </el-row>
+    <div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>
     <el-dialog
+      v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="添加公司"
@@ -29,8 +28,10 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import elDragDialog from '@/directive/el-dragDialog'
 
 export default {
+  directives: { elDragDialog },
   data() {
     return {
       dialogVisible: false,
@@ -81,5 +82,4 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-
 </style>

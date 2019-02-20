@@ -7,6 +7,7 @@ import tagsView from './modules/tagsView'
 import user from './modules/user'
 import company from './modules/company'
 import commission from './modules/commission'
+import client from './modules/client'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
     tagsView,
     user,
     company,
-    commission
+    commission,
+    client
   },
   getters
 })

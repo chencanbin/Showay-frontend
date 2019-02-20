@@ -4,7 +4,7 @@ import router from '@/router'
 import { Message, MessageBox, Notification } from 'element-ui'
 // 使用vuex做全局loading时使用
 import store from '@/store'
-
+const _ = require('lodash')
 export default function $axios(options) {
   return new Promise((resolve, reject) => {
     // 初始化参数配置
@@ -18,6 +18,9 @@ export default function $axios(options) {
     // request 拦截器
     instance.interceptors.request.use(
       config => {
+        if (config.data) {
+          config.data = _.omitBy(config.data, _.isNull)
+        }
         store.commit('SHOW_LOADING')
         return config
       },

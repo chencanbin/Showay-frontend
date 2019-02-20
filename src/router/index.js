@@ -101,8 +101,8 @@ export const asyncRouterMap = [
         meta: { title: '产品佣金', icon: 'commission', noCache: true }
       },
       {
-        path: '/policy',
-        component: () => import('@/views/dashboard/index'),
+        path: '/channel_strategy',
+        component: () => import('@/views/channel/index'),
         name: '渠道策略',
         meta: { title: '渠道策略', icon: 'client', noCache: true }
       }
@@ -115,14 +115,14 @@ export const asyncRouterMap = [
     meta: { title: 'client', icon: 'client', noCache: true },
     children: [
       {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
+        path: '/policy',
+        component: () => import('@/views/client/policy'),
         name: '保单',
         meta: { title: '保单', icon: 'client', noCache: true }
       },
       {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
+        path: '/info',
+        component: () => import('@/views/client/info'),
         name: '客户资料',
         meta: { title: '客户资料', icon: 'client', noCache: true }
       }

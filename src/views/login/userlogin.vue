@@ -39,7 +39,7 @@
           </el-input>
         </el-col>
         <el-col :span="8">
-          <div class="login-code">
+          <div v-loading="loading" class="login-code">
             <img :src="code.src" class="login-code-img" @click="refreshCode">
           </div>
         </el-col>

@@ -14,9 +14,32 @@ export function fetchCommissionTableList(id, params) {
 
 export function fetchCommissionList(companyId, params) {
   return request({
-    url: `/commissionTable/${companyId}`,
+    url: `/commissionTableDraft/${companyId}`,
     method: 'get',
     params
+  })
+}
+
+export function fetchCommissionTable(commissionTableId, params) {
+  return request({
+    url: `/commissionTable/${commissionTableId}`,
+    method: 'get',
+    params
+  })
+}
+
+export function fetchChannelCommissionTable(params) {
+  return request({
+    url: `/channelCommissionTable`,
+    method: 'get',
+    params
+  })
+}
+
+export function getChannelCommissionTable(id) {
+  return request({
+    url: `/channelCommissionTable/${id}`,
+    method: 'get'
   })
 }
 

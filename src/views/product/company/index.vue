@@ -1,7 +1,7 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <add/>
+
       <el-table v-loading="loading" :data="companyList.list" stripe>
         <el-table-column prop="id" label="ID" width="50px"/>
         <el-table-column prop="acronym" label="公司缩写"/>
@@ -21,6 +21,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-col span="24">
+        <add/>
+      </el-col>
       <pagination :total="companyList.total" @pagination="pagination"/>
     </basic-container>
   </div>
@@ -79,3 +82,6 @@ export default {
   }
 }
 </script>
+<style>
+
+</style>

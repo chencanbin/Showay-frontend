@@ -11,8 +11,10 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'https://13.75.70.13',//设置你调用的接口域名 别忘了加http
-        //target: 'http://192.168.1.105:8080',
+        //target: 'http://192.168.20.67:8080',
+        target: 'https://13.75.70.13', //设置你调用的接口域名 别忘了加http
+        //target: 'http://192.168.1.106:8080',
+        //target: 'http://12511e04.ngrok.io/',
         secure: false,
         changeOrigin: true
       }
@@ -22,7 +24,7 @@ module.exports = {
 
     // can be overwritten by process.env.HOST
     // if you want dev by ip, please set host: '0.0.0.0'
-    host: 'localhost',
+    host: '0.0.0.0',
     port: 9527, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,

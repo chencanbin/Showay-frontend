@@ -1,7 +1,9 @@
 <template>
-  <span style="margin-right: 20px;height: 36px;line-height: 36px;display: inline-block;">
-    <el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>
+  <el-col span.number="24" style="margin-bottom: 10px">
+    <div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>
+    <!--<el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>-->
     <el-dialog
+      v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="添加佣金表"
@@ -32,13 +34,15 @@
         <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
       </div>
     </el-dialog>
-  </span>
+  </el-col>
 </template>
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapState } from 'vuex'
+import elDragDialog from '@/directive/el-dragDialog'
 
 export default {
+  directives: { elDragDialog },
   data() {
     return {
       dialogVisible: false,

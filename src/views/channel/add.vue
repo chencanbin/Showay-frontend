@@ -1,27 +1,36 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button :loading="loading" icon="el-icon-plus" type="primary" size="small" plain @click="initForm">{{ $t('action.add') }}</el-button>
     <el-dialog
+      v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="编辑渠道"
+      title="创建渠道"
       width="500px">
-      <el-form ref="account" :model="account" :rules="ruleAccount" label-width="80px">
+      <el-form ref="account" :model="account" :rules="ruleAccount" label-width="100px">
         <el-form-item :label="$t('user.form_label.name')" prop="name">
           <el-input v-model="account.name"/>
         </el-form-item>
-        <el-form-item :label="$t('user.form_label.role')" prop="roles">
+        <el-form-item :label="$t('user.form_label.account')" prop="login">
+          <el-input v-model="account.login"/>
+        </el-form-item>
+        <el-form-item label="上级" prop="superior">
           <el-select
-            v-model="account.roles"
-            placeholder="请选择账户角色"
-            multiple
+            v-model="account.superior"
+            placeholder="请选择账户上级"
+            clearable
             style="width: 100%">
             <el-option
-              v-for="item in roles"
+              v-for="item in users"
               :key="item.id"
               :label="item.name"
               :value="item.id"/>
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="account.superior" label="上级佣金率" prop="superiorCommissionRate">
+          <el-input v-if="account.superior" v-model.number="account.superiorCommissionRate">
+            <template slot="append">%</template>
+          </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -34,29 +43,28 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import elDragDialog from '@/directive/el-dragDialog'
+
 export default {
-  props: {
-    user: {
-      type: Object,
-      default() {
-        return {}
-      }
-    }
-  },
+  directives: { elDragDialog },
   data() {
     return {
-      roles: [],
+      users: [],
+      dialogVisible: false,
       account: {
-        id: '',
         name: '',
         login: '',
-        roles: []
+        roles: [2],
+        superior: null,
+        superiorCommissionRate: null
       },
-      dialogVisible: false,
       ruleAccount: {
         name: [{ required: true, message: '姓名必须填', trigger: 'blur' }],
         login: [{ required: true, message: '账号必须填', trigger: 'blur' }],
-        roles: [{ required: true, message: '角色必须选', trigger: 'blur' }]
+        superiorCommissionRate: [
+          { required: true, message: '上级佣金率必须选', trigger: 'blur' },
+          { type: 'number', message: '上级佣金率必须为数字', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -65,33 +73,25 @@ export default {
   },
   methods: {
     initForm() {
-      // 初始化参数，将传进来的对象字段复制给account
-      this.user.roles.forEach(item => {
-        this.account.roles.push(item.id)
-      })
-      this.account.id = this.user.id
-      this.account.name = this.user.name
-      // 调用roles接口拿到所有权限
-      this.$api.role.fetchRoleList().then(res => {
-        this.roles = res.data.list
+      this.$api.user.fetchUserList({ role: 2 }).then(res => {
+        this.users = res.data.list
         this.dialogVisible = true
       })
     },
     handleClose() {
-      this.account = { roles: [] }
       this.$refs['account'].resetFields()
       this.dialogVisible = false
     },
     handleSubmit() {
       this.$refs['account'].validate((valid) => {
         if (valid) {
-          this.$api.user.editUser(this.account.id, this.account).then(_ => {
+          this.$api.user.addUser(this.account).then(_ => {
             this.$message({
               message: '操作成功',
               type: 'success',
               duration: 5 * 1000
             })
-            this.$store.dispatch('FetchUserList')
+            this.$store.dispatch('FetchUserList', { role: 2 })
             this.handleClose()
           })
         } else {

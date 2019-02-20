@@ -6,6 +6,8 @@ import * as user from './modules/user'
 import * as role from './modules/role'
 import * as company from './modules/company'
 import * as commission from './modules/commission'
+import * as client from './modules/client'
+import * as product from './modules/product'
 
 // 默认全部导出
 export default {
@@ -13,5 +15,7 @@ export default {
   user,
   role,
   company,
-  commission
+  commission,
+  client,
+  product
 }

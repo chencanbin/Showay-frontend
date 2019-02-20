@@ -1,7 +1,6 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <add/>
       <el-form :inline="true" style="display: inline-block; vertical-align: top; float: right">
         <el-form-item label="" prop="company">
           <el-select
@@ -49,9 +48,22 @@
             <el-tag v-if="scope.row.status === 2" type="warning">有改动</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200">
+        <el-table-column label="操作" width="300">
           <template slot-scope="scope">
+            <el-button
+              v-if="scope.row.status !== 0"
+              type="text"
+              icon="el-icon-view"
+              style="margin-right: 5px"
+              @click="handleView(scope.row.id)">
+              查看
+            </el-button>
             <commission-table :id="scope.row.id" :title="scope.row.company.name"/>
+            <el-button
+              v-if="scope.row.status !== 0"
+              type="text"
+              icon="el-icon-download"
+              @click="exportExcel(scope.row)">导出Excel</el-button>
             <el-button
               type="text"
               icon="el-icon-delete"
@@ -60,8 +72,9 @@
           </template>
         </el-table-column>
       </el-table>
-
+      <add/>
     </basic-container>
+    <commission-view ref="commissionView"/>
   </div>
 </template>
 
@@ -70,9 +83,11 @@ import { parseTime } from '@/utils'
 import { mapGetters, mapState } from 'vuex'
 import commissionTable from './commissionTable'
 import add from './add'
+import commissionView from './view'
 export default {
   components: {
     add,
+    commissionView,
     commissionTable
   },
   data: function() {
@@ -110,7 +125,7 @@ export default {
       this.$store.dispatch('company/FetchCompanyList', { name: query })
     },
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该管理员账号, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该策略表, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -124,6 +139,25 @@ export default {
           this.getCommissionTableList()
         })
       })
+    },
+    exportExcel(row) {
+      if (row.status === 2) {
+        this.$confirm('导出的部分不包含未发布的内容, 是否继续导出?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          window.location.href = process.env.BASE_API + `/commissionTable/${row.id}/export`
+        })
+      } else {
+        window.location.href = process.env.BASE_API + `/commissionTable/${row.id}/export`
+      }
+    },
+    handleView(id) {
+      this.$refs.commissionView.openDialog(id)
+    },
+    dbRowClick(row) {
+      this.$refs.commissionView.openDialog(row.id)
     }
   }
 }

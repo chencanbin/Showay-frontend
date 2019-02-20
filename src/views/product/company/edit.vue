@@ -2,6 +2,7 @@
   <span>
     <el-button :loading="loading" type="text" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">编辑</el-button>
     <el-dialog
+      v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑公司"
@@ -10,7 +11,7 @@
         <el-form-item label="公司名(英文)" prop="en">
           <el-input v-model="company.en"/>
         </el-form-item>
-        <el-form-item label="公司名(中文)" prop="zhCN">
+        <el-form-item label="公司名(中文)" prop="zh">
           <el-input v-model="company.zh"/>
         </el-form-item>
         <el-form-item label="公司缩写" prop="acronym">
@@ -27,8 +28,9 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
-import Cookies from 'js-cookie'
+import elDragDialog from '@/directive/el-dragDialog'
 export default {
+  directives: { elDragDialog },
   props: {
     id: {
       type: Number,
@@ -55,17 +57,6 @@ export default {
         this.company.acronym = res.data.acronym
         this.company.en = res.data.en
         this.company.zh = res.data.zh
-        // 便利 localizedNames, 根據當前的語言環境對中文名字段賦值
-        // res.data.localizedNames.forEach(item => {
-        //   if(item.locale === 'en') {
-        //     this.company.en = item.name
-        //   }
-        //   if(language === 'zh_TW' && item.locale === 'zh_TW') {
-        //     this.company.zhCN = item.name
-        //   } else if(language === 'zh_CN' && item.locale === 'zh_CN') {
-        //     this.company.zhCN = item.name
-        //   }
-        // })
         this.dialogVisible = true
       })
     },
@@ -76,12 +67,7 @@ export default {
     handleSubmit() {
       this.$refs['company'].validate((valid) => {
         if (valid) {
-          const data = { acronym: '', localizedNames: [] }
-          data.acronym = this.company.acronym
-          const language = Cookies.get('language') || 'en'
-          data.localizedNames.push({ name: this.company.en, locale: 'en' })
-          data.localizedNames.push({ name: this.company.zh, locale: language })
-          this.$api.company.editCompany(this.id, data).then(_ => {
+          this.$api.company.editCompany(this.id, this.company).then(_ => {
             this.$message({
               message: '操作成功',
               type: 'success',
