@@ -146,4 +146,7 @@ export default {
 </script>
 
 <style>
+  .el-loading-mask {
+    right: -8px;
+  }
 </style>

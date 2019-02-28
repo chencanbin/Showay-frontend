@@ -1,10 +1,11 @@
-import { fetchCommissionTableList } from '@/http/modules/commission'
+import { fetchCommissionTableList, fetchCommissionCredit } from '@/http/modules/commission'
 
 const company = {
   namespaced: true,
   state: {
     commissionTableList: [],
-    commissionTableDialogVisible: false
+    commissionTableDialogVisible: false,
+    commissionCredit: {}
   },
   mutations: {
     SET_COMMISSION_TABLE_LIST: (state, commissionTableList) => {
@@ -15,13 +16,20 @@ const company = {
     },
     HIDE_COMMISSION_TABLE_DIALOG_VISIBLE: (state) => {
       state.commissionTableDialogVisible = false
+    },
+    SET_COMMISSION_CREDIT: (state, commissionCredit) => {
+      state.commissionCredit = commissionCredit
     }
   },
   actions: {
     FetchCommissionTableList({ commit }, { id, params }) {
-      console.log(id)
       return fetchCommissionTableList(id, params).then(res => {
         commit('SET_COMMISSION_TABLE_LIST', res.data)
+      })
+    },
+    FetchCommissionCredit({ commit }, params) {
+      return fetchCommissionCredit(params).then(res => {
+        commit('SET_COMMISSION_CREDIT', res.data)
       })
     }
   }

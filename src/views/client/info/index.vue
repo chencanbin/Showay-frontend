@@ -14,6 +14,7 @@
       </el-form>
       <el-table
         v-loading="loading"
+        :max-height="height"
         :data="client.list"
         stripe
       >
@@ -46,6 +47,7 @@
         <el-table-column
           prop="email"
           label="电子邮箱"
+          show-overflow-tooltip
           min-width="120"/>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -59,6 +61,7 @@
         </el-table-column>
       </el-table>
       <add/>
+      <pagination :total="client.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
   </div>
 </template>
@@ -68,14 +71,21 @@ import { parseTime } from '@/utils'
 import { mapGetters, mapState } from 'vuex'
 import add from './add'
 import edit from './edit'
+import pagination from '@/components/Pagination'
 const _ = require('lodash')
 export default {
   components: {
     add,
-    edit
+    edit,
+    pagination
   },
   data: function() {
     return {
+      height: window.screen.height - 260,
+      listQuery: {
+        page: 1,
+        limit: 50
+      },
       wildcard: ''
     }
   },
@@ -115,6 +125,19 @@ export default {
           this.getClient()
         })
       })
+    },
+
+    pagination(pageObj) {
+      const offset = (pageObj.page - 1) * pageObj.limit
+      const max = pageObj.limit
+      const params = { offset, max }
+      this.getClient(params)
+    },
+    updatePage(val) {
+      this.listQuery.page = val
+    },
+    updateLimit(val) {
+      this.listQuery.limit = val
     }
   }
 }

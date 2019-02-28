@@ -32,21 +32,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination :total="users.total" @pagination="pagination"/>
-      <!--
-      <el-pagination
-        ref="pagination"
-        class="pagination"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-size="size"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="users.total"
-      >
-      </el-pagination>
--->
+      <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
   </div>
 </template>
@@ -64,6 +50,14 @@ export default {
     add,
     edit,
     pagination
+  },
+  data() {
+    return {
+      listQuery: {
+        page: 1,
+        limit: 50
+      }
+    }
   },
   computed: {
     ...mapGetters(['loading']),
@@ -101,6 +95,12 @@ export default {
       const max = pageObj.limit
       const params = { offset, max }
       this.getUsers(params)
+    },
+    updatePage(val) {
+      this.listQuery.page = val
+    },
+    updateLimit(val) {
+      this.listQuery.limit = val
     }
   }
 }

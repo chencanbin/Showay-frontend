@@ -30,7 +30,7 @@ export default {
     },
     limit: {
       type: Number,
-      default: 10
+      default: 50
     },
     pageSizes: {
       type: Array,
@@ -81,6 +81,7 @@ export default {
       }
     },
     handleCurrentChange(val) {
+      console.log(val)
       this.$emit('pagination', { page: val, limit: this.pageSize })
       if (this.autoScroll) {
         scrollTo(0, 800)
@@ -95,6 +96,7 @@ export default {
   background: #fff;
   float: right;
   padding: 0px 8px 10px 8px;
+  margin-top: 15px;
 }
 .pagination-container.hidden {
   display: none;

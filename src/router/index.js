@@ -85,24 +85,23 @@ export const asyncRouterMap = [
   {
     path: '/product',
     component: Layout,
-    redirect: 'product',
     meta: { title: 'product', icon: 'product' },
     children: [
       {
-        path: '/company',
+        path: 'company',
         component: () => import('@/views/product/company'),
         name: 'company',
         meta: { title: '合作机构', icon: 'company', noCache: true, roles: [3] }
       },
       {
-        path: '/commission',
-        component: () => import('@/views/commission/index'),
+        path: 'commission',
+        component: () => import('@/views/product/commission/index'),
         name: '产品佣金',
         meta: { title: '产品佣金', icon: 'commission', noCache: true }
       },
       {
-        path: '/channel_strategy',
-        component: () => import('@/views/channel/index'),
+        path: 'channel_strategy',
+        component: () => import('@/views/product/channel/index'),
         name: '渠道策略',
         meta: { title: '渠道策略', icon: 'client', noCache: true }
       }
@@ -118,33 +117,33 @@ export const asyncRouterMap = [
         path: '/policy',
         component: () => import('@/views/client/policy'),
         name: '保单',
-        meta: { title: '保单', icon: 'client', noCache: true }
+        meta: { title: '保单', icon: 'policy', noCache: true }
       },
       {
         path: '/info',
         component: () => import('@/views/client/info'),
         name: '客户资料',
-        meta: { title: '客户资料', icon: 'client', noCache: true }
+        meta: { title: '客户资料', icon: 'info', noCache: true }
       }
     ]
   },
   {
-    path: '/yongjin',
+    path: '/commission',
     component: Layout,
     redirect: 'noredirect',
     meta: { title: '佣金', icon: 'channel', noCache: true },
     children: [
       {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
+        path: 'commissionCredit',
+        component: () => import('@/views/commission/commissionCredit/index'),
         name: '到账记录',
-        meta: { title: '到账记录', icon: 'channel', noCache: true }
+        meta: { title: '到账记录', icon: 'credit', noCache: true }
       },
       {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
+        path: 'channelCommissionPayment',
+        component: () => import('@/views/commission/channelCommissionPayment/index'),
         name: '发放记录',
-        meta: { title: '发放记录', icon: 'channel', noCache: true }
+        meta: { title: '发放记录', icon: 'payment', noCache: true }
       }
     ]
   },

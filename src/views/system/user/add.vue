@@ -4,6 +4,7 @@
       <el-button :loading="loading" icon="el-icon-plus" type="primary" size="small" @click="initForm">{{ $t('action.add') }}</el-button>
     </el-row>
     <el-dialog
+      v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('user.dialog_title.add')"
@@ -39,7 +40,10 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import elDragDialog from '@/directive/el-dragDialog'
+
 export default {
+  directives: { elDragDialog },
   data() {
     return {
       roles: [],

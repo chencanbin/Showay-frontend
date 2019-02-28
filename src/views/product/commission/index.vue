@@ -73,12 +73,14 @@
         </el-table-column>
       </el-table>
       <add/>
+      <pagination :total="commissionTableList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
     <commission-view ref="commissionView"/>
   </div>
 </template>
 
 <script>
+import pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
 import { mapGetters, mapState } from 'vuex'
 import commissionTable from './commissionTable'
@@ -88,10 +90,15 @@ export default {
   components: {
     add,
     commissionView,
-    commissionTable
+    commissionTable,
+    pagination
   },
   data: function() {
     return {
+      listQuery: {
+        page: 1,
+        limit: 50
+      },
       companyId: ''
     }
   },
@@ -108,8 +115,8 @@ export default {
     this.getCommissionTableList()
   },
   methods: {
-    getCommissionTableList(id, param) {
-      this.$store.dispatch('commission/FetchCommissionTableList', { id, param })
+    getCommissionTableList(id, params) {
+      this.$store.dispatch('commission/FetchCommissionTableList', { id, params })
     },
     getCompanyList(param) {
       this.$store.dispatch('company/FetchCompanyList', param)
@@ -158,6 +165,18 @@ export default {
     },
     dbRowClick(row) {
       this.$refs.commissionView.openDialog(row.id)
+    },
+    pagination(pageObj) {
+      const offset = (pageObj.page - 1) * pageObj.limit
+      const max = pageObj.limit
+      const params = { offset, max }
+      this.getCommissionTableList('', params)
+    },
+    updatePage(val) {
+      this.listQuery.page = val
+    },
+    updateLimit(val) {
+      this.listQuery.limit = val
     }
   }
 }

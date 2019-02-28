@@ -8,6 +8,7 @@ import * as company from './modules/company'
 import * as commission from './modules/commission'
 import * as client from './modules/client'
 import * as product from './modules/product'
+import * as channel from './modules/channel'
 
 // 默认全部导出
 export default {
@@ -17,5 +18,6 @@ export default {
   company,
   commission,
   client,
-  product
+  product,
+  channel
 }

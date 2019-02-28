@@ -2,6 +2,7 @@
   <el-col span.number="24" style="margin-bottom: 10px">
     <div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>
     <el-dialog
+      v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="添加客户资料"
@@ -14,10 +15,10 @@
         class="insurance-policy-form"
         label-width="80px">
         <el-form-item label="保单号:" prop="number">
-          <el-input v-model="insurancePolicy.number"/>
+          <el-input v-model="insurancePolicy.number" placeholder="请输入保单号"/>
         </el-form-item>
-        <el-form-item label="内部编号:" prop="sn">
-          <el-input v-model="insurancePolicy.sn"/>
+        <el-form-item label="内部编号:" prop="sn" >
+          <el-input v-model="insurancePolicy.sn" placeholder="请输入内部编号"/>
         </el-form-item>
         <el-form-item label="申请日期:" prop="submitDate">
           <el-date-picker
@@ -33,15 +34,6 @@
             type="date"
             placeholder="选择日期"/>
         </el-form-item>
-        <el-form-item label="保单状态:" prop="policyStatus">
-          <el-select v-model="insurancePolicy.policyStatus" placeholder="请选择保单状态" filterable style="width: 100%">
-            <el-option
-              v-for="item in policyStatus"
-              :key="item.id"
-              :label="item[language]"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
         <el-form-item label="申请人:" prop="applicant.name">
           <el-select v-model="insurancePolicy.applicant.id" placeholder="请选择申请人" filterable style="width: 100%">
             <el-option
@@ -51,11 +43,29 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
+        <el-form-item label="受益人:" prop="beneficiary.name">
+          <el-select v-model="insurancePolicy.beneficiary.id" placeholder="请选择受益人" filterable style="width: 100%">
+            <el-option
+              v-for="item in client.list"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="保单状态:" prop="policyStatus">
+          <el-select v-model="insurancePolicy.policyStatus" placeholder="请选择保单状态" filterable style="width: 100%">
+            <el-option
+              v-for="item in policyStatus"
+              :key="item.id"
+              :label="item[language]"
+              :value="item.id"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="保费:" prop="premium">
-          <el-input v-model="insurancePolicy.premium"/>
+          <el-input v-model="insurancePolicy.premium" placeholder="请输入保费" />
         </el-form-item>
         <el-form-item label="保额:" prop="premium">
-          <el-input v-model="insurancePolicy.amountInsured"/>
+          <el-input v-model="insurancePolicy.amountInsured" placeholder="请输入保单号" />
         </el-form-item>
         <el-form-item label="渠道:" prop="channel">
           <el-select v-model="insurancePolicy.channel.id" placeholder="请选择渠道" filterable style="width: 100%">
@@ -84,15 +94,6 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="佣金状态:" prop="commissionStatus">
-          <el-select v-model="insurancePolicy.commissionStatus" placeholder="请选择佣金状态" filterable style="width: 100%">
-            <el-option
-              v-for="item in commissionStatus"
-              :key="item.id"
-              :label="item[language]"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -104,15 +105,16 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapState } from 'vuex'
-import { policyStatus, commissionStatus } from '@/utils/constant'
-
+import { policyStatus } from '@/utils/constant'
+import elDragDialog from '@/directive/el-dragDialog'
 import Cookies from 'js-cookie'
+const _ = require('lodash')
 export default {
+  directives: { elDragDialog },
   data() {
     return {
       language: 'en',
       policyStatus,
-      commissionStatus,
       dialogVisible: false,
       agents: [],
       products: [],
@@ -122,6 +124,9 @@ export default {
         submitDate: null,
         policyStatus: null,
         applicant: {
+          id: null
+        },
+        beneficiary: {
           id: null
         },
         premium: null,
@@ -135,8 +140,7 @@ export default {
         product: {
           id: null
         },
-        issueDate: null,
-        commissionStatus: null
+        issueDate: null
       },
       rule: {
         name: [{ required: true, message: '请输入客户姓名', trigger: 'blur' }],
@@ -191,7 +195,12 @@ export default {
     handleSubmit() {
       this.$refs['insurancePolicy'].validate((valid) => {
         if (valid) {
-          this.$api.client.createInsurancePolicy(this.insurancePolicy).then(_ => {
+          const data = _.cloneDeep(this.insurancePolicy)
+          data.applicant = this.insurancePolicy.applicant.id
+          data.beneficiary = this.insurancePolicy.beneficiary.id
+          data.channel = this.insurancePolicy.channel.id
+          data.product = this.insurancePolicy.product.id
+          this.$api.client.createInsurancePolicy(data).then(_ => {
             this.$message({
               message: '操作成功',
               type: 'success',

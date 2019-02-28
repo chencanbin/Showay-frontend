@@ -24,7 +24,7 @@
       <el-col span="24">
         <add/>
       </el-col>
-      <pagination :total="companyList.total" @pagination="pagination"/>
+      <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
   </div>
 </template>
@@ -41,6 +41,14 @@ export default {
     pagination,
     add,
     edit
+  },
+  data() {
+    return {
+      listQuery: {
+        page: 1,
+        limit: 50
+      }
+    }
   },
   computed: {
     ...mapGetters(['loading']),
@@ -78,6 +86,12 @@ export default {
       const max = pageObj.limit
       const params = { offset, max }
       this.getCompanyList(params)
+    },
+    updatePage(val) {
+      this.listQuery.page = val
+    },
+    updateLimit(val) {
+      this.listQuery.limit = val
     }
   }
 }

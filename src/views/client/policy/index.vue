@@ -3,6 +3,7 @@
     <basic-container>
       <el-table
         v-loading="loading"
+        :max-height="height"
         :data="insurancePolicy.list"
         stripe>
         <el-table-column type="expand">
@@ -14,34 +15,27 @@
               <el-form-item label="签单员:">
                 <span>{{ scope.row.agent.name }}</span>
               </el-form-item>
-              <el-form-item label="币种:">
-                <span>{{ scope.row.currency }}</span>
-              </el-form-item>
-              <el-form-item label="年期:">
-                <span/>
-              </el-form-item>
               <el-form-item label="保额:">
-                <span>{{ numberFormat(scope.row.amountInsured) }}</span>
+                <span>{{ numberFormat(scope.row, scope.row.amountInsured) }}</span>
               </el-form-item>
               <el-form-item label="保费:">
-                <span>{{ numberFormat(scope.row.premium) }}</span>
-              </el-form-item>
-              <el-form-item label="AFYP:">
-                <span/>
+                <span>{{ numberFormat(scope.row, scope.row.premium) }}</span>
               </el-form-item>
               <el-form-item label="生效时间:">
-                <span>{{ scope.row.issueDate }}</span>
+                <span>{{ getFormattedDate(scope.row.issueDate) }}</span>
               </el-form-item>
             </el-form>
           </template>
         </el-table-column>
         <el-table-column
           prop="number"
-          label="保单号"/>
+          label="保单号"
+          min-width="120"/>
         <el-table-column
           :formatter="dateFormat"
           prop="submitDate"
-          label="申请日期"/>
+          label="申请日期"
+          min-width="100"/>
         <el-table-column
           :formatter="formatterPolicyStatus"
           prop="policyStatus"
@@ -50,12 +44,15 @@
           prop="applicant.name"
           label="申请人"/>
         <el-table-column
+          prop="beneficiary.name"
+          label="受保人"/>
+        <el-table-column
           prop="company.name"
-          width="180"
+          min-width="150"
           label="保险公司"/>
         <el-table-column
           prop="product.name"
-          width="250"
+          min-width="200"
           label="产品"/>
 
         <el-table-column label="操作" width="150">
@@ -70,6 +67,7 @@
         </el-table-column>
       </el-table>
       <add/>
+      <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
   </div>
 </template>
@@ -81,16 +79,23 @@ import Cookies from 'js-cookie'
 import { mapGetters, mapState } from 'vuex'
 import add from './add'
 import edit from './edit'
+import pagination from '@/components/Pagination'
 const _ = require('lodash')
-
+const currencyFormatter = require('currency-formatter')
 export default {
   name: 'InsurancePolicy',
   components: {
     add,
-    edit
+    edit,
+    pagination
   },
   data() {
     return {
+      height: window.screen.height - 260,
+      listQuery: {
+        page: 1,
+        limit: 50
+      },
       language: Cookies.get('language') || 'en'
     }
   },
@@ -109,8 +114,8 @@ export default {
   methods: {
 
     // 获取保单列表
-    getInsurancePolicyList(param) {
-      this.$store.dispatch('client/FetchInsurancePolicyList', { param })
+    getInsurancePolicyList(params) {
+      this.$store.dispatch('client/FetchInsurancePolicyList', { params })
     },
 
     // 格式化事件
@@ -118,12 +123,11 @@ export default {
       const date = row[column.property]
       return parseTime(date, '{y}-{m}-{d}')
     },
-    numberFormat(value) {
-      if (value && _.isNumber(_.toNumber(value))) {
-        return _.toNumber(value).toFixed(2)
-      } else {
-        return value
-      }
+    getFormattedDate(value) {
+      return parseTime(value, '{y}-{m}-{d}')
+    },
+    numberFormat(row, value) {
+      return currencyFormatter.format(value, { code: row.currency })
     },
     // 处理删除保单事件
     handleDelete(index, row) {
@@ -154,6 +158,19 @@ export default {
         }
       })
       return result
+    },
+
+    pagination(pageObj) {
+      const offset = (pageObj.page - 1) * pageObj.limit
+      const max = pageObj.limit
+      const params = { offset, max }
+      this.getInsurancePolicyList(params)
+    },
+    updatePage(val) {
+      this.listQuery.page = val
+    },
+    updateLimit(val) {
+      this.listQuery.limit = val
     }
   }
 }

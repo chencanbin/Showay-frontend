@@ -2,6 +2,7 @@
   <span>
     <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
+      v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑渠道"
@@ -34,7 +35,9 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import elDragDialog from '@/directive/el-dragDialog'
 export default {
+  directives: { elDragDialog },
   props: {
     user: {
       type: Object,

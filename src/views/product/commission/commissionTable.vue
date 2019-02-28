@@ -66,7 +66,7 @@
 
 <script type="text/ecmascript-6">
 import { HotTable } from '@handsontable/vue'
-import '../../../node_modules/handsontable-pro/dist/handsontable.full.min.css'
+import '../../../../node_modules/handsontable-pro/dist/handsontable.full.min.css'
 const _ = require('lodash')
 
 export default {
@@ -88,7 +88,6 @@ export default {
       overrideTitle: '',
       activeName: 'basic',
       editStatus: '', // 修改cell时,页面的状态显示
-      cellReadOnly: false,
       errorCoordinate: [],
       selectedRows: [], // 选中行数的数组
       effectiveDate: (new Date()).valueOf(), // 有效时间
@@ -197,7 +196,13 @@ export default {
               data.push({ row, column, value })
             })
             this.editStatus = '正在保存.....'
-            this.$api.commission.commissionTableDraft(this.id, { data }).then(res => {
+            let type = 0
+            if (this.activeName === 'override') {
+              type = 1
+            } else if (this.activeName === 'overall') {
+              type = 2
+            }
+            this.$api.commission.commissionTableDraft(this.id, { data, type }).then(res => {
               const date = new Date()
               this.editStatus = '最近保存 ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
             }).catch(_ => {
@@ -210,13 +215,15 @@ export default {
     }
   },
   created() {
-    this.initColumn(false)
+    this.initColumn()
   },
+
   methods: {
     initColumn() {
       // this.$api.commission.fetchCommissionTable(3).then(res => {
       //   console.log(res)
       // })
+
       const colHeaders = ['计划名称', 'ENG name', '产品编号', '年期']
       const columns = [{ data: 'zh', renderer: this.textFormatter }, { data: 'en', renderer: this.textFormatter }, { data: 'pId' }, { data: 'years' }]
       const colWidths = []
@@ -272,6 +279,7 @@ export default {
       } else if (this.activeName === 'overall') {
         this.initColumn()
         this.loadOverallData()
+        this.overallHotInstance.render()
       }
     },
     // 格式化百分比的cell
@@ -407,30 +415,14 @@ export default {
   .handsontable tbody th.ht__highlight, .handsontable thead th.ht__highlight {
     background-color: #fafafa;
   }
-  .htCore tr:nth-child(odd) td {
-    background: #e1eedc;
+  .handsontable tr:nth-child(odd) > td {
+    background: #e1eedc!important;
   }
   .handsontable tr:nth-child(odd):hover > td {
     background: #e1eedc;
   }
   .handsontable tr:nth-child(even):hover > td {
     background-color: #fafafa;
-  }
-
-  /* 设置滚动条的样式 */
-  ::-webkit-scrollbar {
-    width:12px;
-  }
-
-  /* 滚动槽 */
-  ::-webkit-scrollbar-track {
-    border-radius:5px;
-  }
-
-  /* 滚动条滑块 */
-  ::-webkit-scrollbar-thumb {
-    border-radius:5px;
-    background:rgba(1,1,1,0.1);
   }
 
   #commissionTableDialog, .dialog-footer, #setOverrideDialog .dialog-footer{
@@ -466,7 +458,7 @@ export default {
   }
   #commissionTableDialog {
     .el-dialog__header {
-      background: url("../../assets/images/commissionBanner.png") no-repeat;
+      background: url("../../../assets/images/commissionBanner.png") no-repeat;
       background-size: cover;
       //filter: blur(20px);
       .title {

@@ -7,13 +7,14 @@
       :before-close="handleClose"
       :title="$t('user.dialog_title.edit')"
       width="500px">
-      <el-form ref="account" :model="account" :rules="ruleAccount" label-width="80px">
+      <el-form ref="account" :model="account" :rules="ruleAccount" label-width="100px">
         <el-form-item :label="$t('user.form_label.name')" prop="name">
           <el-input v-model="account.name"/>
         </el-form-item>
         <el-form-item label="上级" prop="superior">
           <el-select
             v-model="account.superior"
+            clearable
             placeholder="请选择账户上级"
             style="width: 100%">
             <el-option
@@ -22,6 +23,11 @@
               :label="item.name"
               :value="item.id"/>
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="account.superior" label="上级佣金率" prop="superiorCommissionRate">
+          <el-input v-if="account.superior" v-model.number="account.superiorCommissionRate">
+            <template slot="append">%</template>
+          </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -35,16 +41,10 @@
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
-
+const _ = require('lodash')
 export default {
   directives: { elDragDialog },
   props: {
-    users: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
     user: {
       type: Object,
       default() {
@@ -54,6 +54,7 @@ export default {
   },
   data() {
     return {
+      users: [],
       account: {
         id: '',
         name: '',
@@ -76,10 +77,13 @@ export default {
       })
       this.account.id = this.user.id
       this.account.name = this.user.name
+      if (this.user.superior) {
+        this.account.superior = this.user.superior.id
+        this.account.superiorCommissionRate = _.toNumber(this.user.superior.superiorCommissionRate).toFixed(2)
+      }
       this.dialogVisible = true
     },
     handleClose() {
-      this.account = { roles: [] }
       this.$refs['account'].resetFields()
       this.dialogVisible = false
     },
@@ -103,7 +107,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" rel="stylesheet/scss">
-
-</style>

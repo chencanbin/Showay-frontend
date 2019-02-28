@@ -2,6 +2,7 @@
   <span>
     <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
+      v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑保单"
@@ -51,6 +52,15 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
+        <el-form-item label="受益人:" prop="beneficiary.name">
+          <el-select v-model="insurancePolicy.beneficiary.id" placeholder="请选择申请人" filterable style="width: 100%">
+            <el-option
+              v-for="item in client.list"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="保费:" prop="premium">
           <el-input v-model="insurancePolicy.premium"/>
         </el-form-item>
@@ -84,15 +94,6 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="佣金状态:" prop="commissionStatus">
-          <el-select v-model="insurancePolicy.commissionStatus" placeholder="请选择佣金状态" filterable style="width: 100%">
-            <el-option
-              v-for="item in commissionStatus"
-              :key="item.id"
-              :label="item[language]"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -104,10 +105,12 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapState } from 'vuex'
-import { policyStatus, commissionStatus } from '@/utils/constant'
+import { policyStatus } from '@/utils/constant'
+import elDragDialog from '@/directive/el-dragDialog'
 const _ = require('lodash')
 import Cookies from 'js-cookie'
 export default {
+  directives: { elDragDialog },
   props: {
     data: {
       type: Object,
@@ -120,7 +123,6 @@ export default {
     return {
       language: 'en',
       policyStatus,
-      commissionStatus,
       dialogVisible: false,
       agents: [],
       products: [],
@@ -130,6 +132,9 @@ export default {
         submitDate: null,
         policyStatus: null,
         applicant: {
+          id: null
+        },
+        beneficiary: {
           id: null
         },
         premium: null,
@@ -143,8 +148,7 @@ export default {
         product: {
           id: null
         },
-        issueDate: null,
-        commissionStatus: null
+        issueDate: null
       },
       rule: {
         name: [{ required: true, message: '请输入客户姓名', trigger: 'blur' }],
@@ -204,7 +208,12 @@ export default {
     handleSubmit() {
       this.$refs['insurancePolicy'].validate((valid) => {
         if (valid) {
-          this.$api.client.editInsurancePolicy(this.insurancePolicy.id, this.insurancePolicy).then(_ => {
+          const data = _.cloneDeep(this.insurancePolicy)
+          data.applicant = this.insurancePolicy.applicant.id
+          data.beneficiary = this.insurancePolicy.beneficiary.id
+          data.channel = this.insurancePolicy.channel.id
+          data.product = this.insurancePolicy.product.id
+          this.$api.client.editInsurancePolicy(this.insurancePolicy.id, data).then(_ => {
             this.$message({
               message: '操作成功',
               type: 'success',

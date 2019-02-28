@@ -69,3 +69,35 @@ export const commissionStatus = [
   }
 ]
 
+export const creditStatus = [{ id: 0,
+  'zh-TW': '待审核',
+  'zh-CN': '待审核',
+  'en': 'Pending'
+}, { id: 1,
+  'zh-TW': '已接收',
+  'zh-CN': '已接收',
+  'en': 'Received'
+}, { id: 2,
+  'zh-TW': '已結清',
+  'zh-CN': '已结清',
+  'en': 'Clear'
+}]
+
+export const commissionPaymentStatus = [{ id: 0,
+  'zh-TW': '待审核',
+  'zh-CN': '待审核',
+  'en': 'Pending'
+}, { id: 1,
+  'zh-TW': '已拒絕',
+  'zh-CN': '已拒绝',
+  'en': 'Rejected'
+}, { id: 2,
+  'zh-TW': '已批准',
+  'zh-CN': '已批准',
+  'en': 'Approved'
+}, { id: 3,
+  'zh-TW': '已結清',
+  'zh-CN': '已结清',
+  'en': 'Clear'
+}]
+

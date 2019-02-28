@@ -1,11 +1,12 @@
 import { fetchClientList, fetchInsurancePolicyList } from '@/http/modules/client'
-import { fetchChannelCommissionTable } from '@/http/modules/channel'
+import { fetchChannelCommissionTable, fetchChannelCommissionPayment } from '@/http/modules/channel'
 const client = {
   namespaced: true,
   state: {
     clientList: [],
     insurancePolicyList: [],
-    channelCommissionTableList: []
+    channelCommissionTableList: [],
+    channelCommissionPayment: []
   },
   mutations: {
     SET_CLIENT_LIST: (state, clientList) => {
@@ -16,6 +17,9 @@ const client = {
     },
     SET_COMMISSION_TABLE_LIST: (state, channelCommissionTableList) => {
       state.channelCommissionTableList = channelCommissionTableList
+    },
+    SET_CHANNEL_COMMISSION_PAYMENT: (state, channelCommissionPayment) => {
+      state.channelCommissionPayment = channelCommissionPayment
     }
   },
   actions: {
@@ -31,7 +35,12 @@ const client = {
     },
     FetchChannelCommissionTable({ commit }, params) {
       return fetchChannelCommissionTable(params).then(res => {
-        commit('SET_COMMISSION_TABLE_LIST', res.data)
+        commit('SET_COMMISSION_TABLE_LIST', res.data.list)
+      })
+    },
+    FetchChannelCommissionPayment({ commit }, params) {
+      return fetchChannelCommissionPayment(params).then(res => {
+        commit('SET_CHANNEL_COMMISSION_PAYMENT', res.data)
       })
     }
   }

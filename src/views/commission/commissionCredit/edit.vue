@@ -1,0 +1,117 @@
+<template>
+  <span>
+    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-dialog
+      v-el-drag-dialog
+      :visible="dialogVisible"
+      :before-close="handleClose"
+      title="编辑到账记录"
+      width="500px">
+      <el-form ref="credit" :model="credit" label-width="80px">
+        <el-form-item label="实发数额" prop="name">
+          <el-input v-model="credit.amount" placeholder="请输入实发数额">
+            <template slot="prepend">{{ getSymbol(credit.currency) }}</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select
+            v-model="credit.status"
+            placeholder="请选择状态"
+            style="width: 100%">
+            <el-option
+              v-for="item in creditStatus"
+              :key="item.id"
+              :label="item[language]"
+              :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="credit.ffyap" label="FFYAP" prop="name">
+          <el-checkbox v-model="credit.ffyap"/>
+        </el-form-item>
+        <el-form-item label="备注" prop="remarks">
+          <el-input v-model="credit.remarks" placeholder="请输入备注"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+      </div>
+    </el-dialog>
+  </span>
+</template>
+
+<script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
+import Cookies from 'js-cookie'
+import { creditStatus } from '@/utils/constant'
+import elDragDialog from '@/directive/el-dragDialog'
+
+const _ = require('lodash')
+export default {
+  directives: { elDragDialog },
+  props: {
+    commissionCredit: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
+  data() {
+    return {
+      language: 'en',
+      credit: {
+        id: '',
+        status: '',
+        ffyap: '',
+        remarks: ''
+      },
+      creditStatus,
+      dialogVisible: false
+    }
+  },
+  computed: {
+    ...mapGetters(['loading'])
+  },
+  methods: {
+    initForm() {
+      this.language = Cookies.get('language') || 'en'
+      this.credit = _.cloneDeep(this.commissionCredit)
+      this.dialogVisible = true
+    },
+    handleClose() {
+      this.$refs['credit'].resetFields()
+      this.dialogVisible = false
+    },
+    getSymbol(currency) {
+      if (currency === 'HKD') {
+        return 'HK$'
+      } else if (currency === 'USD') {
+        return '$'
+      } else if (currency === 'CNY') {
+        return '￥'
+      }
+    },
+    handleSubmit() {
+      this.$refs['credit'].validate((valid) => {
+        if (valid) {
+          this.$api.commission.editCommissionCredit(this.credit.id, this.credit).then(_ => {
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+            this.$store.dispatch('commission/FetchCommissionCredit')
+            this.handleClose()
+          })
+        } else {
+          return false
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style lang="scss" rel="stylesheet/scss" type="text/scss">
+</style>

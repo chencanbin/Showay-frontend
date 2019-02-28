@@ -28,18 +28,11 @@ export function fetchCommissionTable(commissionTableId, params) {
   })
 }
 
-export function fetchChannelCommissionTable(params) {
-  return request({
-    url: `/channelCommissionTable`,
-    method: 'get',
-    params
-  })
-}
-
-export function getChannelCommissionTable(id) {
+export function getChannelCommissionTable(id, params) {
   return request({
     url: `/channelCommissionTable/${id}`,
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
@@ -73,5 +66,21 @@ export function deleteCommission(id) {
   return request({
     url: `/commissionTable/${id}`,
     method: 'delete'
+  })
+}
+
+export function fetchCommissionCredit(params) {
+  return request({
+    url: `/commissionCredit`,
+    method: 'get',
+    params
+  })
+}
+
+export function editCommissionCredit(id, data) {
+  return request({
+    url: `/commissionCredit/${id}`,
+    method: 'put',
+    data
   })
 }

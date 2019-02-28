@@ -2,6 +2,7 @@
   <span>
     <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
+      v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="添加客户资料"
@@ -56,9 +57,11 @@
 import { mapGetters, mapState } from 'vuex'
 import { country } from '@/utils/country'
 import Cookies from 'js-cookie'
+import elDragDialog from '@/directive/el-dragDialog'
 
 const _ = require('lodash')
 export default {
+  directives: { elDragDialog },
   props: {
     data: {
       type: Object,

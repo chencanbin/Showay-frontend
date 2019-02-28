@@ -142,7 +142,7 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
 .tags-view-container {
   height: 34px;
   width: 100%;
@@ -154,10 +154,11 @@ export default {
       display: inline-block;
       position: relative;
       cursor: pointer;
-      height: 26px;
-      line-height: 26px;
+      height: 30px;
+
+      line-height: 30px;
       border: 1px solid #d8dce5;
-      border-radius: 5px;
+      border-radius: 3px;
       color: #495060;
       background: #fff;
       padding: 0 8px;
@@ -170,10 +171,20 @@ export default {
       &:last-of-type {
         margin-right: 15px;
       }
+      &::before {
+        content: '';
+        background: #d8dce5;
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        position: relative;
+        margin-right: 2px;
+      }
       &.active {
         /*background-color: #42b983;*/
         color: rgb(249, 170, 51);
-        border-color: rgb(249, 170, 51);
+        //border-color: rgb(249, 170, 51);
         &::before {
           content: '';
           background: rgb(249, 170, 51);
@@ -211,7 +222,7 @@ export default {
 }
 </style>
 
-<style rel="stylesheet/scss" lang="scss">
+<style rel="stylesheet/scss" lang="scss" type="text/scss">
 //reset element css of el-icon-close
 .tags-view-wrapper {
   .tags-view-item {
