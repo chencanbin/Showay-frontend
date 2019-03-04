@@ -11,11 +11,18 @@
       center
       title="编辑渠道佣金策略">
       <el-table id="channelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
+        <!--<el-table-column
+          label="优先级"
+          type="index"
+          width="80">
+        </el-table-column>-->
         <el-table-column label="公司 / 产品" prop="name" min-width="400">
           <template slot-scope="scope">
             <el-tag v-for="product in scope.row.products" :key="product.id" style="margin-right: 10px; margin-bottom: 5px">{{ product.name }}</el-tag>
             <el-tag v-for="company in scope.row.companies" :key="company.id" style="margin-right: 10px; margin-bottom: 5px; color:#409EFF; background-color: rgba(64, 158, 255, 0.1); border: 1px solid rgba(64, 158, 255, 0.2)">{{ company.name }}</el-tag>
             <el-tag v-if="!scope.row.products && !scope.row.companies" type="success">ALL</el-tag>
+            <el-tag v-if="scope.row.products && scope.row.companies && scope.row.products.length === 0 && scope.row.companies.length === 0" type="success">ALL</el-tag>
+            <!--<el-tag v-if="scope.row.products.length === 0 && scope.row.companies.length === 0" type="success">ALL</el-tag>-->
           </template>
         </el-table-column>
         <el-table-column prop="term" label="年期" width="60" align="center"/>
@@ -111,7 +118,13 @@ export default {
       })
     },
     handleClose() {
-      this.dialogVisible = false
+      this.$confirm('是否需要关闭次页面?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.dialogVisible = false
+      })
     },
     handleSubmit() {
       // 处理companies 和 products 字段, 只提交id的数组

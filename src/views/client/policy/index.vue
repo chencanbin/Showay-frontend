@@ -6,6 +6,7 @@
         :max-height="height"
         :data="insurancePolicy.list"
         stripe>
+        <!--
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-form label-position="left" inline class="policy-table-expand">
@@ -27,6 +28,7 @@
             </el-form>
           </template>
         </el-table-column>
+-->
         <el-table-column
           prop="number"
           label="保单号"
@@ -39,7 +41,8 @@
         <el-table-column
           :formatter="formatterPolicyStatus"
           prop="policyStatus"
-          label="保单状态"/>
+          label="保单状态"
+          min-width="100"/>
         <el-table-column
           prop="applicant.name"
           label="申请人"/>
@@ -49,14 +52,17 @@
         <el-table-column
           prop="company.name"
           min-width="150"
+          show-overflow-tooltip
           label="保险公司"/>
         <el-table-column
           prop="product.name"
           min-width="200"
+          show-overflow-tooltip
           label="产品"/>
 
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="200">
           <template slot-scope="scope">
+            <detail :data="scope.row"/>
             <edit :data="scope.row"/>
             <el-button
               type="text"
@@ -79,6 +85,7 @@ import Cookies from 'js-cookie'
 import { mapGetters, mapState } from 'vuex'
 import add from './add'
 import edit from './edit'
+import detail from './detail'
 import pagination from '@/components/Pagination'
 const _ = require('lodash')
 const currencyFormatter = require('currency-formatter')
@@ -87,6 +94,7 @@ export default {
   components: {
     add,
     edit,
+    detail,
     pagination
   },
   data() {
@@ -131,18 +139,18 @@ export default {
     },
     // 处理删除保单事件
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该保单, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$api.client.deleteClient(row.id).then(res => {
+        this.$api.client.deleteInsurancePolicy(row.id).then(res => {
           this.$message({
             message: '操作成功',
             type: 'success',
             duration: 5 * 1000
           })
-          this.getClient()
+          this.getInsurancePolicyList()
         })
       })
     },

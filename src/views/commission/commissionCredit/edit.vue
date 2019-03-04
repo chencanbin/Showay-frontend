@@ -6,8 +6,17 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑到账记录"
-      width="500px">
+      width="400px">
       <el-form ref="credit" :model="credit" label-width="80px">
+        <el-form-item label="保单号" prop="name">
+          {{ commissionCredit.insurancePolicy.number }}
+        </el-form-item>
+        <el-form-item label="应发数额" prop="name">
+          {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmount) }}
+        </el-form-item>
+        <el-form-item label="期序" prop="name">
+          {{ commissionCredit.year }}
+        </el-form-item>
         <el-form-item label="实发数额" prop="name">
           <el-input v-model="credit.amount" placeholder="请输入实发数额">
             <template slot="prepend">{{ getSymbol(credit.currency) }}</template>
@@ -45,6 +54,7 @@ import { mapGetters } from 'vuex'
 import Cookies from 'js-cookie'
 import { creditStatus } from '@/utils/constant'
 import elDragDialog from '@/directive/el-dragDialog'
+const currencyFormatter = require('currency-formatter')
 
 const _ = require('lodash')
 export default {
@@ -82,6 +92,9 @@ export default {
     handleClose() {
       this.$refs['credit'].resetFields()
       this.dialogVisible = false
+    },
+    formatterCurrency(value) {
+      return currencyFormatter.format(value, { symbol: '' })
     },
     getSymbol(currency) {
       if (currency === 'HKD') {

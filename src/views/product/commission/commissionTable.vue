@@ -26,7 +26,7 @@
           <hot-table v-loading="loading" ref="overrideTable" :settings="settings"/>
         </el-tab-pane>
         <el-tab-pane label="总佣金表" name="overall">
-          <hot-table v-loading="loading" ref="overallTable" :settings="settings"/>
+          <hot-table v-loading="loading" ref="overallTable" :settings="overAllSettings"/>
         </el-tab-pane>
       </el-tabs>
       <el-dialog
@@ -67,6 +67,7 @@
 <script type="text/ecmascript-6">
 import { HotTable } from '@handsontable/vue'
 import '../../../../node_modules/handsontable-pro/dist/handsontable.full.min.css'
+
 const _ = require('lodash')
 
 export default {
@@ -116,10 +117,9 @@ export default {
           }
           if (changes) {
             const data = []
-            let column = 0
             let value
-            changes.forEach(([row, prop, oldValue, newValue]) => {
-              column = this.setOverrideHotInstance.propToCol(prop) + 4
+            changes.forEach(([row, column, oldValue, newValue]) => {
+              column = column + 4
               if (newValue) {
                 value = _.toString(newValue)
               }
@@ -131,6 +131,7 @@ export default {
               })
             })
             this.$api.commission.commissionTableDraft(this.id, { data, type: 1 }).catch(_ => {
+              console.log('....')
               this.setOverrideHotInstance.redo()
             })
           }
@@ -139,13 +140,111 @@ export default {
       settings: {
         colWidths: [250, 250, 120, 70],
         colHeaders: [],
-        startCols: 20,
-        startRows: 99,
+        startCols: 21,
+        startRows: 20,
         height: window.screen.height - 330,
         stretchH: 'all',
         autoWrapRow: false,
         autoWrapCol: false,
         rowHeaders: true,
+        rowHeaderWidth: 65,
+        fixedColumnsLeft: 1,
+        columnHeaderHeight: 45,
+        contextMenu: {
+          items: {
+            'override': { // Own custom option
+              name: '设置Override',
+              callback: (key, selection, clickEvent) => {
+                const serialNumberArray = []
+                const rowLengthArray = []
+                this.selectedRows = []
+                let flag = true // 作为标记，判断是否打开批量设置override的弹框
+                selection.forEach(item => {
+                  if (item.start.row === item.end.row) {
+                    this.selectedRows = _.union(this.selectedRows, [item.start.row])
+                  } else {
+                    this.selectedRows = _.union(this.selectedRows, _.range(item.start.row, item.end.row + 1))
+                  }
+                })
+                this.selectedRows.forEach(row => {
+                  const result = _.compact(this.basicHotInstance.getDataAtRow(row))
+                  serialNumberArray.push(this.basicHotInstance.getDataAtCell(row, 2))
+                  rowLengthArray.push(result.length)
+                  if (!this.basicHotInstance.getDataAtCell(row, 4)) {
+                    flag = false
+                  }
+                })
+                if (flag) {
+                  this.overrideTitle = _.join(serialNumberArray, ', ')
+                  this.showSetOverrideDialogVisible(_.min(rowLengthArray))
+                }
+              }
+            }
+          }
+        },
+        afterBeginEditing: (row, coloumn) => {
+          this.editStatus = '正在修改.....'
+        },
+        afterChange: (changes, source) => {
+          if (source === 'loadData') {
+            return
+          }
+          if (changes) {
+            const data = []
+            changes.forEach(([row, column, oldValue, newValue]) => {
+              let value = ''
+              if (newValue) {
+                value = _.toString(newValue)
+              }
+              if (value && value.substr(-1) === '%') {
+                value = value.substr(0, value.length - 1)
+              }
+              data.push({ row, column, value })
+            })
+            this.editStatus = '正在保存.....'
+            let type = 0
+            if (this.activeName === 'override') {
+              type = 1
+            } else if (this.activeName === 'overall') {
+              type = 2
+            }
+            this.$api.commission.commissionTableDraft(this.id, { data, type }).then(res => {
+              const date = new Date()
+              this.editStatus = '最近保存 ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+            }).catch(_ => {
+              this.basicHotInstance.undo()
+              this.overallHotInstance.undo()
+              this.overrideHotInstance.undo()
+              this.editStatus = ''
+            })
+          }
+        },
+        afterScrollVertically: _ => {
+          this.$nextTick(function() {
+            // 为了解决scrollTop 偶尔为0的情况
+            setTimeout(() => {
+              const scrollTop = document.querySelector('.wtHolder').scrollTop
+              const clientHeight = document.querySelector('.wtHolder').clientHeight
+              const scrollHeight = document.querySelector('.wtHolder').scrollHeight
+              if (scrollTop + clientHeight >= scrollHeight) {
+                this.basicHotInstance.alter('insert_row')
+                this.overrideHotInstance.alter('insert_row')
+              }
+            }, 0)
+          })
+        }
+      },
+      overAllSettings: {
+        colWidths: [250, 250, 120, 70],
+        colHeaders: [],
+        startCols: 20,
+        startRows: 800,
+        height: window.screen.height - 330,
+        stretchH: 'all',
+        autoWrapRow: false,
+        autoWrapCol: false,
+        rowHeaders: true,
+        rowHeaderWidth: 65,
         fixedColumnsLeft: 1,
         columnHeaderHeight: 45,
         contextMenu: {
@@ -173,78 +272,51 @@ export default {
               }
             }
           }
-        },
-        afterBeginEditing: (row, coloumn) => {
-          this.editStatus = '正在修改.....'
-        },
-        afterChange: (changes, source) => {
-          if (source === 'loadData') {
-            return
-          }
-          if (changes) {
-            const data = []
-            let column = 0
-            let value
-            changes.forEach(([row, prop, oldValue, newValue]) => {
-              column = this.basicHotInstance.propToCol(prop)
-              if (newValue) {
-                value = _.toString(newValue)
-              }
-              if (value && value.substr(-1) === '%') {
-                value = value.substr(0, value.length - 1)
-              }
-              data.push({ row, column, value })
-            })
-            this.editStatus = '正在保存.....'
-            let type = 0
-            if (this.activeName === 'override') {
-              type = 1
-            } else if (this.activeName === 'overall') {
-              type = 2
-            }
-            this.$api.commission.commissionTableDraft(this.id, { data, type }).then(res => {
-              const date = new Date()
-              this.editStatus = '最近保存 ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
-            }).catch(_ => {
-              this.basicHotInstance.redo()
-              this.editStatus = ''
-            })
-          }
         }
       }
     }
   },
   created() {
-    this.initColumn()
   },
 
   methods: {
     initColumn() {
-      // this.$api.commission.fetchCommissionTable(3).then(res => {
-      //   console.log(res)
-      // })
-
       const colHeaders = ['计划名称', 'ENG name', '产品编号', '年期']
-      const columns = [{ data: 'zh', renderer: this.textFormatter }, { data: 'en', renderer: this.textFormatter }, { data: 'pId' }, { data: 'years' }]
+      // const columns = [{ data: 'zh', renderer: this.textFormatter }, { data: 'en', renderer: this.textFormatter }, { data: 'pId' }, { data: 'years' }]
+      const columns = [{ renderer: this.textFormatter }, { renderer: this.textFormatter }, {}, {}]
       const colWidths = []
       for (let i = 1; i <= 15; i++) {
         colWidths.push(85)
         colHeaders.push('第' + i + '年')
-        columns.push({ data: 'year' + i, renderer: this.toPercent })
+        columns.push({ renderer: this.toPercent })
       }
       colWidths.push(85)
       colHeaders.push('15年以后')
-      columns.push({ data: 'after15', renderer: this.toPercent })
+      columns.push({ renderer: this.toPercent })
       if (this.activeName === 'basic') {
         colWidths.push(85)
         colHeaders.push('FFYAP')
-        columns.push({ data: 'ffyap', renderer: this.toPercent })
+        columns.push({ renderer: this.toPercent })
       }
-      // overrideHeaders.push('15年以后')
-      // overrideColumns.push({ data: 'after15', renderer: this.toPercent })
       this.settings.colHeaders = colHeaders
       this.settings.colWidths = _.concat(this.settings.colWidths, colWidths)
       this.settings.columns = columns
+    },
+    initOverAll() {
+      const colHeaders = ['计划名称', 'ENG name', '产品编号', '年期']
+      const columns = [{ renderer: this.textFormatter, readOnly: true }, { renderer: this.textFormatter, readOnly: true }, { readOnly: true }, { readOnly: true }]
+      const colWidths = []
+      for (let i = 1; i <= 15; i++) {
+        colWidths.push(85)
+        colHeaders.push('第' + i + '年')
+        columns.push({ renderer: this.toPercent, readOnly: true })
+      }
+      colWidths.push(85)
+      colHeaders.push('15年以后')
+      columns.push({ renderer: this.toPercent, readOnly: true })
+      this.overAllSettings.colHeaders = colHeaders
+      this.overAllSettings.colWidths = _.concat(this.settings.colWidths, colWidths)
+      this.overAllSettings.columns = columns
     },
     // 显示批量设置Override的弹框
     showSetOverrideDialogVisible(minLength) {
@@ -253,33 +325,32 @@ export default {
         const overrideHeaders = []
         const overrideColumns = []
         this.setOverrideHotInstance = this.$refs.setOverrideHotInstance.hotInstance
-        _.forEach(_.range(1, minLength - 3), i => {
+        _.forEach(_.range(1, minLength - 3, 1), i => {
           if (i > 15) {
             overrideHeaders.push('15年以后')
-            overrideColumns.push({ data: 'after15', renderer: this.toPercent })
+            overrideColumns.push({ renderer: this.toPercent })
           } else {
             overrideHeaders.push('第' + i + '年')
-            overrideColumns.push({ data: 'year' + i, renderer: this.toPercent })
+            overrideColumns.push({ renderer: this.toPercent })
           }
         })
         this.setOverrideSettings.colHeaders = overrideHeaders
         this.setOverrideSettings.columns = overrideColumns
-        _.forEach(_.range(0, minLength - 4), i => {
-          this.setOverrideHotInstance.setDataAtCell(0, i, '', 'loadData')
-        })
+        // _.forEach(_.range(0, minLength - 4), i => {
+        //   this.setOverrideHotInstance.setDataAtCell(0, i, '', 'loadData')
+        // })
       })
     },
     handleTabClick(tab, event) {
       if (this.activeName === 'basic') {
-        this.initColumn()
         this.loadBasicData()
+        // this.basicHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
       } else if (this.activeName === 'override') {
-        this.initColumn()
         this.loadOverrideData()
+        // this.overrideHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
       } else if (this.activeName === 'overall') {
-        this.initColumn()
         this.loadOverallData()
-        this.overallHotInstance.render()
+        // this.overallHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
       }
     },
     // 格式化百分比的cell
@@ -304,12 +375,15 @@ export default {
       return td
     },
     textFormatter(instance, td, row, col, prop, value, cellProperties) {
-      td.style.cssText = 'text-align: center;'
+      td.style.cssText = 'text-align: center; word-break: keep-all;'
       td.innerText = value
       return td
     },
     initForm() {
+      this.initColumn()
+      this.initOverAll()
       this.dialogVisible = true
+      this.activeName = 'basic'
       this.editStatus = ''
       this.$nextTick(() => {
         this.basicHotInstance = this.$refs.basicTable.hotInstance
@@ -321,33 +395,47 @@ export default {
     loadBasicData() {
       this.loading = true
       this.$api.commission.fetchCommissionList(this.id).then(res => {
+        // this.basicHotInstance.updateSettings({data: this.mockData})
+        const result = []
         res.data.list.forEach(item => {
-          this.basicHotInstance.setDataAtCell(item.row, item.column, item.value.basic, 'loadData')
+          result.push([item.row, item.column, item.value.basic])
         })
+        this.basicHotInstance.setDataAtRowProp(result, 'loadData')
         this.loading = false
       })
     },
     loadOverrideData() {
       this.loading = true
       this.$api.commission.fetchCommissionList(this.id).then(res => {
+        const result = []
         res.data.list.forEach(item => {
-          this.overrideHotInstance.setDataAtCell(item.row, item.column, item.value.override, 'loadData')
+          result.push([item.row, item.column, item.value.override])
         })
+        this.overrideHotInstance.setDataAtRowProp(result, 'loadData')
         this.loading = false
       })
     },
     loadOverallData() {
       this.loading = true
       this.$api.commission.fetchCommissionList(this.id).then(res => {
+        const result = []
         res.data.list.forEach(item => {
-          this.overallHotInstance.setDataAtCell(item.row, item.column, item.value.overall, 'loadData')
+          result.push([item.row, item.column, item.value.overall])
+          // this.overallHotInstance.setDataAtCell(item.row, item.column, item.value.overall, 'loadData')
         })
+        this.overallHotInstance.setDataAtRowProp(result, 'loadData')
         this.loading = false
       })
     },
     handleClose() {
-      this.$store.dispatch('commission/FetchCommissionTableList', {})
-      this.dialogVisible = false
+      this.$confirm('是否需要关闭次页面?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$store.dispatch('commission/FetchCommissionTableList', {})
+        this.dialogVisible = false
+      })
     },
     handleCloseSetOverrideDialog() {
       if (this.activeName === 'basic') {

@@ -99,8 +99,8 @@ export default {
     animation: statusProcessing 1.2s infinite ease-in-out;
   }
   .badge-status-text {
-    color: #000;
-    font-size: 14px;
+    /*color: #000;*/
+    /*font-size: 14px;*/
     margin-left: 8px;
   }
 </style>

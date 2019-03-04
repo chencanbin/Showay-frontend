@@ -74,7 +74,7 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
 .scroll-container {
   white-space: nowrap;
   position: relative;

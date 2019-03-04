@@ -27,6 +27,7 @@
           </template>
         </el-table-column>
         <el-table-column label="保单号" prop="insurancePolicy.number" min-width="120px"/>
+        <el-table-column label="期序" prop="year" width="50"/>
         <el-table-column label="渠道" prop="channel.name"/>
         <el-table-column label="上级渠道" prop="amount">
           <template slot-scope="scope">
@@ -51,7 +52,7 @@
             <statusBadge v-if="scope.row.status === 3" :text="statusFormatter(scope.row.status)"/>
           </template>
         </el-table-column>
-        <el-table-column label="备注" prop="remarks" min-width="200"/>
+        <el-table-column label="备注" prop="remarks" min-width="150"/>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <edit v-if="scope.row.status !== 3" :commission-payment="scope.row"/>
@@ -83,7 +84,7 @@ export default {
   data() {
     return {
       language: Cookies.get('language') || 'en',
-      height: window.screen.height - 260,
+      height: window.screen.height - 290,
       listQuery: {
         page: 1,
         limit: 50

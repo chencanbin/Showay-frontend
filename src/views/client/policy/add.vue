@@ -6,7 +6,7 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       title="添加客户资料"
-      width="800px">
+      width="70%">
       <el-form
         ref="insurancePolicy"
         :model="insurancePolicy"
@@ -39,8 +39,9 @@
             <el-option
               v-for="item in client.list"
               :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
+              :value="item.id">
+              <span style="float: left">{{ item.name }}</span><span style="float: right;">{{ item.idNumber }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="受益人:" prop="beneficiary.name">
@@ -48,8 +49,9 @@
             <el-option
               v-for="item in client.list"
               :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
+              :value="item.id">
+              <span style="float: left">{{ item.name }}</span><span style="float: right;">{{ item.idNumber }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="保单状态:" prop="policyStatus">
@@ -61,11 +63,16 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
+        <el-form-item label="币种:" prop="currency">
+          <el-select v-model="insurancePolicy.currency" placeholder="请选中币种" style="width: 100%">
+            <el-option v-for="item in currencyArray" :key="item.id" :value="item.id" :label="item.desc"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="保费:" prop="premium">
           <el-input v-model="insurancePolicy.premium" placeholder="请输入保费" />
         </el-form-item>
         <el-form-item label="保额:" prop="premium">
-          <el-input v-model="insurancePolicy.amountInsured" placeholder="请输入保单号" />
+          <el-input v-model="insurancePolicy.amountInsured" placeholder="请输入保额" />
         </el-form-item>
         <el-form-item label="渠道:" prop="channel">
           <el-select v-model="insurancePolicy.channel.id" placeholder="请选择渠道" filterable style="width: 100%">
@@ -118,6 +125,16 @@ export default {
       dialogVisible: false,
       agents: [],
       products: [],
+      currencyArray: [{
+        id: 0,
+        desc: 'USD'
+      }, {
+        id: 1,
+        desc: 'HKD'
+      }, {
+        id: 2,
+        desc: 'CNY'
+      }],
       insurancePolicy: {
         number: null,
         sn: null,
@@ -129,6 +146,7 @@ export default {
         beneficiary: {
           id: null
         },
+        currency: null,
         premium: null,
         amountInsured: null,
         channel: {
@@ -200,6 +218,7 @@ export default {
           data.beneficiary = this.insurancePolicy.beneficiary.id
           data.channel = this.insurancePolicy.channel.id
           data.product = this.insurancePolicy.product.id
+          data.riderBenefits = [] // 副险暂时不参与编辑
           this.$api.client.createInsurancePolicy(data).then(_ => {
             this.$message({
               message: '操作成功',

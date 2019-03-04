@@ -69,7 +69,7 @@
           </el-select>
         </el-form-item>
         <el-form-item v-if="policy.term > 1" label="自定义年期" prop="userDefined">
-          <el-select v-if="policy.term > 1" v-model="policy.userDefined" placeholder="请选择自定义年期" style="width: 100%">
+          <el-select v-if="policy.term > 1" v-model="policy.userDefined" placeholder="请选择自定义年期" style="width: 100%" @change="userDefinedChange">
             <el-option
               v-for="item in generateDefinedYear"
               :key="item"
@@ -139,6 +139,7 @@ export default {
     },
     getUserDefined() {
       const result = []
+
       // this.policy.commissionRates = []
       if (this.policy.term === 1 || this.policy.userDefined === 1) {
         result.push({ label: `第1年`, value: 1 })
@@ -165,13 +166,6 @@ export default {
       this.$refs['policy'].validate((valid) => {
         if (valid) {
           const result = { remarks: this.policy.remark, term: this.policy.term, conditions: [], companies: this.policy.companies, products: this.policy.products }
-          console.log(this.policy)
-          // if (this.policy.companies && this.policy.companies.length > 1) {
-          //   result.companies = this.policy.companies
-          // }
-          // if (this.policy.products && this.policy.products.length > 1) {
-          //   result.products = this.policy.products
-          // }
           _.forEach(_.compact(this.policy.conditions), item => {
             result.conditions.push({ ratio: item })
           })
@@ -215,9 +209,12 @@ export default {
         this.policy.products = []
         this.getCompanies()
       } else {
-        this.policy.companies = null
-        this.policy.products = null
+        this.policy.companies = []
+        this.policy.products = []
       }
+    },
+    userDefinedChange(value) {
+      this.policy.conditions = []
     }
   }
 }

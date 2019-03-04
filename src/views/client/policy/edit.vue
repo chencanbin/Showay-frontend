@@ -34,15 +34,6 @@
             type="date"
             placeholder="选择日期"/>
         </el-form-item>
-        <el-form-item label="保单状态:" prop="policyStatus">
-          <el-select v-model="insurancePolicy.policyStatus" placeholder="请选择保单状态" filterable style="width: 100%">
-            <el-option
-              v-for="item in policyStatus"
-              :key="item.id"
-              :label="item[language]"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
         <el-form-item label="申请人:" prop="applicant.name">
           <el-select v-model="insurancePolicy.applicant.id" placeholder="请选择申请人" filterable style="width: 100%">
             <el-option
@@ -61,11 +52,25 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
+        <el-form-item label="保单状态:" prop="policyStatus">
+          <el-select v-model="insurancePolicy.policyStatus" placeholder="请选择保单状态" filterable style="width: 100%">
+            <el-option
+              v-for="item in policyStatus"
+              :key="item.id"
+              :label="item[language]"
+              :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="币种:" prop="currency">
+          <el-select v-model="insurancePolicy.currency" placeholder="请选中币种" style="width: 100%">
+            <el-option v-for="item in currencyArray" :key="item.id" :value="item.id" :label="item.desc"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="保费:" prop="premium">
-          <el-input v-model="insurancePolicy.premium"/>
+          <el-input v-model.number="insurancePolicy.premium"/>
         </el-form-item>
         <el-form-item label="保额:" prop="premium">
-          <el-input v-model="insurancePolicy.amountInsured"/>
+          <el-input v-model.number="insurancePolicy.amountInsured"/>
         </el-form-item>
         <el-form-item label="渠道:" prop="channel">
           <el-select v-model="insurancePolicy.channel.id" placeholder="请选择渠道" filterable style="width: 100%">
@@ -126,6 +131,16 @@ export default {
       dialogVisible: false,
       agents: [],
       products: [],
+      currencyArray: [{
+        id: 0,
+        desc: 'USD'
+      }, {
+        id: 1,
+        desc: 'HKD'
+      }, {
+        id: 2,
+        desc: 'CNY'
+      }],
       insurancePolicy: {
         number: null,
         sn: null,
@@ -139,6 +154,7 @@ export default {
         },
         premium: null,
         amountInsured: null,
+        currency: null,
         channel: {
           id: null
         },
@@ -173,9 +189,9 @@ export default {
       this.getAgents()
       this.getProducts()
       this.insurancePolicy = _.cloneDeep(this.data)
+      this.insurancePolicy.currency = this.getCurrencyKey(this.data.currency)
       this.insurancePolicy.premium = _.toNumber(this.insurancePolicy.premium).toFixed(2)
       this.insurancePolicy.amountInsured = _.toNumber(this.insurancePolicy.amountInsured).toFixed(2)
-      console.log(this.insurancePolicy)
     },
     getClient(params) {
       this.$store.dispatch('client/FetchClientList', { params })
@@ -194,7 +210,16 @@ export default {
       }
       this.$store.dispatch('FetchUserList', params)
     },
-
+    getCurrencyKey(value) {
+      let result = ''
+      _.forEach(this.currencyArray, item => {
+        if (value === item.desc) {
+          result = item.id
+          return
+        }
+      })
+      return result
+    },
     getProducts(params) {
       this.$api.product.fetchProductList().then(res => {
         this.products = res.data.list
@@ -213,6 +238,7 @@ export default {
           data.beneficiary = this.insurancePolicy.beneficiary.id
           data.channel = this.insurancePolicy.channel.id
           data.product = this.insurancePolicy.product.id
+          data.riderBenefits = [] // 暂时不编辑副险
           this.$api.client.editInsurancePolicy(this.insurancePolicy.id, data).then(_ => {
             this.$message({
               message: '操作成功',

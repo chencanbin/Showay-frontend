@@ -59,3 +59,10 @@ export function editInsurancePolicy(id, data) {
     data
   })
 }
+
+export function deleteInsurancePolicy(id) {
+  return request({
+    url: `/insurancePolicy/${id}`,
+    method: 'delete'
+  })
+}

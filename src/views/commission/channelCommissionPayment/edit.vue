@@ -6,8 +6,17 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑到账记录"
-      width="500px">
+      width="400px">
       <el-form ref="payment" :model="payment" label-width="80px">
+        <el-form-item label="保单号" prop="name">
+          {{ commissionPayment.insurancePolicy.number }}
+        </el-form-item>
+        <el-form-item label="应发数额" prop="name">
+          {{ getSymbol(commissionPayment.currency) + formatterCurrency(commissionPayment.calculatedAmount) }}
+        </el-form-item>
+        <el-form-item label="期序" prop="name">
+          {{ commissionPayment.year }}
+        </el-form-item>
         <el-form-item label="实发数额" prop="name">
           <el-input v-model="payment.amount" placeholder="请输入实发数额">
             <template slot="prepend">{{ getSymbol(payment.currency) }}</template>
@@ -45,7 +54,7 @@ import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 import { commissionPaymentStatus } from '@/utils/constant'
 import Cookies from 'js-cookie'
-
+const currencyFormatter = require('currency-formatter')
 const _ = require('lodash')
 export default {
   directives: { elDragDialog },
@@ -81,9 +90,8 @@ export default {
       this.payment = _.cloneDeep(this.commissionPayment)
       this.dialogVisible = true
     },
-    handleClose() {
-      this.$refs['payment'].resetFields()
-      this.dialogVisible = false
+    formatterCurrency(value) {
+      return currencyFormatter.format(value, { symbol: '' })
     },
     getSymbol(currency) {
       if (currency === 'HKD') {
@@ -93,6 +101,10 @@ export default {
       } else if (currency === 'CNY') {
         return '￥'
       }
+    },
+    handleClose() {
+      this.$refs['payment'].resetFields()
+      this.dialogVisible = false
     },
     handleSubmit() {
       this.$refs['payment'].validate((valid) => {

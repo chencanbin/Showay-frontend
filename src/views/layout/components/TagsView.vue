@@ -144,7 +144,7 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
 .tags-view-container {
-  height: 34px;
+  height: 38px;
   width: 100%;
   background: #fff;
   border-bottom: 1px solid #d8dce5;
