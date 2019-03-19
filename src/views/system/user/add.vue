@@ -1,8 +1,6 @@
 <template>
-  <span>
-    <el-row style="margin-bottom: 10px">
-      <el-button :loading="loading" icon="el-icon-plus" type="primary" size="small" @click="initForm">{{ $t('action.add') }}</el-button>
-    </el-row>
+  <el-col span.number="24" class="el-table-add-col">
+    <div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -35,7 +33,7 @@
         <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
       </div>
     </el-dialog>
-  </span>
+  </el-col>
 </template>
 
 <script type="text/ecmascript-6">

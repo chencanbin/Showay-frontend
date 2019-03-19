@@ -12,26 +12,26 @@
     <el-tabs v-model="activeName" @tab-click="handleTabClick">
       <el-tab-pane label="基础佣金表" name="basic">
         <el-table :data="data" :max-height="tableHeight" stripe>
-          <el-table-column prop="product.acronym" label="编号" width="120"/>
-          <el-table-column prop="product.name" label="产品名称(中文)"/>
-          <el-table-column prop="product.enName" label="产品名称(英文)"/>
+          <el-table-column prop="product.acronym" label="编号" width="100" fixed="left"/>
+          <el-table-column prop="product.name" label="产品名称(中文)" show-overflow-tooltip min-width="180" fixed="left"/>
+          <el-table-column prop="product.enName" label="产品名称(英文)" show-overflow-tooltip min-width="180" fixed="left"/>
           <el-table-column prop="product.period" label="年期" width="80"/>
-          <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="70">
+          <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="90">
             <template slot-scope="scope">
-              <span>{{ scope.row.conditions[index] ? numbro(scope.row.conditions[index].basicCommissionRate/100).format({ output: "percent" }) : '-' }}</span>
+              <span>{{ scope.row.conditions[index] ? numberFormatter(scope.row.conditions[index].overallCommissionRate) : '-' }}</span>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="总佣金表" name="overall">
         <el-table :data="data" :max-height="tableHeight" stripe>
-          <el-table-column prop="product.acronym" label="编号" width="120"/>
-          <el-table-column prop="product.name" label="产品名称(中文)"/>
-          <el-table-column prop="product.enName" label="产品名称(英文)"/>
-          <el-table-column prop="product.period" label="年期" width="50"/>
-          <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" align="right" width="70">
+          <el-table-column prop="product.acronym" label="编号" width="120" fixed="left"/>
+          <el-table-column prop="product.name" label="产品名称(中文)" fixed="left" min-width="180" show-overflow-tooltip/>
+          <el-table-column prop="product.enName" label="产品名称(英文)" fixed="left" min-width="180" show-overflow-tooltip/>
+          <el-table-column prop="product.period" label="年期" width="80"/>
+          <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" align="right" width="90">
             <template slot-scope="scope">
-              <div>{{ scope.row.conditions[index] ? numbro(scope.row.conditions[index].overallCommissionRate/100).format({ output: "percent" }) : '-' }}</div>
+              <div>{{ scope.row.conditions[index] ? numberFormatter(scope.row.conditions[index].overallCommissionRate) : '-' }}</div>
             </template>
           </el-table-column>
         </el-table>
@@ -88,6 +88,9 @@ export default {
     },
     handleTabClick(tab, event) {
       this.activeName = tab.name
+    },
+    numberFormatter(value) {
+      return _.toNumber(value).toFixed(2) + '%'
     },
     exportExcel() {
       window.location.href = process.env.BASE_API + `/commissionTable/${this.id}/export`

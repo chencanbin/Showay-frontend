@@ -9,7 +9,7 @@
       </app-link>
     </template>
 
-    <el-submenu v-else ref="submenu" :index="resolvePath(item.path)">
+    <el-submenu v-else ref="submenu" :index="resolvePath(item.path)" :show-timeout="100" :hide-timeout="300">
       <template slot="title">
         <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" />
       </template>
@@ -25,7 +25,7 @@
 
         <app-link v-else :to="resolvePath(child.path)" :key="child.name">
           <el-menu-item :index="resolvePath(child.path)">
-            <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" />
+            <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)"/>
           </el-menu-item>
         </app-link>
       </template>

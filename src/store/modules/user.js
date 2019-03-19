@@ -1,6 +1,6 @@
 import { logout, getUserInfo, loginByUsername } from '@/http/modules/login'
 import { fetchUserList } from '@/http/modules/user'
-import { setLoginStatus, removeLoginStatus } from '@/utils/auth'
+import { setLoginStatus, removeLoginStatus, setUserId } from '@/utils/auth'
 
 const user = {
   state: {
@@ -11,7 +11,8 @@ const user = {
     avatar: '',
     introduction: '',
     roles: [],
-    users: []
+    users: [],
+    id: ''
   },
 
   mutations: {
@@ -35,6 +36,9 @@ const user = {
     },
     SET_USERS: (state, users) => {
       state.users = users
+    },
+    SET_ID: (state, id) => {
+      state.id = id
     }
   },
 
@@ -44,9 +48,9 @@ const user = {
       return new Promise((resolve, reject) => {
         loginByUsername(userInfo).then(res => {
           setLoginStatus(true)
+          setUserId(res.data.id)
           resolve(res)
         }).catch(error => {
-          console.log(error) // For Debug
           reject(error)
         })
       })

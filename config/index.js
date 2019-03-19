@@ -13,8 +13,10 @@ module.exports = {
       '/api': {
         //target: 'http://192.168.20.67:8080',
         target: 'https://13.75.70.13', //设置你调用的接口域名 别忘了加http
-        //target: 'http://192.168.1.108:8080',
+        //target: 'http://118.25.231.120:8888', //騰訊測試服務器
+        //target: 'http://192.168.1.103:8080',
         //target: 'http://12511e04.ngrok.io/',
+        //target: 'https://19314439.ngrok.io',
         secure: false,
         changeOrigin: true
       }

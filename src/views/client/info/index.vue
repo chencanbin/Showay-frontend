@@ -1,26 +1,28 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <el-form :inline="true" style="display: inline-block; vertical-align: top; float: right">
+      <el-form :inline="true" class="search-input" @submit.native.prevent>
         <el-form-item label="" prop="wildcard">
           <el-input
             v-model="wildcard"
             clearable
-            placeholder="请输入搜索内容"
+            placeholder="搜索(客户姓名 | 证件号)"
             @input="search">
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
         </el-form-item>
       </el-form>
+      <pagination :total="client.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
         v-loading="loading"
-        :max-height="height"
+        :height="height"
         :data="client.list"
         stripe
       >
         <el-table-column
           prop="name"
-          label="客户姓名"/>
+          label="客户姓名"
+          show-overflow-tooltip/>
         <el-table-column
           prop="idNumber"
           label="证件号"
@@ -32,7 +34,7 @@
         <el-table-column
           prop="sex"
           label="性别"
-          width="50">
+          width="70">
           <template slot-scope="scope">
             {{ scope.row.sex === 0 ? '男' : '女' }}
           </template>
@@ -43,7 +45,8 @@
           label="出生日期"/>
         <el-table-column
           prop="phone"
-          label="电话号码"/>
+          label="电话号码"
+          min-width="120"/>
         <el-table-column
           prop="email"
           label="电子邮箱"
@@ -54,6 +57,7 @@
             <edit :data="scope.row"/>
             <el-button
               type="text"
+              size="mini"
               icon="el-icon-delete"
               @click="handleDelete(scope.$index, scope.row)">删除
             </el-button>
@@ -61,7 +65,6 @@
         </el-table-column>
       </el-table>
       <add/>
-      <pagination :total="client.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
   </div>
 </template>
@@ -81,7 +84,7 @@ export default {
   },
   data: function() {
     return {
-      height: window.screen.height - 260,
+      height: window.screen.height - 315,
       listQuery: {
         page: 1,
         limit: 50

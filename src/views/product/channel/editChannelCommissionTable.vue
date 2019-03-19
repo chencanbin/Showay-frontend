@@ -1,6 +1,6 @@
 <template>
   <span style="margin-right: 5px">
-    <el-button :loading="loading" icon="el-icon-setting" type="text" size="small" style="margin-left: 5px" @click="initForm" >
+    <el-button :loading="loading" icon="el-icon-setting" type="text" size="mini" style="margin-left: 5px" @click="initForm" >
       编辑
     </el-button>
     <el-dialog
@@ -16,7 +16,7 @@
           type="index"
           width="80">
         </el-table-column>-->
-        <el-table-column label="公司 / 产品" prop="name" min-width="400">
+        <el-table-column label="公司 / 产品" prop="name" min-width="300">
           <template slot-scope="scope">
             <el-tag v-for="product in scope.row.products" :key="product.id" style="margin-right: 10px; margin-bottom: 5px">{{ product.name }}</el-tag>
             <el-tag v-for="company in scope.row.companies" :key="company.id" style="margin-right: 10px; margin-bottom: 5px; color:#409EFF; background-color: rgba(64, 158, 255, 0.1); border: 1px solid rgba(64, 158, 255, 0.2)">{{ company.name }}</el-tag>
@@ -41,8 +41,30 @@
       <addPolicy @addPolicy="onAddPolicy"/>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">保存策略</el-button>
+        <el-button :loading="loading" type="primary" @click="timeDialogVisible = true">保存策略</el-button>
       </div>
+      <!-- 佣金生效时间弹框 -->
+      <el-dialog
+        :visible.sync="timeDialogVisible"
+        width="300px"
+        title="渠道佣金生效时间 / 备注"
+        append-to-body>
+        <el-form ref="configForm" label-width="80px">
+          <el-form-item label="生效时间">
+            <el-date-picker
+              v-model="effectiveDate"
+              type="datetime"
+              value-format="timestamp"
+              style="width: 100%"/>
+          </el-form-item>
+          <el-form-item label="备注" prop="remarks">
+            <el-input v-model="remarks" placeholder="请输入备注"/>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer" style="text-align: center">
+          <el-button :loading="configButtonLoading" type="primary" @click="handleSubmit">确定</el-button>
+        </div>
+      </el-dialog>
     </el-dialog>
   </span>
 </template>
@@ -64,6 +86,18 @@ export default {
       default() {
         return 0
       }
+    },
+    effectiveDate: {
+      type: Number,
+      default() {
+        return 0
+      }
+    },
+    remarks: {
+      type: String,
+      default() {
+        return ''
+      }
     }
   },
   data() {
@@ -75,7 +109,9 @@ export default {
       products: [],
       columnYear: [],
       fullscreen: true,
-      dialogVisible: false
+      dialogVisible: false,
+      timeDialogVisible: false,
+      configButtonLoading: false
     }
   },
   // mounted () {
@@ -127,6 +163,7 @@ export default {
       })
     },
     handleSubmit() {
+      this.configButtonLoading = true
       // 处理companies 和 products 字段, 只提交id的数组
       _.forEach(this.originalPolicies, item => {
         const products = []
@@ -140,8 +177,12 @@ export default {
         item.products = products
         item.companies = companies
       })
-      this.$api.channel.editChannelCommissionPolicy(this.id, { policies: this.originalPolicies }).then(res => {
-        this.handleClose()
+      this.$api.channel.editChannelCommissionPolicy(this.id, { policies: this.originalPolicies, effectiveDate: this.effectiveDate, remarks: this.remarks }).then(res => {
+        this.dialogVisible = false
+        this.timeDialogVisible = false
+        this.configButtonLoading = false
+      }).catch(_ => {
+        this.configButtonLoading = false
       })
     },
     getProducts(params) {

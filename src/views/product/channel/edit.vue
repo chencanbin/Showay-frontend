@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -24,11 +24,11 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="account.superior" label="上级佣金率" prop="superiorCommissionRate">
-          <el-input v-if="account.superior" v-model.number="account.superiorCommissionRate">
-            <template slot="append">%</template>
-          </el-input>
-        </el-form-item>
+      <!--<el-form-item v-if="account.superior" label="上级佣金率" prop="superiorCommissionRate">-->
+        <!--<el-input v-if="account.superior" v-model.number="account.superiorCommissionRate">-->
+        <!--<template slot="append">%</template>-->
+        <!--</el-input>-->
+      <!--</el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -41,7 +41,6 @@
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
-const _ = require('lodash')
 export default {
   directives: { elDragDialog },
   props: {
@@ -79,7 +78,7 @@ export default {
       this.account.name = this.user.name
       if (this.user.superior) {
         this.account.superior = this.user.superior.id
-        this.account.superiorCommissionRate = _.toNumber(this.user.superior.superiorCommissionRate).toFixed(2)
+        // this.account.superiorCommissionRate = _.toNumber(this.user.superior.superiorCommissionRate).toFixed(2)
       }
       this.dialogVisible = true
     },

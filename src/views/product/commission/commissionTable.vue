@@ -2,6 +2,7 @@
   <span>
     <el-button
       :loading="loading"
+      size="mini"
       type="text"
       icon="el-icon-edit"
       style="margin-right: 5px"
@@ -14,9 +15,25 @@
       :title="'佣金策略表( ' + title + ' )'"
       class="dialog-body">
       <!--<el-button icon="el-icon-plus" type="text" @click="addNewRow">添加新行</el-button>-->
-      <div slot="title" class="title">
+      <div slot="title" class="title" style="position: relative">
         <div class="el-dialog__title" style="display: inline-block;">{{ title + ' 佣金策略表' }}</div>
         <span style="color: #999; font-family: YouYuan; margin-left: 10px">{{ editStatus }}</span>
+        <el-form style="width: 400px; height:45px; position: absolute; display: block; right: 62px; top: 30px;" @submit.native.prevent>
+          <el-form-item>
+            <el-input
+              ref="search"
+              v-model="wildcard"
+              placeholder="请输入搜索内容"
+              @input="search">
+              <div v-if="wildcard" slot="suffix" style="margin-top: 10px">
+                {{ currentCount }} / {{ matchCount }}
+              </div>
+              <i slot="prefix" class="el-input__icon el-icon-search"/>
+              <el-button slot="append" icon="el-icon-arrow-down" @click="searchNext"/>
+              <el-button slot="append" icon="el-icon-arrow-up" @click="searchLast"/>
+            </el-input>
+          </el-form-item>
+        </el-form>
       </div>
       <el-tabs v-model="activeName" type="border-card" tab-position="bottom" @tab-click="handleTabClick">
         <el-tab-pane label="基础佣金表" name="basic">
@@ -58,7 +75,7 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="buttonLoading" type="primary" @click="timeDialogVisible = true">发布</el-button>
+        <el-button :loading="buttonLoading" type="primary" @click="handleTimeDialogOpen">发布</el-button>
       </div>
     </el-dialog>
   </span>
@@ -69,7 +86,6 @@ import { HotTable } from '@handsontable/vue'
 import '../../../../node_modules/handsontable-pro/dist/handsontable.full.min.css'
 
 const _ = require('lodash')
-
 export default {
   components: {
     HotTable
@@ -88,10 +104,14 @@ export default {
     return {
       overrideTitle: '',
       activeName: 'basic',
+      wildcard: '', // 搜索关键字
+      matchCount: 0,
+      currentCount: 0,
+      searchResult: [],
       editStatus: '', // 修改cell时,页面的状态显示
       errorCoordinate: [],
       selectedRows: [], // 选中行数的数组
-      effectiveDate: (new Date()).valueOf(), // 有效时间
+      effectiveDate: '', // 有效时间
       fullscreen: true,
       dialogVisible: false,
       timeDialogVisible: false,
@@ -131,7 +151,6 @@ export default {
               })
             })
             this.$api.commission.commissionTableDraft(this.id, { data, type: 1 }).catch(_ => {
-              console.log('....')
               this.setOverrideHotInstance.redo()
             })
           }
@@ -142,6 +161,7 @@ export default {
         colHeaders: [],
         startCols: 21,
         startRows: 20,
+        search: true,
         height: window.screen.height - 330,
         stretchH: 'all',
         autoWrapRow: false,
@@ -150,6 +170,7 @@ export default {
         rowHeaderWidth: 65,
         fixedColumnsLeft: 1,
         columnHeaderHeight: 45,
+        autoRowSize: true,
         contextMenu: {
           items: {
             'override': { // Own custom option
@@ -238,7 +259,8 @@ export default {
         colWidths: [250, 250, 120, 70],
         colHeaders: [],
         startCols: 20,
-        startRows: 800,
+        startRows: 20,
+        search: true,
         height: window.screen.height - 330,
         stretchH: 'all',
         autoWrapRow: false,
@@ -272,7 +294,21 @@ export default {
               }
             }
           }
+        },
+        afterScrollVertically: _ => {
+          this.$nextTick(function() {
+            // 为了解决scrollTop 偶尔为0的情况
+            setTimeout(() => {
+              const scrollTop = document.querySelector('.wtHolder').scrollTop
+              const clientHeight = document.querySelector('.wtHolder').clientHeight
+              const scrollHeight = document.querySelector('.wtHolder').scrollHeight
+              if (scrollTop + clientHeight >= scrollHeight) {
+                this.overallHotInstance.alter('insert_row')
+              }
+            }, 0)
+          })
         }
+
       }
     }
   },
@@ -361,13 +397,11 @@ export default {
         value = value.substr(0, value.length - 1)
       }
       if (value && isNaN(value)) {
-        td.innerText = value
-        td.style.border = '1px solid red'
-        td.setAttribute('title', '格式必须要数字')
+        td.innerText = ''
         return td
       }
 
-      if (Number(value) === 0) {
+      if (Number(value) <= 0) {
         td.innerText = ''
       } else {
         td.innerText = _.toNumber(value).toFixed(2) + '%'
@@ -395,7 +429,6 @@ export default {
     loadBasicData() {
       this.loading = true
       this.$api.commission.fetchCommissionList(this.id).then(res => {
-        // this.basicHotInstance.updateSettings({data: this.mockData})
         const result = []
         res.data.list.forEach(item => {
           result.push([item.row, item.column, item.value.basic])
@@ -418,6 +451,7 @@ export default {
     loadOverallData() {
       this.loading = true
       this.$api.commission.fetchCommissionList(this.id).then(res => {
+        console.log(res.data.list)
         const result = []
         res.data.list.forEach(item => {
           result.push([item.row, item.column, item.value.overall])
@@ -447,6 +481,10 @@ export default {
       }
       this.setOverrideDialogVisible = false
     },
+    handleTimeDialogOpen() {
+      this.timeDialogVisible = true
+      this.effectiveDate = (new Date()).valueOf()
+    },
     handlePublish() {
       this.buttonLoading = true
       this.$api.commission.publishCommissionTableDraft(this.id, this.effectiveDate).then(res => {
@@ -455,6 +493,7 @@ export default {
         this.dialogVisible = false
         this.$store.dispatch('commission/FetchCommissionTableList', {})
       }).catch(error => {
+        console.log(error)
         const data = error.data
         this.buttonLoading = false
         if (data && data.coordinate) {
@@ -470,6 +509,72 @@ export default {
         this.buttonLoading = false
         this.timeDialogVisible = false
       })
+    },
+    searchAction() {
+      let hotInstance
+      if (this.activeName === 'basic') {
+        hotInstance = this.basicHotInstance
+      } else if (this.activeName === 'override') {
+        hotInstance = this.overrideHotInstance
+      } else {
+        hotInstance = this.overallHotInstance
+      }
+      const search = hotInstance.getPlugin('search')
+      this.searchResult = search.query(this.wildcard)
+      if (this.searchResult.length > 0) {
+        this.matchCount = this.searchResult.length
+        this.currentCount = 1
+        hotInstance.toPhysicalRow(this.searchResult[0].row)
+        hotInstance.selectRows(this.searchResult[0].row)
+        hotInstance.render()
+      } else {
+        this.matchCount = 0
+        this.currentCount = 0
+      }
+      setTimeout(_ => {
+        this.$refs.search.focus()
+      }, 500)
+    },
+    search: _.debounce(function() {
+      this.searchAction()
+    }, 500),
+    searchNext() {
+      let hotInstance
+      if (this.activeName === 'basic') {
+        hotInstance = this.basicHotInstance
+      } else if (this.activeName === 'override') {
+        hotInstance = this.overrideHotInstance
+      } else {
+        hotInstance = this.overallHotInstance
+      }
+      if (this.currentCount >= this.matchCount) {
+        hotInstance.toVisualRow(this.searchResult[this.matchCount - 1].row)
+        hotInstance.selectRows(this.searchResult[this.matchCount - 1].row)
+      } else {
+        this.currentCount++
+        const row = this.searchResult[this.currentCount - 0].row
+        hotInstance.toVisualRow(row)
+        hotInstance.selectRows(row)
+      }
+    },
+    searchLast() {
+      let hotInstance
+      if (this.activeName === 'basic') {
+        hotInstance = this.basicHotInstance
+      } else if (this.activeName === 'override') {
+        hotInstance = this.overrideHotInstance
+      } else {
+        hotInstance = this.overallHotInstance
+      }
+      if (this.currentCount <= 1) {
+        hotInstance.toVisualRow(this.searchResult[0].row)
+        hotInstance.selectRows(this.searchResult[0].row)
+      } else {
+        this.currentCount--
+        const row = this.searchResult[this.currentCount - 0].row
+        hotInstance.toVisualRow(row)
+        hotInstance.selectRows(row)
+      }
     }
   }
 }
@@ -506,13 +611,16 @@ export default {
   .handsontable tr:nth-child(odd) > td {
     background: #e1eedc!important;
   }
+
   .handsontable tr:nth-child(odd):hover > td {
     background: #e1eedc;
   }
   .handsontable tr:nth-child(even):hover > td {
     background-color: #fafafa;
   }
-
+  .handsontable .searchClass {
+    background: #71b7ee !important;
+  }
   #commissionTableDialog, .dialog-footer, #setOverrideDialog .dialog-footer{
     padding-top: 0px;
   }

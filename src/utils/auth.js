@@ -4,6 +4,8 @@ const TokenKey = 'Admin-Token'
 
 const IsLogin = 'IsLogin'
 
+const UserIdKey = 'User-ID'
+
 export function getToken() {
   return Cookies.get(TokenKey)
 }
@@ -26,4 +28,12 @@ export function getLoginStatus() {
 
 export function removeLoginStatus() {
   return sessionStorage.removeItem(IsLogin)
+}
+
+export function setUserId(userId) {
+  return Cookies.set(UserIdKey, userId)
+}
+
+export function getUserId(userId) {
+  return Cookies.get(UserIdKey)
 }

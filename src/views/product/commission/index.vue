@@ -1,7 +1,7 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <el-form :inline="true" style="display: inline-block; vertical-align: top; float: right">
+      <el-form :inline="true" class="search-input" @submit.native.prevent>
         <el-form-item label="" prop="company">
           <el-select
             v-model="companyId"
@@ -9,7 +9,7 @@
             filterable
             clearable
             remote
-            placeholder="搜索供应商"
+            placeholder="搜索(供应商)"
             @change="companyChange">
             <el-option
               v-for="company in companyList"
@@ -19,27 +19,31 @@
           </el-select>
         </el-form-item>
       </el-form>
+      <pagination :total="commissionTableList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
         v-loading="loading"
+        :height="height"
         :data="commissionTableList.list"
         stripe
       >
         <el-table-column
           min-width="200px"
           prop="company.name"
+          show-overflow-tooltip
           label="供应商"/>
         <el-table-column
           :formatter="dateFormat"
           width="200"
           prop="effectiveDate"
           label="生效时间"/>
+        <!--<el-table-column-->
+        <!--:formatter="dateFormat"-->
+        <!--width="200"-->
+        <!--prop="expirationDate"-->
+        <!--label="失效时间"/>-->
         <el-table-column
-          :formatter="dateFormat"
-          width="200"
-          prop="expirationDate"
-          label="失效时间"/>
-        <el-table-column
-          width="100"
+          align="center"
+          width="140"
           prop="status"
           label="状态">
           <template slot-scope="scope">
@@ -50,8 +54,36 @@
         </el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
+            <!--<el-dropdown>-->
+            <!--<svg-icon icon-class="more" />-->
+            <!--<el-dropdown-menu slot="dropdown">-->
+            <!--<el-dropdown-item><el-button-->
+            <!--size="mini"-->
+            <!--v-if="scope.row.status !== 0"-->
+            <!--type="text"-->
+            <!--icon="el-icon-view"-->
+            <!--style="margin-right: 5px"-->
+            <!--@click="handleView(scope.row.id)">-->
+            <!--查看-->
+            <!--</el-button></el-dropdown-item>-->
+            <!--<el-dropdown-item><commission-table :id="scope.row.id" :title="scope.row.company.name"/></el-dropdown-item>-->
+            <!--<el-dropdown-item><el-button-->
+            <!--size="mini"-->
+            <!--v-if="scope.row.status !== 0"-->
+            <!--type="text"-->
+            <!--icon="el-icon-download"-->
+            <!--@click="exportExcel(scope.row)">导出Excel</el-button></el-dropdown-item>-->
+            <!--<el-dropdown-item><el-button-->
+            <!--size="mini"-->
+            <!--type="text"-->
+            <!--icon="el-icon-delete"-->
+            <!--@click="handleDelete(scope.$index, scope.row)">删除-->
+            <!--</el-button></el-dropdown-item>-->
+            <!--</el-dropdown-menu>-->
+            <!--</el-dropdown>-->
             <el-button
               v-if="scope.row.status !== 0"
+              size="mini"
               type="text"
               icon="el-icon-view"
               style="margin-right: 5px"
@@ -61,10 +93,12 @@
             <commission-table :id="scope.row.id" :title="scope.row.company.name"/>
             <el-button
               v-if="scope.row.status !== 0"
+              size="mini"
               type="text"
               icon="el-icon-download"
               @click="exportExcel(scope.row)">导出Excel</el-button>
             <el-button
+              size="mini"
               type="text"
               icon="el-icon-delete"
               @click="handleDelete(scope.$index, scope.row)">删除
@@ -73,7 +107,6 @@
         </el-table-column>
       </el-table>
       <add/>
-      <pagination :total="commissionTableList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
     <commission-view ref="commissionView"/>
   </div>
@@ -95,6 +128,7 @@ export default {
   },
   data: function() {
     return {
+      height: window.screen.height - 300,
       listQuery: {
         page: 1,
         limit: 50

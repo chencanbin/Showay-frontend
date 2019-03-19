@@ -10,9 +10,9 @@
     <!--</div>-->
     <div class="table-container">
       <el-table :data="data" :max-height="tableHeight" stripe>
-        <el-table-column prop="company.name" label="供应商" min-width="200"/>
-        <el-table-column prop="product.name" label="产品名称" min-width="200"/>
-        <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="70">
+        <el-table-column fixed prop="company.name" label="供应商" min-width="200"/>
+        <el-table-column fixed prop="product.name" label="产品名称" min-width="200"/>
+        <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="100">
           <template slot-scope="scope">
             <span>{{ scope.row.conditions[index] ? formatToPercent(scope.row.conditions[index].rate) : '-' }}</span>
           </template>

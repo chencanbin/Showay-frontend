@@ -77,6 +77,22 @@ export function fetchCommissionCredit(params) {
   })
 }
 
+export function CommissionCreditReject(data) {
+  return request({
+    url: `/commissionCredit/reject`,
+    method: 'put',
+    data
+  })
+}
+
+export function CommissionCreditClear(data) {
+  return request({
+    url: `/commissionCredit/clear`,
+    method: 'put',
+    data
+  })
+}
+
 export function editCommissionCredit(id, data) {
   return request({
     url: `/commissionCredit/${id}`,
@@ -84,3 +100,58 @@ export function editCommissionCredit(id, data) {
     data
   })
 }
+
+export function getCommissionCreditSum(params) {
+  return request({
+    url: `/commissionCredit/sum`,
+    method: 'get',
+    params
+  })
+}
+
+export function fetchAuditPayment(params) {
+  return request({
+    url: `/mergedPayment`,
+    method: 'get',
+    params
+  })
+}
+
+export function fetchMergedPayment(id, params) {
+  return request({
+    url: `/mergedPayment/${id}`,
+    method: 'get',
+    params
+  })
+}
+
+export function mergedPayment(data) {
+  return request({
+    url: `/mergedPayment`,
+    method: 'post',
+    data
+  })
+}
+
+export function mergedPaymentReject(id) {
+  return request({
+    url: `/mergedPayment/${id}/reject`,
+    method: 'put'
+  })
+}
+
+export function mergedPaymentApprove(id) {
+  return request({
+    url: `/mergedPayment/${id}/approve`,
+    method: 'put'
+  })
+}
+
+export function mergedPaymentClear(id, data) {
+  return request({
+    url: `/mergedPayment/${id}/clear`,
+    method: 'put',
+    data
+  })
+}
+

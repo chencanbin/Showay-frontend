@@ -139,78 +139,83 @@ export const asyncRouterMap = [
         name: '到账记录',
         meta: { title: '到账记录', icon: 'credit', noCache: true }
       },
+      // {
+      //   path: 'channelCommissionPayment',
+      //   component: () => import('@/views/commission/channelCommissionPayment/index'),
+      //   name: '发放记录',
+      //   meta: { title: '发放记录', icon: 'payment', noCache: true }
+      // },
       {
-        path: 'channelCommissionPayment',
-        component: () => import('@/views/commission/channelCommissionPayment/index'),
-        name: '发放记录',
-        meta: { title: '发放记录', icon: 'payment', noCache: true }
+        path: 'paymentAudit',
+        component: () => import('@/views/commission/paymentAudit/index'),
+        name: '发放审核',
+        meta: { title: '发放审核', icon: 'payment', noCache: true }
       }
     ]
   },
-  {
-    path: '/channel',
-    component: Layout,
-    redirect: 'noredirect',
-    meta: { title: 'channel', icon: 'channel', noCache: true },
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
-        name: '资料',
-        meta: { title: 'channel', icon: 'channel', noCache: true }
-      },
-      {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
-        name: '佣金率检索',
-        meta: { title: '佣金率检索', icon: 'channel', noCache: true }
-      },
-      {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
-        name: '支票发放记录',
-        meta: { title: '支票发放记录', icon: 'channel', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/document',
-    component: Layout,
-    redirect: 'document',
-    meta: { title: '文档', icon: 'document', noCache: true },
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
-        name: '内部',
-        meta: { title: '内部文档', icon: 'document', noCache: true }
-      },
-      {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
-        name: '保险公司',
-        meta: { title: '保险公司', icon: 'channel', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/report',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/dashboard/index'),
-        name: 'report',
-        meta: { title: 'report', icon: 'chart', noCache: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/channel',
+  //   component: Layout,
+  //   redirect: 'noredirect',
+  //   meta: { title: 'channel', icon: 'channel', noCache: true },
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/dashboard/index'),
+  //       name: '资料',
+  //       meta: { title: 'channel', icon: 'channel', noCache: true }
+  //     },
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/dashboard/index'),
+  //       name: '佣金率检索',
+  //       meta: { title: '佣金率检索', icon: 'channel', noCache: true }
+  //     },
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/dashboard/index'),
+  //       name: '支票发放记录',
+  //       meta: { title: '支票发放记录', icon: 'channel', noCache: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/document',
+  //   component: Layout,
+  //   redirect: 'noredirect',
+  //   meta: { title: '文档', icon: 'document', noCache: true },
+  //   children: [
+  //     {
+  //       path: 'internalDocument',
+  //       component: () => import('@/views/document/internalDocument'),
+  //       name: '内部',
+  //       meta: { title: '内部文档', icon: 'int_document', noCache: true }
+  //     },
+  //     {
+  //       path: 'companyDocument',
+  //       component: () => import('@/views/document/companyDocument'),
+  //       name: '保险公司',
+  //       meta: { title: '保险公司', icon: 'company_document', noCache: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/report',
+  //   component: Layout,
+  //   redirect: 'noredirect',
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/dashboard/index'),
+  //       name: 'report',
+  //       meta: { title: 'report', icon: 'chart', noCache: true }
+  //     }
+  //   ]
+  // },
   {
     path: '/system',
     component: Layout,
     redirect: 'user',
-    name: 'system',
     meta: { title: 'system', icon: 'system', noCache: true, roles: [1] },
     children: [
       {

@@ -1,16 +1,16 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <add/>
-      <el-table v-loading="loading" :data="users.list" stripe>
+      <el-table v-loading="loading" :data="users.list" :height="height" stripe>
         <el-table-column label="ID" prop="id" width="50px"/>
-        <el-table-column :label="$t('user.table_header.name')" prop="name"/>
+        <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
         <el-table-column :label="$t('user.table_header.account')" prop="login"/>
         <el-table-column :label="$t('user.table_header.role')" prop="roles" min-width="150px">
           <template slot-scope="scope">
             <el-tag
               v-for="role in scope.row.roles"
               :key="role.id"
+              type="success"
               style="margin-right: 5px">
               {{ role.name }}
             </el-tag>
@@ -32,6 +32,7 @@
           </template>
         </el-table-column>
       </el-table>
+      <add/>
       <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
   </div>
@@ -53,6 +54,7 @@ export default {
   },
   data() {
     return {
+      height: window.screen.height - 310,
       listQuery: {
         page: 1,
         limit: 50

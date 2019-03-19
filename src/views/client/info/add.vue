@@ -1,5 +1,5 @@
 <template>
-  <el-col span.number="24" style="margin-bottom: 10px">
+  <el-col span.number="24" class="el-table-add-col">
     <div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>
     <el-dialog
       v-el-drag-dialog
@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     initForm() {
-      this.language = Cookies.get('language') || 'en'
+      this.language = Cookies.get('language') || 'zh-CN'
       this.dialogVisible = true
     },
     handleClose() {

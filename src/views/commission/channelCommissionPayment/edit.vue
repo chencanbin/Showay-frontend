@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -53,12 +53,19 @@
 import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 import { commissionPaymentStatus } from '@/utils/constant'
+import { getSymbol } from '@/utils'
 import Cookies from 'js-cookie'
 const currencyFormatter = require('currency-formatter')
 const _ = require('lodash')
 export default {
   directives: { elDragDialog },
   props: {
+    activeName: {
+      type: Number,
+      default() {
+        return 0
+      }
+    },
     commissionPayment: {
       type: Object,
       default() {
@@ -86,22 +93,14 @@ export default {
   },
   methods: {
     initForm() {
-      this.language = Cookies.get('language') || 'en'
+      this.language = Cookies.get('language') || 'zh-CN'
       this.payment = _.cloneDeep(this.commissionPayment)
       this.dialogVisible = true
     },
     formatterCurrency(value) {
       return currencyFormatter.format(value, { symbol: '' })
     },
-    getSymbol(currency) {
-      if (currency === 'HKD') {
-        return 'HK$'
-      } else if (currency === 'USD') {
-        return '$'
-      } else if (currency === 'CNY') {
-        return '￥'
-      }
-    },
+    getSymbol,
     handleClose() {
       this.$refs['payment'].resetFields()
       this.dialogVisible = false
@@ -115,7 +114,7 @@ export default {
               type: 'success',
               duration: 5 * 1000
             })
-            this.$store.dispatch('client/FetchChannelCommissionPayment')
+            this.$store.dispatch('client/FetchChannelCommissionPayment', { status: this.activeName })
             this.handleClose()
           })
         } else {

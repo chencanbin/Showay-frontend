@@ -1,9 +1,21 @@
 <template>
   <div class="table-container">
     <basic-container>
+      <el-form :inline="true" class="search-input" @submit.native.prevent>
+        <el-form-item label="" prop="wildcard">
+          <el-input
+            v-model="wildcard"
+            clearable
+            placeholder="请输入搜索内容"
+            @input="search">
+            <i slot="prefix" class="el-input__icon el-icon-search"/>
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
         v-loading="loading"
-        :max-height="height"
+        :height="height"
         :data="insurancePolicy.list"
         stripe>
         <!--
@@ -32,6 +44,7 @@
         <el-table-column
           prop="number"
           label="保单号"
+          show-overflow-tooltip
           min-width="120"/>
         <el-table-column
           :formatter="dateFormat"
@@ -45,9 +58,11 @@
           min-width="100"/>
         <el-table-column
           prop="applicant.name"
+          show-overflow-tooltip
           label="申请人"/>
         <el-table-column
           prop="beneficiary.name"
+          show-overflow-tooltip
           label="受保人"/>
         <el-table-column
           prop="company.name"
@@ -66,6 +81,7 @@
             <edit :data="scope.row"/>
             <el-button
               type="text"
+              size="mini"
               icon="el-icon-delete"
               @click="handleDelete(scope.$index, scope.row)">删除
             </el-button>
@@ -73,7 +89,6 @@
         </el-table-column>
       </el-table>
       <add/>
-      <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
   </div>
 </template>
@@ -99,12 +114,13 @@ export default {
   },
   data() {
     return {
-      height: window.screen.height - 260,
+      height: window.screen.height - 315,
+      wildcard: '',
       listQuery: {
         page: 1,
         limit: 50
       },
-      language: Cookies.get('language') || 'en'
+      language: Cookies.get('language') || 'zh-CN'
     }
   },
   computed: {
@@ -120,7 +136,9 @@ export default {
     this.getInsurancePolicyList()
   },
   methods: {
-
+    search: _.debounce(function() {
+      this.getInsurancePolicyList({ wildcard: this.wildcard })
+    }, 500),
     // 获取保单列表
     getInsurancePolicyList(params) {
       this.$store.dispatch('client/FetchInsurancePolicyList', { params })

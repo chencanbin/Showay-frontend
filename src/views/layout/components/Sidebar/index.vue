@@ -1,13 +1,13 @@
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
     <el-menu
-      :show-timeout="200"
+      :show-timeout="300"
       :default-active="$route.path"
       :collapse="isCollapse"
       mode="vertical"
-      background-color="#344955"
-      text-color="#bfcbd9"
-      active-text-color="#F9AA33"
+      background-color="#141f29"
+      text-color="#e0f2f1"
+      active-text-color="#ffffff"
     >
       <sidebar-item v-for="route in permission_routers" :key="route.path" :item="route" :base-path="route.path"/>
     </el-menu>

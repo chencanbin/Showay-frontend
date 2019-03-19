@@ -4,6 +4,7 @@
       <el-table
         v-loading="loading"
         :data="roles"
+        :height="height"
         stripe
       >
         <el-table-column
@@ -29,6 +30,7 @@ export default {
   name: 'Role',
   data() {
     return {
+      height: window.screen.height - 200,
       roles: []
     }
   },
@@ -50,7 +52,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .table-container {
-    padding: 8px 10px;
-  }
+  /*.table-container {*/
+    /*padding: 8px 10px;*/
+  /*}*/
 </style>

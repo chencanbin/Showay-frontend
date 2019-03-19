@@ -25,6 +25,7 @@ export default function $axios(options) {
         return config
       },
       error => {
+        store.commit('HIDE_LOADING')
         // 请求错误时
         // 1. 判断请求超时
         if (error.code === 'ECONNABORTED' && error.message.indexOf('timeout') !== -1) {

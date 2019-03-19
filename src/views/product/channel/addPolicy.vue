@@ -182,7 +182,7 @@ export default {
       })
     },
     getProducts(params) {
-      this.$api.product.fetchProductList().then(res => {
+      this.$api.product.fetchProductList(params).then(res => {
         this.products = res.data.list
       })
     },

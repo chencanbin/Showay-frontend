@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-info" style="margin-right: 10px" @click="initForm">详情</el-button>
+    <el-button type="text" size="mini" icon="el-icon-info" style="margin-right: 10px" @click="initForm">详情</el-button>
     <el-dialog
       v-el-drag-dialog
       id="policy-detail-dialog"
@@ -16,7 +16,8 @@
           <span>{{ data.agent.name }}</span>
         </el-form-item>
         <el-form-item label="保额:">
-          <span>{{ numberFormat(data, data.amountInsured) }}</span>
+          <span v-if="!data.amountInsured || data.amountInsured === 0">N/A</span>
+          <span v-else>{{ numberFormat(data, data.amountInsured) }}</span>
         </el-form-item>
         <el-form-item label="保费:">
           <span>{{ numberFormat(data, data.premium) }}</span>
@@ -81,9 +82,12 @@ export default {
     .detail-form {
       font-size: 0;
       .el-form-item {
+        &:first-child {
+          width: 30%;
+        }
         margin-right: 0;
         margin-bottom: 0;
-        width: 20%;
+        width: 17%;
         label {
           color: #99a9bf;
         }

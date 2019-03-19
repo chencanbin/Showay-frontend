@@ -7,7 +7,7 @@ const app = {
       withoutAnimation: false
     },
     device: 'desktop',
-    language: Cookies.get('language') || 'en',
+    language: Cookies.get('language') || 'zh-CN',
     size: Cookies.get('size') || 'medium',
     loading: false
   },

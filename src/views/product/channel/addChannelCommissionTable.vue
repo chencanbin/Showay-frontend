@@ -1,6 +1,6 @@
 <template>
-  <el-col span.number="24" style="margin-bottom: 10px">
-    <div class="el-table-add-row" @click="initForm"><span>+ 添加渠道佣金表</span></div>
+  <el-col :span="18" :offset="3" style="margin-bottom: 10px">
+    <div class="el-table-add-row" @click="initForm"><span style="font-size: 12px">+ 添加渠道佣金策略</span></div>
     <!--<el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>-->
     <el-dialog
       id="createChannelCommissionTableDialog"
@@ -15,7 +15,7 @@
           type="index"
           width="80">
         </el-table-column>-->
-        <el-table-column label="公司 / 产品" prop="name" min-width="400">
+        <el-table-column label="公司 / 产品" prop="name" min-width="300">
           <template slot-scope="scope">
             <el-tag v-for="product in scope.row.products" :key="product.id" style="margin-right: 10px; margin-bottom: 5px">{{ product.name }}</el-tag>
             <el-tag v-for="company in scope.row.companies" :key="company.id" style="margin-right: 10px; margin-bottom: 5px; color:#409EFF; background-color: rgba(64, 158, 255, 0.1); border: 1px solid rgba(64, 158, 255, 0.2)">{{ company.name }}</el-tag>
@@ -160,7 +160,8 @@ export default {
         item.companies = companies
       })
       this.$api.channel.createChannelCommissionPolicy({ channel: this.id, policies: this.originalPolicies, effectiveDate: this.effectiveDate, remarks: this.remarks }).then(res => {
-        this.handleClose()
+        this.dialogVisible = false
+        this.timeDialogVisible = false
         this.configButtonLoading = false
         this.$store.dispatch('client/FetchChannelCommissionTable', { channel: this.id })
       }).catch(_ => {

@@ -1,10 +1,10 @@
 @import './variables.scss';
 @import './mixin.scss';
 @import './transition.scss';
-@import './element-ui.scss';
 @import './sidebar.scss';
 @import './btn.scss';
 @import './media.scss';
+@import './element-ui.scss';
 
 body {
   height: 100%;
@@ -217,8 +217,8 @@ code {
   color: #969696;
 }
 .el-table-add-row:hover {
-  color: #fabb5c;
-  border: 1px dashed #fabb5c;
+  color: rgb(51, 141, 72);
+  border: 1px dashed rgb(51, 141, 72);
 }
 
 /* 设置滚动条的样式 */
@@ -235,4 +235,12 @@ code {
 ::-webkit-scrollbar-thumb {
   border-radius:5px;
   background:rgba(1,1,1,0.1);
+}
+
+.search-input {
+  display: inline-block;
+  margin-top: 10px;
+  margin-left: 10px;
+  float: left;
+  height: 45px;
 }

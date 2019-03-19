@@ -9,7 +9,7 @@ import * as commission from './modules/commission'
 import * as client from './modules/client'
 import * as product from './modules/product'
 import * as channel from './modules/channel'
-
+import * as document from './modules/document'
 // 默认全部导出
 export default {
   login,
@@ -19,5 +19,6 @@ export default {
   commission,
   client,
   product,
-  channel
+  channel,
+  document
 }

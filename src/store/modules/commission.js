@@ -1,11 +1,13 @@
-import { fetchCommissionTableList, fetchCommissionCredit } from '@/http/modules/commission'
+import { fetchCommissionTableList, fetchCommissionCredit, fetchAuditPayment, fetchMergedPayment } from '@/http/modules/commission'
 
 const company = {
   namespaced: true,
   state: {
     commissionTableList: [],
     commissionTableDialogVisible: false,
-    commissionCredit: {}
+    commissionCredit: {},
+    mergedPayment: {},
+    auditPayment: {}
   },
   mutations: {
     SET_COMMISSION_TABLE_LIST: (state, commissionTableList) => {
@@ -19,6 +21,12 @@ const company = {
     },
     SET_COMMISSION_CREDIT: (state, commissionCredit) => {
       state.commissionCredit = commissionCredit
+    },
+    SET_MERGED_PAYMENT: (state, mergedPayment) => {
+      state.mergedPayment = mergedPayment
+    },
+    SET_AUDIT_PAYMENT: (state, auditPayment) => {
+      state.auditPayment = auditPayment
     }
   },
   actions: {
@@ -30,6 +38,16 @@ const company = {
     FetchCommissionCredit({ commit }, params) {
       return fetchCommissionCredit(params).then(res => {
         commit('SET_COMMISSION_CREDIT', res.data)
+      })
+    },
+    FetchAuditPayment({ commit }, params) {
+      return fetchAuditPayment(params).then(res => {
+        commit('SET_AUDIT_PAYMENT', res.data)
+      })
+    },
+    FetchMergedPayment({ commit }, { id, params }) {
+      return fetchMergedPayment(id, params).then(res => {
+        commit('SET_MERGED_PAYMENT', res.data)
       })
     }
   }

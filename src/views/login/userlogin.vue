@@ -8,6 +8,7 @@
     label-width="0">
     <el-form-item prop="id">
       <el-input
+        ref="username"
         v-model="loginForm.id"
         auto-complete="off"
         placeholder="请输入用户名"
@@ -26,7 +27,7 @@
         <svg-icon slot="prefix" icon-class="password"/>
       </el-input>
     </el-form-item>
-    <el-form-item prop="code">
+    <el-form-item ref="code" prop="code">
       <el-row :span="24">
         <el-col :span="16">
           <el-input
@@ -48,7 +49,7 @@
     <!--<el-checkbox v-model="checked">记住账号</el-checkbox>-->
     <el-form-item>
       <el-button
-        v-loading="loading"
+        :loading="loading"
         type="primary"
         size="small"
         class="login-submit"
@@ -60,7 +61,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-
+import sha256 from 'sha256'
 export default {
   name: 'UserLogin',
   data() {
@@ -106,6 +107,9 @@ export default {
     ...mapGetters(['loading'])
   },
   created() {
+    this.$nextTick(function() {
+      this.$refs.username.focus()
+    })
     this.refreshCode()
   },
   methods: {
@@ -122,12 +126,16 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          const userInfo = Object.assign({}, this.loginForm)
+          userInfo.password = sha256(userInfo.password)
           this.$store.commit('SHOW_LOADING')
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(_ => {
+          this.$store.dispatch('LoginByUsername', userInfo).then(_ => {
             this.$store.commit('HIDE_LOADING')
             this.$router.push({ path: this.redirect || '/home' })
           }).catch(_ => {
             this.$store.commit('HIDE_LOADING')
+            this.loginForm.code = ''
+            this.refreshCode()
           })
           // this.$api.login.loginByUsername(this.loginForm).then(() => {
           //   this.$store.commit('HIDE_LOADING')

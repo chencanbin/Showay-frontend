@@ -12,10 +12,10 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" type="text/scss">
 .basic-container {
-  padding: 8px 10px;
-  border-radius: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 9px 2px #5653534a;
   box-sizing: border-box;
   .el-card {
     width: 100%;

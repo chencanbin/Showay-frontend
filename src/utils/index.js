@@ -292,3 +292,13 @@ export function uniqueArr(arr) {
 export function isExternal(path) {
   return /^(https?:|mailto:|tel:)/.test(path)
 }
+
+export function getSymbol(currency) {
+  if (currency === 'HKD') {
+    return 'HK$'
+  } else if (currency === 'USD') {
+    return 'US$'
+  } else if (currency === 'CNY') {
+    return 'CN¥'
+  }
+}

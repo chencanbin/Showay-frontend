@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button :loading="loading" type="text" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">编辑</el-button>
+    <el-button :loading="loading" type="text" icon="el-icon-edit" size="mini" style="margin-right: 10px" @click="initForm">编辑</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"

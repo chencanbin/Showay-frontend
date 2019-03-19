@@ -1,11 +1,22 @@
 <template>
   <div class="table-container">
     <basic-container>
-
-      <el-table v-loading="loading" :data="companyList.list" stripe>
-        <el-table-column prop="id" label="ID" width="50px"/>
+      <el-form :inline="true" class="search-input" @submit.native.prevent>
+        <el-form-item label="" prop="wildcard">
+          <el-input
+            v-model="wildcard"
+            clearable
+            placeholder="搜索(公司缩写 | 公司名)"
+            @input="search">
+            <i slot="prefix" class="el-input__icon el-icon-search"/>
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
+      <el-table v-loading="loading" :data="companyList.list" :height="height" stripe>
+        <el-table-column prop="id" label="ID" width="70px"/>
         <el-table-column prop="acronym" label="公司缩写"/>
-        <el-table-column prop="name" label="公司名"/>
+        <el-table-column prop="name" label="公司名" show-overflow-tooltip/>
         <el-table-column
           :formatter="dateFormat"
           prop="creationDay"
@@ -15,6 +26,7 @@
           <template slot-scope="scope">
             <edit :id="scope.row.id"/>
             <el-button
+              size="mini"
               type="text"
               icon="el-icon-delete"
               @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -24,7 +36,6 @@
       <el-col span="24">
         <add/>
       </el-col>
-      <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
   </div>
 </template>
@@ -35,6 +46,8 @@ import { mapGetters, mapState } from 'vuex'
 import { parseTime } from '@/utils'
 import add from './add'
 import edit from './edit'
+const _ = require('lodash')
+
 export default {
   name: 'Company',
   components: {
@@ -44,6 +57,8 @@ export default {
   },
   data() {
     return {
+      height: window.screen.height - 300,
+      wildcard: '',
       listQuery: {
         page: 1,
         limit: 50
@@ -58,6 +73,9 @@ export default {
     this.getCompanyList()
   },
   methods: {
+    search: _.debounce(function() {
+      this.getCompanyList({ wildcard: this.wildcard })
+    }, 500),
     handleDelete(index, row) {
       this.$confirm('此操作将永久删除该管理员账号, 是否继续?', '提示', {
         confirmButtonText: '确定',

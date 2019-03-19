@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     initForm() {
-      this.language = Cookies.get('language') || 'en'
+      this.language = Cookies.get('language') || 'zh-CN'
       this.client = _.cloneDeep(this.data)
       this.dialogVisible = true
     },

@@ -1,5 +1,5 @@
 <template>
-  <el-col span.number="24" style="margin-bottom: 10px">
+  <el-col span.number="24" class="el-table-add-col">
     <div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>
     <el-dialog
       v-el-drag-dialog
@@ -34,23 +34,25 @@
             type="date"
             placeholder="选择日期"/>
         </el-form-item>
-        <el-form-item label="申请人:" prop="applicant.name">
+        <el-form-item label="申请人:" prop="applicant.id">
           <el-select v-model="insurancePolicy.applicant.id" placeholder="请选择申请人" filterable style="width: 100%">
             <el-option
               v-for="item in client.list"
               :key="item.id"
-              :value="item.id">
-              <span style="float: left">{{ item.name }}</span><span style="float: right;">{{ item.idNumber }}</span>
+              :value="item.id"
+              :label="item.name">
+              <span style="float: left; margin-right: 15px; max-width: 10em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ item.name }}</span><span style="float: right;">{{ item.idNumber }}</span>
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="受益人:" prop="beneficiary.name">
-          <el-select v-model="insurancePolicy.beneficiary.id" placeholder="请选择受益人" filterable style="width: 100%">
+        <el-form-item label="受保人:" prop="beneficiary.id">
+          <el-select v-model="insurancePolicy.beneficiary.id" placeholder="请选择受保人" filterable style="width: 100%">
             <el-option
               v-for="item in client.list"
               :key="item.id"
-              :value="item.id">
-              <span style="float: left">{{ item.name }}</span><span style="float: right;">{{ item.idNumber }}</span>
+              :value="item.id"
+              :label="item.name">
+              <span style="float: left; margin-right: 15px;max-width: 10em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ item.name }}</span><span style="float: right;">{{ item.idNumber }}</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -69,12 +71,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="保费:" prop="premium">
-          <el-input v-model="insurancePolicy.premium" placeholder="请输入保费" />
+          <currency-input v-model="insurancePolicy.premium" :symbol="currency" placeholder="请输入保费"/>
+          <!--<el-input v-model="insurancePolicy.premium" placeholder="请输入保费" />-->
         </el-form-item>
-        <el-form-item label="保额:" prop="premium">
-          <el-input v-model="insurancePolicy.amountInsured" placeholder="请输入保额" />
+        <el-form-item label="保额:" prop="amountInsured">
+          <currency-input v-model="insurancePolicy.amountInsured" :symbol="currency" placeholder="请输入保额" />
+          <!--<el-input v-model="insurancePolicy.amountInsured" placeholder="请输入保额" />-->
         </el-form-item>
-        <el-form-item label="渠道:" prop="channel">
+        <el-form-item label="渠道:" prop="channel.id">
           <el-select v-model="insurancePolicy.channel.id" placeholder="请选择渠道" filterable style="width: 100%">
             <el-option
               v-for="item in channels.list"
@@ -83,7 +87,7 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="签单员:" prop="agent">
+        <el-form-item label="签单员:" prop="agent.id">
           <el-select v-model="insurancePolicy.agent.id" placeholder="请选择签单员" filterable style="width: 100%">
             <el-option
               v-for="item in agents"
@@ -92,19 +96,29 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品:" prop="product">
-          <el-select v-model="insurancePolicy.product.id" placeholder="请选择产品" filterable style="width: 100%">
+        <el-form-item label="产品:" prop="product.id" style="width: 100%">
+          <el-select
+            v-model="insurancePolicy.product.id"
+            :remote-method="searchProduct"
+            :loading="loading"
+            placeholder="请输入产品名或产品编号"
+            filterable
+            remote
+            style="width: 125%"
+            @focus="onProductFocus">
             <el-option
               v-for="item in products"
               :key="item.id"
               :label="item.name"
-              :value="item.id"/>
+              :value="item.id">
+              <span style="float: left;margin-right: 15px;">{{ item.name }}</span><span style="float: left; font-weight: bold">{{ item.acryonym }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button :loading="submitLoading" type="primary" @click="handleSubmit">提交</el-button>
       </div>
     </el-dialog>
   </el-col>
@@ -114,27 +128,29 @@
 import { mapGetters, mapState } from 'vuex'
 import { policyStatus } from '@/utils/constant'
 import elDragDialog from '@/directive/el-dragDialog'
+import { currencyArray } from '@/utils/constant'
 import Cookies from 'js-cookie'
+import currencyInput from '@/components/CurrencyInput'
 const _ = require('lodash')
 export default {
   directives: { elDragDialog },
+  components: {
+    currencyInput
+  },
   data() {
     return {
       language: 'en',
       policyStatus,
       dialogVisible: false,
+      submitLoading: false,
       agents: [],
       products: [],
-      currencyArray: [{
-        id: 0,
-        desc: 'USD'
-      }, {
-        id: 1,
-        desc: 'HKD'
-      }, {
-        id: 2,
-        desc: 'CNY'
-      }],
+      queryProduct: {
+        name: '',
+        offset: 0,
+        max: 50
+      },
+      currencyArray,
       insurancePolicy: {
         number: null,
         sn: null,
@@ -172,16 +188,26 @@ export default {
     ...mapState({
       client: state => state.client.clientList,
       channels: state => state.user.users
-    })
+    }),
+    currency() {
+      if (this.insurancePolicy.currency === 0) {
+        return 'US$'
+      } else if (this.insurancePolicy.currency === 1) {
+        return 'HK$'
+      } else if (this.insurancePolicy.currency === 2) {
+        return 'CN¥'
+      } else {
+        return ''
+      }
+    }
   },
   methods: {
     initForm() {
-      this.language = Cookies.get('language') || 'en'
+      this.language = Cookies.get('language') || 'zh-CN'
       this.dialogVisible = true
       this.getClient()
       this.getChannel()
       this.getAgents()
-      this.getProducts()
     },
     getClient(params) {
       this.$store.dispatch('client/FetchClientList', { params })
@@ -201,18 +227,42 @@ export default {
       this.$store.dispatch('FetchUserList', params)
     },
 
-    getProducts(params) {
-      this.$api.product.fetchProductList().then(res => {
+    getProducts() {
+      this.products = []
+      this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
       })
     },
+    searchProduct(query) {
+      this.queryProduct.name = query
+      this.getProducts()
+    },
+    onProductFocus() {
+      this.queryProduct.name = ''
+      this.getProducts()
+    },
     handleClose() {
-      this.$refs['insurancePolicy'].resetFields()
-      this.dialogVisible = false
+      this.$confirm('窗口即将关闭, 是否放弃编辑?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$refs['insurancePolicy'].resetFields()
+        this.insurancePolicy.premium = 0
+        this.insurancePolicy.amountInsured = 0
+        this.dialogVisible = false
+      })
+    },
+    loadMoreProduct() {
+      this.queryProduct.offset = this.queryProduct.max + this.queryProduct.offset
+      this.$api.product.fetchProductList(this.queryProduct).then(res => {
+        this.products = this.products.concat(res.data.list)
+      })
     },
     handleSubmit() {
       this.$refs['insurancePolicy'].validate((valid) => {
         if (valid) {
+          this.submitLoading = true
           const data = _.cloneDeep(this.insurancePolicy)
           data.applicant = this.insurancePolicy.applicant.id
           data.beneficiary = this.insurancePolicy.beneficiary.id
@@ -226,7 +276,13 @@ export default {
               duration: 5 * 1000
             })
             this.$store.dispatch('client/FetchInsurancePolicyList', {})
-            this.handleClose()
+            this.submitLoading = false
+            this.$refs['insurancePolicy'].resetFields()
+            this.insurancePolicy.premium = 0
+            this.insurancePolicy.amountInsured = 0
+            this.dialogVisible = false
+          }).catch(_ => {
+            this.submitLoading = false
           })
         } else {
           return false
