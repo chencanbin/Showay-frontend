@@ -66,3 +66,10 @@ export function deleteInsurancePolicy(id) {
     method: 'delete'
   })
 }
+
+export function resetInsurancePolicy(id) {
+  return request({
+    url: `/insurancePolicy/${id}/reset`,
+    method: 'post'
+  })
+}

@@ -62,6 +62,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import sha256 from 'sha256'
+const username = process.env.LOGIN_USER_NAME
+const password = process.env.LOGIN_PASSWORD
+const code = process.env.LOGIN_CODE
 export default {
   name: 'UserLogin',
   data() {
@@ -76,9 +79,9 @@ export default {
     }
     return {
       loginForm: {
-        id: 'admin',
-        password: '888888',
-        code: 'ABCD'
+        id: username,
+        password: password,
+        code: code
       },
       checked: false,
       code: {

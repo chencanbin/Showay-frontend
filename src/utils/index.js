@@ -302,3 +302,37 @@ export function getSymbol(currency) {
     return 'CN¥'
   }
 }
+
+/**
+ * 获取当前月的第一天
+ */
+export function getCurrentMonthFirst() {
+  const date = new Date()
+  date.setDate(1)
+  return date.valueOf()
+}
+/**
+ * 获取当前月的最后一天
+ */
+export function getCurrentMonthLast() {
+  const date = new Date()
+  let currentMonth = date.getMonth()
+  const nextMonth = ++currentMonth
+  const nextMonthFirstDay = new Date(date.getFullYear(), nextMonth, 1)
+  const oneDay = 1000 * 60 * 60 * 24
+  return new Date(nextMonthFirstDay - oneDay).valueOf()
+}
+
+export function getCurrentYearFirst() {
+  const date = new Date()
+  date.setDate(1)
+  date.setMonth(0)
+  return date.valueOf()
+}
+
+export function getCurrentYearLast() {
+  const date = new Date()
+  date.setDate(31)
+  date.setMonth(11)
+  return date.valueOf()
+}

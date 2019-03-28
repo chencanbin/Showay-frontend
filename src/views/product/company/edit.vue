@@ -17,6 +17,10 @@
         <el-form-item label="公司缩写" prop="acronym">
           <el-input v-model="company.acronym"/>
         </el-form-item>
+        <el-form-item label="二级供应商" prop="secondary">
+          <el-switch
+            v-model="company.secondary"/>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -40,7 +44,12 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      company: {},
+      company: {
+        acronym: '',
+        secondary: false,
+        en: '',
+        zh: ''
+      },
       rule: {
         en: [{ required: true, message: '公司名(英文)必须填', trigger: 'blur' }],
         zh: [{ required: true, message: '公司名(中文)必须填', trigger: 'blur' }],
@@ -55,6 +64,7 @@ export default {
     initForm() {
       this.$api.company.getCompany(this.id).then(res => {
         this.company.acronym = res.data.acronym
+        this.company.secondary = res.data.secondary
         this.company.en = res.data.en
         this.company.zh = res.data.zh
         this.dialogVisible = true

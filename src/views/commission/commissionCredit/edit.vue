@@ -7,23 +7,32 @@
       :before-close="handleClose"
       title="编辑到账记录"
       width="400px">
-      <el-form ref="credit" :model="credit" label-width="80px">
+      <div v-if="locked" class="lock-icon" @click="unlockCalculate()">
+        <svg-icon icon-class="lock"/>
+      </div>
+      <div v-if="!locked" class="lock-icon" @click="lockCalculate()">
+        <svg-icon icon-class="unlock" />
+      </div>
+      <el-form ref="credit" :model="credit" label-width="90px">
         <el-form-item label="保单号" prop="name">
           {{ commissionCredit.insurancePolicy.number }}
-        </el-form-item>
-        <el-form-item label="应发数额" prop="name">
-          {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmount) }}
         </el-form-item>
         <el-form-item label="期序" prop="name">
           第{{ commissionCredit.year }}期
         </el-form-item>
-        <el-form-item label="实发数额" prop="name">
-          <currency-input v-model="credit.amount" symbol="HK$"/>
+        <el-form-item label="佣金率" prop="name">
+          {{ formatterNumber(commissionCredit.commissionRate) + '%' }}
+        </el-form-item>
+        <el-form-item label="应发数额" prop="name">
+          {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmount) }}
+        </el-form-item>
+        <el-form-item label="实发数额">
+          <currency-input ref="amount" :value="credit.amount" symbol="HK$" @input="onAmountInput" />
         </el-form-item>
         <el-form-item v-if="credit.currency !== 'HKD'" label="汇率" prop="exchangeRateToHkd" >
-          <el-input v-model="credit.exchangeRateToHkd" placeholder="请输入汇率"/>
+          <el-input v-model="credit.exchangeRateToHkd" placeholder="请输入汇率" @input="onExchangeRateInput"/>
         </el-form-item>
-        <el-form-item v-if="credit.ffyap" label="FFYAP" prop="name">
+        <el-form-item v-if="isBoolean(credit.ffyap)" label="FFYAP" prop="name">
           <el-checkbox v-model="credit.ffyap"/>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
@@ -74,16 +83,23 @@ export default {
         amount: '',
         exchangeRateToHkd: ''
       },
+      locked: true,
       dialogVisible: false
     }
   },
   computed: {
     ...mapGetters(['loading'])
   },
+  created() {
+    this.credit = _.cloneDeep(this.commissionCredit)
+    this.credit.amount = this.credit.calculatedAmountInHkd
+  },
   methods: {
     initForm() {
-      this.credit = _.cloneDeep(this.commissionCredit)
       this.dialogVisible = true
+    },
+    isBoolean(value) {
+      return typeof value === 'boolean'
     },
     handleClose() {
       this.$refs['credit'].resetFields()
@@ -109,10 +125,40 @@ export default {
           return false
         }
       })
+    },
+    formatterNumber(value) {
+      return _.toNumber(value).toFixed(2)
+    },
+    unlockCalculate() {
+      this.locked = !this.locked
+    },
+    lockCalculate() {
+      this.locked = !this.locked
+    },
+    onAmountInput(val) {
+      if (this.locked) {
+        if (parseInt(this.credit.calculatedAmount) === 0) {
+          return
+        }
+        this.credit.exchangeRateToHkd = (val / this.credit.calculatedAmount).toFixed(2)
+      }
+    },
+    onExchangeRateInput(val) {
+      if (this.locked) {
+        this.credit.amount = (val * this.credit.calculatedAmount).toFixed(2)
+        this.$refs.amount.onChange(this.credit.amount)
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
+  .lock-icon {
+    display: inline-block;
+    position: absolute;
+    top: 296px;
+    font-size: 18px;
+    z-index: 1000;
+  }
 </style>

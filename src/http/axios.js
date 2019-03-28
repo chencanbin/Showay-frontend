@@ -21,6 +21,18 @@ export default function $axios(options) {
         if (config.data) {
           config.data = _.omitBy(config.data, _.isNull)
         }
+        let url = config.url
+        // get参数编码
+        if (config.method === 'get' && config.params) {
+          url += '?'
+          const keys = Object.keys(config.params)
+          for (const key of keys) {
+            url += `${key}=${encodeURIComponent(config.params[key])}&`
+          }
+          url = url.substring(0, url.length - 1)
+          config.params = {}
+          config.url = url
+        }
         store.commit('SHOW_LOADING')
         return config
       },
@@ -48,7 +60,6 @@ export default function $axios(options) {
     // response 拦截器
     instance.interceptors.response.use(
       response => {
-        store.commit('HIDE_LOADING')
         let data
         // IE9时response.data是undefined，因此需要使用response.request.responseText(Stringify后的字符串)
         if (response.data === undefined) {
@@ -75,9 +86,11 @@ export default function $axios(options) {
               type: 'error',
               duration: 5 * 1000
             })
+            store.commit('HIDE_LOADING')
             return reject(data)
           }
         } else {
+          store.commit('HIDE_LOADING')
           return data
         }
       },

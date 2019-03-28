@@ -17,7 +17,7 @@
       class="banner-uploader">
       <img v-if="imgSrc" :src="imgSrc" class="banner">
       <el-progress v-if="percentCompleted > 0" :percentage="percentCompleted" type="circle" style="position: absolute; top: 10px; left: 165px"/>
-      <i v-if="percentCompleted === 0" class="el-icon-plus banner_upload_img"/>
+      <i v-if="percentCompleted === 0 && !imgSrc" class="el-icon-plus banner_upload_img"/>
     </el-upload>
   </div>
 </template>
@@ -49,14 +49,21 @@ export default {
       const _file = params.file
       const isLt2M = _file.size / 1024 / 1024 < 2
       if (!isLt2M) {
+        this.disableUpload = false
         this.$message.error('请上传2M以下的文件')
         return false
       }
       let url = ''
       await this.$api.document.getCompanyToken(_file.name).then(res => {
         url = res.data.url
+      }).catch(_ => {
+        this.percentCompleted = 0
+        this.disableUpload = false
+        return false
       })
-
+      if (!url) {
+        return false
+      }
       const config = {
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -90,6 +97,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
   .banner-uploader .el-upload--picture-card {
     width: 100%;
+    height: 100%;
   }
 
   .banner-uploader .el-upload {

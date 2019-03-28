@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span id="paymentDetail">
     <el-button v-loading="loading" type="text" size="mini" @click="initForm">{{ generateButtonText() }}</el-button>
     <el-dialog
       :visible="dialogVisible"
@@ -8,7 +8,7 @@
       :fullscreen="true"
       center>
       <el-row style="margin-bottom: 10px">
-        <el-button v-if="status === '-1'" disabled="disableSubmit" type="primary" @click="handleSubmit">提交审核</el-button>
+        <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">提交审核</el-button>
       </el-row>
       <el-table
         v-loading="loading"
@@ -46,7 +46,12 @@
         </el-table-column>
         <el-table-column label="实发数额" prop="amount">
           <template slot-scope="scope">
-            <span class="left_text">HK$</span><span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
+            <div v-if="scope.row.amount">
+              <span class="left_text">HK$</span><span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
+            </div>
+            <div v-else>
+              <span class="left_text">HK$</span><span class="right_text">{{ formatterCurrency(scope.row.predictedAmountInHkd) }}</span>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="佣金率">
@@ -56,7 +61,7 @@
         </el-table-column>
         <el-table-column v-if="status === '-1'" label="操作">
           <template slot-scope="scope">
-            <edit :payment="scope.row"/>
+            <edit :payment="scope.row" :key="scope.row.id"/>
           </template>
         </el-table-column>
       </el-table>
@@ -102,7 +107,7 @@ export default {
   },
   data() {
     return {
-      height: window.screen.height - 250,
+      height: window.screen.height - 220,
       dialogVisible: false,
       selectedRow: []
     }
@@ -118,6 +123,9 @@ export default {
     initForm() {
       this.getMergedPayment()
       this.dialogVisible = true
+    },
+    getRandom() {
+      return Math.random()
     },
     generateTitle() {
       if (this.status === '-1') {
@@ -180,7 +188,12 @@ export default {
         this.loading = true
         const data = []
         _.forEach(this.selectedRow, item => {
-          const obj = { id: item.id, amount: item.amount }
+          let obj = {}
+          if (item.amount) {
+            obj = { id: item.id, amount: item.amount }
+          } else {
+            obj = { id: item.id, amount: item.predictedAmountInHkd }
+          }
           // if(item.currency !== 'HKD') {
           //   obj.exchangeRate = item.exchangeRateToHkd
           // }
@@ -199,7 +212,7 @@ export default {
 }
 </script>
 <style lang="scss" rel="stylesheet/scss">
-  #commissionTable .el-dialog__body {
+  #paymentDetail .el-dialog__body {
     padding: 5px 20px;
   }
 </style>

@@ -97,6 +97,7 @@ export default {
   float: right;
   /*padding: 0px 8px 10px 8px;*/
   margin-top: 15px;
+  margin-bottom: 5px;
 }
 .pagination-container.hidden {
   display: none;

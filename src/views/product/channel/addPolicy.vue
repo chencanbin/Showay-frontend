@@ -83,11 +83,10 @@
           :key="item.id"
           :prop="`conditions.${item.value}`"
           :rules="[
-            {required: true, message: '请输入佣金率', trigger: 'blur'},
-            {type: 'number', message: '佣金率必须为数字', trigger: ['blur', 'change']}
+            {required: true, message: '请输入佣金率', trigger: 'blur'}
           ]"
         >
-          <el-input v-model.number="policy.conditions[item.value]">
+          <el-input v-model="policy.conditions[item.value]">
             <template slot="append">%</template>
           </el-input>
         </el-form-item>

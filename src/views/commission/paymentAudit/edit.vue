@@ -28,14 +28,13 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">保存</el-button>
+        <el-button type="primary" @click="handleSubmit">保存</el-button>
       </div>
     </el-dialog>
   </span>
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import currencyInput from '@/components/CurrencyInput'
 import elDragDialog from '@/directive/el-dragDialog'
 const currencyFormatter = require('currency-formatter')
@@ -61,13 +60,11 @@ export default {
       paymentCopy: {}
     }
   },
-  computed: {
-    ...mapGetters(['loading'])
-  },
   methods: {
     initForm() {
       this.paymentCopy = _.cloneDeep(this.payment)
       this.dialogVisible = true
+      this.payment.amount = this.payment.predictedAmountInHkd
     },
     handleClose() {
       this.payment.amount = this.paymentCopy.amount

@@ -181,6 +181,9 @@ export default {
         })
       })
     },
+    // showCommissionTable(id) {
+    //   this.$store.commit('commission/SHOW_COMMISSION_TABLE_DIALOG_VISIBLE', id)
+    // },
     exportExcel(row) {
       if (row.status === 2) {
         this.$confirm('导出的部分不包含未发布的内容, 是否继续导出?', '提示', {

@@ -41,24 +41,34 @@ export default {
         container: this.id,
         forceFit: true,
         height: 250,
-        padding: [20, 30, 30, 40]
+        padding: [20, 30, 40, 40]
       })
-      this.chart.source(this.charData)
-      this.chart.scale('runCount', {
-        min: 0
-      })
-      this.chart.scale('time', {
-        range: [0, 1]
-      })
-      this.chart.tooltip({
-        crosshairs: {
-          type: 'line'
+      this.chart.source(this.charData, {
+        percent: {
+          formatter: function formatter(val) {
+            val = val * 100 + '%'
+            return val
+          }
         }
       })
-      this.chart.line().position('time*runCount')
-      this.chart.point().position('time*runCount').size(4).shape('circle').style({
-        stroke: '#fff',
-        lineWidth: 1
+      this.chart.coord('theta')
+      this.chart.intervalStack().position('percent').color('item').label('percent', {
+        offset: -40,
+        // autoRotate: false,
+        textStyle: {
+          textAlign: 'center',
+          shadowBlur: 2,
+          shadowColor: 'rgba(0, 0, 0, .45)'
+        }
+      }).tooltip('item*percent', function(item, percent) {
+        percent = percent * 100 + '%'
+        return {
+          name: item,
+          value: percent
+        }
+      }).style({
+        lineWidth: 1,
+        stroke: '#fff'
       })
       this.chart.render()
     }

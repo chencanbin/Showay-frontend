@@ -7,3 +7,10 @@ export function fetchProductList(params) {
     params
   })
 }
+
+export function traceInsurancePolicy(number) {
+  return request({
+    url: `/trace/insurancePolicy/${number}`,
+    method: 'get'
+  })
+}

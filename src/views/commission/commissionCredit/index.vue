@@ -14,71 +14,72 @@
           :key="status.id"
           :name="status.id + ''"
           :label="statusFormatter(status.id)">
-          <el-form :inline="true" class="search-input" @submit.native.prevent>
-            <el-form-item v-if="activeName === '1' && selectData.length > 0">
-              <el-button type="primary" size="small" @click="batchPay">批量外发</el-button>
-            </el-form-item>
-            <el-form-item label="" prop="wildcard">
-              <el-input
-                v-model="wildcard"
-                clearable
-                placeholder="搜索(保单号 | 投保人)"
-                @input="search">
-                <i slot="prefix" class="el-input__icon el-icon-search"/>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="" prop="dateRange">
-              <el-date-picker
-                v-model="dateRange"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="timestamp"
-                @change="onDateRangeChange"/>
-            </el-form-item>
-            <el-form-item label="切换排序">
-              <el-switch v-model="mode" @change="onSwitchChange"/>
-            </el-form-item>
-          </el-form>
-          <el-tag class="tag-sum" type="success">
-            <i class="el-icon-info" style="margin-right: 5px"/>
-            <span style="margin-right: 30px;">{{ selectTotalText }}:
-              <count-to
-                :start-val="0"
-                :end-val="selectTotal"
-                :duration="2000"
-                suffix="条"
-                style="font-weight: bold;"/>
-            </span>
-            <span style="margin-right: 30px">{{ selectSumText }}:
-              <count-to
-                :start-val="0"
-                :end-val="selectSum"
-                :duration="2000"
-                prefix="HK$"
-                style="font-weight: bold;"/>
-            </span>
-            <span style="margin-right: 30px">{{ totalText }}:
-              <count-to
-                :start-val="0"
-                :end-val="commissionCredit.total"
-                :duration="2000"
-                suffix="条"
-                style="font-weight: bold;"/>
-            </span>
-            <span>{{ sumText }}:
-              <count-to
-                :start-val="0"
-                :end-val="sum"
-                :duration="2000"
-                prefix="HK$"
-                style="font-weight: bold; font-size: 16px"/>
-            </span>
-          </el-tag>
+          <el-row>
+            <el-form :inline="true" class="filter-form" @submit.native.prevent>
+              <el-form-item v-if="activeName === '1' && selectData.length > 0">
+                <el-button type="primary" size="small" @click="batchPay">批量外发</el-button>
+              </el-form-item>
+              <el-form-item label="" prop="wildcard">
+                <el-input
+                  v-model="wildcard"
+                  clearable
+                  placeholder="搜索(保单号 | 投保人)"
+                  @input="search">
+                  <i slot="prefix" class="el-input__icon el-icon-search"/>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="" prop="dateRange">
+                <el-date-picker
+                  v-model="dateRange"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  value-format="timestamp"
+                  @change="onDateRangeChange"/>
+              </el-form-item>
+              <el-form-item label="切换排序">
+                <el-switch v-model="mode" @change="onSwitchChange"/>
+              </el-form-item>
+            </el-form>
+            <el-tag class="tag-sum" type="success">
+              <i class="el-icon-info" style="margin-right: 5px"/>
+              <span style="margin-right: 30px;">{{ selectTotalText }}:
+                <count-to
+                  :start-val="0"
+                  :end-val="selectTotal"
+                  :duration="2000"
+                  suffix="条"
+                  style="font-weight: bold;"/>
+              </span>
+              <span style="margin-right: 30px">{{ selectSumText }}:
+                <count-to
+                  :start-val="0"
+                  :end-val="selectSum"
+                  :duration="2000"
+                  prefix="HK$"
+                  style="font-weight: bold;"/>
+              </span>
+              <span style="margin-right: 30px">{{ totalText }}:
+                <count-to
+                  :start-val="0"
+                  :end-val="commissionCredit.total"
+                  :duration="2000"
+                  suffix="条"
+                  style="font-weight: bold;"/>
+              </span>
+              <span>{{ sumText }}:
+                <count-to
+                  :start-val="0"
+                  :end-val="sum"
+                  :duration="2000"
+                  prefix="HK$"
+                  style="font-weight: bold; font-size: 16px"/>
+              </span>
+            </el-tag>
+          </el-row>
           <el-table
             v-loading="loading"
-            :row-key="getRandom"
             :height="height"
             :data="commissionCredit.list"
             :row-class-name="tableRowClassName"
@@ -132,7 +133,8 @@
                 <edit
                   v-if="scope.row.status === 0"
                   :commission-credit="scope.row"
-                  :active-name="activeName"/>
+                  :active-name="activeName"
+                  :key="scope.row.id"/>
                 <audit v-if="scope.row.status === 1" :commission-credit="scope.row" :active-name="activeName"/>
               </template>
             </el-table-column>
@@ -159,9 +161,9 @@ import edit from './edit'
 import audit from './audit'
 import Cookies from 'js-cookie'
 import CountTo from 'vue-count-to'
+import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
 const currencyFormatter = require('currency-formatter')
 const _ = require('lodash')
-
 export default {
   name: 'CommissionCredit',
   components: {
@@ -173,7 +175,7 @@ export default {
   data() {
     return {
       mode: false,
-      dateRange: '',
+      dateRange: [getCurrentYearFirst(), getCurrentYearLast()],
       totalText: '',
       sumText: '',
       selectTotalText: '',
@@ -232,6 +234,9 @@ export default {
     getCommissionCreditList(params) {
       if (this.dateRange) {
         this.queryCondition = _.assign(this.queryCondition, { geDueDate: this.dateRange[0], leDueDate: this.dateRange[1] })
+      } else {
+        delete this.queryCondition.geDueDate
+        delete this.queryCondition.leDueDate
       }
       this.queryCondition = _.assign(this.queryCondition, params)
       this.$store.dispatch('commission/FetchCommissionCredit', this.queryCondition)
@@ -343,36 +348,6 @@ export default {
           }
         }
       })
-      //   .then(() => {
-      //   this.$api.commission.CommissionCreditClear(ids).then(_ => {
-      //     this.$message({
-      //       message: '操作成功',
-      //       type: 'success',
-      //       duration: 5 * 1000
-      //     })
-      //     this.$store.dispatch('commission/FetchCommissionCredit', {status: this.activeName})
-      //     this.dialogVisible = false
-      //   })
-      // }).catch(() => {
-      //   this.$api.commission.CommissionCreditReject(ids).then(_ => {
-      //     this.$message({
-      //       message: '操作成功',
-      //       type: 'success',
-      //       duration: 5 * 1000
-      //     })
-      //     this.$store.dispatch('commission/FetchCommissionCredit', {status: this.activeName})
-      //     this.dialogVisible = false
-      //   })
-      // })
-      // // this.$api.commission.CommissionCreditClear(this.commissionCredit.id).then(_ => {
-      //   this.$message({
-      //     message: '操作成功',
-      //     type: 'success',
-      //     duration: 5 * 1000
-      //   })
-      //   this.$store.dispatch('commission/FetchCommissionCredit', {status: this.activeName})
-      //   this.dialogVisible = false
-      // })
     }
   }
 
@@ -396,8 +371,10 @@ export default {
     .el-table tr td:first-child {
       padding-left: 0px;
     }
-    .search-input {
+    .filter-form {
       margin-top: 0;
+      margin-left: 0;
+      display: block;
     }
   }
 
@@ -405,8 +382,10 @@ export default {
     margin-bottom: 10px;
     width: 100%;
     font-size: 14px;
-    line-height: 35px;
-    height: 35px;
+    line-height: 40px;
+    height: 40px;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
   .el-table .selected-row {
     background: #e1eedc;

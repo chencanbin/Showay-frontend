@@ -15,26 +15,26 @@
       :title="'佣金策略表( ' + title + ' )'"
       class="dialog-body">
       <!--<el-button icon="el-icon-plus" type="text" @click="addNewRow">添加新行</el-button>-->
-      <div slot="title" class="title" style="position: relative">
-        <div class="el-dialog__title" style="display: inline-block;">{{ title + ' 佣金策略表' }}</div>
-        <span style="color: #999; font-family: YouYuan; margin-left: 10px">{{ editStatus }}</span>
-        <el-form style="width: 400px; height:45px; position: absolute; display: block; right: 62px; top: 30px;" @submit.native.prevent>
-          <el-form-item>
-            <el-input
-              ref="search"
-              v-model="wildcard"
-              placeholder="请输入搜索内容"
-              @input="search">
-              <div v-if="wildcard" slot="suffix" style="margin-top: 10px">
-                {{ currentCount }} / {{ matchCount }}
-              </div>
-              <i slot="prefix" class="el-input__icon el-icon-search"/>
-              <el-button slot="append" icon="el-icon-arrow-down" @click="searchNext"/>
-              <el-button slot="append" icon="el-icon-arrow-up" @click="searchLast"/>
-            </el-input>
-          </el-form-item>
-        </el-form>
-      </div>
+      <el-row slot="title" class="title" style="position: relative">
+        <el-col :xs="24" :sm="24" :lg="8" style="height: 40px;line-height: 40px;">
+          <span style="font-size: 16px">{{ title + ' 佣金策略表' }}</span>
+          <span style="color: #999; font-family: YouYuan; margin-left: 10px">{{ editStatus }}</span>
+        </el-col>
+        <el-col :xs="24" :sm="24" :lg="{span: 8, offset: 7}">
+          <el-input
+            ref="search"
+            v-model="wildcard"
+            placeholder="请输入搜索内容"
+            @input="search">
+            <div v-if="wildcard" slot="suffix" style="margin-top: 10px">
+              {{ currentCount }} / {{ matchCount }}
+            </div>
+            <i slot="prefix" class="el-input__icon el-icon-search"/>
+            <el-button slot="append" icon="el-icon-arrow-down" @click="searchNext"/>
+            <el-button slot="append" icon="el-icon-arrow-up" @click="searchLast"/>
+          </el-input>
+        </el-col>
+      </el-row>
       <el-tabs v-model="activeName" type="border-card" tab-position="bottom" @tab-click="handleTabClick">
         <el-tab-pane label="基础佣金表" name="basic">
           <hot-table v-loading="loading" ref="basicTable" :settings="settings"/>
@@ -162,6 +162,16 @@ export default {
         startCols: 21,
         startRows: 20,
         search: true,
+        currentRowClassName: 'currentRow',
+        currentColClassName: 'currentColumn',
+        renderer: function(instance, TD, row, col, prop, value) {
+          if (row % 2 === 0) {
+            TD.style.backgroundColor = '#e1eedc'
+          } else {
+            TD.style.backgroundColor = '#fafafa'
+          }
+          TD.innerHTML = value
+        },
         height: window.screen.height - 330,
         stretchH: 'all',
         autoWrapRow: false,
@@ -269,6 +279,14 @@ export default {
         rowHeaderWidth: 65,
         fixedColumnsLeft: 1,
         columnHeaderHeight: 45,
+        renderer: function(instance, TD, row, col, prop, value) {
+          if (row % 2 === 0) {
+            TD.style.backgroundColor = '#e1eedc'
+          } else {
+            TD.style.backgroundColor = '#fafafa'
+          }
+          TD.innerHTML = value
+        },
         contextMenu: {
           items: {
             'override': { // Own custom option
@@ -406,11 +424,21 @@ export default {
       } else {
         td.innerText = _.toNumber(value).toFixed(2) + '%'
       }
+      if (row % 2 === 0) {
+        td.style.backgroundColor = '#e1eedc'
+      } else {
+        td.style.backgroundColor = '#fafafa'
+      }
       return td
     },
     textFormatter(instance, td, row, col, prop, value, cellProperties) {
       td.style.cssText = 'text-align: center; word-break: keep-all;'
       td.innerText = value
+      if (row % 2 === 0) {
+        td.style.backgroundColor = '#e1eedc'
+      } else {
+        td.style.backgroundColor = '#fafafa'
+      }
       return td
     },
     initForm() {
@@ -434,6 +462,7 @@ export default {
           result.push([item.row, item.column, item.value.basic])
         })
         this.basicHotInstance.setDataAtRowProp(result, 'loadData')
+        this.basicHotInstance.render()
         this.loading = false
       })
     },
@@ -445,19 +474,20 @@ export default {
           result.push([item.row, item.column, item.value.override])
         })
         this.overrideHotInstance.setDataAtRowProp(result, 'loadData')
+        this.overrideHotInstance.render()
         this.loading = false
       })
     },
     loadOverallData() {
       this.loading = true
       this.$api.commission.fetchCommissionList(this.id).then(res => {
-        console.log(res.data.list)
         const result = []
         res.data.list.forEach(item => {
           result.push([item.row, item.column, item.value.overall])
           // this.overallHotInstance.setDataAtCell(item.row, item.column, item.value.overall, 'loadData')
         })
         this.overallHotInstance.setDataAtRowProp(result, 'loadData')
+        this.overallHotInstance.render()
         this.loading = false
       })
     },
@@ -493,7 +523,6 @@ export default {
         this.dialogVisible = false
         this.$store.dispatch('commission/FetchCommissionTableList', {})
       }).catch(error => {
-        console.log(error)
         const data = error.data
         this.buttonLoading = false
         if (data && data.coordinate) {
@@ -552,7 +581,10 @@ export default {
         hotInstance.selectRows(this.searchResult[this.matchCount - 1].row)
       } else {
         this.currentCount++
-        const row = this.searchResult[this.currentCount - 0].row
+        const row = this.searchResult[this.currentCount - 1].row
+        if (!row) {
+          return
+        }
         hotInstance.toVisualRow(row)
         hotInstance.selectRows(row)
       }
@@ -571,7 +603,7 @@ export default {
         hotInstance.selectRows(this.searchResult[0].row)
       } else {
         this.currentCount--
-        const row = this.searchResult[this.currentCount - 0].row
+        const row = this.searchResult[this.currentCount].row
         hotInstance.toVisualRow(row)
         hotInstance.selectRows(row)
       }
@@ -608,16 +640,19 @@ export default {
   .handsontable tbody th.ht__highlight, .handsontable thead th.ht__highlight {
     background-color: #fafafa;
   }
-  .handsontable tr:nth-child(odd) > td {
-    background: #e1eedc!important;
+  .currentRow {
+    background-color: #00aa72 !important;
   }
+  /*.handsontable tr:nth-child(odd) td {*/
+    /*background: #e1eedc;*/
+  /*}*/
 
-  .handsontable tr:nth-child(odd):hover > td {
-    background: #e1eedc;
-  }
-  .handsontable tr:nth-child(even):hover > td {
-    background-color: #fafafa;
-  }
+  /*.handsontable tr:nth-child(odd):hover > td {*/
+    /*background: #e1eedc;*/
+  /*}*/
+  /*.handsontable tr:nth-child(even):hover > td {*/
+    /*background-color: #fafafa;*/
+  /*}*/
   .handsontable .searchClass {
     background: #71b7ee !important;
   }

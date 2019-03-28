@@ -9,6 +9,9 @@
       title="保险详情"
       width="75%">
       <el-form label-position="left" inline class="detail-form" style="padding-bottom: 20px">
+        <el-form-item label="内部编号:">
+          <span>{{ data.sn }}</span>
+        </el-form-item>
         <el-form-item label="渠道:">
           <span>{{ data.channel.name }}</span>
         </el-form-item>
@@ -21,6 +24,9 @@
         </el-form-item>
         <el-form-item label="保费:">
           <span>{{ numberFormat(data, data.premium) }}</span>
+        </el-form-item>
+        <el-form-item label="续费计划:">
+          <span>{{ formatterPremiumPlan(data.premiumPlan) }}</span>
         </el-form-item>
         <el-form-item label="生效时间:">
           <span>{{ getFormattedDate(data.issueDate) }}</span>
@@ -42,8 +48,12 @@
 
 <script type="text/ecmascript-6">
 import { parseTime } from '@/utils'
+import { premiumPlan } from '@/utils/constant'
 import elDragDialog from '@/directive/el-dragDialog'
+import Cookies from 'js-cookie'
 const currencyFormatter = require('currency-formatter')
+const _ = require('lodash')
+
 export default {
   directives: { elDragDialog },
   props: {
@@ -56,7 +66,8 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      language: Cookies.get('language') || 'zh-CN'
     }
   },
   methods: {
@@ -68,6 +79,17 @@ export default {
     },
     getFormattedDate(value) {
       return parseTime(value, '{y}-{m}-{d}')
+    },
+    // 格式化保单状态
+    formatterPremiumPlan(id) {
+      let result = ''
+      _.forEach(premiumPlan, item => {
+        if (id === item.id) {
+          result = item[this.language]
+          return
+        }
+      })
+      return result
     },
     handleClose() {
       this.dialogVisible = false
@@ -82,12 +104,13 @@ export default {
     .detail-form {
       font-size: 0;
       .el-form-item {
-        &:first-child {
-          width: 30%;
-        }
-        margin-right: 0;
-        margin-bottom: 0;
-        width: 17%;
+        /*&:first-child {*/
+          /*width: 30%;*/
+        /*}*/
+        /*margin-right: 0;*/
+        /*margin-bottom: 0;*/
+        /*width: 17%;*/
+        margin-right: 50px;
         label {
           color: #99a9bf;
         }

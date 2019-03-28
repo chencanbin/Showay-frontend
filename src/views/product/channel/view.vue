@@ -18,15 +18,21 @@
           </template>
         </el-table-column>
       </el-table>
+      <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </div>
   </el-dialog>
 </template>
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import pagination from '@/components/Pagination'
+
 const _ = require('lodash')
 export default {
   name: 'CommissionView',
+  components: {
+    pagination
+  },
   data() {
     return {
       activeName: 'basic',
@@ -34,7 +40,12 @@ export default {
       dialogVisible: false,
       id: '',
       data: [],
-      columnYear: []
+      total: 0,
+      columnYear: [],
+      listQuery: {
+        page: 1,
+        limit: 50
+      }
     }
   },
   computed: {
@@ -42,8 +53,32 @@ export default {
   },
   methods: {
     openDialog(id) {
-      this.$api.channel.previewChannelCommission(id).then(res => {
+      this.id = id
+      console.log(this.id)
+      // this.$api.channel.previewChannelCommission(id).then(res => {
+      //   this.data = res.data.list
+      //   this.total = res.data.total
+      //   this.id = id
+      //   const conditionLengthArray = []
+      //   this.columnYear = []
+      //   _.forEach(res.data.list, item => {
+      //     conditionLengthArray.push(item.conditions.length)
+      //   })
+      //   _.forEach(_.range(1, _.max(conditionLengthArray) + 1), item => {
+      //     if (item > 15) {
+      //       this.columnYear.push('15年之后')
+      //     } else {
+      //       this.columnYear.push('第' + item + '年')
+      //     }
+      //   })
+      //   this.dialogVisible = true
+      // })
+      this.getViewData(this.id)
+    },
+    getViewData(id, params) {
+      this.$api.channel.previewChannelCommission(id, params).then(res => {
         this.data = res.data.list
+        this.total = res.data.total
         this.id = id
         const conditionLengthArray = []
         this.columnYear = []
@@ -73,12 +108,26 @@ export default {
     },
     exportExcel() {
       window.location.href = process.env.BASE_API + `/commissionTable/${this.id}/export`
+    },
+    updatePage(val) {
+      this.listQuery.page = val
+    },
+    updateLimit(val) {
+      this.listQuery.limit = val
+    },
+    pagination(pageObj) {
+      const offset = (pageObj.page - 1) * pageObj.limit
+      const max = pageObj.limit
+      const params = { offset, max, role: 2 }
+      this.getViewData(this.id, params)
     }
   }
 }
 </script>
-<style lang="scss" rel="stylesheet/scss">
-  #commissionTable .el-dialog__body {
-    padding: 5px 20px;
+<style lang="scss" rel="stylesheet/scss" type="text/scss">
+  #channelCommissionPreviewTable {
+    .el-dialog__body {
+      padding: 0
+    }
   }
 </style>

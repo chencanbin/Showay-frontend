@@ -3,7 +3,7 @@
     ref="input"
     :value="formatValue"
     :placeholder="placeholder"
-    @change="onChange"
+    @input="onChange"
     @focus="selectAll"
     @blur="onBlur"/>
 </template>
@@ -14,8 +14,8 @@ export default {
   name: 'CurrencyInput',
   props: {
     value: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
       desc: '数值'
     },
     symbol: {
@@ -50,11 +50,14 @@ export default {
   },
   methods: {
     onChange: function(value) {
-      this.currencyValue = accounting.unformat(value)
-      this.$emit('input', this.currencyValue)
+      if (!isNaN(value)) {
+        this.currencyValue = value
+      }
     },
-    onBlur: function() {
+    onBlur: function(event) {
+      this.currencyValue = accounting.unformat(this.currencyValue)
       this.focused = false
+      this.$emit('input', this.currencyValue)
     },
     selectAll: function(event) {
       this.focused = true

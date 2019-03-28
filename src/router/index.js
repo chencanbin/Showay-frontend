@@ -153,6 +153,19 @@ export const asyncRouterMap = [
       }
     ]
   },
+  {
+    path: '/audit',
+    component: Layout,
+    redirect: 'audit',
+    children: [
+      {
+        path: '',
+        name: '保单审计',
+        component: () => import('@/views/audit/index'),
+        meta: { title: '保单审计', icon: 'audit', noCache: true }
+      }
+    ]
+  },
   // {
   //   path: '/channel',
   //   component: Layout,

@@ -4,6 +4,7 @@ const company = {
   namespaced: true,
   state: {
     commissionTableList: [],
+    commissionTableId: '',
     commissionTableDialogVisible: false,
     commissionCredit: {},
     mergedPayment: {},
@@ -13,8 +14,9 @@ const company = {
     SET_COMMISSION_TABLE_LIST: (state, commissionTableList) => {
       state.commissionTableList = commissionTableList
     },
-    SHOW_COMMISSION_TABLE_DIALOG_VISIBLE: (state) => {
+    SHOW_COMMISSION_TABLE_DIALOG_VISIBLE: (state, id) => {
       state.commissionTableDialogVisible = true
+      state.commissionTableId = id
     },
     HIDE_COMMISSION_TABLE_DIALOG_VISIBLE: (state) => {
       state.commissionTableDialogVisible = false

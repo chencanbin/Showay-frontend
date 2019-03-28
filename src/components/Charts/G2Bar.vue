@@ -44,22 +44,10 @@ export default {
         padding: [20, 30, 30, 40]
       })
       this.chart.source(this.charData)
-      this.chart.scale('runCount', {
-        min: 0
+      this.chart.scale('sales', {
+        tickInterval: 20
       })
-      this.chart.scale('time', {
-        range: [0, 1]
-      })
-      this.chart.tooltip({
-        crosshairs: {
-          type: 'line'
-        }
-      })
-      this.chart.line().position('time*runCount')
-      this.chart.point().position('time*runCount').size(4).shape('circle').style({
-        stroke: '#fff',
-        lineWidth: 1
-      })
+      this.chart.interval().position('channel*sales')
       this.chart.render()
     }
   }

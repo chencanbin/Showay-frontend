@@ -6,6 +6,7 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       title="结清佣金"
+      top="50px"
       width="600px">
       <el-form ref="clear" :model="clear" label-width="100px">
         <el-form-item label="支票号码" prop="chequeNumber">
@@ -39,12 +40,6 @@ export default {
   props: {
     id: {
       type: Number,
-      default() {
-        return 0
-      }
-    },
-    activeName: {
-      type: String,
       default() {
         return 0
       }
@@ -90,7 +85,6 @@ export default {
     },
     setChequeCopy(key) {
       this.clear.chequeCopy = key
-      console.log(key)
     }
   }
 }

@@ -6,11 +6,11 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑保单"
+      top="50px"
       width="800px">
       <el-form
         ref="insurancePolicy"
         :model="insurancePolicy"
-        :rules="rule"
         inline
         class="insurance-policy-form"
         label-width="80px">
@@ -93,6 +93,11 @@
         <el-form-item label="保额:" prop="premium">
           <currency-input v-model="insurancePolicy.amountInsured" :symbol="currency" placeholder="请输入保额"/>
         </el-form-item>
+        <el-form-item label="续保计划:" prop="premiumPlan">
+          <el-select v-model="insurancePolicy.premiumPlan" placeholder="请选择续保计划" style="width: 100%">
+            <el-option v-for="item in premiumPlan" :key="item.id" :value="item.id" :label="item[language]"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="渠道:" prop="channel">
           <el-select
             v-model="insurancePolicy.channel.id"
@@ -128,15 +133,34 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品:" prop="product" style="width: 100%">
+        <el-form-item label="公司:" prop="company.id">
+          <el-select
+            :remote-method="searchCompany"
+            :loading="loading"
+            v-model="insurancePolicy.company.id"
+            placeholder="请选择公司"
+            clearable
+            filterable
+            remote
+            style="width: 100%"
+            @focus="onCompanyFocus">
+            <el-option
+              v-for="item in companies"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="产品:" prop="product" style="width: 124%;">
           <el-select
             v-model="insurancePolicy.product.id"
             :loading="loading"
             :remote-method="searchProduct"
             placeholder="请输入产品关键词"
             filterable
+            clearable
             remote
-            style="width: 125%"
+            style="width: 100%"
             @focus="onProductFocus"
           >
             <el-option
@@ -159,7 +183,7 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapState } from 'vuex'
-import { policyStatus } from '@/utils/constant'
+import { policyStatus, premiumPlan } from '@/utils/constant'
 import elDragDialog from '@/directive/el-dragDialog'
 import currencyInput from '@/components/CurrencyInput'
 import { currencyArray } from '@/utils/constant'
@@ -189,6 +213,7 @@ export default {
       products: [],
       channels: [],
       currencyArray,
+      premiumPlan,
       insurancePolicy: {
         number: null,
         sn: null,
@@ -198,6 +223,9 @@ export default {
           id: null
         },
         beneficiary: {
+          id: null
+        },
+        company: {
           id: null
         },
         premium: 0,
@@ -214,13 +242,9 @@ export default {
         },
         issueDate: null
       },
-      rule: {
-        name: [{ required: true, message: '请输入客户姓名', trigger: 'blur' }],
-        idNumber: [{ required: true, message: '请输入证件号', trigger: 'blur' }],
-        email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]
-      },
       queryProduct: {
         name: '',
+        company: '',
         offset: 0,
         max: 50
       }
@@ -229,7 +253,8 @@ export default {
   computed: {
     ...mapGetters(['loading']),
     ...mapState({
-      client: state => state.client.clientList
+      client: state => state.client.clientList,
+      companies: state => state.company.companyList.list
     }),
     currency() {
       if (this.insurancePolicy.currency === 0) {
@@ -249,13 +274,16 @@ export default {
       // this.getChannel()
       // this.getAgents()
       this.getClient()
+      this.getCompanies()
       this.insurancePolicy = _.cloneDeep(this.data)
       this.products = [this.insurancePolicy.product]
       this.agents = [this.insurancePolicy.agent]
       this.channels = [this.insurancePolicy.channel]
-      console.log(this.channels)
       this.insurancePolicy.currency = this.getCurrencyKey(this.data.currency)
       this.dialogVisible = true
+    },
+    getCompanies(params) {
+      this.$store.dispatch('company/FetchCompanyList', params)
     },
     getClient(params) {
       this.$store.dispatch('client/FetchClientList', { params })
@@ -301,6 +329,7 @@ export default {
 
     getProducts() {
       this.products = []
+      this.queryProduct.company = this.insurancePolicy.company.id
       this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
       })
@@ -313,7 +342,12 @@ export default {
       this.queryProduct.name = ''
       this.getProducts()
     },
-
+    searchCompany(query) {
+      this.getCompanies({ wildcard: query })
+    },
+    onCompanyFocus() {
+      this.getCompanies()
+    },
     handleClose() {
       this.$refs['insurancePolicy'].resetFields()
       this.dialogVisible = false

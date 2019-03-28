@@ -5,12 +5,12 @@
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="添加客户资料"
+      title="添加保单"
+      top="50px"
       width="70%">
       <el-form
         ref="insurancePolicy"
         :model="insurancePolicy"
-        :rules="rule"
         inline
         class="insurance-policy-form"
         label-width="80px">
@@ -78,6 +78,11 @@
           <currency-input v-model="insurancePolicy.amountInsured" :symbol="currency" placeholder="请输入保额" />
           <!--<el-input v-model="insurancePolicy.amountInsured" placeholder="请输入保额" />-->
         </el-form-item>
+        <el-form-item label="续保计划:" prop="premiumPlan">
+          <el-select v-model="insurancePolicy.premiumPlan" placeholder="请选择续保计划" style="width: 100%">
+            <el-option v-for="item in premiumPlan" :key="item.id" :value="item.id" :label="item[language]"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="渠道:" prop="channel.id">
           <el-select v-model="insurancePolicy.channel.id" placeholder="请选择渠道" filterable style="width: 100%">
             <el-option
@@ -96,7 +101,25 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品:" prop="product.id" style="width: 100%">
+        <el-form-item label="公司:" prop="company.id">
+          <el-select
+            :remote-method="searchCompany"
+            :loading="loading"
+            v-model="insurancePolicy.company.id"
+            placeholder="请选择公司"
+            filterable
+            remote
+            clearable
+            style="width: 100%"
+            @focus="onCompanyFocus">
+            <el-option
+              v-for="item in companies"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="产品:" prop="product.id" style="width: 124%;">
           <el-select
             v-model="insurancePolicy.product.id"
             :remote-method="searchProduct"
@@ -104,7 +127,8 @@
             placeholder="请输入产品名或产品编号"
             filterable
             remote
-            style="width: 125%"
+            clearable
+            style="width: 100%"
             @focus="onProductFocus">
             <el-option
               v-for="item in products"
@@ -128,7 +152,7 @@
 import { mapGetters, mapState } from 'vuex'
 import { policyStatus } from '@/utils/constant'
 import elDragDialog from '@/directive/el-dragDialog'
-import { currencyArray } from '@/utils/constant'
+import { currencyArray, premiumPlan } from '@/utils/constant'
 import Cookies from 'js-cookie'
 import currencyInput from '@/components/CurrencyInput'
 const _ = require('lodash')
@@ -147,10 +171,12 @@ export default {
       products: [],
       queryProduct: {
         name: '',
+        company: '',
         offset: 0,
         max: 50
       },
       currencyArray,
+      premiumPlan,
       insurancePolicy: {
         number: null,
         sn: null,
@@ -163,8 +189,12 @@ export default {
           id: null
         },
         currency: null,
+        premiumPlan: null,
         premium: null,
         amountInsured: null,
+        company: {
+          id: ''
+        },
         channel: {
           id: null
         },
@@ -175,11 +205,6 @@ export default {
           id: null
         },
         issueDate: null
-      },
-      rule: {
-        name: [{ required: true, message: '请输入客户姓名', trigger: 'blur' }],
-        idNumber: [{ required: true, message: '请输入证件号', trigger: 'blur' }],
-        email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]
       }
     }
   },
@@ -187,7 +212,8 @@ export default {
     ...mapGetters(['loading']),
     ...mapState({
       client: state => state.client.clientList,
-      channels: state => state.user.users
+      channels: state => state.user.users,
+      companies: state => state.company.companyList.list
     }),
     currency() {
       if (this.insurancePolicy.currency === 0) {
@@ -208,6 +234,10 @@ export default {
       this.getClient()
       this.getChannel()
       this.getAgents()
+      this.getCompanies()
+    },
+    getCompanies(params) {
+      this.$store.dispatch('company/FetchCompanyList', params)
     },
     getClient(params) {
       this.$store.dispatch('client/FetchClientList', { params })
@@ -229,6 +259,7 @@ export default {
 
     getProducts() {
       this.products = []
+      this.queryProduct.company = this.insurancePolicy.company.id
       this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
       })
@@ -240,6 +271,12 @@ export default {
     onProductFocus() {
       this.queryProduct.name = ''
       this.getProducts()
+    },
+    searchCompany(query) {
+      this.getCompanies({ wildcard: query })
+    },
+    onCompanyFocus() {
+      this.getCompanies()
     },
     handleClose() {
       this.$confirm('窗口即将关闭, 是否放弃编辑?', '提示', {

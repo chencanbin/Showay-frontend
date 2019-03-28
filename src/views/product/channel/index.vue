@@ -15,6 +15,7 @@
       <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
         id="channelTable"
+        ref="channelTable"
         :height="height"
         :data="users.list"
         :expand-row-keys="expandKeys"
@@ -44,7 +45,6 @@
                         type="text"
                         size="mini"
                         icon="el-icon-view"
-                        style="margin-right: 5px"
                         @click="handleView(item.id)">
                         查看
                       </el-button>
@@ -95,8 +95,12 @@
           :label="$t('user.table_header.create_time')"
           prop="creationDay"
           min-width="100px"/>
-        <el-table-column :label="$t('user.table_header.action')">
+        <el-table-column :label="$t('user.table_header.action')" min-width="100px">
           <template slot-scope="scope">
+            <el-button type="text" size="mini" style="margin-right: 10px" @click="toggleChannelPolicy(scope.row)">
+              <svg-icon icon-class="commissionPolicy"/>
+              渠道策略
+            </el-button>
             <edit v-if="!scope.row.isBuiltin" :user="scope.row"/>
             <el-button
               v-if="!scope.row.isBuiltin"
@@ -139,11 +143,13 @@ export default {
   data() {
     return {
       height: window.screen.height - 300,
+      wildcard: '',
       listQuery: {
         page: 1,
         limit: 50
       },
-      expandKeys: []
+      expandKeys: [],
+      showExpandRow: false
     }
   },
   computed: {
@@ -230,6 +236,15 @@ export default {
         // 只展开当前选项
         expandedRows.shift()
       }
+    },
+    toggleChannelPolicy(row) {
+      if (this.expandKeys[0] && row.id !== this.expandKeys[0]) {
+        this.showExpandRow = true
+      } else {
+        this.showExpandRow = !this.showExpandRow
+      }
+      this.$refs.channelTable.toggleRowExpansion(row, this.showExpandRow)
+      console.log(this.expandKeys[0])
     },
     handleView(id) {
       this.$refs.channelCommissionView.openDialog(id)

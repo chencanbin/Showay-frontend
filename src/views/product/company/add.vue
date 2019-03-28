@@ -1,5 +1,5 @@
 <template>
-  <el-col span.number="24" class="el-table-add-col">
+  <el-col :span="24" class="el-table-add-col">
     <div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>
     <el-dialog
       v-el-drag-dialog
@@ -16,6 +16,10 @@
         </el-form-item>
         <el-form-item label="公司缩写" prop="acronym">
           <el-input v-model="company.acronym"/>
+        </el-form-item>
+        <el-form-item label="二级供应商" prop="secondary">
+          <el-switch
+            v-model="company.secondary"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -61,6 +65,7 @@ export default {
         if (valid) {
           const data = { acronym: '', localizedNames: [] }
           data.acronym = this.company.acronym
+          data.secondary = this.company.secondary
           data.localizedNames.push({ name: this.company.en, locale: 'en' })
           data.localizedNames.push({ name: this.company.zhCN, locale: 'zh_CN' })
           this.$api.company.addCompany(data).then(_ => {

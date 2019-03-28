@@ -18,29 +18,6 @@
         :height="height"
         :data="insurancePolicy.list"
         stripe>
-        <!--
-        <el-table-column type="expand">
-          <template slot-scope="scope">
-            <el-form label-position="left" inline class="policy-table-expand">
-              <el-form-item label="渠道:">
-                <span>{{ scope.row.channel.name }}</span>
-              </el-form-item>
-              <el-form-item label="签单员:">
-                <span>{{ scope.row.agent.name }}</span>
-              </el-form-item>
-              <el-form-item label="保额:">
-                <span>{{ numberFormat(scope.row, scope.row.amountInsured) }}</span>
-              </el-form-item>
-              <el-form-item label="保费:">
-                <span>{{ numberFormat(scope.row, scope.row.premium) }}</span>
-              </el-form-item>
-              <el-form-item label="生效时间:">
-                <span>{{ getFormattedDate(scope.row.issueDate) }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
--->
         <el-table-column
           prop="number"
           label="保单号"
@@ -50,20 +27,17 @@
           :formatter="dateFormat"
           prop="submitDate"
           label="申请日期"
-          min-width="100"/>
-        <el-table-column
-          :formatter="formatterPolicyStatus"
-          prop="policyStatus"
-          label="保单状态"
-          min-width="100"/>
+          min-width="150"/>
         <el-table-column
           prop="applicant.name"
           show-overflow-tooltip
-          label="申请人"/>
+          label="申请人"
+          min-width="150"/>
         <el-table-column
           prop="beneficiary.name"
           show-overflow-tooltip
-          label="受保人"/>
+          label="受保人"
+          min-width="150"/>
         <el-table-column
           prop="company.name"
           min-width="150"
@@ -74,27 +48,12 @@
           min-width="200"
           show-overflow-tooltip
           label="产品"/>
-
-        <el-table-column label="操作" width="240">
+        <el-table-column label="操作" width="150">
           <template slot-scope="scope">
-            <detail :data="scope.row"/>
-            <edit :data="scope.row"/>
-            <el-button
-              type="text"
-              size="mini"
-              icon="el-icon-refresh"
-              @click="handleReset(scope.row.id)">重置
-            </el-button>
-            <el-button
-              type="text"
-              size="mini"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.$index, scope.row)">删除
-            </el-button>
+            <trace :number="scope.row.number"/>
           </template>
         </el-table-column>
       </el-table>
-      <add/>
     </basic-container>
   </div>
 </template>
@@ -104,23 +63,19 @@ import { parseTime } from '@/utils'
 import { policyStatus } from '@/utils/constant'
 import Cookies from 'js-cookie'
 import { mapGetters, mapState } from 'vuex'
-import add from './add'
-import edit from './edit'
-import detail from './detail'
 import pagination from '@/components/Pagination'
+import trace from './trace'
 const _ = require('lodash')
 const currencyFormatter = require('currency-formatter')
 export default {
   name: 'InsurancePolicy',
   components: {
-    add,
-    edit,
-    detail,
-    pagination
+    pagination,
+    trace
   },
   data() {
     return {
-      height: window.screen.height - 315,
+      height: window.screen.height - 250,
       wildcard: '',
       listQuery: {
         page: 1,
@@ -147,7 +102,6 @@ export default {
     }, 500),
     // 获取保单列表
     getInsurancePolicyList(params) {
-      params = Object.assign({ sort: 'sn', order: 'desc', ...params })
       this.$store.dispatch('client/FetchInsurancePolicyList', { params })
     },
 
@@ -163,38 +117,12 @@ export default {
       return currencyFormatter.format(value, { code: row.currency })
     },
     // 处理删除保单事件
-    handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该保单, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$api.client.deleteInsurancePolicy(row.id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getInsurancePolicyList()
-        })
+    handleAudit(index, row) {
+      this.$api.product.traceInsurancePolicy(row.number).then(res => {
+        console.log(res)
       })
     },
-    handleReset(id) {
-      this.$confirm('此操作将重置保单, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$api.client.resetInsurancePolicy(id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getInsurancePolicyList()
-        })
-      })
-    },
+
     // 格式化保单状态
     formatterPolicyStatus(row, column) {
       const id = row[column.property]

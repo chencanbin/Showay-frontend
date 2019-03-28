@@ -134,3 +134,58 @@ export const currencyArray = [
     id: 2,
     desc: 'CNY'
   }]
+
+export const insurancePolicyTrace = [
+  { id: 0, 'zh-TW': '創建保單', 'zh-CN': '创建保单', 'en': 'Created' },
+  { id: 1, 'zh-TW': '修改保單', 'zh-CN': '修改保单', 'en': 'Modified' },
+  { id: 2, 'zh-TW': '保單已結清', 'zh-CN': '保单已结清', 'en': 'Clear' },
+  { id: 3, 'zh-TW': '刪除保單', 'zh-CN': '删除保单', 'en': 'Deleted' },
+  { id: 4, 'zh-TW': '生成待收帳記錄', 'zh-CN': '生成待收帐记录', 'en': 'Credit Generated' },
+  { id: 5, 'zh-TW': '重新生成待收帳記錄', 'zh-CN': '重新生成待收帐记录', 'en': 'Credit Regenerated' },
+  { id: 6, 'zh-TW': '修改外發賬單', 'zh-CN': '修改外发账单', 'en': 'Credit Modified' },
+  { id: 7, 'zh-TW': '支付外發賬單', 'zh-CN': '支付外发账单', 'en': 'Credit Payable' },
+  { id: 8, 'zh-TW': '生成待發放記錄', 'zh-CN': '生成待发放记录', 'en': 'Payment Generated' },
+  { id: 9, 'zh-TW': '重新生成待發放記錄', 'zh-CN': '重新生成待发放记录', 'en': 'Payment Regenerated' },
+  { id: 10, 'zh-TW': '待發賬單已合併', 'zh-CN': '待发账单已合并', 'en': 'Payment Merged' },
+  { id: 11, 'zh-TW': '待發賬單審核通過', 'zh-CN': '待发账单审核通过', 'en': 'Payment Approved' },
+  { id: 12, 'zh-TW': '待發賬單審核不通過', 'zh-CN': '待发账单审核不通过', 'en': 'Payment Rejected' },
+  { id: 13, 'zh-TW': '待發賬單已結清', 'zh-CN': '待发账单已结清', 'en': 'Payment Clear' }
+]
+
+export const premiumPlan = [
+  {
+    id: 0,
+    'zh-TW': 'Annual',
+    'zh-CN': 'Annual',
+    'en': 'Annual'
+  },
+  {
+    id: 1,
+    'zh-TW': 'Regular',
+    'zh-CN': 'Regular',
+    'en': 'Regular'
+  },
+  {
+    id: 2,
+    'zh-TW': 'Single',
+    'zh-CN': 'Single',
+    'en': 'Single'
+  },
+  {
+    id: 3,
+    'zh-TW': 'AnnualRenewal',
+    'zh-CN': 'AnnualRenewal',
+    'en': 'AnnualRenewal'
+  },
+  {
+    id: 4,
+    'zh-TW': 'Quarterly',
+    'zh-CN': 'Quarterly',
+    'en': 'Quarterly'
+  },
+  {
+    id: 5,
+    'zh-TW': 'HalfYearly',
+    'zh-CN': 'HalfYearly',
+    'en': 'HalfYearly'
+  }]
