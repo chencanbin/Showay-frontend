@@ -177,9 +177,9 @@ export default {
 }
 .login-form {
   margin: 10px 0;
-  i {
-    color: #999;
-  }
+  /*i {*/
+    /*color: #999;*/
+  /*}*/
   .el-form-item__content {
     width: 100%;
   }

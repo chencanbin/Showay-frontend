@@ -39,7 +39,7 @@
           </el-input>
         </el-col>
         <el-col :span="8">
-          <div v-loading="loading" class="login-code">
+          <div v-loading="codeLoading" class="login-code">
             <img :src="code.src" class="login-code-img" @click="refreshCode">
           </div>
         </el-col>
@@ -48,7 +48,7 @@
     <!--<el-checkbox v-model="checked">记住账号</el-checkbox>-->
     <el-form-item>
       <el-button
-        :loading="loading"
+        :loading="loginLoading"
         type="primary"
         size="small"
         class="login-submit"
@@ -102,7 +102,9 @@ export default {
           { required: true, trigger: 'blur', validator: validateCode }
         ]
       },
-      passwordType: 'password'
+      passwordType: 'password',
+      codeLoading: false,
+      loginLoading: false
     }
   },
   computed: {
@@ -116,8 +118,12 @@ export default {
   },
   methods: {
     refreshCode() {
+      this.codeLoading = true
       this.$api.login.generateCode().then(res => {
+        this.codeLoading = false
         this.code.src = 'data:image/png;base64,' + res.data
+      }).catch(_ => {
+        this.codeLoading = false
       })
     },
     showPassword() {
@@ -130,12 +136,12 @@ export default {
         if (valid) {
           const userInfo = Object.assign({}, this.loginForm)
           userInfo.password = sha256(userInfo.password)
-          this.$store.commit('SHOW_LOADING')
+          this.loginLoading = true
           this.$store.dispatch('LoginByUsername', userInfo).then(_ => {
-            this.$store.commit('HIDE_LOADING')
             this.$router.push({ path: this.redirect || '/home' })
+            this.loginLoading = false
           }).catch(_ => {
-            this.$store.commit('HIDE_LOADING')
+            this.loginLoading = false
             this.loginForm.code = ''
             this.refreshCode()
           })

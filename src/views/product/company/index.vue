@@ -13,7 +13,12 @@
         </el-form-item>
       </el-form>
       <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
-      <el-table v-loading="loading" :data="companyList.list" :height="height" stripe>
+      <el-table
+        v-loading="companyLoading"
+        :data="companyList.list"
+        :height="height"
+        row-key="id"
+        stripe>
         <el-table-column prop="acronym" label="公司缩写" width="120px"/>
         <el-table-column prop="name" label="公司名" show-overflow-tooltip/>
         <el-table-column prop="level" label="级别" width="150px">
@@ -31,10 +36,11 @@
           <template slot-scope="scope">
             <edit :id="scope.row.id"/>
             <el-button
+              :loading="deleteLoading"
               size="mini"
               type="text"
               icon="el-icon-delete"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -45,7 +51,7 @@
 
 <script>
 import pagination from '@/components/Pagination'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
 import add from './add'
 import edit from './edit'
@@ -65,12 +71,16 @@ export default {
       listQuery: {
         page: 1,
         limit: 50
-      }
+      },
+      tableLoading: true,
+      deleteLoading: false
     }
   },
   computed: {
-    ...mapGetters(['loading']),
-    ...mapState({ companyList: state => state.company.companyList })
+    ...mapState({
+      companyList: state => state.company.companyList,
+      companyLoading: state => state.company.companyLoading
+    })
   },
   mounted() {
     this.getCompanyList()
@@ -79,20 +89,30 @@ export default {
     search: _.debounce(function() {
       this.getCompanyList({ wildcard: this.wildcard })
     }, 500),
-    handleDelete(index, row) {
+    handleDelete(row) {
       this.$confirm('此操作将永久删除该供应商, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$api.company.delCompany(row.id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getCompanyList()
-        })
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.company.delCompany(row.id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getCompanyList()
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       })
     },
     dateFormat(row, column) {

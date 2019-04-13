@@ -15,12 +15,12 @@ export default {
   name: '',
   data() {
     return {
-      afyp: []
+      afyp: [],
+      total: 0
     }
   },
   watch: {
     afyp: function(val, oldVal) { // 监听charData，当放生变化时，触发这个回调函数绘制图表
-      console.log('new: %s, old: %s', val, oldVal)
       this.drawChart(val)
     }
   },
@@ -34,39 +34,37 @@ export default {
     getAFYP(item, groupBy, max) {
       this.$api.statistics.fetchTop({ item, groupBy, max, other: '' }).then(res => {
         this.afyp = res.data
+        this.afyp.forEach(item => {
+          this.total += item.value
+        })
       })
     },
     drawChart: function() {
+      const total = this.total
+      console.log(total)
       this.chart && this.chart.destroy()
       this.chart = new G2.Chart({
         container: 'channelPie',
         forceFit: true,
         height: 300,
-        padding: [20, 30, 40, 40]
+        padding: [20, 40, 40, 40]
       })
       this.chart.source(this.afyp)
       this.chart.coord('theta')
       this.chart.scale('value', {
-        min: 0,
-        formatter: function(val) {
-          return accounting.formatMoney(val, '', 2)
-        }
+        min: 0
       })
       this.chart.tooltip({
         showTitle: false
       })
       this.chart.intervalStack().position('value').color('key').label('value', {
-        offset: -40,
-        // autoRotate: false,
-        textStyle: {
-          textAlign: 'center',
-          shadowBlur: 2,
-          shadowColor: 'rgba(0, 0, 0, .45)'
+        formatter: function formatter(val, item) {
+          return item.point.key + ': ' + (accounting.unformat(val) / total).toFixed(2) + '%'
         }
       }).tooltip('key*value', function(key, value) {
         return {
           name: key,
-          value: value
+          value: accounting.formatMoney(value, '', 2)
         }
       }).style({
         lineWidth: 1,

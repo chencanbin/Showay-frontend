@@ -33,11 +33,9 @@ export default function $axios(options) {
           config.params = {}
           config.url = url
         }
-        store.commit('SHOW_LOADING')
         return config
       },
       error => {
-        store.commit('HIDE_LOADING')
         // 请求错误时
         // 1. 判断请求超时
         if (error.code === 'ECONNABORTED' && error.message.indexOf('timeout') !== -1) {
@@ -88,11 +86,9 @@ export default function $axios(options) {
               type: 'error',
               duration: 5 * 1000
             })
-            store.commit('HIDE_LOADING')
             return reject(data)
           }
         } else {
-          store.commit('HIDE_LOADING')
           return data
         }
       },

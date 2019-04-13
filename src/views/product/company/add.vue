@@ -38,7 +38,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 
 export default {
@@ -46,6 +45,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      loading: false,
       company: {
         names: {}
       },
@@ -55,9 +55,6 @@ export default {
         acronym: [{ required: true, message: '公司缩写必须填', trigger: 'blur' }]
       }
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
@@ -73,6 +70,7 @@ export default {
     handleSubmit() {
       this.$refs['company'].validate((valid) => {
         if (valid) {
+          this.loading = true
           const data = { acronym: '', localizedNames: [] }
           data.acronym = this.company.acronym
           data.secondary = this.company.secondary
@@ -86,7 +84,10 @@ export default {
               duration: 5 * 1000
             })
             this.$store.dispatch('company/FetchCompanyList')
+            this.loading = false
             this.handleClose()
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false
