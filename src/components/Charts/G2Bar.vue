@@ -4,6 +4,8 @@
 
 <script>
 import G2 from '@antv/g2'
+import accounting from 'accounting'
+
 export default {
   props: {
     charData: {
@@ -27,27 +29,30 @@ export default {
   // 监听API接口传过来的数据  2018-08-21更新
   watch: {
     charData: function(val, oldVal) { // 监听charData，当放生变化时，触发这个回调函数绘制图表
-      console.log('new: %s, old: %s', val, oldVal)
       this.drawChart(val)
     }
   },
-  mounted() {
+  created() {
+    console.log(this.id)
     this.drawChart()
   },
   methods: {
     drawChart: function() {
-      this.chart && this.chart.destory()
+      this.chart && this.chart.destroy()
       this.chart = new G2.Chart({
         container: this.id,
         forceFit: true,
         height: 250,
-        padding: [20, 30, 30, 40]
+        padding: [20, 30, 30, 80]
       })
       this.chart.source(this.charData)
-      this.chart.scale('sales', {
-        tickInterval: 20
+      this.chart.scale('value', {
+        tickInterval: 20,
+        formatter: function(val) {
+          return accounting.formatMoney(val, '', 2)
+        }
       })
-      this.chart.interval().position('channel*sales')
+      this.chart.interval().position('key*value')
       this.chart.render()
     }
   }

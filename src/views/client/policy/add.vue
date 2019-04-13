@@ -6,7 +6,7 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       title="添加保单"
-      top="50px"
+      top="10px"
       width="70%">
       <el-form
         ref="insurancePolicy"
@@ -15,7 +15,7 @@
         class="insurance-policy-form"
         label-width="80px">
         <el-form-item label="保单号:" prop="number">
-          <el-input v-model="insurancePolicy.number" placeholder="请输入保单号"/>
+          <el-input ref="number" v-model="insurancePolicy.number" autofocus placeholder="请输入保单号"/>
         </el-form-item>
         <el-form-item label="内部编号:" prop="sn" >
           <el-input v-model="insurancePolicy.sn" placeholder="请输入内部编号"/>
@@ -71,11 +71,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="保费:" prop="premium">
-          <currency-input v-model="insurancePolicy.premium" :symbol="currency" placeholder="请输入保费"/>
+          <currency-input ref="premium" v-model="insurancePolicy.premium" :symbol="currency" placeholder="请输入保费"/>
           <!--<el-input v-model="insurancePolicy.premium" placeholder="请输入保费" />-->
         </el-form-item>
         <el-form-item label="保额:" prop="amountInsured">
-          <currency-input v-model="insurancePolicy.amountInsured" :symbol="currency" placeholder="请输入保额" />
+          <currency-input ref="amountInsured" v-model="insurancePolicy.amountInsured" :symbol="currency" placeholder="请输入保额" />
           <!--<el-input v-model="insurancePolicy.amountInsured" placeholder="请输入保额" />-->
         </el-form-item>
         <el-form-item label="续保计划:" prop="premiumPlan">
@@ -181,7 +181,7 @@ export default {
         number: null,
         sn: null,
         submitDate: null,
-        policyStatus: null,
+        policyStatus: 0,
         applicant: {
           id: null
         },
@@ -189,9 +189,9 @@ export default {
           id: null
         },
         currency: null,
-        premiumPlan: null,
-        premium: null,
-        amountInsured: null,
+        premiumPlan: 1,
+        premium: '0',
+        amountInsured: '0',
         company: {
           id: ''
         },
@@ -219,7 +219,7 @@ export default {
       if (this.insurancePolicy.currency === 0) {
         return 'US$'
       } else if (this.insurancePolicy.currency === 1) {
-        return 'HK$'
+        return 'HK$ '
       } else if (this.insurancePolicy.currency === 2) {
         return 'CN¥'
       } else {
@@ -235,6 +235,9 @@ export default {
       this.getChannel()
       this.getAgents()
       this.getCompanies()
+      this.$nextTick(function() {
+        this.$refs.number.focus()
+      })
     },
     getCompanies(params) {
       this.$store.dispatch('company/FetchCompanyList', params)
@@ -285,8 +288,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$refs['insurancePolicy'].resetFields()
-        this.insurancePolicy.premium = 0
-        this.insurancePolicy.amountInsured = 0
+        this.$refs['premium'].currencyValue = 0
+        this.$refs['amountInsured'].currencyValue = 0
         this.dialogVisible = false
       })
     },
@@ -315,8 +318,8 @@ export default {
             this.$store.dispatch('client/FetchInsurancePolicyList', {})
             this.submitLoading = false
             this.$refs['insurancePolicy'].resetFields()
-            this.insurancePolicy.premium = 0
-            this.insurancePolicy.amountInsured = 0
+            this.$refs['premium'].currencyValue = 0
+            this.$refs['amountInsured'].currencyValue = 0
             this.dialogVisible = false
           }).catch(_ => {
             this.submitLoading = false

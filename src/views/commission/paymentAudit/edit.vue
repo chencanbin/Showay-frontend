@@ -5,8 +5,7 @@
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      center
-      title="编辑到账记录"
+      title="编辑发放记录"
       width="400px"
       append-to-body>
       <el-form ref="payment" :model="payment" label-width="80px">
@@ -14,13 +13,13 @@
           {{ payment.insurancePolicy.number }}
         </el-form-item>
         <el-form-item label="应发" prop="calculatedAmount">
-          {{ 'HK$' + formatterCurrency(payment.calculatedAmountInHkd) }}
+          {{ 'HK$ ' + formatterCurrency(payment.calculatedAmountInHkd) }}
         </el-form-item>
         <el-form-item label="实发" prop="amount">
           <!--<el-input v-model="payment.amount" placeholder="请输入实发数额">-->
           <!--<template slot="prepend">{{ getSymbol(payment.currency) }}</template>-->
           <!--</el-input>-->
-          <currency-input v-model="payment.amount" placeholder="请输入实发数额" symbol="HK$"/>
+          <currency-input v-model="payment.amount" placeholder="请输入实发" symbol="HK$ "/>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="payment.remarks" placeholder="请输入备注"/>

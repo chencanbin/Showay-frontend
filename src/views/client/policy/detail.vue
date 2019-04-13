@@ -12,7 +12,7 @@
         <el-form-item label="内部编号:">
           <span>{{ data.sn }}</span>
         </el-form-item>
-        <el-form-item label="渠道:">
+        <el-form-item label="渠道:" style="width: 25%">
           <span>{{ data.channel.name }}</span>
         </el-form-item>
         <el-form-item label="签单员:">
@@ -72,6 +72,7 @@ export default {
   },
   methods: {
     initForm() {
+      console.log('....................')
       this.dialogVisible = true
     },
     numberFormat(row, value) {
@@ -104,12 +105,9 @@ export default {
     .detail-form {
       font-size: 0;
       .el-form-item {
-        /*&:first-child {*/
-          /*width: 30%;*/
-        /*}*/
-        /*margin-right: 0;*/
-        /*margin-bottom: 0;*/
-        /*width: 17%;*/
+        margin-right: 0;
+        margin-bottom: 0;
+        width: 19%;
         margin-right: 50px;
         label {
           color: #99a9bf;

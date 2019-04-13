@@ -16,7 +16,7 @@
       <el-table v-loading="loading" :data="companyList.list" :height="height" stripe>
         <el-table-column prop="acronym" label="公司缩写" width="120px"/>
         <el-table-column prop="name" label="公司名" show-overflow-tooltip/>
-        <el-table-column prop="name" label="级别" width="150px">
+        <el-table-column prop="level" label="级别" width="150px">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.secondary" type="warning">二级</el-tag>
             <el-tag v-else type="success">一级</el-tag>
@@ -24,8 +24,8 @@
         </el-table-column>
         <el-table-column
           :formatter="dateFormat"
-          prop="creationDay"
-          label="创建时间"
+          prop="contractEffectiveDate"
+          label="签约时间"
           min-width="100px"/>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -60,7 +60,7 @@ export default {
   },
   data() {
     return {
-      height: window.screen.height - 300,
+      height: document.body.clientHeight - 190,
       wildcard: '',
       listQuery: {
         page: 1,
@@ -97,7 +97,7 @@ export default {
     },
     dateFormat(row, column) {
       const date = row[column.property]
-      return parseTime(date)
+      return parseTime(date, '{y}-{m}-{d}')
     },
     getCompanyList(param) {
       this.$store.dispatch('company/FetchCompanyList', param)

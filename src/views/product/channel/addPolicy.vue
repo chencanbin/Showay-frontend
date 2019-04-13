@@ -11,7 +11,7 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       append-to-body
-      title="设置全局渠道佣金"
+      title="添加渠道佣金策略"
       width="600px">
       <el-form ref="policy" :model="policy" :rules="rulePolicy" label-width="100px">
         <el-form-item label="类型" prop="type">

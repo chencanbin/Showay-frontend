@@ -1,154 +1,154 @@
 <template>
   <div id="credit" class="table-container">
-    <basic-container>
-      <!--<el-form :inline="true" style="display: inline-block; position: absolute; right: 10px; z-index: 1000;">-->
-      <!--<el-form-item label="切换排序">-->
-      <!--<el-switch v-model="mode">-->
-      <!--</el-switch>-->
-      <!--</el-form-item>-->
-      <!--</el-form>-->
-      <!--<component v-bind:is="getComponent"></component>-->
-      <el-tabs v-model="activeName" @tab-click="handleTabClick">
-        <el-tab-pane
-          v-for="status in creditStatus"
-          :key="status.id"
-          :name="status.id + ''"
-          :label="statusFormatter(status.id)">
-          <el-row>
-            <el-form :inline="true" class="filter-form" @submit.native.prevent>
-              <el-form-item v-if="activeName === '1' && selectData.length > 0">
-                <el-button type="primary" size="small" @click="batchPay">批量外发</el-button>
-              </el-form-item>
-              <el-form-item label="" prop="wildcard">
-                <el-input
-                  v-model="wildcard"
-                  clearable
-                  placeholder="搜索(保单号 | 投保人)"
-                  @input="search">
-                  <i slot="prefix" class="el-input__icon el-icon-search"/>
-                </el-input>
-              </el-form-item>
-              <el-form-item label="" prop="dateRange">
-                <el-date-picker
-                  v-model="dateRange"
-                  type="daterange"
-                  range-separator="-"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  value-format="timestamp"
-                  @change="onDateRangeChange"/>
-              </el-form-item>
-              <el-form-item label="切换排序">
-                <el-switch v-model="mode" @change="onSwitchChange"/>
-              </el-form-item>
-            </el-form>
-            <el-tag class="tag-sum" type="success">
-              <i class="el-icon-info" style="margin-right: 5px"/>
-              <span style="margin-right: 30px;">{{ selectTotalText }}:
-                <count-to
-                  :start-val="0"
-                  :end-val="selectTotal"
-                  :duration="2000"
-                  suffix="条"
-                  style="font-weight: bold;"/>
-              </span>
-              <span style="margin-right: 30px">{{ selectSumText }}:
-                <count-to
-                  :start-val="0"
-                  :end-val="selectSum"
-                  :duration="2000"
-                  prefix="HK$"
-                  style="font-weight: bold;"/>
-              </span>
-              <span style="margin-right: 30px">{{ totalText }}:
-                <count-to
-                  :start-val="0"
-                  :end-val="commissionCredit.total"
-                  :duration="2000"
-                  suffix="条"
-                  style="font-weight: bold;"/>
-              </span>
-              <span>{{ sumText }}:
-                <count-to
-                  :start-val="0"
-                  :end-val="sum"
-                  :duration="2000"
-                  prefix="HK$"
-                  style="font-weight: bold; font-size: 16px"/>
-              </span>
-            </el-tag>
-          </el-row>
-          <el-table
-            v-loading="loading"
-            :height="height"
-            :data="commissionCredit.list"
-            :row-class-name="tableRowClassName"
-            border
-            @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="40" align="center"/>
-            <el-table-column label="保单号" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip/>
-            <el-table-column label="保费" min-width="140">
-              <template slot-scope="scope">
-                <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.insurancePolicy.premium) }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="投保人" prop="insurancePolicy.applicant.name" show-overflow-tooltip/>
-            <el-table-column label="期序" prop="year" align="center"/>
-            <el-table-column
-              :formatter="formatterIssueDate"
-              label="申请日期"
-              prop="insurancePolicy.submitDate"
-              min-width="100"/>
-            <el-table-column
-              :formatter="formatterIssueDate"
-              label="生效日期"
-              prop="insurancePolicy.issueDate"
-              min-width="100"/>
-            <el-table-column label="应发" min-width="120">
-              <template slot-scope="scope">
-                <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmount) }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="实发" prop="amount" min-width="120">
-              <template slot-scope="scope">
-                <span class="left_text">HK$</span>
-                <span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="状态" min-width="80" align="center">
-              <template slot-scope="scope">
-                <el-tag v-if="scope.row.status === 0" style="color: #409eff;" >{{ statusFormatter(scope.row.status) }}</el-tag>
-                <el-tag v-if="scope.row.status === 1" type="warning">{{ statusFormatter(scope.row.status) }}</el-tag>
-                <el-tag v-if="scope.row.status === 2" type="success">{{ statusFormatter(scope.row.status) }}</el-tag>
-                <el-tag v-if="scope.row.status === 3" type="success">{{ statusFormatter(scope.row.status) }}</el-tag>
-                <!--<statusBadge v-if="scope.row.status === 0" :text="statusFormatter(scope.row.status)" type="processing-badge"/>-->
-                <!--<statusBadge v-if="scope.row.status === 1" :text="statusFormatter(scope.row.status)" type="warning-badge"/>-->
-                <!--<statusBadge v-if="scope.row.status === 2" :text="statusFormatter(scope.row.status)" type="error-badge"/>-->
-                <!--<statusBadge v-if="scope.row.status === 3" :text="statusFormatter(scope.row.status)" type="success-badge"/>-->
-              </template>
-            </el-table-column>
-            <!--<el-table-column label="备注" prop="remarks" min-width="140"/>-->
-            <el-table-column v-if="activeName !== '2'" label="操作">
-              <template slot-scope="scope">
-                <edit
-                  v-if="scope.row.status === 0"
-                  :commission-credit="scope.row"
-                  :active-name="activeName"
-                  :key="scope.row.id"/>
-                <audit v-if="scope.row.status === 1" :commission-credit="scope.row" :active-name="activeName"/>
-              </template>
-            </el-table-column>
-          </el-table>
-          <pagination
-            :total="commissionCredit.total"
-            :page="listQuery.page"
-            :limit="listQuery.limit"
-            @pagination="pagination"
-            @update:page="updatePage"
-            @update:limit="updateLimit"/>
-        </el-tab-pane>
-      </el-tabs>
-    </basic-container>
+    <!--<el-form :inline="true" style="display: inline-block; position: absolute; right: 10px; z-index: 1000;">-->
+    <!--<el-form-item label="切换排序">-->
+    <!--<el-switch v-model="mode">-->
+    <!--</el-switch>-->
+    <!--</el-form-item>-->
+    <!--</el-form>-->
+    <!--<component v-bind:is="getComponent"></component>-->
+    <el-tabs v-model="activeName" type="border-card" @tab-click="handleTabClick">
+      <el-tab-pane
+        v-for="status in creditStatus"
+        :key="status.id"
+        :name="status.id + ''"
+        :label="statusFormatter(status.id)">
+        <el-row>
+          <el-form :inline="true" class="filter-form" @submit.native.prevent>
+            <el-form-item v-if="activeName === '1' && selectData.length > 0">
+              <el-button type="primary" size="small" @click="batchPay">批量外发</el-button>
+            </el-form-item>
+            <el-form-item label="" prop="wildcard">
+              <el-input
+                v-model="wildcard"
+                clearable
+                placeholder="搜索(保单号 | 投保人)"
+                @input="search">
+                <i slot="prefix" class="el-input__icon el-icon-search"/>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="" prop="dateRange">
+              <el-date-picker
+                v-model="dateRange"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="timestamp"
+                @change="onDateRangeChange"/>
+            </el-form-item>
+            <el-form-item label="切换排序">
+              <el-switch v-model="mode" @change="onSwitchChange"/>
+            </el-form-item>
+          </el-form>
+          <el-tag class="tag-sum" type="success">
+            <i class="el-icon-info" style="margin-right: 5px"/>
+            <span style="margin-right: 30px;">{{ selectTotalText }}:
+              <count-to
+                :start-val="0"
+                :end-val="selectTotal"
+                :duration="2000"
+                suffix="条"
+                style="font-weight: bold;"/>
+            </span>
+            <span style="margin-right: 30px">{{ selectSumText }}:
+              <count-to
+                :start-val="0"
+                :end-val="selectSum"
+                :duration="2000"
+                prefix="HK$ "
+                style="font-weight: bold;"/>
+            </span>
+            <span style="margin-right: 30px">{{ totalText }}:
+              <count-to
+                :start-val="0"
+                :end-val="commissionCredit.total"
+                :duration="2000"
+                suffix="条"
+                style="font-weight: bold;"/>
+            </span>
+            <span>{{ sumText }}:
+              <count-to
+                :start-val="0"
+                :end-val="sum"
+                :duration="2000"
+                prefix="HK$ "
+                style="font-weight: bold; font-size: 16px"/>
+            </span>
+          </el-tag>
+        </el-row>
+        <el-table
+          v-loading="loading"
+          :height="height"
+          :data="commissionCredit.list"
+          :row-class-name="tableRowClassName"
+          border
+          @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="40" align="center"/>
+          <el-table-column label="保单号" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip/>
+          <el-table-column label="保费" min-width="140">
+            <template slot-scope="scope">
+              <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.premium) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="投保人" prop="insurancePolicy.applicant.name" show-overflow-tooltip/>
+          <el-table-column label="期序" prop="year" align="center"/>
+          <el-table-column
+            :formatter="formatterIssueDate"
+            label="申请日期"
+            prop="insurancePolicy.submitDate"
+            min-width="100"/>
+          <el-table-column
+            :formatter="formatterIssueDate"
+            label="生效日期"
+            prop="insurancePolicy.issueDate"
+            min-width="100"/>
+          <el-table-column label="应收" min-width="120">
+            <template slot-scope="scope">
+              <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmount) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="实收" prop="amount" min-width="120">
+            <template slot-scope="scope">
+              <span class="left_text">HK$ </span>
+              <span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" min-width="80" align="center">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.status === 0" style="color: #409eff;" >{{ statusFormatter(scope.row.status) }}</el-tag>
+              <el-tag v-if="scope.row.status === 1" type="warning">{{ statusFormatter(scope.row.status) }}</el-tag>
+              <el-tag v-if="scope.row.status === 2" type="success">{{ statusFormatter(scope.row.status) }}</el-tag>
+              <el-tag v-if="scope.row.status === 3" type="success">{{ statusFormatter(scope.row.status) }}</el-tag>
+              <!--<statusBadge v-if="scope.row.status === 0" :text="statusFormatter(scope.row.status)" type="processing-badge"/>-->
+              <!--<statusBadge v-if="scope.row.status === 1" :text="statusFormatter(scope.row.status)" type="warning-badge"/>-->
+              <!--<statusBadge v-if="scope.row.status === 2" :text="statusFormatter(scope.row.status)" type="error-badge"/>-->
+              <!--<statusBadge v-if="scope.row.status === 3" :text="statusFormatter(scope.row.status)" type="success-badge"/>-->
+            </template>
+          </el-table-column>
+          <!--<el-table-column label="备注" prop="remarks" min-width="140"/>-->
+          <el-table-column v-if="activeName !== '2'" label="操作">
+            <template slot-scope="scope">
+              <edit
+                v-if="scope.row.status === 0"
+                :commission-credit="scope.row"
+                :wildcard="wildcard"
+                :date-range="dateRange"
+                :active-name="activeName"
+                :key="scope.row.id"/>
+              <audit v-if="scope.row.status === 1" :commission-credit="scope.row" :active-name="activeName"/>
+            </template>
+          </el-table-column>
+        </el-table>
+        <pagination
+          :total="commissionCredit.total"
+          :page="listQuery.page"
+          :limit="listQuery.limit"
+          @pagination="pagination"
+          @update:page="updatePage"
+          @update:limit="updateLimit"/>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -180,7 +180,7 @@ export default {
       sumText: '',
       selectTotalText: '',
       selectSumText: '',
-      height: window.screen.height - 390,
+      height: document.body.clientHeight - 310,
       creditStatus,
       language: Cookies.get('language') || 'zh-CN',
       activeName: '0',
@@ -213,6 +213,9 @@ export default {
     }
   },
   created() {
+    if (this.$route.query.type) {
+      this.activeName = this.$route.query.type
+    }
     this.commissionCredit.total = 0
     this.queryCondition = { status: this.activeName, wildcard: this.wildcard, sort: 'year,submitDate', order: 'asc,desc' }
     this.getCommissionCreditList()
@@ -365,8 +368,11 @@ export default {
   }
 
   #credit {
+    .search-input {
+      margin-left: 0;
+    }
     .el-card__body {
-      padding: 10px
+      padding: 0px
     }
     .el-table tr td:first-child {
       padding-left: 0px;

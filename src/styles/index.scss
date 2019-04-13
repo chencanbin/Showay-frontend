@@ -215,6 +215,9 @@ code {
   display: flex;
   line-height: 34px;
   color: #969696;
+  span {
+    font-weight: 600;
+  }
 }
 .el-table-add-row:hover {
   color: rgb(51, 141, 72);

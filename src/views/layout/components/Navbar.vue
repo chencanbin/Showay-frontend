@@ -7,7 +7,12 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <error-log class="errLog-container right-menu-item"/>
-
+        <el-tooltip
+          content="续保日历"
+          effect="dark"
+          placement="bottom">
+          <renewal-calendar class="calendar right-menu-item" style="margin-right: 15px"/>
+        </el-tooltip>
         <el-tooltip
           :content="$t('navbar.screenfull')"
           effect="dark"
@@ -91,6 +96,7 @@ import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
+import RenewalCalendar from '@/views/client/policy/renewalCalendar'
 import sha256 from 'sha256'
 import { getUserId } from '@/utils/auth'
 export default {
@@ -101,7 +107,8 @@ export default {
     Screenfull,
     SizeSelect,
     LangSelect,
-    ThemePicker
+    ThemePicker,
+    RenewalCalendar
   },
   data() {
     var validatePass = (rule, value, callback) => {
@@ -203,13 +210,16 @@ export default {
     }
     .right-menu-item {
       display: inline-block;
-      margin: 0 8px;
+      margin: 0 10px;
     }
     .screenfull {
       height: 20px;
     }
     .international{
       top: -15px;
+    }
+    .calendar {
+      height: 20px;
     }
     .theme-switch {
       vertical-align: 15px;

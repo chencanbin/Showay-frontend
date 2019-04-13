@@ -295,11 +295,11 @@ export function isExternal(path) {
 
 export function getSymbol(currency) {
   if (currency === 'HKD') {
-    return 'HK$'
+    return 'HK$ '
   } else if (currency === 'USD') {
-    return 'US$'
+    return 'US$ '
   } else if (currency === 'CNY') {
-    return 'CN¥'
+    return 'CN¥ '
   }
 }
 
@@ -332,7 +332,23 @@ export function getCurrentYearFirst() {
 
 export function getCurrentYearLast() {
   const date = new Date()
-  date.setDate(31)
-  date.setMonth(11)
+  date.setDate(1)
+  date.setMonth(12)
+  const lastDayOfYear = new Date(date.getTime() - 1000 * 60 * 60 * 24)
+  return lastDayOfYear.valueOf()
+}
+
+export function getYearFirst(val) {
+  const date = new Date(val)
+  date.setDate(1)
+  date.setMonth(0)
   return date.valueOf()
+}
+
+export function getYearLast(val) {
+  const date = new Date(val)
+  date.setDate(1)
+  date.setMonth(12)
+  const lastDayOfYear = new Date(date.getTime() - 1000 * 60 * 60 * 24)
+  return lastDayOfYear.valueOf()
 }

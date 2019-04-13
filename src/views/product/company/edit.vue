@@ -17,6 +17,13 @@
         <el-form-item label="公司缩写" prop="acronym">
           <el-input v-model="company.acronym"/>
         </el-form-item>
+        <el-form-item label="签约时间" prop="contractEffectiveDate">
+          <el-date-picker
+            v-model="company.contractEffectiveDate"
+            type="date"
+            value-format="timestamp"
+            style="width: 100%"/>
+        </el-form-item>
         <el-form-item label="二级供应商" prop="secondary">
           <el-switch
             v-model="company.secondary"/>
@@ -48,7 +55,8 @@ export default {
         acronym: '',
         secondary: false,
         en: '',
-        zh: ''
+        zh: '',
+        contractEffectiveDate: ''
       },
       rule: {
         en: [{ required: true, message: '公司名(英文)必须填', trigger: 'blur' }],
@@ -67,6 +75,7 @@ export default {
         this.company.secondary = res.data.secondary
         this.company.en = res.data.en
         this.company.zh = res.data.zh
+        this.company.contractEffectiveDate = res.data.contractEffectiveDate
         this.dialogVisible = true
       })
     },

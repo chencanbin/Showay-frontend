@@ -8,6 +8,7 @@ import user from './modules/user'
 import company from './modules/company'
 import commission from './modules/commission'
 import client from './modules/client'
+import document from './modules/document'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -21,7 +22,8 @@ const store = new Vuex.Store({
     user,
     company,
     commission,
-    client
+    client,
+    document
   },
   getters
 })

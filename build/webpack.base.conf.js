@@ -21,9 +21,9 @@ const createLintingRule = () => ({
 })
 
 module.exports = {
-  // devServer: {
-  //   disableHostCheck: true,
-  // },
+   devServer: {
+      disableHostCheck: true,
+  },
   context: path.resolve(__dirname, '../'),
   entry: {
     app: './src/main.js'

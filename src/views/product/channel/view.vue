@@ -4,27 +4,41 @@
     :visible="dialogVisible"
     :before-close="handleClose"
     :fullscreen="true"
-    title="渠道佣金预览">
+    :title="title">
     <!--<div style="display: inline-block; position: absolute; right: 20px; z-index: 3000;">-->
     <!--<el-button :loading="loading" size="small" plain icon="el-icon-download" type="primary" @click="exportExcel()">导出</el-button>-->
     <!--</div>-->
-    <div class="table-container">
-      <el-table :data="data" :max-height="tableHeight" stripe>
-        <el-table-column fixed prop="company.name" label="供应商" min-width="200"/>
-        <el-table-column fixed prop="product.name" label="产品名称" min-width="200"/>
-        <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="100">
-          <template slot-scope="scope">
-            <span>{{ scope.row.conditions[index] ? formatToPercent(scope.row.conditions[index].rate) : '-' }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
+    <basic-container>
+      <el-form :inline="true" class="search-input" @submit.native.prevent>
+        <el-form-item label="" prop="wildcard">
+          <el-input
+            v-model="wildcard"
+            clearable
+            placeholder="搜索 (供应商 | 产品)"
+            @input="search">
+            <i slot="prefix" class="el-input__icon el-icon-search"/>
+          </el-input>
+        </el-form-item>
+      </el-form>
       <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
-    </div>
+      <div class="table-container">
+        <el-table v-loading="loading" :data="data" :height="tableHeight" stripe>
+          <el-table-column fixed prop="company.name" label="供应商" min-width="200"/>
+          <el-table-column fixed prop="product.name" label="产品名称" min-width="200"/>
+          <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.conditions[index] ? formatToPercent(scope.row.conditions[index].rate) : '-' }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </basic-container>
   </el-dialog>
 </template>
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import { parseTime } from '@/utils'
 import pagination from '@/components/Pagination'
 
 const _ = require('lodash')
@@ -36,9 +50,12 @@ export default {
   data() {
     return {
       activeName: 'basic',
-      tableHeight: window.screen.height - 250,
+      tableHeight: document.body.clientHeight - 140,
+      wildcard: '',
       dialogVisible: false,
       id: '',
+      title: '',
+      timestamp: '',
       data: [],
       total: 0,
       columnYear: [],
@@ -52,9 +69,13 @@ export default {
     ...mapGetters(['loading'])
   },
   methods: {
-    openDialog(id) {
-      this.id = id
-      console.log(this.id)
+    search: _.debounce(function() {
+      this.getViewData(this.id, { wildcard: this.wildcard })
+    }, 500),
+    openDialog(channelPolicyObj, channelName) {
+      this.id = channelPolicyObj.id
+      this.timestamp = channelPolicyObj.timestamp
+      this.title = `渠道佣金预览 - ${channelName} ( ${parseTime(channelPolicyObj.timestamp, '{y}-{m}-{d}')} )`
       // this.$api.channel.previewChannelCommission(id).then(res => {
       //   this.data = res.data.list
       //   this.total = res.data.total
@@ -76,6 +97,7 @@ export default {
       this.getViewData(this.id)
     },
     getViewData(id, params) {
+      params = Object.assign({ timestamp: this.timestamp }, params)
       this.$api.channel.previewChannelCommission(id, params).then(res => {
         this.data = res.data.list
         this.total = res.data.total
@@ -96,6 +118,7 @@ export default {
       })
     },
     handleClose() {
+      this.wildcard = ''
       this.dialogVisible = false
     },
     formatToPercent(number) {
@@ -127,7 +150,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
   #channelCommissionPreviewTable {
     .el-dialog__body {
-      padding: 0
+      padding: 10px
     }
   }
 </style>

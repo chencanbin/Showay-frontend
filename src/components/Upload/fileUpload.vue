@@ -10,8 +10,17 @@
 
 <script>
 import axios from 'axios'
+
 export default {
   name: 'FileUpload',
+  props: {
+    id: {
+      type: Number,
+      default() {
+        return 0
+      }
+    }
+  },
   data() {
     return {
       fileList: [],
@@ -27,20 +36,26 @@ export default {
       this.loading = true
       this.disabled = true
       this.buttonText = '正在上传...'
+      console.log(params)
       const _file = params.file
-      // const isLt2M = _file.size / 1024 / 1024 < 2
+      const isLt20M = _file.size / 1024 / 1024 < 20
       // 通过 FormData 对象上传文件
       const formData = new FormData()
       formData.append('file', _file)
-      // if (!isLt2M) {
-      //   this.$message.error("请上传2M以下的.xlsx文件");
-      //   return false;
-      // }
+      if (!isLt20M) {
+        this.$message.error('请上传20M以下的文件')
+        return false
+      }
       let url = ''
-      await this.$api.document.getCompanyToken(_file.name).then(res => {
-        url = res.data.url
-      })
-
+      if (this.id === 1) {
+        await this.$api.document.getCompanyToken(_file.uid).then(res => {
+          url = res.data.url
+        })
+      } else if (this.id === 2) {
+        await this.$api.document.getPrivateToken(_file.uid).then(res => {
+          url = res.data.url
+        })
+      }
       const config = {
         onUploadProgress: (progressEvent) => {
           this.percentCompleted = '(' + Math.round((progressEvent.loaded * 100) / progressEvent.total) + '%' + ')'
@@ -55,6 +70,13 @@ export default {
           this.$message({
             type: 'success',
             message: '上传成功'
+          })
+          this.$api.document.createFile({
+            'name': _file.name,
+            'parent': this.id,
+            'size': _file.size,
+            'extension': _file.type,
+            'resourceKey': _file.uid
           })
         } else {
           this.$message({

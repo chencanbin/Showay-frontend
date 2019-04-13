@@ -9,13 +9,20 @@
       width="500px">
       <el-form ref="company" :model="company" :rules="rule" label-width="120px">
         <el-form-item label="公司名(英文)" prop="en">
-          <el-input v-model="company.en"/>
+          <el-input ref="en" v-model="company.en" autofocus/>
         </el-form-item>
         <el-form-item label="公司名(中文)" prop="zhCN">
           <el-input v-model="company.zhCN"/>
         </el-form-item>
         <el-form-item label="公司缩写" prop="acronym">
           <el-input v-model="company.acronym"/>
+        </el-form-item>
+        <el-form-item label="签约时间" prop="contractEffectiveDate">
+          <el-date-picker
+            v-model="company.contractEffectiveDate"
+            type="date"
+            value-format="timestamp"
+            style="width: 100%"/>
         </el-form-item>
         <el-form-item label="二级供应商" prop="secondary">
           <el-switch
@@ -55,6 +62,9 @@ export default {
   methods: {
     initForm() {
       this.dialogVisible = true
+      this.$nextTick(function() {
+        this.$refs['en'].focus()
+      })
     },
     handleClose() {
       this.$refs['company'].resetFields()
@@ -66,6 +76,7 @@ export default {
           const data = { acronym: '', localizedNames: [] }
           data.acronym = this.company.acronym
           data.secondary = this.company.secondary
+          data.contractEffectiveDate = this.company.contractEffectiveDate
           data.localizedNames.push({ name: this.company.en, locale: 'en' })
           data.localizedNames.push({ name: this.company.zhCN, locale: 'zh_CN' })
           this.$api.company.addCompany(data).then(_ => {

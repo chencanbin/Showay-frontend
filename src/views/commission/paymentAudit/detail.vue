@@ -22,41 +22,54 @@
           align="center"
           type="selection"
           width="55" />
-        <el-table-column label="保单号" prop="insurancePolicy.number"/>
-        <el-table-column label="保费">
-          <template slot-scope="scope">
-            <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.insurancePolicy.premium) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="期序">
+        <el-table-column label="保单号" prop="insurancePolicy.number" show-overflow-tooltip/>
+        <el-table-column label="期序" width="80">
           <template slot-scope="scope">
             <span>第 {{ scope.row.year }} 期</span>
           </template>
         </el-table-column>
-        <el-table-column label="兑港币汇率" prop="exchangeRateToHkd"/>
-        <el-table-column label="预计应发数额">
+        <el-table-column label="保费">
           <template slot-scope="scope">
-            <span class="left_text">HK$</span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmountInHkd) }}</span>
+            <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.premium) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="预计实发数额" prop="amount">
+        <el-table-column label="保费等额港币">
           <template slot-scope="scope">
-            <span class="left_text">HK$</span><span class="right_text">{{ formatterCurrency(scope.row.predictedAmountInHkd) }}</span>
+            <div v-if="scope.row.currency !== 'HKD'">
+              <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.premiumInHkd) }}</span>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column label="实发数额" prop="amount">
+        <el-table-column label="汇率" prop="exchangeRateToHkd" width="80">
+          <template slot-scope="scope">
+            <div v-if="scope.row.currency !== 'HKD'" style="float: right">
+              {{ scope.row.exchangeRateToHkd }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="预计应发">
+          <template slot-scope="scope">
+            <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmountInHkd) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="预计实发" prop="amount">
+          <template slot-scope="scope">
+            <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.predictedAmountInHkd) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="实发" prop="amount">
           <template slot-scope="scope">
             <div v-if="scope.row.amount">
-              <span class="left_text">HK$</span><span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
+              <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
             </div>
             <div v-else>
-              <span class="left_text">HK$</span><span class="right_text">{{ formatterCurrency(scope.row.predictedAmountInHkd) }}</span>
+              <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.predictedAmountInHkd) }}</span>
             </div>
           </template>
         </el-table-column>
         <el-table-column label="佣金率">
           <template slot-scope="scope">
-            {{ formatPercent(scope.row.commissionRate) }}
+            <div style="float: right">{{ formatPercent(scope.row.commissionRate) }}</div>
           </template>
         </el-table-column>
         <el-table-column v-if="status === '-1'" label="操作">
@@ -129,9 +142,9 @@ export default {
     },
     generateTitle() {
       if (this.status === '-1') {
-        return '渠道佣金待发放列表 ( ' + this.channel.name + ' )'
+        return `${this.channel.name} 待发放佣金`
       } else if (this.status === '0') {
-        return '渠道佣金审核放列表 ( ' + this.channel.name + ' )'
+        return `${this.channel.name} 待审核佣金`
       }
     },
     generateButtonText() {

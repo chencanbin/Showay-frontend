@@ -75,7 +75,7 @@ export default {
   },
   data() {
     return {
-      height: window.screen.height - 250,
+      height: document.body.clientHeight - 130,
       wildcard: '',
       listQuery: {
         page: 1,
@@ -151,17 +151,3 @@ export default {
   }
 }
 </script>
-
-<style type="text/scss"  lang="scss">
-  .policy-table-expand {
-    font-size: 0;
-    .el-form-item {
-      margin-right: 0;
-      margin-bottom: 0;
-      width: 25%;
-      label {
-        color: #99a9bf;
-      }
-    }
-  }
-</style>

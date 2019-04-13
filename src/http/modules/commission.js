@@ -155,3 +155,18 @@ export function mergedPaymentClear(id, data) {
   })
 }
 
+export function fetchCommissionPolicy(params) {
+  return request({
+    url: `/commissionPolicy`,
+    method: 'get',
+    params
+  })
+}
+
+export function editCommissionPolicy(data) {
+  return request({
+    url: `/commissionPolicy`,
+    method: 'post',
+    data
+  })
+}

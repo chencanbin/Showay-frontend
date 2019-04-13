@@ -4,7 +4,6 @@
     :rules="loginRules"
     :model="loginForm"
     class="login-form"
-    status-icon
     label-width="0">
     <el-form-item prop="id">
       <el-input

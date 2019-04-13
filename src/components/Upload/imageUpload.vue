@@ -1,11 +1,4 @@
 <template>
-  <!--<el-upload
-    :disabled="disabled"
-    action=""
-    :http-request="uploadFile"
-    :show-file-list="false">
-    <el-button size="small" type="primary" :loading="loading" disable>{{buttonText + percentCompleted}}</el-button>
-  </el-upload>-->
   <div>
     <el-upload
       :disabled="disableUpload"

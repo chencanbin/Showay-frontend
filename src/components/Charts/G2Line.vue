@@ -4,6 +4,8 @@
 
 <script>
 import G2 from '@antv/g2'
+import accounting from 'accounting'
+
 export default {
   props: {
     charData: {
@@ -31,23 +33,26 @@ export default {
       this.drawChart(val)
     }
   },
-  mounted() {
+  created() {
     this.drawChart()
   },
   methods: {
     drawChart: function() {
-      this.chart && this.chart.destory()
+      this.chart && this.chart.destroy()
       this.chart = new G2.Chart({
         container: this.id,
         forceFit: true,
-        height: 250,
-        padding: [20, 30, 30, 40]
+        height: 300,
+        padding: [20, 40, 50, 90]
       })
       this.chart.source(this.charData)
-      this.chart.scale('runCount', {
-        min: 0
+      this.chart.scale('value', {
+        min: 0,
+        formatter: function(val) {
+          return accounting.formatMoney(val, '', 2)
+        }
       })
-      this.chart.scale('time', {
+      this.chart.scale('key', {
         range: [0, 1]
       })
       this.chart.tooltip({
@@ -55,8 +60,8 @@ export default {
           type: 'line'
         }
       })
-      this.chart.line().position('time*runCount')
-      this.chart.point().position('time*runCount').size(4).shape('circle').style({
+      this.chart.line().position('key*value')
+      this.chart.point().position('key*value').size(3).shape('circle').style({
         stroke: '#fff',
         lineWidth: 1
       })

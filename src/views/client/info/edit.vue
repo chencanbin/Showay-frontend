@@ -5,7 +5,7 @@
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="添加客户资料"
+      title="编辑客户资料"
       width="450px">
       <el-form ref="client" :model="client" :rules="rule" label-width="100px">
         <el-form-item label="客户姓名:" prop="name">
@@ -54,7 +54,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import { country } from '@/utils/country'
 import Cookies from 'js-cookie'
 import elDragDialog from '@/directive/el-dragDialog'
@@ -91,8 +91,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
-    ...mapState({ companyList: state => state.company.companyList.list })
+    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {

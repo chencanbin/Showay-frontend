@@ -11,14 +11,14 @@
         <el-form-item label="保单号" prop="name">
           {{ commissionPayment.insurancePolicy.number }}
         </el-form-item>
-        <el-form-item label="应发数额" prop="name">
+        <el-form-item label="应发" prop="name">
           {{ getSymbol(commissionPayment.currency) + formatterCurrency(commissionPayment.calculatedAmount) }}
         </el-form-item>
         <el-form-item label="期序" prop="name">
           {{ commissionPayment.year }}
         </el-form-item>
-        <el-form-item label="实发数额" prop="name">
-          <el-input v-model="payment.amount" placeholder="请输入实发数额">
+        <el-form-item label="实发" prop="name">
+          <el-input v-model="payment.amount" placeholder="请输入实发">
             <template slot="prepend">{{ getSymbol(payment.currency) }}</template>
           </el-input>
         </el-form-item>

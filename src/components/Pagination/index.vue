@@ -40,7 +40,7 @@ export default {
     },
     layout: {
       type: String,
-      default: 'total, sizes, prev, pager, next, jumper'
+      default: 'total, sizes, prev, pager, next'
     },
     background: {
       type: Boolean,
@@ -81,7 +81,6 @@ export default {
       }
     },
     handleCurrentChange(val) {
-      console.log(val)
       this.$emit('pagination', { page: val, limit: this.pageSize })
       if (this.autoScroll) {
         scrollTo(0, 800)

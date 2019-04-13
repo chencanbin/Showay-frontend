@@ -26,7 +26,8 @@
         <el-table-column
           prop="idNumber"
           label="证件号"
-          min-width="120"/>
+          min-width="120"
+          show-overflow-tooltip/>
         <el-table-column
           prop="locale"
           width="100"
@@ -42,11 +43,13 @@
         <el-table-column
           :formatter="dateFormat"
           prop="birthday"
-          label="出生日期"/>
+          label="出生日期"
+          width="100"/>
         <el-table-column
           prop="phone"
           label="电话号码"
-          min-width="120"/>
+          min-width="120"
+          show-overflow-tooltip/>
         <el-table-column
           prop="email"
           label="电子邮箱"
@@ -84,7 +87,7 @@ export default {
   },
   data: function() {
     return {
-      height: window.screen.height - 315,
+      height: document.body.clientHeight - 190,
       listQuery: {
         page: 1,
         limit: 50

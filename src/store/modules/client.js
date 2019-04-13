@@ -1,9 +1,10 @@
-import { fetchClientList, fetchInsurancePolicyList } from '@/http/modules/client'
+import { fetchClientList, fetchInsurancePolicyList, fetchRenewal } from '@/http/modules/client'
 import { fetchChannelCommissionTable, fetchChannelCommissionPayment } from '@/http/modules/channel'
 const client = {
   namespaced: true,
   state: {
     clientList: [],
+    renewal: [],
     insurancePolicyList: [],
     channelCommissionTableList: [],
     channelCommissionPayment: []
@@ -20,6 +21,9 @@ const client = {
     },
     SET_CHANNEL_COMMISSION_PAYMENT: (state, channelCommissionPayment) => {
       state.channelCommissionPayment = channelCommissionPayment
+    },
+    SET_RENEWAL: (state, renewal) => {
+      state.renewal = renewal
     }
   },
   actions: {
@@ -41,6 +45,16 @@ const client = {
     FetchChannelCommissionPayment({ commit }, params) {
       return fetchChannelCommissionPayment(params).then(res => {
         commit('SET_CHANNEL_COMMISSION_PAYMENT', res.data)
+      })
+    },
+    FetchRenewal({ commit }, { id, params }) {
+      return fetchRenewal(id, params).then(res => {
+        const renewal = []
+        renewal.push(res.data.primary)
+        res.data.riders.forEach(item => {
+          renewal.push(item)
+        })
+        commit('SET_RENEWAL', renewal)
       })
     }
   }

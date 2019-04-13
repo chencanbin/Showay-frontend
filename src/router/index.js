@@ -148,8 +148,8 @@ export const asyncRouterMap = [
       {
         path: 'paymentAudit',
         component: () => import('@/views/commission/paymentAudit/index'),
-        name: '发放审核',
-        meta: { title: '发放审核', icon: 'payment', noCache: true }
+        name: '发放记录',
+        meta: { title: '发放记录', icon: 'payment', noCache: true }
       }
     ]
   },
@@ -192,26 +192,26 @@ export const asyncRouterMap = [
   //     }
   //   ]
   // },
-  // {
-  //   path: '/document',
-  //   component: Layout,
-  //   redirect: 'noredirect',
-  //   meta: { title: '文档', icon: 'document', noCache: true },
-  //   children: [
-  //     {
-  //       path: 'internalDocument',
-  //       component: () => import('@/views/document/internalDocument'),
-  //       name: '内部',
-  //       meta: { title: '内部文档', icon: 'int_document', noCache: true }
-  //     },
-  //     {
-  //       path: 'companyDocument',
-  //       component: () => import('@/views/document/companyDocument'),
-  //       name: '保险公司',
-  //       meta: { title: '保险公司', icon: 'company_document', noCache: true }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/document',
+    component: Layout,
+    redirect: 'noredirect',
+    meta: { title: '文档', icon: 'document', noCache: true },
+    children: [
+      {
+        path: 'internalDocument',
+        component: () => import('@/views/document/internalDocument'),
+        name: '内部',
+        meta: { title: '内部文档', icon: 'int_document', noCache: true }
+      },
+      {
+        path: 'companyDocument',
+        component: () => import('@/views/document/companyDocument'),
+        name: '保险公司',
+        meta: { title: '保险公司', icon: 'company_document', noCache: true }
+      }
+    ]
+  },
   // {
   //   path: '/report',
   //   component: Layout,

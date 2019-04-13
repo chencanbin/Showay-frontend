@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 5px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -361,14 +361,15 @@ export default {
           data.beneficiary = this.insurancePolicy.beneficiary.id
           data.channel = this.insurancePolicy.channel.id
           data.product = this.insurancePolicy.product.id
-          data.riderBenefits = [] // 暂时不编辑副险
+          delete data.riderBenefits
           this.$api.client.editInsurancePolicy(this.insurancePolicy.id, data).then(_ => {
             this.$message({
               message: '操作成功',
               type: 'success',
               duration: 5 * 1000
             })
-            this.$store.dispatch('client/FetchInsurancePolicyList', {})
+            const params = { sort: 'submitDate', order: 'desc' }
+            this.$store.dispatch('client/FetchInsurancePolicyList', { params })
             this.submitLoading = false
             this.handleClose()
           }).catch(_ => {
@@ -386,10 +387,10 @@ export default {
   .insurance-policy-form {
     font-size: 0;
     .el-form-item {
+      margin-bottom: 15px;
+      margin-right: 10px;
       width: 48%;
     }
-    .el-form-item__content {
-      width: 65%;
-    }
   }
+
 </style>

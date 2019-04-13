@@ -1,0 +1,220 @@
+<template>
+  <span style="margin-right: 5px">
+    <el-col span.number="24" style="margin-bottom: 20px">
+      <div class="el-table-add-row" style="margin-top: 0" @click="initForm"><span>+ 添加</span></div>
+    </el-col>
+    <!--<el-button :loading="loading" icon="el-icon-setting" type="text" size="small" style="margin-left: 5px" >-->
+    <!--渠道佣金-->
+    <!--</el-button>-->
+    <el-dialog
+      v-el-drag-dialog
+      :visible="dialogVisible"
+      :before-close="handleClose"
+      append-to-body
+      title="添加渠道佣金策略"
+      width="600px">
+      <el-form ref="policy" :model="policy" :rules="rulePolicy" label-width="100px">
+        <el-form-item label="类型" prop="type">
+          <el-select v-model="policy.type" style="width: 100%" placeholder="请选择策略类型" @change="onTypeChange">
+            <el-option key="0" label="所有" value="all"/>
+            <el-option key="1" label="公司" value="companies"/>
+            <el-option key="2" label="產品" value="products"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="policy.type === 'products'" label="产品" prop="products">
+          <el-select
+            v-if="policy.type === 'products'"
+            ref="product"
+            :remote-method="searchProduct"
+            v-model="policy.products"
+            multiple
+            remote
+            filterable
+            value-key="id"
+            placeholder="请选择产品"
+            style="width: 100%">
+            <el-option
+              v-for="item in products"
+              :key="item.id"
+              :label="item.name"
+              :value="item"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="policy.type === 'companies'" label="供应商" prop="companies">
+          <el-select
+            v-if="policy.type === 'companies'"
+            ref="product"
+            :remote-method="searchCompany"
+            v-model="policy.companies"
+            multiple
+            remote
+            filterable
+            value-key="id"
+            placeholder="请选择公司"
+            style="width: 100%">
+            <el-option
+              v-for="item in companies"
+              :key="item.id"
+              :label="item.name"
+              :value="item"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="policy.type" label="年期" prop="term" >
+          <el-select v-model="policy.term" style="width: 100%" placeholder="请选择年期">
+            <el-option
+              v-for="item in totalYear"
+              :key="item"
+              :label= "`${item}年`"
+              :value="item"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="policy.term > 1" label="自定义年期" prop="userDefined">
+          <el-select v-if="policy.term > 1" v-model="policy.userDefined" placeholder="请选择自定义年期" style="width: 100%" @change="userDefinedChange">
+            <el-option
+              v-for="item in generateDefinedYear"
+              :key="item"
+              :label= "`${item}年`"
+              :value="item"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-for="item in getUserDefined"
+          :label="item.label"
+          :key="item.id"
+          :prop="`conditions.${item.value}`"
+          :rules="[
+            {required: true, message: '请输入佣金率', trigger: 'blur'}
+          ]"
+        >
+          <el-input v-model="policy.conditions[item.value]">
+            <template slot="append">%</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="policy.remark"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+      </div>
+    </el-dialog>
+  </span>
+</template>
+
+<script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
+import elDragDialog from '@/directive/el-dragDialog'
+
+const _ = require('lodash')
+export default {
+  directives: { elDragDialog },
+  data() {
+    return {
+      dialogVisible: false,
+      products: [],
+      companies: [],
+      policy: {
+        remark: '',
+        type: '',
+        products: [],
+        companies: [],
+        term: '',
+        userDefined: '',
+        conditions: []
+      },
+      totalYear: _.range(1, 16),
+      rulePolicy: {
+        type: [{ required: true, message: '请选择策略类型', trigger: ['blur', 'change'] }],
+        term: [{ required: true, message: '年期必须选', trigger: 'blur' }],
+        userDefined: [{ required: true, message: '自定义年期必须选', trigger: 'blur' }]
+      }
+    }
+  },
+  computed: {
+    ...mapGetters(['loading']),
+    generateDefinedYear() {
+      return _.range(1, this.policy.term + 1)
+    },
+    getUserDefined() {
+      const result = []
+
+      // this.policy.commissionRates = []
+      if (this.policy.term === 1 || this.policy.userDefined === 1) {
+        result.push({ label: `第1年`, value: 1 })
+      } else if (this.policy.userDefined > 1) {
+        for (let i = 0; i < this.policy.userDefined; i++) {
+          result.push({ label: `第${i + 1}年`, value: i })
+        }
+      }
+      if (this.policy.userDefined && this.policy.userDefined < this.policy.term) {
+        result.push({ label: `第${this.policy.userDefined}年之后`, value: this.policy.userDefined + 1 })
+      }
+      return result
+    }
+  },
+  methods: {
+    initForm() {
+      this.dialogVisible = true
+    },
+    handleClose() {
+      this.$refs['policy'].resetFields()
+      this.dialogVisible = false
+    },
+    handleSubmit() {
+      this.$refs['policy'].validate((valid) => {
+        if (valid) {
+          const result = { remarks: this.policy.remark, term: this.policy.term, conditions: [], companies: this.policy.companies, products: this.policy.products }
+          _.forEach(_.compact(this.policy.conditions), item => {
+            result.conditions.push({ commissionRate: item })
+          })
+          this.$emit('addPolicy', result)
+          this.$message({
+            message: '操作成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          this.handleClose()
+        } else {
+          return false
+        }
+      })
+    },
+    getProducts(params) {
+      this.$api.product.fetchProductList(params).then(res => {
+        this.products = res.data.list
+      })
+    },
+    getCompanies(params) {
+      this.$api.company.fetchCompanyList(params).then(res => {
+        this.companies = res.data.list
+      })
+    },
+    searchProduct(query) {
+      this.$api.product.fetchProductList({ name: query }).then(res => {
+        this.products = res.data.list
+      })
+    },
+    searchCompany(query) {
+      this.$api.company.fetchCompanyList({ name: query }).then(res => {
+        this.companies = res.data.list
+      })
+    },
+    onTypeChange(value) {
+      if (value === 'products') {
+        this.policy.companies = []
+        this.getProducts()
+      } else if (value === 'companies') {
+        this.policy.products = []
+        this.getCompanies()
+      } else {
+        this.policy.companies = []
+        this.policy.products = []
+      }
+    },
+    userDefinedChange(value) {
+      this.policy.conditions = []
+    }
+  }
+}
+</script>

@@ -1,32 +1,34 @@
 <template>
-  <span>
+  <span id="audit">
     <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">外发</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      center
       title="到账审核"
       width="400px">
       <el-form ref="audit" label-width="150px">
         <el-form-item label="保单号" prop="name">
           {{ commissionCredit.insurancePolicy.number }}
         </el-form-item>
-        <el-form-item label="应发数额" prop="name">
-          {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmount) }}
-        </el-form-item>
         <el-form-item label="期序" prop="name">
           第{{ commissionCredit.year }}期
         </el-form-item>
-        <el-form-item label="实发数额" prop="name">
-          {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.amount) }}
+        <el-form-item label="应收" prop="name">
+          {{ getSymbol(commissionCredit.currency) + ' ' + formatterCurrency(commissionCredit.calculatedAmount) }}
         </el-form-item>
-        <el-form-item label="兑港币汇率" prop="name">
+        <el-form-item v-if="commissionCredit.currency !== 'HKD'" label="应收等额港币" prop="name">
+          {{ 'HK$ ' + formatterCurrency(commissionCredit.calculatedAmountInHkd) }}
+        </el-form-item>
+        <el-form-item v-if="commissionCredit.currency !== 'HKD'" label="汇率" prop="name">
           {{ commissionCredit.exchangeRateToHkd }}
         </el-form-item>
-        <!--<el-form-item label="备注" prop="remarks">-->
-        <!--{{commissionCredit.remarks}}-->
-        <!--</el-form-item>-->
+        <el-form-item label="实收" prop="name">
+          {{ 'HK$ ' + formatterCurrency(commissionCredit.amount) }}
+        </el-form-item>
+        <el-form-item label="备注" prop="remarks">
+          {{ commissionCredit.remarks }}
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button :loading="loading" type="danger" @click="handleReject">退回待发</el-button>
@@ -104,4 +106,9 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
+  #audit {
+    .el-form-item {
+      margin-bottom: 10px;
+    }
+  }
 </style>

@@ -1,49 +1,49 @@
 <template>
   <el-row :gutter="40" class="panel-group">
-    <el-col :xs="24" :sm="24" :lg="8" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+    <el-col :xs="24" :sm="24" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="panelClick('creditSum')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="income" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">总佣金收入</div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num"/>
+          <div class="card-panel-text">已到账</div>
+          <count-to :start-val="0" :end-val="overall.creditSum" :duration="2600" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
-    <el-col :xs="24" :sm="24" :lg="8" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
+    <el-col :xs="24" :sm="24" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="panelClick('pendingCreditSum')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="earning" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">总收益</div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num"/>
+          <div class="card-panel-text">预计待收</div>
+          <count-to :start-val="0" :end-val="overall.pendingCreditSum" :duration="3000" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
-    <el-col :xs="24" :sm="24" :lg="8" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+    <el-col :xs="24" :sm="24" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="panelClick('paymentSum')">
+        <div class="card-panel-icon-wrapper icon-payment-sum">
+          <svg-icon icon-class="paymentSum" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">预计待发</div>
+          <count-to :start-val="0" :end-val="overall.pendingPaymentSum" :duration="3000" class="card-panel-num"/>
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="24" :sm="24" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="panelClick('policyCount')">
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="order" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">总成单数</div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="overall.policyCount" :duration="1000" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
-    <!--    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">Shoppings</div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num"/>
-        </div>
-      </div>
-    </el-col>-->
   </el-row>
 </template>
 
@@ -54,15 +54,23 @@ export default {
   components: {
     CountTo
   },
+  props: {
+    overall: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   methods: {
-    handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
+    panelClick(type) {
+      this.$emit('panelClick', type)
     }
   }
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
 .panel-group {
   margin-top: 18px;
   .card-panel-col{
@@ -88,6 +96,9 @@ export default {
       .icon-message {
         background: #36a3f7;
       }
+      .icon-payment-sum {
+        background: #E6A23C;
+      }
       .icon-money {
         background: #f4516c;
       }
@@ -100,6 +111,9 @@ export default {
     }
     .icon-message {
       color: #36a3f7;
+    }
+    .icon-payment-sum {
+      color: #E6A23C;
     }
     .icon-money {
       color: #f4516c;

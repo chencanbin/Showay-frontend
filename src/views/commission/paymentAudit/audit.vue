@@ -12,13 +12,13 @@
         <el-form-item label="保单号" prop="name">
           {{ commissionCredit.insurancePolicy.number }}
         </el-form-item>
-        <el-form-item label="应发数额" prop="name">
+        <el-form-item label="应发" prop="name">
           {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmount) }}
         </el-form-item>
         <el-form-item label="期序" prop="name">
           第{{ commissionCredit.year }}期
         </el-form-item>
-        <el-form-item label="实发数额" prop="name">
+        <el-form-item label="实发" prop="name">
           {{ formatterCurrency(commissionCredit.amount) }}
         </el-form-item>
         <el-form-item label="备注" prop="remarks">

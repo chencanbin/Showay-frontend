@@ -1,8 +1,8 @@
 <template>
   <div class="table-container">
     <basic-container>
+      <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table v-loading="loading" :data="users.list" :height="height" stripe>
-        <el-table-column label="ID" prop="id" width="50px"/>
         <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
         <el-table-column :label="$t('user.table_header.account')" prop="login"/>
         <el-table-column :label="$t('user.table_header.role')" prop="roles" min-width="150px">
@@ -21,7 +21,7 @@
           :label="$t('user.table_header.create_time')"
           prop="creationDay"
           min-width="100px"/>
-        <el-table-column :label="$t('user.table_header.action')">
+        <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
             <edit v-if="!scope.row.isBuiltin" :user="scope.row"/>
             <el-button
@@ -33,7 +33,6 @@
         </el-table-column>
       </el-table>
       <add/>
-      <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
     </basic-container>
   </div>
 </template>
@@ -54,7 +53,8 @@ export default {
   },
   data() {
     return {
-      height: window.screen.height - 310,
+      events: [],
+      height: document.body.clientHeight - 190,
       listQuery: {
         page: 1,
         limit: 50

@@ -71,9 +71,11 @@ export default function $axios(options) {
           // 4003 :令牌超时;
           if (data.status === 4003 || data.status === 50012 || data.status === 50014) {
             // 请自行在引入 MessageBox
-            MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
-              confirmButtonText: '重新登录',
-              cancelButtonText: '取消',
+            MessageBox.confirm('你已被登出，请重新登录', '确定登出', {
+              confirmButtonText: '确定',
+              showCancelButton: false,
+              closeOnClickModal: false,
+              closeOnPressEscape: false,
               type: 'warning'
             }).then(() => {
               store.dispatch('FedLogOut').then(() => {
@@ -95,7 +97,6 @@ export default function $axios(options) {
         }
       },
       err => {
-        store.commit('HIDE_LOADING')
         if (err && err.response) {
           switch (err.response.status) {
             case 400:

@@ -8,7 +8,6 @@
         </el-menu-item>
       </app-link>
     </template>
-
     <el-submenu v-else ref="submenu" :index="resolvePath(item.path)" :show-timeout="100" :hide-timeout="300">
       <template slot="title">
         <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" />
@@ -22,7 +21,6 @@
           :key="child.path"
           :base-path="resolvePath(child.path)"
           class="nest-menu" />
-
         <app-link v-else :to="resolvePath(child.path)" :key="child.name">
           <el-menu-item :index="resolvePath(child.path)">
             <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)"/>
@@ -30,7 +28,6 @@
         </app-link>
       </template>
     </el-submenu>
-
   </div>
 </template>
 
@@ -88,7 +85,6 @@ export default {
         this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
         return true
       }
-
       return false
     },
     resolvePath(routePath) {
@@ -104,3 +100,9 @@ export default {
   }
 }
 </script>
+<style>
+  .item {
+    margin-top: 10px;
+    margin-right: 40px;
+  }
+</style>

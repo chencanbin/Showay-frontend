@@ -48,6 +48,21 @@ export const policyStatus = [
     'en': 'Lapse'
   }]
 
+export const riderBenefitStatus = [
+  {
+    id: 0,
+    'zh-TW': '已生效',
+    'zh-CN': '已生效',
+    'en': 'Inforce'
+  },
+  {
+    id: 1,
+    'zh-TW': '已失效',
+    'zh-CN': '已失效',
+    'en': 'Lapse'
+  }
+]
+
 export const commissionStatus = [
   {
     id: 0,
@@ -110,8 +125,8 @@ export const commissionPaymentStatus = [
   },
   {
     id: '2',
-    'zh-TW': '已批准',
-    'zh-CN': '已批准',
+    'zh-TW': '待結清',
+    'zh-CN': '待结清',
     'en': 'Approved'
   },
   {
@@ -153,12 +168,12 @@ export const insurancePolicyTrace = [
 ]
 
 export const premiumPlan = [
-  {
-    id: 0,
-    'zh-TW': 'Annual',
-    'zh-CN': 'Annual',
-    'en': 'Annual'
-  },
+  // {
+  //   id: 0,
+  //   'zh-TW': 'Annual',
+  //   'zh-CN': 'Annual',
+  //   'en': 'Annual'
+  // },
   {
     id: 1,
     'zh-TW': 'Regular',
@@ -189,3 +204,24 @@ export const premiumPlan = [
     'zh-CN': 'HalfYearly',
     'en': 'HalfYearly'
   }]
+
+export const fileType = {
+  'application/pdf': 'pdf',
+  'text/plain': 'txt',
+  'application/msword': 'word',
+  'application/vnd.ms-excel': 'excel',
+  'application/vnd.ms-powerpoint': 'ppt',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'word',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'excel',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'ppt',
+  'video/avi': 'video',
+  'video/mpeg4': 'video',
+  'video/mp4': 'video',
+  'video/x-ms-wmv': 'video',
+  'audio/mp3': 'audio',
+  'image/gif': 'img',
+  'image/jpeg': 'img',
+  'image/png': 'img',
+  'application/x-zip-compressed': 'rar'
+}
+

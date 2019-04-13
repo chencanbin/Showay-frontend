@@ -24,7 +24,37 @@
         @expand-change="expandChange">
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <el-col v-loading="loading" :span="24">
+            <el-timeline id="channelCommissionTableList">
+              <div v-if="channelCommissionTableList.length === 0" style="text-align: center; color: #909399;">
+                无渠道佣金策略
+              </div>
+              <el-timeline-item v-for="item in channelCommissionTableList" :key="item.id" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
+                <el-card>
+                  <!--<p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>-->
+                  <div class="bottom clearfix">
+                    <el-button
+                      v-if="item.status !== 0"
+                      :loading="loading"
+                      type="text"
+                      size="mini"
+                      icon="el-icon-view"
+                      @click="handleTimestampDialog(item.id, item.effectiveDate, scope.row.name)">
+                      查看
+                    </el-button>
+                    <el-button
+                      :loading="loading"
+                      type="text"
+                      size="mini"
+                      icon="el-icon-download"
+                      @click="exportPDF(item.id)">导出</el-button>
+                    <editChannelCommissionTable :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks"/>
+                    <el-button :loading="loading" type="text" size="mini" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">删除</el-button>
+                  </div>
+                </el-card>
+              </el-timeline-item>
+            </el-timeline>
+            <addChannelCommissionTable :effective-date="scope.row.effectiveDate" :id="scope.row.id"/>
+            <!--<el-col v-loading="loading" :span="24">
               <el-form v-for="item in channelCommissionTableList" id="channelCommissionTableList" :key="item.id" :inline="true" label-width="100px">
                 <el-row>
                   <el-col :span="6" :offset="2">
@@ -45,7 +75,7 @@
                         type="text"
                         size="mini"
                         icon="el-icon-view"
-                        @click="handleView(item.id)">
+                        @click="handleTimestampDialog(item.id, item.effectiveDate)">
                         查看
                       </el-button>
                       <el-button
@@ -60,60 +90,45 @@
                   </el-col>
                 </el-row>
               </el-form>
-              <!--<el-table id="channelCommissionTableList" v-loading="loading" :data="channelCommissionTableList" :show-header="false">-->
-              <!--<el-table-column :formatter="dateFormat" label="有效时间" prop="effectiveDate" align="center"/>-->
-              <!--<el-table-column label="备注" prop="remarks" align="left"/>-->
-              <!--<el-table-column :label="$t('user.table_header.action')">-->
-              <!--<template slot-scope="scope">-->
-              <!--<el-button-->
-              <!--v-if="scope.row.status !== 0"-->
-              <!--type="text"-->
-              <!--icon="el-icon-view"-->
-              <!--style="margin-right: 5px"-->
-              <!--@click="handleView(scope.row.id)">-->
-              <!--查看-->
-              <!--</el-button>-->
-              <!--<el-button-->
-              <!--type="text"-->
-              <!--icon="el-icon-download"-->
-              <!--@click="exportPDF(scope.row.id)">导出</el-button>-->
-              <!--<editChannelCommissionTable :id="scope.row.id" :effectiveDate="scope.row.effectiveDate" :remarks="scope.row.remarks"/>-->
-              <!--<el-button :loading="loading" type="text" size="small" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(scope)">删除</el-button>-->
-              <!--</template>-->
-              <!--</el-table-column>-->
-              <!--</el-table>-->
-              <addChannelCommissionTable :effective-date="scope.row.effectiveDate" :id="scope.row.id"/>
-            </el-col>
+            </el-col>-->
           </template>
         </el-table-column>
-        <el-table-column label="ID" prop="id" width="50px"/>
         <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
         <el-table-column :label="$t('user.table_header.account')" prop="login"/>
         <el-table-column label="上级" prop="superior.name"/>
-        <el-table-column
-          :formatter="dateFormat"
-          :label="$t('user.table_header.create_time')"
-          prop="creationDay"
-          min-width="100px"/>
-        <el-table-column :label="$t('user.table_header.action')" min-width="100px">
+        <el-table-column :label="$t('common.action')" width="250px">
           <template slot-scope="scope">
             <el-button type="text" size="mini" style="margin-right: 10px" @click="toggleChannelPolicy(scope.row)">
               <svg-icon icon-class="commissionPolicy"/>
               渠道策略
             </el-button>
+            <commission-policy :id="scope.row.id"/>
             <edit v-if="!scope.row.isBuiltin" :user="scope.row"/>
-            <el-button
-              v-if="!scope.row.isBuiltin"
-              type="text"
-              size="mini"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.$index, scope.row)">{{ $t('action.del') }}
-            </el-button>
+            <!--<el-button-->
+            <!--v-if="!scope.row.isBuiltin"-->
+            <!--type="text"-->
+            <!--size="mini"-->
+            <!--icon="el-icon-delete"-->
+            <!--@click="handleDelete(scope.$index, scope.row)">{{ $t('action.del') }}-->
+            <!--</el-button>-->
           </template>
         </el-table-column>
       </el-table>
       <add/>
       <channelCommissionView ref="channelCommissionView"/>
+      <el-dialog
+        :visible.sync="timeDialogVisible"
+        width="400px"
+        title="选择参考时间">
+        <el-date-picker
+          v-model="channelPolicyObj.timestamp"
+          type="date"
+          value-format="timestamp"
+          style="width: 100%"/>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="handleView">确定</el-button>
+        </div>
+      </el-dialog>
     </basic-container>
   </div>
 </template>
@@ -124,7 +139,7 @@ import edit from './edit'
 import channelCommissionView from './view'
 import addChannelCommissionTable from './addChannelCommissionTable'
 import editChannelCommissionTable from './editChannelCommissionTable'
-import channelCommissionTable from './channelCommissionTable'
+import commissionPolicy from './commissionPolicy'
 import pagination from '@/components/Pagination'
 import { mapGetters, mapState } from 'vuex'
 import { parseTime } from '@/utils'
@@ -136,13 +151,19 @@ export default {
     edit,
     addChannelCommissionTable,
     editChannelCommissionTable,
-    channelCommissionTable,
     pagination,
-    channelCommissionView
+    channelCommissionView,
+    commissionPolicy
   },
   data() {
     return {
-      height: window.screen.height - 300,
+      height: document.body.clientHeight - 190,
+      timeDialogVisible: false,
+      channelName: '',
+      channelPolicyObj: {
+        id: '',
+        timestamp: ''
+      },
       wildcard: '',
       listQuery: {
         page: 1,
@@ -168,7 +189,7 @@ export default {
       this.getUsers({ role: 2, wildcard: this.wildcard })
     }, 500),
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该管理员账号, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该渠道账号, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -204,6 +225,9 @@ export default {
       const date = row[column.property]
       return parseTime(date)
     },
+    getFormattedDate(value) {
+      return parseTime(value, '{y}-{m}-{d}')
+    },
     rateFormat(value) {
       if (value) {
         return _.toNumber(value).toFixed(2) + '%'
@@ -229,7 +253,6 @@ export default {
         return
       }
       this.getChannelCommissionTableList({ channel: row.id })
-      console.log(this.channelCommissionTableList)
       this.expandKeys.shift()
       this.expandKeys.push(row.id)
       if (expandedRows.length > 1) {
@@ -244,10 +267,16 @@ export default {
         this.showExpandRow = !this.showExpandRow
       }
       this.$refs.channelTable.toggleRowExpansion(row, this.showExpandRow)
-      console.log(this.expandKeys[0])
     },
-    handleView(id) {
-      this.$refs.channelCommissionView.openDialog(id)
+    handleTimestampDialog(id, effectiveDate, name) {
+      this.channelPolicyObj.timestamp = effectiveDate
+      this.channelPolicyObj.id = id
+      this.channelName = name
+      this.timeDialogVisible = true
+    },
+    handleView() {
+      this.$refs.channelCommissionView.openDialog(this.channelPolicyObj, this.channelName)
+      this.timeDialogVisible = false
     },
     exportPDF(id) {
       window.location.href = process.env.BASE_API + `/channelCommissionTable/${id}/export`
@@ -264,7 +293,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
   #channel {
     .el-table__expanded-cell {
-      padding: 5px;
+      padding: 15px;
     }
   }
  #channelCommissionTableList {
@@ -277,6 +306,28 @@ export default {
      .el-form-item__content {
        font-size: 12px;
      }
+   }
+    p {
+     font-size: 14px;
+     color: #5e6d82;
+     line-height: 1.5em;
+    }
+   .el-card {
+     padding: 15px;
+     .button {
+       padding: 0;
+       float: right;
+     }
+     .clearfix:before, .clearfix:after {
+       display: table;
+       content: "";
+     }
+     .clearfix:after {
+       clear: both
+     }
+   }
+   .el-card.is-always-shadow {
+     box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
    }
  }
 </style>

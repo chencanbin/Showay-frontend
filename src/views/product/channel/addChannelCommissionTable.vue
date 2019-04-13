@@ -1,5 +1,5 @@
 <template>
-  <el-col :span="18" :offset="3" style="margin-bottom: 10px">
+  <el-col :span="24" style="margin-bottom: 10px">
     <div class="el-table-add-row" @click="initForm"><span style="font-size: 12px">+ 添加渠道佣金策略</span></div>
     <!--<el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>-->
     <el-dialog
@@ -30,7 +30,7 @@
           </template>
         </el-table-column>
         <el-table-column label="备注" prop="remarks" align="center" min-width="150"/>
-        <el-table-column :label="$t('user.table_header.action')" width="80" align="center">
+        <el-table-column :label="$t('common.action')" width="80" align="center">
           <template slot-scope="scope">
             <el-button :loading="loading" type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.$index)">删除</el-button>
           </template>

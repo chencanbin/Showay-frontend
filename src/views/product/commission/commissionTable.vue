@@ -1,6 +1,7 @@
 <template>
   <span>
     <el-button
+      v-if="showButton"
       :loading="loading"
       size="mini"
       type="text"
@@ -35,6 +36,7 @@
           </el-input>
         </el-col>
       </el-row>
+
       <el-tabs v-model="activeName" type="border-card" tab-position="bottom" @tab-click="handleTabClick">
         <el-tab-pane label="基础佣金表" name="basic">
           <hot-table v-loading="loading" ref="basicTable" :settings="settings"/>
@@ -43,6 +45,9 @@
           <hot-table v-loading="loading" ref="overrideTable" :settings="settings"/>
         </el-tab-pane>
         <el-tab-pane label="总佣金表" name="overall">
+          <span style="margin-bottom: 10px; display: inline-block">
+            <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange"/>
+          </span>
           <hot-table v-loading="loading" ref="overallTable" :settings="overAllSettings"/>
         </el-tab-pane>
       </el-tabs>
@@ -95,6 +100,18 @@ export default {
       type: Number,
       default: 0
     },
+    created: {
+      type: Boolean,
+      default: false
+    },
+    companyId: {
+      type: Number,
+      default: 0
+    },
+    showButton: {
+      type: Boolean,
+      default: true
+    },
     title: {
       type: String,
       default: ''
@@ -105,6 +122,7 @@ export default {
       overrideTitle: '',
       activeName: 'basic',
       wildcard: '', // 搜索关键字
+      ffyap: true,
       matchCount: 0,
       currentCount: 0,
       searchResult: [],
@@ -129,7 +147,7 @@ export default {
         colHeaders: [],
         height: 120,
         stretchH: 'all',
-        rowHeights: 50,
+        rowHeights: 45,
         columnHeaderHeight: 45,
         afterChange: (changes, source) => {
           if (source === 'loadData') {
@@ -179,6 +197,7 @@ export default {
         rowHeaders: true,
         rowHeaderWidth: 65,
         fixedColumnsLeft: 1,
+        rowHeights: 45,
         columnHeaderHeight: 45,
         autoRowSize: true,
         contextMenu: {
@@ -271,7 +290,7 @@ export default {
         startCols: 20,
         startRows: 20,
         search: true,
-        height: window.screen.height - 330,
+        height: document.body.clientHeight - 235,
         stretchH: 'all',
         autoWrapRow: false,
         autoWrapCol: false,
@@ -279,6 +298,7 @@ export default {
         rowHeaderWidth: 65,
         fixedColumnsLeft: 1,
         columnHeaderHeight: 45,
+        rowHeights: 45,
         renderer: function(instance, TD, row, col, prop, value) {
           if (row % 2 === 0) {
             TD.style.backgroundColor = '#e1eedc'
@@ -330,9 +350,6 @@ export default {
       }
     }
   },
-  created() {
-  },
-
   methods: {
     initColumn() {
       const colHeaders = ['计划名称', 'ENG name', '产品编号', '年期']
@@ -458,9 +475,17 @@ export default {
       this.loading = true
       this.$api.commission.fetchCommissionList(this.id).then(res => {
         const result = []
-        res.data.list.forEach(item => {
-          result.push([item.row, item.column, item.value.basic])
-        })
+        if (this.created && res.data.list.length === 0) {
+          for (let x = 0; x < 21; x++) {
+            for (let y = 0; y < 1000; y++) {
+              result.push([y, x, ''])
+            }
+          }
+        } else {
+          res.data.list.forEach(item => {
+            result.push([item.row, item.column, item.value.basic])
+          })
+        }
         this.basicHotInstance.setDataAtRowProp(result, 'loadData')
         this.basicHotInstance.render()
         this.loading = false
@@ -480,7 +505,7 @@ export default {
     },
     loadOverallData() {
       this.loading = true
-      this.$api.commission.fetchCommissionList(this.id).then(res => {
+      this.$api.commission.fetchCommissionList(this.id, { ffyap: this.ffyap }).then(res => {
         const result = []
         res.data.list.forEach(item => {
           result.push([item.row, item.column, item.value.overall])
@@ -497,7 +522,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$store.dispatch('commission/FetchCommissionTableList', {})
+        this.wildcard = ''
+        this.$store.dispatch('commission/FetchCommissionTableList', { id: this.companyId })
         this.dialogVisible = false
       })
     },
@@ -521,7 +547,7 @@ export default {
         this.buttonLoading = false
         this.timeDialogVisible = false
         this.dialogVisible = false
-        this.$store.dispatch('commission/FetchCommissionTableList', {})
+        this.$store.dispatch('commission/FetchCommissionTableList', { id: this.companyId })
       }).catch(error => {
         const data = error.data
         this.buttonLoading = false
@@ -607,6 +633,9 @@ export default {
         hotInstance.toVisualRow(row)
         hotInstance.selectRows(row)
       }
+    },
+    ffyapChange() {
+      this.loadOverallData()
     }
   }
 }
@@ -631,7 +660,7 @@ export default {
   .handsontable td, .handsontable th {
     padding-left: 5px;
     padding-right: 5px;
-    line-height: 1.7;
+    height: 20px;
     min-width: 50px;
     vertical-align: middle;
     border-color: #e0e2e4;
@@ -642,6 +671,7 @@ export default {
   }
   .currentRow {
     background-color: #00aa72 !important;
+    color: #fafafa;
   }
   /*.handsontable tr:nth-child(odd) td {*/
     /*background: #e1eedc;*/
@@ -667,7 +697,9 @@ export default {
   #commissionTableDialog .el-dialog__header {
     padding: 0;
   }
-
+  #commissionTableDialog .el-dialog__close{
+    color: #909399;
+  }
   #commissionTableDialog .el-dialog {
     background-color: #f8f8f8;
   }

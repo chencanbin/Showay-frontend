@@ -8,8 +8,8 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       :fullscreen="true"
-      center
-      title="编辑渠道佣金策略">
+      :title="title"
+      center>
       <el-table id="channelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
         <!--<el-table-column
           label="优先级"
@@ -32,7 +32,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="remarks" label="备注" align="center" min-width="150"/>
-        <el-table-column :label="$t('user.table_header.action')">
+        <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
             <el-button :loading="loading" type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.$index)">删除</el-button>
           </template>
@@ -41,7 +41,7 @@
       <addPolicy @addPolicy="onAddPolicy"/>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="timeDialogVisible = true">保存策略</el-button>
+        <el-button :loading="loading" type="primary" @click="timeDialogVisible = true">保存</el-button>
       </div>
       <!-- 佣金生效时间弹框 -->
       <el-dialog
@@ -73,6 +73,7 @@
 import { mapGetters } from 'vuex'
 import addPolicy from './addPolicy'
 import Sortable from 'sortablejs'
+import { parseTime } from '@/utils'
 import prefixSelect from './component/prefixSelect'
 const _ = require('lodash')
 export default {
@@ -102,6 +103,7 @@ export default {
   },
   data() {
     return {
+      title: '',
       originalPolicies: [],
       policies: [],
       tableHeight: window.screen.height - 320,
@@ -122,6 +124,7 @@ export default {
   },
   methods: {
     initForm() {
+      this.title = `编辑渠道佣金策略 ( ${parseTime(this.effectiveDate, '{y}-{m}-{d}')} )`
       this.$api.channel.fetchChannelCommissionPolicy(this.id).then(res => {
         this.originalPolicies = _.cloneDeep(res.data.policies)
         this.formatterData(res.data.policies)
@@ -164,7 +167,7 @@ export default {
     },
     handleSubmit() {
       this.configButtonLoading = true
-      // 处理companies 和 products 字段, 只提交id的数组
+      //  处理companies 和 products 字段, 只提交id的数组
       _.forEach(this.originalPolicies, item => {
         const products = []
         const companies = []

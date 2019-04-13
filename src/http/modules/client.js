@@ -73,3 +73,42 @@ export function resetInsurancePolicy(id) {
     method: 'post'
   })
 }
+
+export function fetchRenewal(id, params) {
+  return request({
+    url: `/insurancePolicy/renewal/${id}`,
+    method: 'get',
+    params
+  })
+}
+
+export function createRenewal(id, data) {
+  return request({
+    url: `/insurancePolicy/${id}/renew`,
+    method: 'post',
+    data
+  })
+}
+
+export function editRenewal(id, data) {
+  return request({
+    url: `/insurancePolicy/renewal/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteRenewal(id) {
+  return request({
+    url: `/insurancePolicy/renewal/${id}`,
+    method: 'delete'
+  })
+}
+
+export function calendarRenewal(params) {
+  return request({
+    url: `/calendar/renewal`,
+    method: 'get',
+    params
+  })
+}
