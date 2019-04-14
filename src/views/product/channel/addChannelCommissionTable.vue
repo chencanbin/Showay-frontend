@@ -39,7 +39,7 @@
       <addPolicy @addPolicy="onAddPolicy"/>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="timeDialogVisible = true">保存策略</el-button>
+        <el-button type="primary" @click="timeDialogVisible = true">保存策略</el-button>
       </div>
       <!-- 佣金生效时间弹框 -->
       <el-dialog
@@ -60,15 +60,13 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer" style="text-align: center">
-          <el-button v-loading="configButtonLoading" :loading="buttonLoading" type="primary" @click="handleSubmit">确定</el-button>
+          <el-button :loading="saveLoading" type="primary" @click="handleSubmit">确定</el-button>
         </div>
       </el-dialog>
-
     </el-dialog>
   </el-col>
 </template>
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import addPolicy from './addPolicy'
 import Sortable from 'sortablejs'
 import prefixSelect from './component/prefixSelect'
@@ -99,11 +97,9 @@ export default {
       timeDialogVisible: false,
       buttonLoading: false,
       remarks: '',
-      configButtonLoading: false
+      saveLoading: false,
+      loading: false
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
@@ -145,7 +141,7 @@ export default {
       })
     },
     handleSubmit() {
-      this.configButtonLoading = true
+      this.saveLoading = true
       // 处理companies 和 products 字段, 只提交id的数组
       _.forEach(this.originalPolicies, item => {
         const products = []
@@ -162,10 +158,10 @@ export default {
       this.$api.channel.createChannelCommissionPolicy({ channel: this.id, policies: this.originalPolicies, effectiveDate: this.effectiveDate, remarks: this.remarks }).then(res => {
         this.dialogVisible = false
         this.timeDialogVisible = false
-        this.configButtonLoading = false
+        this.saveLoading = false
         this.$store.dispatch('client/FetchChannelCommissionTable', { channel: this.id })
       }).catch(_ => {
-        this.configButtonLoading = false
+        this.saveLoading = false
       })
     },
     getProducts(params) {

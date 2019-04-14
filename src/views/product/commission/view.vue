@@ -19,7 +19,7 @@
     </div>
     <el-tabs v-model="activeName" type="border-card">
       <el-tab-pane label="基础佣金表" name="basic">
-        <el-table v-loading="loading" :data="data" :max-height="tableHeight" stripe>
+        <el-table v-loading="viewLoading" :data="data" :max-height="tableHeight" stripe>
           <el-table-column prop="product.acronym" label="编号" width="100" fixed="left" show-overflow-tooltip/>
           <el-table-column prop="product.name" label="产品名称(中文)" show-overflow-tooltip min-width="180" fixed="left"/>
           <el-table-column prop="product.enName" label="产品名称(英文)" show-overflow-tooltip min-width="180" fixed="left"/>
@@ -36,7 +36,7 @@
         <span style="margin-bottom: 10px; display: inline-block">
           <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange"/>
         </span>
-        <el-table v-loading="loading" :data="data" :max-height="tableHeight" stripe>
+        <el-table v-loading="viewLoading" :data="data" :max-height="tableHeight" stripe>
           <el-table-column prop="product.acronym" label="编号" width="120" fixed="left" show-overflow-tooltip/>
           <el-table-column prop="product.name" label="产品名称(中文)" fixed="left" min-width="180" show-overflow-tooltip/>
           <el-table-column prop="product.enName" label="产品名称(英文)" fixed="left" min-width="180" show-overflow-tooltip/>
@@ -64,6 +64,7 @@ export default {
   },
   data() {
     return {
+      viewLoading: false,
       ffyap: true,
       activeName: 'basic',
       wildcard: '',
@@ -91,6 +92,9 @@ export default {
       this.getCommissionTableList({ wildcard: this.wildcard })
     }, 500),
     openDialog(id) {
+      this.dialogVisible = true
+      this.viewLoading = true
+      this.data = []
       this.$api.commission.fetchCommissionTable(id, { ffyap: this.ffyap }).then(res => {
         this.data = res.data.list
         this.total = res.data.total
@@ -108,7 +112,9 @@ export default {
             this.columnYear.push('第' + item + '年')
           }
         })
-        this.dialogVisible = true
+        this.viewLoading = false
+      }).catch(_ => {
+        this.viewLoading = false
       })
     },
     getCommissionTableList(p) {

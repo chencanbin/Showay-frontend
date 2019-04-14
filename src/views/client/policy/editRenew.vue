@@ -22,7 +22,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="handleSubmit">保存</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">保存</el-button>
       </div>
     </el-dialog>
   </span>
@@ -66,6 +66,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       dialogVisible: false,
       form: {
         premium: 0,
@@ -76,7 +77,6 @@ export default {
   },
   methods: {
     initForm() {
-      console.log(this.data)
       this.form.premium = this.renewal.premium
       this.form.year = this.renewal.year
       this.dialogVisible = true
@@ -87,6 +87,7 @@ export default {
     handleSubmit() {
       this.$refs['renewal'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.client.editRenewal(this.renewal.id, { insurancePolicy: this.id, product: this.data.product.id, premium: this.form.premium, year: this.renewal.year }).then(res => {
             this.$message({
               message: '操作成功',
@@ -95,6 +96,9 @@ export default {
             })
             this.$store.dispatch('client/FetchRenewal', { id: this.id })
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

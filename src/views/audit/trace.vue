@@ -8,8 +8,8 @@
       title="保单审计列表"
       top="10px"
       width="450px">
-      <div class="block">
-        <el-timeline>
+      <div class="block" style="min-height: 200px">
+        <el-timeline v-loading="loading">
           <el-timeline-item v-for="trace in traceList" :key="trace.id" :timestamp="dateFormat(trace.timestamp)" placement="top">
             <el-card>
               <h4>{{ getTraceDesc(trace.type) }}</h4>
@@ -42,15 +42,20 @@ export default {
     return {
       language: '',
       traceList: [],
-      dialogVisible: false
+      dialogVisible: false,
+      loading: false
     }
   },
   methods: {
     initForm() {
+      this.dialogVisible = true
       this.language = Cookies.get('language') || 'zh-CN'
+      this.loading = true
       this.$api.product.traceInsurancePolicy(this.number).then(res => {
         this.traceList = res.data.list
-        this.dialogVisible = true
+        this.loading = false
+      }).catch(_ => {
+        this.loading = false
       })
     },
     dateFormat(date) {

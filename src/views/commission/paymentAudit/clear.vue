@@ -28,7 +28,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import imageUpload from '@/components/upload/imageUpload'
 import elDragDialog from '@/directive/el-dragDialog'
 
@@ -52,11 +51,9 @@ export default {
         chequeCopy: '',
         remarks: ''
       },
-      dialogVisible: false
+      dialogVisible: false,
+      loading: false
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
@@ -69,6 +66,7 @@ export default {
     handleSubmit() {
       this.$refs['clear'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.commission.mergedPaymentClear(this.id, this.clear).then(_ => {
             this.$message({
               message: '操作成功',
@@ -77,6 +75,9 @@ export default {
             })
             this.$store.dispatch('commission/FetchAuditPayment', { status: 2 })
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

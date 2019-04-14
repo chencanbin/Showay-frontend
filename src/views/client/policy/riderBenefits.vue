@@ -52,14 +52,13 @@
       <add :company-id="companyId" :currency="currency" @afterAdd="afterAdd" />
       <div slot="footer" style="text-align: center">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button :loading="saveLoading" type="primary" @click="handleSubmit">提交</el-button>
       </div>
     </el-dialog>
   </span>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import add from './addRiderBenefit'
 import { getSymbol } from '@/utils'
 import edit from './editRiderBenefit'
@@ -104,12 +103,10 @@ export default {
   data() {
     return {
       language: '',
+      saveLoading: false,
       dialogVisible: false,
       riderBenefits: []
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     getSymbol,
@@ -137,10 +134,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.riderBenefits.splice(index, 1)
-        console.log(this.riderBenefits)
       })
     },
     handleSubmit() {
+      this.saveLoading = true
       const data = []
       this.riderBenefits.forEach(item => {
         data.push({ product: item.product.id, premium: item.premium, amountInsured: item.amountInsured, status: item.status })
@@ -154,6 +151,9 @@ export default {
         const params = { sort: 'submitDate', order: 'asc' }
         this.$store.dispatch('client/FetchInsurancePolicyList', { params })
         this.handleClose()
+        this.saveLoading = false
+      }).catch(_ => {
+        this.saveLoading = false
       })
     },
     formatterRiderBenefitStatus(id) {

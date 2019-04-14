@@ -14,6 +14,7 @@
       </el-form>
       <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
+        v-loading="userLoading"
         id="channelTable"
         ref="channelTable"
         :height="height"
@@ -24,7 +25,7 @@
         @expand-change="expandChange">
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <el-timeline id="channelCommissionTableList">
+            <el-timeline v-loading="channelCommissionLoading" id="channelCommissionTableList">
               <div v-if="channelCommissionTableList.length === 0" style="text-align: center; color: #909399;">
                 无渠道佣金策略
               </div>
@@ -34,7 +35,6 @@
                   <div class="bottom clearfix">
                     <el-button
                       v-if="item.status !== 0"
-                      :loading="loading"
                       type="text"
                       size="mini"
                       icon="el-icon-view"
@@ -42,55 +42,17 @@
                       查看
                     </el-button>
                     <el-button
-                      :loading="loading"
                       type="text"
                       size="mini"
                       icon="el-icon-download"
                       @click="exportPDF(item.id)">导出</el-button>
                     <editChannelCommissionTable :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks"/>
-                    <el-button :loading="loading" type="text" size="mini" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">删除</el-button>
+                    <el-button type="text" size="mini" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">删除</el-button>
                   </div>
                 </el-card>
               </el-timeline-item>
             </el-timeline>
             <addChannelCommissionTable :effective-date="scope.row.effectiveDate" :id="scope.row.id"/>
-            <!--<el-col v-loading="loading" :span="24">
-              <el-form v-for="item in channelCommissionTableList" id="channelCommissionTableList" :key="item.id" :inline="true" label-width="100px">
-                <el-row>
-                  <el-col :span="6" :offset="2">
-                    <el-form-item label="有效时间:" class="effectiveDate">
-                      {{ parseTime(item.effectiveDate) }}
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-form-item label="备注:" class="remarks">
-                      {{ item.remarks || '-' }}
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="8">
-                    <el-form-item label="操作:" class="operation">
-                      <el-button
-                        v-if="item.status !== 0"
-                        :loading="loading"
-                        type="text"
-                        size="mini"
-                        icon="el-icon-view"
-                        @click="handleTimestampDialog(item.id, item.effectiveDate)">
-                        查看
-                      </el-button>
-                      <el-button
-                        :loading="loading"
-                        type="text"
-                        size="mini"
-                        icon="el-icon-download"
-                        @click="exportPDF(item.id)">导出</el-button>
-                      <editChannelCommissionTable :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks"/>
-                      <el-button :loading="loading" type="text" size="mini" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">删除</el-button>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-form>
-            </el-col>-->
           </template>
         </el-table-column>
         <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
@@ -141,7 +103,7 @@ import addChannelCommissionTable from './addChannelCommissionTable'
 import editChannelCommissionTable from './editChannelCommissionTable'
 import commissionPolicy from './commissionPolicy'
 import pagination from '@/components/Pagination'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
 const _ = require('lodash')
 export default {
@@ -174,8 +136,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState({
+      userLoading: state => state.user.userLoading,
+      channelCommissionLoading: state => state.client.channelCommissionLoading,
       users: state => state.user.users,
       channelCommissionTableList: state => state.client.channelCommissionTableList
     })
@@ -205,20 +168,29 @@ export default {
       })
     },
     handleDeleteChannelCommissionTable(scope) {
-      console.log(scope)
       this.$confirm('此操作将永久删除该渠道佣金表, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$api.channel.deleteChannelCommissionPolicy(scope.id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getChannelCommissionTableList({ channel: scope.channel.id })
-        })
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.channel.deleteChannelCommissionPolicy(scope.id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getChannelCommissionTableList({ channel: scope.channel.id })
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       })
     },
     dateFormat(row, column) {

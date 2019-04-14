@@ -14,7 +14,7 @@
           </el-form-item>
         </el-form>
         <pagination :total="auditPayment.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
-        <el-table v-loading="loading" :height="height" :data="auditPayment.list" stripe border>
+        <el-table v-loading="auditPaymentLoading" :height="height" :data="auditPayment.list" stripe border>
           <el-table-column label="渠道" prop="channel.name" min-width="150"/>
           <el-table-column label="预计应发总额" min-width="120">
             <template slot-scope="scope">
@@ -65,7 +65,7 @@
 <script>
 import pagination from '@/components/Pagination'
 import statusBadge from '@/components/StatusBadge'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { commissionPaymentStatus } from '@/utils/constant'
 import Cookies from 'js-cookie'
 import detail from './detail'
@@ -97,8 +97,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
-    ...mapState({ auditPayment: state => state.commission.auditPayment })
+    ...mapState({
+      auditPayment: state => state.commission.auditPayment,
+      auditPaymentLoading: state => state.commission.auditPaymentLoading
+    })
   },
   created() {
     this.getAuditPayment({ status: -1 })

@@ -10,7 +10,7 @@
       :fullscreen="true"
       title= "续保记录">
       <el-table
-        v-loading="loading"
+        v-loading="renewalLoading"
         id="riderBenefits"
         :data="renewal"
         stripe
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { getSymbol } from '@/utils'
 import renew from './renew'
 import edit from './editRenew'
@@ -97,8 +97,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
-    ...mapState({ renewal: state => state.client.renewal })
+    ...mapState({
+      renewal: state => state.client.renewal,
+      renewalLoading: state => state.client.renewalLoading
+    })
   },
   methods: {
     getSymbol,
@@ -128,16 +130,27 @@ export default {
       this.$confirm('此操作将删除该续费记录, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.client.deleteRenewal(id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getRenewal(this.id)
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       }).then(() => {
-        this.$api.client.deleteRenewal(id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getRenewal(this.id)
-        })
       })
     },
     expandChange(row, expandedRows) {

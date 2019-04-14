@@ -16,7 +16,7 @@
       <add-client style="display:inline-block; margin-top: 9px"/>
       <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
-        v-loading="loading"
+        v-loading="insurancePolicyLoading"
         :height="height"
         :data="insurancePolicy.list"
         stripe
@@ -136,7 +136,7 @@
 import { parseTime, getYearFirst, getYearLast } from '@/utils'
 import { policyStatus, premiumPlan } from '@/utils/constant'
 import Cookies from 'js-cookie'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import add from './add'
 import edit from './edit'
 import detail from './detail'
@@ -171,10 +171,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState(
       {
-        insurancePolicy: state => state.client.insurancePolicyList
+        insurancePolicy: state => state.client.insurancePolicyList,
+        insurancePolicyLoading: state => state.client.insurancePolicyLoading
       })
   },
   watch: {
@@ -218,33 +218,54 @@ export default {
       this.$confirm('此操作将永久删除该保单, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$api.client.deleteInsurancePolicy(row.id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getInsurancePolicyList()
-        })
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.client.deleteInsurancePolicy(row.id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getInsurancePolicyList()
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       })
     },
     handleReset(id) {
-      console.log(new Date(this.year).getFullYear())
       this.$confirm('此操作将重置保单, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.client.resetInsurancePolicy(id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getInsurancePolicyList()
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       }).then(() => {
-        this.$api.client.resetInsurancePolicy(id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getInsurancePolicyList()
-        })
+
       })
     },
     // 格式化保单状态
@@ -285,6 +306,7 @@ export default {
       this.getInsurancePolicyList(params)
     },
     updatePage(val) {
+      console.log(val)
       this.listQuery.page = val
     },
     updateLimit(val) {

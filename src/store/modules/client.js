@@ -7,9 +7,37 @@ const client = {
     renewal: [],
     insurancePolicyList: [],
     channelCommissionTableList: [],
-    channelCommissionPayment: []
+    channelCommissionPayment: [],
+    channelCommissionLoading: false,
+    insurancePolicyLoading: false,
+    clientLoading: false,
+    renewalLoading: false
   },
   mutations: {
+    SHOW_RENEWAL_LOADING: (state) => {
+      state.renewalLoading = true
+    },
+    HIDE_RENEWAL_LOADING: (state) => {
+      state.renewalLoading = false
+    },
+    SHOW_CLIENT_LOADING: (state) => {
+      state.clientLoading = true
+    },
+    HIDE_CLIENT_LOADING: (state) => {
+      state.clientLoading = false
+    },
+    SHOW_INSURANCE_POLICY_LOADING: (state) => {
+      state.insurancePolicyLoading = true
+    },
+    HIDE_INSURANCE_POLICY_LOADING: (state) => {
+      state.insurancePolicyLoading = false
+    },
+    SHOW_CHANNEL_COMMISSION_TABLE_LOADING: (state) => {
+      state.channelCommissionLoading = true
+    },
+    HIDE_CHANNEL_COMMISSION_TABLE_LOADING: (state) => {
+      state.channelCommissionLoading = false
+    },
     SET_CLIENT_LIST: (state, clientList) => {
       state.clientList = clientList
     },
@@ -28,18 +56,30 @@ const client = {
   },
   actions: {
     FetchClientList({ commit }, { params }) {
+      commit('SHOW_CLIENT_LOADING')
       return fetchClientList(params).then(res => {
         commit('SET_CLIENT_LIST', res.data)
+        commit('HIDE_CLIENT_LOADING')
+      }).catch(_ => {
+        commit('HIDE_CLIENT_LOADING')
       })
     },
     FetchInsurancePolicyList({ commit }, { params }) {
+      commit('SHOW_INSURANCE_POLICY_LOADING')
       return fetchInsurancePolicyList(params).then(res => {
         commit('SET_INSURANCE_POLICY_LIST', res.data)
+        commit('HIDE_INSURANCE_POLICY_LOADING')
+      }).catch(_ => {
+        commit('HIDE_INSURANCE_POLICY_LOADING')
       })
     },
     FetchChannelCommissionTable({ commit }, params) {
+      commit('SHOW_CHANNEL_COMMISSION_TABLE_LOADING')
       return fetchChannelCommissionTable(params).then(res => {
         commit('SET_COMMISSION_TABLE_LIST', res.data.list)
+        commit('HIDE_CHANNEL_COMMISSION_TABLE_LOADING')
+      }).catch(_ => {
+        commit('HIDE_CHANNEL_COMMISSION_TABLE_LOADING')
       })
     },
     FetchChannelCommissionPayment({ commit }, params) {
@@ -48,6 +88,7 @@ const client = {
       })
     },
     FetchRenewal({ commit }, { id, params }) {
+      commit('SHOW_RENEWAL_LOADING')
       return fetchRenewal(id, params).then(res => {
         const renewal = []
         renewal.push(res.data.primary)
@@ -55,6 +96,9 @@ const client = {
           renewal.push(item)
         })
         commit('SET_RENEWAL', renewal)
+        commit('HIDE_RENEWAL_LOADING')
+      }).catch(_ => {
+        commit('HIDE_RENEWAL_LOADING')
       })
     }
   }

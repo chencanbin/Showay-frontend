@@ -12,10 +12,17 @@ const user = {
     introduction: '',
     roles: [],
     users: [],
-    id: ''
+    id: '',
+    userLoading: false
   },
 
   mutations: {
+    SHOW_USER_LOADING: (state) => {
+      state.userLoading = true
+    },
+    HIDE_USER_LOADING: (state) => {
+      state.userLoading = false
+    },
     SET_CODE: (state, code) => {
       state.code = code
     },
@@ -80,8 +87,12 @@ const user = {
 
     // 获取用户列表
     FetchUserList({ commit }, params) {
+      commit('SHOW_USER_LOADING')
       return fetchUserList(params).then(res => {
         commit('SET_USERS', res.data)
+        commit('HIDE_USER_LOADING')
+      }).catch(_ => {
+        commit('HIDE_USER_LOADING')
       })
     },
     // 登出

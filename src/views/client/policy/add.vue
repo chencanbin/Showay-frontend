@@ -1,6 +1,7 @@
 <template>
   <el-col span.number="24" class="el-table-add-col">
-    <div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>
+    <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
+    <el-button class="el-table-add-row" type="primary" @click="initForm">+ 添加</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -104,7 +105,7 @@
         <el-form-item label="公司:" prop="company.id">
           <el-select
             :remote-method="searchCompany"
-            :loading="loading"
+            :loading="companyLoading"
             v-model="insurancePolicy.company.id"
             placeholder="请选择公司"
             filterable
@@ -123,7 +124,7 @@
           <el-select
             v-model="insurancePolicy.product.id"
             :remote-method="searchProduct"
-            :loading="loading"
+            :loading="productLoading"
             placeholder="请输入产品名或产品编号"
             filterable
             remote
@@ -149,7 +150,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { policyStatus } from '@/utils/constant'
 import elDragDialog from '@/directive/el-dragDialog'
 import { currencyArray, premiumPlan } from '@/utils/constant'
@@ -166,7 +167,7 @@ export default {
       language: 'en',
       policyStatus,
       dialogVisible: false,
-      submitLoading: false,
+
       agents: [],
       products: [],
       queryProduct: {
@@ -205,12 +206,14 @@ export default {
           id: null
         },
         issueDate: null
-      }
+      },
+      submitLoading: false,
+      productLoading: false
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState({
+      companyLoading: state => state.company.companyLoading,
       client: state => state.client.clientList,
       channels: state => state.user.users,
       companies: state => state.company.companyList.list
@@ -261,10 +264,14 @@ export default {
     },
 
     getProducts() {
+      this.productLoading = true
       this.products = []
       this.queryProduct.company = this.insurancePolicy.company.id
       this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
+        this.productLoading = false
+      }).catch(_ => {
+        this.productLoading = false
       })
     },
     searchProduct(query) {
@@ -293,12 +300,6 @@ export default {
         this.dialogVisible = false
       })
     },
-    loadMoreProduct() {
-      this.queryProduct.offset = this.queryProduct.max + this.queryProduct.offset
-      this.$api.product.fetchProductList(this.queryProduct).then(res => {
-        this.products = this.products.concat(res.data.list)
-      })
-    },
     handleSubmit() {
       this.$refs['insurancePolicy'].validate((valid) => {
         if (valid) {
@@ -316,11 +317,11 @@ export default {
               duration: 5 * 1000
             })
             this.$store.dispatch('client/FetchInsurancePolicyList', {})
-            this.submitLoading = false
             this.$refs['insurancePolicy'].resetFields()
             this.$refs['premium'].currencyValue = 0
             this.$refs['amountInsured'].currencyValue = 0
             this.dialogVisible = false
+            this.submitLoading = false
           }).catch(_ => {
             this.submitLoading = false
           })

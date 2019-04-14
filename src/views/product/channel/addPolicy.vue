@@ -96,14 +96,13 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button type="primary" @click="handleSubmit">提交</el-button>
       </div>
     </el-dialog>
   </span>
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 
 const _ = require('lodash')
@@ -132,7 +131,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     generateDefinedYear() {
       return _.range(1, this.policy.term + 1)
     },

@@ -137,4 +137,17 @@
    opacity: 0.75;
  }
 
+ .el-table__expand-icon {
+   width: 35px;
+   height: 35px;
+   background-color: rgba(12, 21, 12, 0.1);
+   color: #C0C4CC;
+   border-radius: 5px;
+   font-size: 16px;
+   .el-icon {
+     margin-left: -8px;
+     margin-top: -8px;
+   }
+ }
+
 

@@ -78,7 +78,7 @@
           </el-tag>
         </el-row>
         <el-table
-          v-loading="loading"
+          v-loading="commissionCreditLoading"
           :height="height"
           :data="commissionCredit.list"
           :row-class-name="tableRowClassName"
@@ -154,7 +154,7 @@
 
 <script>
 import pagination from '@/components/Pagination'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { parseTime, getSymbol } from '@/utils'
 import { creditStatus } from '@/utils/constant'
 import edit from './edit'
@@ -199,8 +199,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
-    ...mapState({ commissionCredit: state => state.commission.commissionCredit })
+    ...mapState({
+      commissionCredit: state => state.commission.commissionCredit,
+      commissionCreditLoading: state => state.commission.commissionCreditLoading
+    })
   },
   watch: {
     selectData(data) {

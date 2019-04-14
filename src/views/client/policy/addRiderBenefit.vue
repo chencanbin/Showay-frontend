@@ -15,7 +15,7 @@
         <el-form-item label="产品:" prop="product" style="width: 100%;">
           <el-select
             v-model="riderBenefit.product"
-            :loading="loading"
+            :loading="productLoading"
             :remote-method="searchProduct"
             value-key="id"
             placeholder="请输入产品关键词"
@@ -52,9 +52,7 @@
 <script type="text/ecmascript-6">
 import currencyInput from '@/components/CurrencyInput'
 import elDragDialog from '@/directive/el-dragDialog'
-import { mapGetters, mapState } from 'vuex'
 import { getSymbol } from '@/utils'
-import Cookies from 'js-cookie'
 
 const _ = require('lodash')
 
@@ -84,7 +82,6 @@ export default {
       riderBenefit: {
         status: 0
       },
-      language: '',
       queryProduct: {
         name: '',
         company: this.companyId,
@@ -94,19 +91,13 @@ export default {
       riderBenefitRule: {
         premium: [{ required: true, message: '保费必须填', trigger: 'blur' }],
         product: [{ required: true, message: '请选择保险产品', trigger: 'blur' }]
-      }
+      },
+      productLoading: false
     }
-  },
-  computed: {
-    ...mapGetters(['loading']),
-    ...mapState({
-      companies: state => state.company.companyList.list
-    })
   },
   methods: {
     getSymbol,
     initForm() {
-      this.language = Cookies.get('language') || 'zh-CN'
       this.dialogVisible = true
     },
     handleClose() {
@@ -121,8 +112,12 @@ export default {
     },
     getProducts() {
       this.products = []
+      this.productLoading = true
       this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
+        this.productLoading = false
+      }).catch(_ => {
+        this.productLoading = false
       })
     },
     onProductFocus() {

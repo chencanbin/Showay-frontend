@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { parseTime } from '@/utils'
 
 export default {
@@ -34,12 +33,13 @@ export default {
       roles: []
     }
   },
-  computed: {
-    ...mapGetters(['loading'])
-  },
   created() {
+    this.loading = true
     this.$api.role.fetchRoleList().then(res => {
       this.roles = res.data.list
+      this.loading = false
+    }).catch(_ => {
+      this.loading = false
     })
   },
   methods: {

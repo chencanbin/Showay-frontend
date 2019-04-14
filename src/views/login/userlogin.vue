@@ -139,7 +139,6 @@ export default {
           this.loginLoading = true
           this.$store.dispatch('LoginByUsername', userInfo).then(_ => {
             this.$router.push({ path: this.redirect || '/home' })
-            this.loginLoading = false
           }).catch(_ => {
             this.loginLoading = false
             this.loginForm.code = ''

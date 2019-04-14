@@ -14,7 +14,7 @@
       </el-form>
       <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
-        v-loading="loading"
+        v-loading="insurancePolicyLoading"
         :height="height"
         :data="insurancePolicy.list"
         stripe>
@@ -62,7 +62,7 @@
 import { parseTime } from '@/utils'
 import { policyStatus } from '@/utils/constant'
 import Cookies from 'js-cookie'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import pagination from '@/components/Pagination'
 import trace from './trace'
 const _ = require('lodash')
@@ -85,9 +85,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState(
       {
+        insurancePolicyLoading: state => state.client.insurancePolicyLoading,
         insurancePolicy: state => state.client.insurancePolicyList
       })
   },

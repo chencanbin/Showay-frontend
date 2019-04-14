@@ -10,7 +10,7 @@
       :fullscreen="true"
       center
       title="编辑渠道佣金策略">
-      <el-table id="channelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
+      <el-table v-loading="loading" id="channelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
         <!--<el-table-column
           label="优先级"
           type="index"
@@ -34,14 +34,14 @@
         <el-table-column prop="remarks" label="备注" align="center" min-width="150"/>
         <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
-            <el-button :loading="loading" type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.$index)">删除</el-button>
+            <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.$index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <addPolicy @addPolicy="onAddPolicy"/>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">保存</el-button>
+        <el-button :loading="saveLoading" type="primary" @click="handleSubmit">保存</el-button>
       </div>
       <!-- 佣金生效时间弹框 -->
     </el-dialog>
@@ -49,7 +49,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import addPolicy from './addCommissionPolicy'
 import Sortable from 'sortablejs'
 import prefixSelect from './component/prefixSelect'
@@ -81,6 +80,8 @@ export default {
   },
   data() {
     return {
+      loading: false,
+      saveLoading: false,
       originalPolicies: [],
       policies: [],
       tableHeight: window.screen.height - 320,
@@ -88,22 +89,22 @@ export default {
       products: [],
       columnYear: [],
       fullscreen: true,
-      dialogVisible: false,
-      configButtonLoading: false
+      dialogVisible: false
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
+      this.dialogVisible = true
+      this.loading = true
       this.$api.commission.fetchCommissionPolicy({ channel: this.id }).then(res => {
         this.originalPolicies = _.cloneDeep(res.data.list)
         this.formatterData(res.data.list)
-        this.dialogVisible = true
         this.$nextTick(() => {
           this.rowDrop()
         })
+        this.loading = false
+      }).catch(_ => {
+        this.loading = false
       })
     },
 
@@ -138,9 +139,8 @@ export default {
       })
     },
     handleSubmit() {
-      this.configButtonLoading = true
+      this.saveLoading = true
       // 处理companies 和 products 字段, 只提交id的数组
-      console.log(this.originalPolicies)
       _.forEach(this.originalPolicies, item => {
         const products = []
         const companies = []
@@ -160,9 +160,9 @@ export default {
           duration: 5 * 1000
         })
         this.dialogVisible = false
-        this.configButtonLoading = false
+        this.saveLoading = false
       }).catch(_ => {
-        this.configButtonLoading = false
+        this.saveLoading = false
       })
     },
 

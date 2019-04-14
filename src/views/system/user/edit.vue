@@ -34,7 +34,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 export default {
   directives: { elDragDialog },
@@ -48,6 +47,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       roles: [],
       account: {
         id: '',
@@ -62,9 +62,6 @@ export default {
         roles: [{ required: true, message: '角色必须选', trigger: 'blur' }]
       }
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
@@ -88,6 +85,7 @@ export default {
     handleSubmit() {
       this.$refs['account'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.user.editUser(this.account.id, this.account).then(_ => {
             this.$message({
               message: '操作成功',
@@ -96,6 +94,9 @@ export default {
             })
             this.$store.dispatch('FetchUserList')
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

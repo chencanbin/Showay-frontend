@@ -3,9 +3,6 @@
     <el-col span.number="24" style="margin-bottom: 20px">
       <div class="el-table-add-row" style="margin-top: 0" @click="initForm"><span>+ 添加</span></div>
     </el-col>
-    <!--<el-button :loading="loading" icon="el-icon-setting" type="text" size="small" style="margin-left: 5px" >-->
-    <!--渠道佣金-->
-    <!--</el-button>-->
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -26,6 +23,7 @@
             v-if="policy.type === 'products'"
             ref="product"
             :remote-method="searchProduct"
+            :loading="productLoading"
             v-model="policy.products"
             multiple
             remote
@@ -44,6 +42,7 @@
           <el-select
             v-if="policy.type === 'companies'"
             ref="product"
+            :loading="companyLoading"
             :remote-method="searchCompany"
             v-model="policy.companies"
             multiple
@@ -96,14 +95,13 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button type="primary" @click="handleSubmit">提交</el-button>
       </div>
     </el-dialog>
   </span>
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 
 const _ = require('lodash')
@@ -111,6 +109,8 @@ export default {
   directives: { elDragDialog },
   data() {
     return {
+      productLoading: false,
+      companyLoading: false,
       dialogVisible: false,
       products: [],
       companies: [],
@@ -132,13 +132,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     generateDefinedYear() {
       return _.range(1, this.policy.term + 1)
     },
     getUserDefined() {
       const result = []
-
       // this.policy.commissionRates = []
       if (this.policy.term === 1 || this.policy.userDefined === 1) {
         result.push({ label: `第1年`, value: 1 })
@@ -181,23 +179,39 @@ export default {
       })
     },
     getProducts(params) {
+      this.productLoading = true
       this.$api.product.fetchProductList(params).then(res => {
         this.products = res.data.list
+        this.productLoading = false
+      }).catch(_ => {
+        this.productLoading = false
       })
     },
     getCompanies(params) {
+      this.companyLoading = true
       this.$api.company.fetchCompanyList(params).then(res => {
         this.companies = res.data.list
+        this.companyLoading = false
+      }).catch(_ => {
+        this.companyLoading = false
       })
     },
     searchProduct(query) {
+      this.productLoading = true
       this.$api.product.fetchProductList({ name: query }).then(res => {
         this.products = res.data.list
+        this.productLoading = false
+      }).catch(_ => {
+        this.productLoading = false
       })
     },
     searchCompany(query) {
+      this.companyLoading = true
       this.$api.company.fetchCompanyList({ name: query }).then(res => {
         this.companies = res.data.list
+        this.companyLoading = false
+      }).catch(_ => {
+        this.companyLoading = false
       })
     },
     onTypeChange(value) {

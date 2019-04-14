@@ -31,15 +31,14 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button :loading="loading" type="danger" @click="handleReject">退回待发</el-button>
-        <el-button :loading="loading" type="primary" @click="handleClear">外发</el-button>
+        <el-button :loading="rejectLoading" @click="handleReject">退回待发</el-button>
+        <el-button :loading="clearLoading" type="primary" @click="handleClear">外发</el-button>
       </div>
     </el-dialog>
   </span>
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import { getSymbol } from '@/utils'
 import elDragDialog from '@/directive/el-dragDialog'
 const currencyFormatter = require('currency-formatter')
@@ -62,17 +61,17 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      rejectLoading: false,
+      clearLoading: false
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
       this.dialogVisible = true
     },
     handleReject() {
+      this.rejectLoading = true
       this.$api.commission.CommissionCreditReject({ ids: [this.commissionCredit.id] }).then(_ => {
         this.$message({
           message: '操作成功',
@@ -81,6 +80,9 @@ export default {
         })
         this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName })
         this.dialogVisible = false
+        this.rejectLoading = false
+      }).catch(_ => {
+        this.rejectLoading = false
       })
     },
     formatterCurrency(value) {
@@ -88,6 +90,7 @@ export default {
     },
     getSymbol,
     handleClear() {
+      this.clearLoading = true
       this.$api.commission.CommissionCreditClear({ ids: [this.commissionCredit.id] }).then(_ => {
         this.$message({
           message: '操作成功',
@@ -96,6 +99,9 @@ export default {
         })
         this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName })
         this.dialogVisible = false
+        this.clearLoading = false
+      }).catch(_ => {
+        this.clearLoading = false
       })
     },
     handleClose() {

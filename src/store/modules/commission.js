@@ -1,6 +1,6 @@
 import { fetchCommissionTableList, fetchCommissionCredit, fetchAuditPayment, fetchMergedPayment, fetchCommissionPolicy } from '@/http/modules/commission'
 
-const company = {
+const commission = {
   namespaced: true,
   state: {
     commissionTableList: [],
@@ -10,9 +10,30 @@ const company = {
     commissionTableId: '',
     commissionCredit: {},
     mergedPayment: {},
-    auditPayment: {}
+    auditPayment: {},
+    commissionCreditLoading: false,
+    auditPaymentLoading: false,
+    mergedPaymentLoading: false
   },
   mutations: {
+    SHOW_MERGED_PAYMENT_LOADING: (state) => {
+      state.mergedPaymentLoading = true
+    },
+    HIDE_MERGED_PAYMENT_LOADING: (state) => {
+      state.mergedPaymentLoading = false
+    },
+    SHOW_AUDIT_PAYMENT_LOADING: (state) => {
+      state.auditPaymentLoading = true
+    },
+    HIDE_AUDIT_PAYMENT_LOADING: (state) => {
+      state.auditPaymentLoading = false
+    },
+    SHOW_COMMISSION_CREDIT_LOADING: (state) => {
+      state.commissionCreditLoading = true
+    },
+    HIDE_COMMISSION_CREDIT_LOADING: (state) => {
+      state.commissionCreditLoading = false
+    },
     SET_COMMISSION_TABLE_LIST: (state, commissionTableList) => {
       state.commissionTableList = commissionTableList
     },
@@ -47,23 +68,36 @@ const company = {
       commit('SHOW_COMMISSION_TABLE_LIST_LOADING')
       return fetchCommissionTableList(id, params).then(res => {
         commit('SET_COMMISSION_TABLE_LIST', res.data)
+        commit('HIDE_COMMISSION_TABLE_LIST_LOADING')
       }).catch(_ => {
         commit('HIDE_COMMISSION_TABLE_LIST_LOADING')
       })
     },
     FetchCommissionCredit({ commit }, params) {
+      commit('SHOW_COMMISSION_CREDIT_LOADING')
       return fetchCommissionCredit(params).then(res => {
         commit('SET_COMMISSION_CREDIT', res.data)
+        commit('HIDE_COMMISSION_CREDIT_LOADING')
+      }).catch(_ => {
+        commit('HIDE_COMMISSION_CREDIT_LOADING')
       })
     },
     FetchAuditPayment({ commit }, params) {
+      commit('SHOW_AUDIT_PAYMENT_LOADING')
       return fetchAuditPayment(params).then(res => {
         commit('SET_AUDIT_PAYMENT', res.data)
+        commit('HIDE_AUDIT_PAYMENT_LOADING')
+      }).catch(_ => {
+        commit('HIDE_AUDIT_PAYMENT_LOADING')
       })
     },
     FetchMergedPayment({ commit }, { id, params }) {
+      commit('SHOW_MERGED_PAYMENT_LOADING')
       return fetchMergedPayment(id, params).then(res => {
         commit('SET_MERGED_PAYMENT', res.data)
+        commit('HIDE_MERGED_PAYMENT_LOADING')
+      }).catch(_ => {
+        commit('HIDE_MERGED_PAYMENT_LOADING')
       })
     },
     FetchCommissionPolicy({ commit }, params) {
@@ -74,4 +108,4 @@ const company = {
 
   }
 }
-export default company
+export default commission

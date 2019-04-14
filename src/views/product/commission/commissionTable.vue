@@ -80,7 +80,7 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="buttonLoading" type="primary" @click="handleTimeDialogOpen">发布</el-button>
+        <el-button type="primary" @click="handleTimeDialogOpen">发布</el-button>
       </div>
     </el-dialog>
   </span>
@@ -459,9 +459,9 @@ export default {
       return td
     },
     initForm() {
+      this.dialogVisible = true
       this.initColumn()
       this.initOverAll()
-      this.dialogVisible = true
       this.activeName = 'basic'
       this.editStatus = ''
       this.$nextTick(() => {
@@ -489,6 +489,8 @@ export default {
         this.basicHotInstance.setDataAtRowProp(result, 'loadData')
         this.basicHotInstance.render()
         this.loading = false
+      }).catch(_ => {
+        this.loading = false
       })
     },
     loadOverrideData() {
@@ -500,6 +502,8 @@ export default {
         })
         this.overrideHotInstance.setDataAtRowProp(result, 'loadData')
         this.overrideHotInstance.render()
+        this.loading = false
+      }).catch(_ => {
         this.loading = false
       })
     },
@@ -513,6 +517,8 @@ export default {
         })
         this.overallHotInstance.setDataAtRowProp(result, 'loadData')
         this.overallHotInstance.render()
+        this.loading = false
+      }).catch(_ => {
         this.loading = false
       })
     },

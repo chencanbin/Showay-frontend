@@ -2,7 +2,7 @@
   <div class="table-container">
     <basic-container>
       <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
-      <el-table v-loading="loading" :data="users.list" :height="height" stripe>
+      <el-table v-loading="userLoading" :data="users.list" :height="height" stripe>
         <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
         <el-table-column :label="$t('user.table_header.account')" prop="login"/>
         <el-table-column :label="$t('user.table_header.role')" prop="roles" min-width="150px">
@@ -41,7 +41,7 @@
 import add from './add'
 import edit from './edit'
 import pagination from '@/components/Pagination'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
 
 export default {
@@ -62,8 +62,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
-    ...mapState({ users: state => state.user.users })
+    ...mapState({
+      userLoading: state => state.user.userLoading,
+      users: state => state.user.users
+    })
   },
   created() {
     this.getUsers()
@@ -73,16 +75,27 @@ export default {
       this.$confirm('此操作将永久删除该管理员账号, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.user.deleteUser(row.id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getUsers()
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       }).then(() => {
-        this.$api.user.deleteUser(row.id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getUsers()
-        })
       })
     },
     dateFormat(row, column) {

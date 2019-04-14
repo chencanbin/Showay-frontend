@@ -7,8 +7,8 @@ const company = {
     companyLoading: false
   },
   mutations: {
-    SET_COMPANY_LIST: (state, compamyList) => {
-      state.companyList = compamyList
+    SET_COMPANY_LIST: (state, companyList) => {
+      state.companyList = companyList
     },
     SHOW_COMPANY_LOADING: (state) => {
       state.companyLoading = true
@@ -20,7 +20,6 @@ const company = {
   actions: {
     FetchCompanyList({ commit }, params) {
       commit('SHOW_COMPANY_LOADING')
-      commit('SET_COMPANY_LIST', [])
       return fetchCompanyList(params).then(res => {
         commit('HIDE_COMPANY_LOADING')
         commit('SET_COMPANY_LIST', res.data)

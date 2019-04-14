@@ -11,7 +11,7 @@
         <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">提交审核</el-button>
       </el-row>
       <el-table
-        v-loading="loading"
+        v-loading="mergedPaymentLoading"
         :max-height="height"
         :data="mergedPayment.payments"
         stripe
@@ -79,15 +79,15 @@
         </el-table-column>
       </el-table>
       <div v-if="status === '0'" slot="footer" class="dialog-footer">
-        <el-button :loading="loading" type="danger" @click="handleReject">拒绝</el-button>
-        <el-button :loading="loading" type="primary" @click="handleApprove">批准</el-button>
+        <el-button :loading="rejectLoading" @click="handleReject">拒绝</el-button>
+        <el-button :loading="approveLoading" type="primary" @click="handleApprove">批准</el-button>
       </div>
     </el-dialog>
   </span>
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import edit from './edit'
 import { getSymbol } from '@/utils'
 
@@ -122,12 +122,16 @@ export default {
     return {
       height: window.screen.height - 220,
       dialogVisible: false,
-      selectedRow: []
+      selectedRow: [],
+      rejectLoading: false,
+      approveLoading: false
     }
   },
   computed: {
-    ...mapGetters(['loading']),
-    ...mapState({ mergedPayment: state => state.commission.mergedPayment }),
+    ...mapState({
+      mergedPayment: state => state.commission.mergedPayment,
+      mergedPaymentLoading: state => state.commission.mergedPaymentLoading
+    }),
     disableSubmit: function() {
       return this.selectedRow.length === 0
     }
@@ -171,6 +175,7 @@ export default {
       return _.toNumber(value).toFixed(2) + '%'
     },
     handleReject() {
+      this.rejectLoading = true
       this.$api.commission.mergedPaymentReject(this.id).then(_ => {
         this.$message({
           message: '操作成功',
@@ -179,9 +184,13 @@ export default {
         })
         this.$store.dispatch('commission/FetchAuditPayment', { status: 0 })
         this.dialogVisible = false
+        this.rejectLoading = false
+      }).catch(_ => {
+        this.rejectLoading = false
       })
     },
     handleApprove() {
+      this.approveLoading = true
       this.$api.commission.mergedPaymentApprove(this.id).then(_ => {
         this.$message({
           message: '操作成功',
@@ -190,35 +199,46 @@ export default {
         })
         this.$store.dispatch('commission/FetchAuditPayment', { status: 0 })
         this.dialogVisible = false
+        this.approveLoading = false
+      }).catch(_ => {
+        this.approveLoading = false
       })
     },
     handleSubmit() {
       this.$confirm('此操作会将选中的渠道佣金记录提交审核, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.loading = true
-        const data = []
-        _.forEach(this.selectedRow, item => {
-          let obj = {}
-          if (item.amount) {
-            obj = { id: item.id, amount: item.amount }
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            const data = []
+            _.forEach(this.selectedRow, item => {
+              let obj = {}
+              if (item.amount) {
+                obj = { id: item.id, amount: item.amount }
+              } else {
+                obj = { id: item.id, amount: item.predictedAmountInHkd }
+              }
+              // if(item.currency !== 'HKD') {
+              //   obj.exchangeRate = item.exchangeRateToHkd
+              // }
+              data.push(obj)
+            })
+            this.$api.commission.mergedPayment({ payments: data }).then(res => {
+              this.getMergedPayment()
+              this.$store.dispatch('commission/FetchAuditPayment', { status: -1 })
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
           } else {
-            obj = { id: item.id, amount: item.predictedAmountInHkd }
+            done()
           }
-          // if(item.currency !== 'HKD') {
-          //   obj.exchangeRate = item.exchangeRateToHkd
-          // }
-          data.push(obj)
-        })
-        this.$api.commission.mergedPayment({ payments: data }).then(res => {
-          this.getMergedPayment()
-          this.$store.dispatch('commission/FetchAuditPayment', { status: -1 })
-          this.loading = false
-        }).catch(_ => {
-          this.loading = false
-        })
+        }
+      }).then(() => {
+
       })
     }
   }

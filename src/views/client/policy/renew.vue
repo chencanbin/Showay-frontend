@@ -37,7 +37,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import { getSymbol } from '@/utils'
 import currencyInput from '@/components/CurrencyInput'
 import elDragDialog from '@/directive/el-dragDialog'
@@ -69,6 +68,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       dialogVisible: false,
       years: [],
       form: {
@@ -76,9 +76,6 @@ export default {
         year: ''
       }
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
@@ -97,6 +94,7 @@ export default {
     handleSubmit() {
       this.$refs['renewal'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.client.createRenewal(this.id, { product: this.data.product.id, premium: this.form.premium, year: this.form.year }).then(res => {
             this.$message({
               message: '操作成功',
@@ -104,7 +102,10 @@ export default {
               duration: 5 * 1000
             })
             this.$store.dispatch('client/FetchRenewal', { id: this.id })
+            this.loading = false
             this.handleClose()
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

@@ -37,7 +37,7 @@
         <el-form-item label="申请人:" prop="applicant.name">
           <el-select
             v-model="insurancePolicy.applicant.id"
-            :loading="loading"
+            :loading="clientLoading"
             :remote-method="searchClient"
             placeholder="请选择申请人"
             filterable
@@ -57,7 +57,7 @@
         <el-form-item label="受保人:" prop="beneficiary.name">
           <el-select
             v-model="insurancePolicy.beneficiary.id"
-            :loading="loading"
+            :loading="clientLoading"
             :remote-method="searchClient"
             placeholder="请选择申请人"
             filterable
@@ -101,7 +101,6 @@
         <el-form-item label="渠道:" prop="channel">
           <el-select
             v-model="insurancePolicy.channel.id"
-            :loading="loading"
             :remote-method="searchChannel"
             placeholder="请选择渠道"
             filterable
@@ -119,7 +118,6 @@
         <el-form-item label="签单员:" prop="agent">
           <el-select
             v-model="insurancePolicy.agent.id"
-            :loading="loading"
             :remote-method="searchAgent"
             placeholder="请选择签单员"
             filterable
@@ -136,7 +134,7 @@
         <el-form-item label="公司:" prop="company.id">
           <el-select
             :remote-method="searchCompany"
-            :loading="loading"
+            :loading="companyLoading"
             v-model="insurancePolicy.company.id"
             placeholder="请选择公司"
             clearable
@@ -154,7 +152,7 @@
         <el-form-item label="产品:" prop="product" style="width: 124%;">
           <el-select
             v-model="insurancePolicy.product.id"
-            :loading="loading"
+            :loading="productLoading"
             :remote-method="searchProduct"
             placeholder="请输入产品关键词"
             filterable
@@ -182,7 +180,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { policyStatus, premiumPlan } from '@/utils/constant'
 import elDragDialog from '@/directive/el-dragDialog'
 import currencyInput from '@/components/CurrencyInput'
@@ -208,7 +206,6 @@ export default {
       language: 'en',
       policyStatus,
       dialogVisible: false,
-      submitLoading: false,
       agents: [],
       products: [],
       channels: [],
@@ -247,12 +244,15 @@ export default {
         company: '',
         offset: 0,
         max: 50
-      }
+      },
+      submitLoading: false,
+      productLoading: false
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState({
+      clientLoading: state => state.client.clientLoading,
+      companyLoading: state => state.company.companyLoading,
       client: state => state.client.clientList,
       companies: state => state.company.companyList.list
     }),
@@ -273,13 +273,15 @@ export default {
       this.language = Cookies.get('language') || 'zh-CN'
       // this.getChannel()
       // this.getAgents()
-      this.getClient()
-      this.getCompanies()
+
       this.insurancePolicy = _.cloneDeep(this.data)
       this.products = [this.insurancePolicy.product]
+      this.$store.commit('company/SET_COMPANY_LIST', { list: [this.insurancePolicy.company] })
       this.agents = [this.insurancePolicy.agent]
       this.channels = [this.insurancePolicy.channel]
       this.insurancePolicy.currency = this.getCurrencyKey(this.data.currency)
+      this.getClient()
+      this.getCompanies()
       this.dialogVisible = true
     },
     getCompanies(params) {
@@ -328,10 +330,14 @@ export default {
     },
 
     getProducts() {
+      this.productLoading = true
       this.products = []
       this.queryProduct.company = this.insurancePolicy.company.id
       this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
+        this.productLoading = false
+      }).catch(_ => {
+        this.productLoading = false
       })
     },
     searchProduct(query) {

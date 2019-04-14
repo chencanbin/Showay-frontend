@@ -39,7 +39,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 export default {
   directives: { elDragDialog },
@@ -53,6 +52,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       users: [],
       account: {
         id: '',
@@ -66,20 +66,17 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapGetters(['loading'])
-  },
   methods: {
     initForm() {
       this.$api.user.fetchUserList({ nid: this.user.id, role: 2 }).then(res => {
         this.users = res.data.list
+        if (this.user.superior) {
+          this.account.superior = this.user.superior.id
+          // this.account.superiorCommissionRate = _.toNumber(this.user.superior.superiorCommissionRate).toFixed(2)
+        }
+        this.account.id = this.user.id
+        this.account.name = this.user.name
       })
-      this.account.id = this.user.id
-      this.account.name = this.user.name
-      if (this.user.superior) {
-        this.account.superior = this.user.superior.id
-        // this.account.superiorCommissionRate = _.toNumber(this.user.superior.superiorCommissionRate).toFixed(2)
-      }
       this.dialogVisible = true
     },
     handleClose() {
@@ -89,6 +86,7 @@ export default {
     handleSubmit() {
       this.$refs['account'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.user.editUser(this.account.id, this.account).then(_ => {
             this.$message({
               message: '操作成功',
@@ -97,6 +95,9 @@ export default {
             })
             this.$store.dispatch('FetchUserList', { role: 2 })
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

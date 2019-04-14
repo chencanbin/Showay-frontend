@@ -55,11 +55,11 @@
           label="电子邮箱"
           show-overflow-tooltip
           min-width="120"/>
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope">
             <edit :data="scope.row"/>
             <el-button
-              type="text"
+              type="primary"
               size="mini"
               icon="el-icon-delete"
               @click="handleDelete(scope.$index, scope.row)">删除

@@ -59,7 +59,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 import { parseTime } from '@/utils'
 
@@ -67,6 +67,7 @@ export default {
   directives: { elDragDialog },
   data() {
     return {
+      loading: false,
       dialogVisible: false,
       commission: {
         companyId: '',
@@ -80,7 +81,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState({
       companyList: state => state.company.companyList.list
     })
@@ -114,6 +114,7 @@ export default {
     handleSubmit() {
       this.$refs['commission'].validate((valid) => {
         if (valid) {
+          this.loading = true
           const data = { company: this.commission.companyId }
           if (this.commission.template || this.commission.template === 0) {
             data.template = this.commission.template
@@ -130,6 +131,9 @@ export default {
             })
             this.$store.dispatch('commission/FetchCommissionTableList', { id: this.commission.companyId })
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

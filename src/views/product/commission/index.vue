@@ -22,7 +22,7 @@
       <!--</el-form>-->
       <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
-        v-loading="loading"
+        v-loading="companyLoading"
         ref="companyTable"
         :expand-row-keys="expandKeys"
         :height="height"
@@ -33,16 +33,12 @@
       >
         <el-table-column type="expand">
           <template slot-scope="scope" style="width: 50%;">
-            <el-timeline id="commissionTableList">
-              <div v-if="commissionTableList.list.length === 0" style="text-align: center; color: #909399;">
+            <el-timeline v-loading="commissionTableListLoading" id="commissionTableList">
+              <div v-if="commissionTableList.list && commissionTableList.list.length === 0" style="text-align: center; color: #909399;">
                 无佣金表
               </div>
               <el-timeline-item v-for="commissionTable in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="commissionTable.id" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
                 <el-card>
-                  <!--<el-tag v-if="commissionTable.status === 0" type="info">未发布</el-tag>-->
-                  <!--<el-tag v-if="commissionTable.status === 1" type="success">已发布</el-tag>-->
-                  <!--<el-tag v-if="commissionTable.status === 2" type="warning">有改动</el-tag>-->
-                  <!--<h4>{{ getTraceDesc(trace.type) }}</h4>-->
                   <p style="display: inline-block">状态 :
                     <el-tag v-if="commissionTable.status === 0" type="info" size="mini">未发布</el-tag>
                     <el-tag v-if="commissionTable.status === 1" type="success" size="mini">已发布</el-tag>
@@ -62,6 +58,7 @@
                     <commission-table :id="commissionTable.id" :company-id="scope.row.id" :title="commissionTable.company.name"/>
                     <el-button
                       v-if="commissionTable.status !== 0"
+                      :ref="`export_${commissionTable.id}`"
                       size="mini"
                       type="text"
                       icon="el-icon-download"
@@ -156,10 +153,12 @@
 <script>
 import pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import commissionTable from './commissionTable'
 import add from './add'
 import commissionView from './view'
+import axios from 'axios'
+
 export default {
   components: {
     add,
@@ -181,16 +180,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState(
       {
+        commissionTableListLoading: state => state.commission.commissionTableListLoading,
+        companyLoading: state => state.company.companyLoading,
         companyList: state => state.company.companyList,
         commissionTableList: state => state.commission.commissionTableList
       })
   },
   mounted() {
     this.getCompanyList()
-    this.getCommissionTableList()
+    // this.getCommissionTableList()
   },
   methods: {
     getCommissionTableList(id, params) {
@@ -225,34 +225,110 @@ export default {
       this.$confirm('此操作将永久删除该策略表, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$api.commission.deleteCommission(row.id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getCommissionTableList(companyId)
-        })
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.commission.deleteCommission(row.id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              instance.confirmButtonLoading = false
+              done()
+              this.getCommissionTableList(companyId)
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       })
     },
     // showCommissionTable(id) {
     //   this.$store.commit('commission/SHOW_COMMISSION_TABLE_DIALOG_VISIBLE', id)
     // },
     exportExcel(row) {
+      const effectiveDate = parseTime(row.effectiveDate, '{y}-{m}-{d}')
+      const fileName = `${row.company.name} EffectiveDate ${effectiveDate}.xlsx`
+      const url = process.env.BASE_API + `/commissionTable/${row.id}/export`
       if (row.status === 2) {
         this.$confirm('导出的部分不包含未发布的内容, 是否继续导出?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          window.location.href = process.env.BASE_API + `/commissionTable/${row.id}/export`
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+              instance.confirmButtonLoading = true
+              axios.get(url, {
+                responseType: 'blob'
+              }).then(res => {
+                const blob = new Blob([res.data])
+                const downloadElement = document.createElement('a')
+                const href = window.URL.createObjectURL(blob) //  创建下载的链接
+                downloadElement.href = href
+                downloadElement.download = fileName //  下载后文件名
+                document.body.appendChild(downloadElement)
+                downloadElement.click() //  点击下载
+                document.body.removeChild(downloadElement) // 下载完成移除元素
+                window.URL.revokeObjectURL(href) // 释放blob对象
+                instance.confirmButtonLoading = false
+                done()
+              }).catch(_ => {
+                instance.confirmButtonLoading = false
+              })
+            } else {
+              done()
+            }
+          }
         })
       } else {
-        window.location.href = process.env.BASE_API + `/commissionTable/${row.id}/export`
+        this.$confirm('导出文件需要较多时间, 是否继续导出?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+              instance.confirmButtonLoading = true
+              axios.get(url, {
+                responseType: 'blob'
+              }).then(res => {
+                const blob = new Blob([res.data])
+                const downloadElement = document.createElement('a')
+                const href = window.URL.createObjectURL(blob) //  创建下载的链接
+                downloadElement.href = href
+                downloadElement.download = fileName //  下载后文件名
+                document.body.appendChild(downloadElement)
+                downloadElement.click() //  点击下载
+                document.body.removeChild(downloadElement) // 下载完成移除元素
+                window.URL.revokeObjectURL(href) // 释放blob对象
+                instance.confirmButtonLoading = false
+                done()
+              }).catch(_ => {
+                instance.confirmButtonLoading = false
+              })
+            } else {
+              done()
+            }
+          }
+        })
       }
     },
+    // exportExcel(row) {
+    //   if (row.status === 2) {
+    //     this.$confirm('导出的部分不包含未发布的内容, 是否继续导出?', '提示', {
+    //       confirmButtonText: '确定',
+    //       cancelButtonText: '取消',
+    //       type: 'warning'
+    //     }).then(() => {
+    //       window.location.href = process.env.BASE_API + `/commissionTable/${row.id}/export`
+    //     })
+    //   } else {
+    //     window.location.href = process.env.BASE_API + `/commissionTable/${row.id}/export`
+    //   }
+    // },
     handleView(id) {
       this.$refs.commissionView.openDialog(id)
     },

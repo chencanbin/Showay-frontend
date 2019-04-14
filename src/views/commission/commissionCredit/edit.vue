@@ -52,7 +52,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 import currencyInput from '@/components/CurrencyInput'
 import { getSymbol } from '@/utils'
@@ -100,17 +99,16 @@ export default {
         exchangeRateToHkd: ''
       },
       locked: true,
-      dialogVisible: false
+      dialogVisible: false,
+      loading: false
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   created() {
   },
   methods: {
     initForm() {
       this.credit = _.cloneDeep(this.commissionCredit)
+      this.credit.amount = this.credit.calculatedAmountInHkd
       this.$nextTick(function() {
         this.$refs['amount'].currencyValue = Number(this.credit.calculatedAmountInHkd).toFixed(2)
       })
@@ -130,6 +128,7 @@ export default {
     handleSubmit() {
       this.$refs['credit'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.commission.editCommissionCredit(this.credit.id, this.credit).then(_ => {
             this.$message({
               message: '操作成功',
@@ -142,6 +141,9 @@ export default {
               this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard })
             }
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false
@@ -188,7 +190,8 @@ export default {
   .lock-icon {
     display: inline-block;
     position: absolute;
-    top: 296px;
+    top: 310px;
+    left: 35px;
     font-size: 18px;
     z-index: 1000;
   }
