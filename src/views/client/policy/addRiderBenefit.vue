@@ -3,7 +3,8 @@
     <!--<el-row style="margin-bottom: 5px">-->
     <!--<el-button type="primary" icon="el-icon-plus" style="margin-right: 10px" @click="initForm">添加副险</el-button>-->
     <!--</el-row>-->
-    <div class="el-table-add-row" @click="initForm"><span>+ 添加副险</span></div>
+    <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加副险</span></div>-->
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加副险</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"

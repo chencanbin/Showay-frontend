@@ -2,7 +2,7 @@
   <div class="table-container">
     <basic-container>
       <el-table
-        v-loading="loading"
+        v-loading="fileLoading"
         :data="folder.items"
         :height="tableHeight"
         stripe>
@@ -22,13 +22,24 @@
           width="200px"/>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
-            <edit :data="scope.row"/>
-            <el-button
-              type="text"
-              size="mini"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.$index, scope.row)">删除
-            </el-button>
+            <el-dropdown>
+              <el-button type="primary" plain size="mini">
+                <i class="el-icon-more"/>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <edit :data="scope.row"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    icon="el-icon-delete"
+                    @click="handleDelete(scope.$index, scope.row)">删除
+                  </el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -40,7 +51,7 @@
 
 <script>
 import fileUpload from './fileUpload'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { fileType } from '@/utils/constant'
 import add from './add'
 import edit from './edit'
@@ -61,10 +72,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState(
       {
-        folder: state => state.document.folders
+        folder: state => state.document.folders,
+        fileLoading: state => state.document.fileLoading
       })
   },
   created() {
@@ -90,16 +101,26 @@ export default {
       this.$confirm('此操作将永久删除该文件夹, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$api.document.deleteFolder(row.id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.this.getFolder()
-        })
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.document.deleteFolder(row.id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getFolder()
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       })
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <span style="margin-right: 5px">
-    <el-button icon="el-icon-setting" type="text" size="mini" style="margin-left: 5px" @click="initForm" >
+    <el-button icon="el-icon-setting" type="text" size="mini" @click="initForm" >
       佣金策略
     </el-button>
     <el-dialog
@@ -9,6 +9,7 @@
       :before-close="handleClose"
       :fullscreen="true"
       center
+      append-to-body
       title="编辑渠道佣金策略">
       <el-table v-loading="loading" id="channelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
         <!--<el-table-column

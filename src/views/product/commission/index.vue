@@ -31,13 +31,51 @@
         stripe
         @expand-change="expandChange"
       >
-        <el-table-column type="expand">
+        <el-table-column type="expand" width="60px">
           <template slot-scope="scope" style="width: 50%;">
             <el-timeline v-loading="commissionTableListLoading" id="commissionTableList">
               <div v-if="commissionTableList.list && commissionTableList.list.length === 0" style="text-align: center; color: #909399;">
                 无佣金表
               </div>
-              <el-timeline-item v-for="commissionTable in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="commissionTable.id" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
+              <el-timeline-item v-for="(commissionTable, index) in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="index" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
+                <el-dropdown class="action-dropdown">
+                  <el-button type="primary" plain size="mini">
+                    <i class="el-icon-more"/>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>
+                      <el-button
+                        v-if="commissionTable.status !== 0"
+                        size="mini"
+                        type="text"
+                        icon="el-icon-view"
+                        style="margin-right: 5px"
+                        @click="handleView(commissionTable.id)">
+                        查看
+                      </el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <commission-table :id="commissionTable.id" :company-id="scope.row.id" :title="commissionTable.company.name"/>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button
+                        v-if="commissionTable.status !== 0"
+                        :ref="`export_${commissionTable.id}`"
+                        size="mini"
+                        type="text"
+                        icon="el-icon-download"
+                        @click="exportExcel(commissionTable)">导出Excel</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button
+                        size="mini"
+                        type="text"
+                        icon="el-icon-delete"
+                        @click="handleDelete(commissionTable, scope.row.id)">删除
+                      </el-button>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
                 <el-card>
                   <p style="display: inline-block">状态 :
                     <el-tag v-if="commissionTable.status === 0" type="info" size="mini">未发布</el-tag>
@@ -45,39 +83,14 @@
                     <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">有改动</el-tag>
                   </p>
                   <p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>
-                  <div class="bottom clearfix">
-                    <el-button
-                      v-if="commissionTable.status !== 0"
-                      size="mini"
-                      type="text"
-                      icon="el-icon-view"
-                      style="margin-right: 5px"
-                      @click="handleView(commissionTable.id)">
-                      查看
-                    </el-button>
-                    <commission-table :id="commissionTable.id" :company-id="scope.row.id" :title="commissionTable.company.name"/>
-                    <el-button
-                      v-if="commissionTable.status !== 0"
-                      :ref="`export_${commissionTable.id}`"
-                      size="mini"
-                      type="text"
-                      icon="el-icon-download"
-                      @click="exportExcel(commissionTable)">导出Excel</el-button>
-                    <el-button
-                      size="mini"
-                      type="text"
-                      icon="el-icon-delete"
-                      @click="handleDelete(commissionTable, scope.row.id)">删除
-                    </el-button>
-                  </div>
                 </el-card>
               </el-timeline-item>
             </el-timeline>
           </template>
         </el-table-column>
-        <el-table-column prop="acronym" label="公司缩写" width="120px"/>
-        <el-table-column prop="name" label="公司名" show-overflow-tooltip/>
-        <el-table-column prop="level" label="级别" width="150px">
+        <el-table-column prop="acronym" label="公司缩写"/>
+        <el-table-column prop="name" label="公司名" show-overflow-tooltip min-width="200px"/>
+        <el-table-column prop="level" label="级别">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.secondary" type="warning">二级</el-tag>
             <el-tag v-else type="success">一级</el-tag>
@@ -88,61 +101,61 @@
           prop="contractEffectiveDate"
           label="签约时间"
           min-width="100px"/>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="text" size="mini" @click="toggleCommissionTableList(scope.row)">
-              <svg-icon icon-class="commissionList"/>
-              佣金列表
-            </el-button>
-          </template>
-        </el-table-column>
-        <!--<el-table-column-->
-        <!--:formatter="dateFormat"-->
-        <!--width="200"-->
-        <!--prop="effectiveDate"-->
-        <!--label="生效时间"/>-->
-        <!--<el-table-column-->
-        <!--:formatter="dateFormat"-->
-        <!--width="200"-->
-        <!--prop="expirationDate"-->
-        <!--label="失效时间"/>-->
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--width="140"-->
-        <!--prop="status"-->
-        <!--label="状态">-->
-        <!--<template slot-scope="scope">-->
-        <!--<el-tag v-if="scope.row.status === 0" type="info">未发布</el-tag>-->
-        <!--<el-tag v-if="scope.row.status === 1" type="success">已发布</el-tag>-->
-        <!--<el-tag v-if="scope.row.status === 2" type="warning">有改动</el-tag>-->
-        <!--</template>-->
-        <!--</el-table-column>-->
-        <!--<el-table-column label="操作" width="300">-->
-        <!--<template slot-scope="scope">-->
-        <!--<el-button-->
-        <!--v-if="scope.row.status !== 0"-->
-        <!--size="mini"-->
-        <!--type="text"-->
-        <!--icon="el-icon-view"-->
-        <!--style="margin-right: 5px"-->
-        <!--@click="handleView(scope.row.id)">-->
-        <!--查看-->
-        <!--</el-button>-->
-        <!--<commission-table :id="scope.row.id" :title="scope.row.company.name"/>-->
-        <!--<el-button-->
-        <!--v-if="scope.row.status !== 0"-->
-        <!--size="mini"-->
-        <!--type="text"-->
-        <!--icon="el-icon-download"-->
-        <!--@click="exportExcel(scope.row)">导出Excel</el-button>-->
-        <!--<el-button-->
-        <!--size="mini"-->
-        <!--type="text"-->
-        <!--icon="el-icon-delete"-->
-        <!--@click="handleDelete(scope.$index, scope.row)">删除-->
-        <!--</el-button>-->
-        <!--</template>-->
-        <!--</el-table-column>-->
+          <!--<el-table-column label="操作">-->
+          <!--<template slot-scope="scope">-->
+          <!--<el-button type="text" size="mini" @click="toggleCommissionTableList(scope.row)">-->
+          <!--<svg-icon icon-class="commissionList"/>-->
+          <!--佣金列表-->
+          <!--</el-button>-->
+          <!--</template>-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+          <!--:formatter="dateFormat"-->
+          <!--width="200"-->
+          <!--prop="effectiveDate"-->
+          <!--label="生效时间"/>-->
+          <!--<el-table-column-->
+          <!--:formatter="dateFormat"-->
+          <!--width="200"-->
+          <!--prop="expirationDate"-->
+          <!--label="失效时间"/>-->
+          <!--<el-table-column-->
+          <!--align="center"-->
+          <!--width="140"-->
+          <!--prop="status"-->
+          <!--label="状态">-->
+          <!--<template slot-scope="scope">-->
+          <!--<el-tag v-if="scope.row.status === 0" type="info">未发布</el-tag>-->
+          <!--<el-tag v-if="scope.row.status === 1" type="success">已发布</el-tag>-->
+          <!--<el-tag v-if="scope.row.status === 2" type="warning">有改动</el-tag>-->
+          <!--</template>-->
+          <!--</el-table-column>-->
+          <!--<el-table-column label="操作" width="300">-->
+          <!--<template slot-scope="scope">-->
+          <!--<el-button-->
+          <!--v-if="scope.row.status !== 0"-->
+          <!--size="mini"-->
+          <!--type="text"-->
+          <!--icon="el-icon-view"-->
+          <!--style="margin-right: 5px"-->
+          <!--@click="handleView(scope.row.id)">-->
+          <!--查看-->
+          <!--</el-button>-->
+          <!--<commission-table :id="scope.row.id" :title="scope.row.company.name"/>-->
+          <!--<el-button-->
+          <!--v-if="scope.row.status !== 0"-->
+          <!--size="mini"-->
+          <!--type="text"-->
+          <!--icon="el-icon-download"-->
+          <!--@click="exportExcel(scope.row)">导出Excel</el-button>-->
+          <!--<el-button-->
+          <!--size="mini"-->
+          <!--type="text"-->
+          <!--icon="el-icon-delete"-->
+          <!--@click="handleDelete(scope.$index, scope.row)">删除-->
+          <!--</el-button>-->
+          <!--</template>-->
+          <!--</el-table-column>-->
       </el-table>
       <add @afterAddCommissionTable="handleAfterCreateCommissionTable"/>
     </basic-container>
@@ -379,6 +392,9 @@ export default {
 </script>
 <style type="text/scss" lang="scss">
   #commissionTableList {
+    .el-table__expanded-cell {
+      padding: 20px;
+    }
     /*h4 {*/
       /*margin: 10px 0;*/
       /*font-weight: 400;*/
@@ -405,6 +421,15 @@ export default {
     }
     .el-card.is-always-shadow {
       box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    }
+    .action-dropdown {
+      display: inline-block;
+      position: relative;
+      color: #606266;
+      font-size: 14px;
+      position: absolute;
+      top: -2px;
+      left: 110px;
     }
   }
 </style>

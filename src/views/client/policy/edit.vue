@@ -1,13 +1,14 @@
 <template>
   <span>
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 5px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="mini" icon="el-icon-edit" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑保单"
       top="50px"
-      width="800px">
+      width="800px"
+      append-to-body>
       <el-form
         ref="insurancePolicy"
         :model="insurancePolicy"

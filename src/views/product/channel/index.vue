@@ -26,10 +26,10 @@
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-timeline v-loading="channelCommissionLoading" id="channelCommissionTableList">
-              <div v-if="channelCommissionTableList.length === 0" style="text-align: center; color: #909399;">
+              <div v-if="channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399;">
                 无渠道佣金策略
               </div>
-              <el-timeline-item v-for="item in channelCommissionTableList" :key="item.id" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
+              <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
                 <el-card>
                   <!--<p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>-->
                   <div class="bottom clearfix">
@@ -60,12 +60,24 @@
         <el-table-column label="上级" prop="superior.name"/>
         <el-table-column :label="$t('common.action')" width="250px">
           <template slot-scope="scope">
-            <el-button type="text" size="mini" style="margin-right: 10px" @click="toggleChannelPolicy(scope.row)">
-              <svg-icon icon-class="commissionPolicy"/>
-              渠道策略
-            </el-button>
-            <commission-policy :id="scope.row.id"/>
-            <edit v-if="!scope.row.isBuiltin" :user="scope.row"/>
+            <!--<el-button type="text" size="mini" style="margin-right: 10px" @click="toggleChannelPolicy(scope.row)">-->
+            <!--<svg-icon icon-class="commissionPolicy"/>-->
+            <!--渠道策略-->
+            <!--</el-button>-->
+            <el-dropdown style="margin-left: 10px">
+              <el-button type="primary" plain size="mini">
+                <i class="el-icon-more"/>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <edit v-if="!scope.row.isBuiltin" :user="scope.row"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <commission-policy :id="scope.row.id"/>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+
             <!--<el-button-->
             <!--v-if="!scope.row.isBuiltin"-->
             <!--type="text"-->
@@ -265,7 +277,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
   #channel {
     .el-table__expanded-cell {
-      padding: 15px;
+      padding: 20px 20px 5px 20px;
     }
   }
  #channelCommissionTableList {

@@ -1,14 +1,15 @@
 <template>
   <span>
-    <el-button type="text" size="mini" style="margin-right: 5px" @click="initForm">
-      <svg-icon icon-class="renewal"/>
+    <el-button type="text" size="mini" @click="initForm">
+      <svg-icon icon-class="renewal" style="margin-right: 5px"/>
       续保
     </el-button>
     <el-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       :fullscreen="true"
-      title= "续保记录">
+      title= "续保记录"
+      append-to-body>
       <el-table
         v-loading="renewalLoading"
         id="riderBenefits"

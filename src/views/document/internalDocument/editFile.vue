@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px; margin-left: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="mini" icon="el-icon-edit" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -22,7 +22,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 const _ = require('lodash')
 
@@ -45,6 +44,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      loading: false,
       file: {
         id: 0,
         name: '',
@@ -54,9 +54,6 @@ export default {
         name: [{ required: true, message: '请输入文件名', trigger: 'blur' }]
       }
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
@@ -70,6 +67,7 @@ export default {
     handleSubmit() {
       this.$refs['file'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.document.editFile(this.file.id, this.file).then(_ => {
             this.$message({
               message: '操作成功',
@@ -78,6 +76,9 @@ export default {
             })
             this.$store.dispatch('document/FetchFolderById', { id: this.id })
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loadin = false
           })
         } else {
           return false

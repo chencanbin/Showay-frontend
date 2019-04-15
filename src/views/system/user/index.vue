@@ -23,12 +23,24 @@
           min-width="100px"/>
         <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
-            <edit v-if="!scope.row.isBuiltin" :user="scope.row"/>
-            <el-button
-              v-if="!scope.row.isBuiltin"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.$index, scope.row)">{{ $t('action.del') }}</el-button>
+            <el-dropdown v-if="!scope.row.isBuiltin">
+              <el-button type="primary" plain size="mini">
+                <i class="el-icon-more"/>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <edit :user="scope.row"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button
+                    v-if="!scope.row.isBuiltin"
+                    type="text"
+                    icon="el-icon-delete"
+                    @click="handleDelete(scope.$index, scope.row)">{{ $t('action.del') }}
+                  </el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>

@@ -75,8 +75,9 @@ const client = {
     },
     FetchChannelCommissionTable({ commit }, params) {
       commit('SHOW_CHANNEL_COMMISSION_TABLE_LOADING')
+      commit('SET_COMMISSION_TABLE_LIST', { list: [] })
       return fetchChannelCommissionTable(params).then(res => {
-        commit('SET_COMMISSION_TABLE_LIST', res.data.list)
+        commit('SET_COMMISSION_TABLE_LIST', res.data)
         commit('HIDE_CHANNEL_COMMISSION_TABLE_LOADING')
       }).catch(_ => {
         commit('HIDE_CHANNEL_COMMISSION_TABLE_LOADING')

@@ -44,21 +44,38 @@
                 </el-form-item>
                 <el-form-item class="policy-form-item action">
                   <!--<detail :data="scope.row"/>-->
-                  <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row"/>
-                  <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency"/>
-                  <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    icon="el-icon-refresh"
-                    @click="handleReset(scope.row.id)">重置
-                  </el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    icon="el-icon-delete"
-                    @click="handleDelete(scope.$index, scope.row)">删除
-                  </el-button>
+                  <el-dropdown style="margin-left: 10px">
+                    <el-button type="primary" plain size="mini">
+                      <i class="el-icon-more"/>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item>
+                        <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row"/>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency"/>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <el-button
+                          type="text"
+                          size="mini"
+                          icon="el-icon-refresh"
+                          @click="handleReset(scope.row.id)">重置
+                        </el-button>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <el-button
+                          type="text"
+                          size="mini"
+                          icon="el-icon-delete"
+                          @click="handleDelete(scope.$index, scope.row)">删除
+                        </el-button>
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
                 </el-form-item>
               </el-form>
               <!--<div v-if="scope.row.riderBenefits && scope.row.riderBenefits.length > 0">-->
@@ -83,7 +100,8 @@
           prop="sn"
           label="内部编号"
           show-overflow-tooltip
-          min-width="120"/>
+          min-width="120"
+          sortable="custom"/>
         <el-table-column
           :formatter="dateFormat"
           prop="submitDate"
@@ -199,7 +217,7 @@ export default {
     }, 500),
     // 获取保单列表
     getInsurancePolicyList(params) {
-      params = Object.assign({ sort: 'submitDate', order: 'desc', ...params })
+      params = Object.assign({ sort: 'submitDate,sn', order: 'desc,desc', ...params })
       this.$store.dispatch('client/FetchInsurancePolicyList', { params })
     },
     // 格式化事件

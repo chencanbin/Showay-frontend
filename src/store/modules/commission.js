@@ -66,6 +66,7 @@ const commission = {
   actions: {
     FetchCommissionTableList({ commit }, { id, params }) {
       commit('SHOW_COMMISSION_TABLE_LIST_LOADING')
+      commit('SET_COMMISSION_TABLE_LIST', [])
       return fetchCommissionTableList(id, params).then(res => {
         commit('SET_COMMISSION_TABLE_LIST', res.data)
         commit('HIDE_COMMISSION_TABLE_LIST_LOADING')

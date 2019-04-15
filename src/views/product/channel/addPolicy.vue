@@ -1,7 +1,8 @@
 <template>
   <span style="margin-right: 5px">
     <el-col span.number="24" style="margin-bottom: 20px">
-      <div class="el-table-add-row" style="margin-top: 0" @click="initForm"><span>+ 添加</span></div>
+      <!--<div class="el-table-add-row" style="margin-top: 0" @click="initForm"><span>+ 添加</span></div>-->
+      <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加</el-button>
     </el-col>
     <!--<el-button :loading="loading" icon="el-icon-setting" type="text" size="small" style="margin-left: 5px" >-->
     <!--渠道佣金-->

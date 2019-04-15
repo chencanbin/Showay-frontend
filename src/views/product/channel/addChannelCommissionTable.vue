@@ -1,6 +1,7 @@
 <template>
-  <el-col :span="24" style="margin-bottom: 10px">
-    <div class="el-table-add-row" @click="initForm"><span style="font-size: 12px">+ 添加渠道佣金策略</span></div>
+  <el-col :span="24" style="margin-bottom: 10px; margin-top: 10px">
+    <!--<div class="el-table-add-row" @click="initForm"><span style="font-size: 12px">+ 添加渠道佣金策略</span></div>-->
+    <el-button class="el-table-add-row" plain type="primary" size="mini" style="height: 40px" @click="initForm" >+ 添加渠道佣金策略</el-button>
     <!--<el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>-->
     <el-dialog
       id="createChannelCommissionTableDialog"

@@ -1,7 +1,7 @@
 <template>
   <el-col span.number="24" class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button class="el-table-add-row" type="primary" @click="initForm">+ 添加</el-button>
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -56,7 +56,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import { country } from '@/utils/country'
 import elDragDialog from '@/directive/el-dragDialog'
 import Cookies from 'js-cookie'
@@ -74,6 +73,7 @@ export default {
         options: country
       }],
       dialogVisible: false,
+      loading: false,
       client: {
         name: '',
         idNumber: '',
@@ -90,9 +90,6 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapGetters(['loading'])
-  },
   methods: {
     initForm() {
       this.language = Cookies.get('language') || 'zh-CN'
@@ -105,6 +102,7 @@ export default {
     handleSubmit() {
       this.$refs['client'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.client.createClient(this.client).then(_ => {
             this.$message({
               message: '操作成功',
@@ -113,6 +111,9 @@ export default {
             })
             this.$store.dispatch('client/FetchClientList', {})
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

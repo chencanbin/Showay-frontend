@@ -14,7 +14,8 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="'佣金策略表( ' + title + ' )'"
-      class="dialog-body">
+      class="dialog-body"
+      append-to-body>
       <!--<el-button icon="el-icon-plus" type="text" @click="addNewRow">添加新行</el-button>-->
       <el-row slot="title" class="title" style="position: relative">
         <el-col :xs="24" :sm="24" :lg="8" style="height: 40px;line-height: 40px;">

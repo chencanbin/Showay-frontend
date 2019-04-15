@@ -1,12 +1,13 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑渠道"
-      width="500px">
+      width="500px"
+      append-to-body>
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="80px">
         <el-form-item :label="$t('user.form_label.name')" prop="name">
           <el-input v-model="account.name"/>

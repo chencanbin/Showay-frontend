@@ -1,11 +1,12 @@
 <template>
   <span>
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="mini" icon="el-icon-edit" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('user.dialog_title.edit')"
+      append-to-body
       width="500px">
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="100px">
         <el-form-item :label="$t('user.form_label.name')" prop="name">

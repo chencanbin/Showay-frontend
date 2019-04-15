@@ -1,18 +1,18 @@
 <template>
   <span id="riderBenefits">
     <el-button type="text" size="mini" style="margin-right: 5px" @click="initForm">
-      <svg-icon icon-class="riderBenefit"/>
+      <svg-icon icon-class="riderBenefit" style="margin-right: 5px"/>
       副险
     </el-button>
     <el-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       :fullscreen="true"
-      title= "副险列表">
+      title= "副险列表"
+      append-to-body>
       <el-table
         :data="riderBenefits"
-        stripe
-        border>
+        stripe>
         <el-table-column prop="product.name" label="产品"/>
         <el-table-column label="保费">
           <template slot-scope="scope">
@@ -37,7 +37,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="160">
           <template slot-scope="scope">
             <edit :rider-benefit="scope.row" :company-id="companyId" :currency="currency"/>
             <el-button
@@ -49,7 +49,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <add :company-id="companyId" :currency="currency" @afterAdd="afterAdd" />
+      <add :company-id="companyId" :currency="currency" style="margin-top: 10px" @afterAdd="afterAdd" />
       <div slot="footer" style="text-align: center">
         <el-button @click="handleClose">取 消</el-button>
         <el-button :loading="saveLoading" type="primary" @click="handleSubmit">提交</el-button>

@@ -9,7 +9,7 @@
       <file-upload @afterComplete="afterComplete"/>
     </el-row>
     <el-table
-      v-loading="loading"
+      v-loading="fileLoading"
       :data="folder.items"
       :height="tableHeight"
       stripe>
@@ -33,19 +33,32 @@
         width="200px"/>
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
-          <el-button
-            type="text"
-            size="mini"
-            icon="el-icon-download"
-            @click="handleDownload(scope.$index, scope.row)">下载
-          </el-button>
-          <edit :data="scope.row" :id="id"/>
-          <el-button
-            type="text"
-            size="mini"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.$index, scope.row)">删除
-          </el-button>
+          <el-dropdown>
+            <el-button type="primary" plain size="mini">
+              <i class="el-icon-more"/>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <el-button
+                  type="text"
+                  size="mini"
+                  icon="el-icon-download"
+                  @click="handleDownload(scope.$index, scope.row)">下载
+                </el-button>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <edit :data="scope.row" :id="id"/>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-button
+                  type="text"
+                  size="mini"
+                  icon="el-icon-delete"
+                  @click="handleDelete(scope.$index, scope.row)">删除
+                </el-button>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
@@ -54,7 +67,7 @@
 
 <script>
 import fileUpload from './fileUpload'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { fileType } from '@/utils/constant'
 import { parseTime } from '@/utils'
 import edit from './editFile'
@@ -75,9 +88,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState(
       {
+        fileLoading: state => state.document.fileLoading,
         folder: state => state.document.folders
       })
   },
@@ -145,16 +158,26 @@ export default {
       this.$confirm('此操作将永久删除该文件, 是否继续?', `提示`, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$api.document.deleteFile(row.id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getFileList(this.id)
-        })
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.document.deleteFile(row.id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getFileList(this.id)
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       })
     }
   }

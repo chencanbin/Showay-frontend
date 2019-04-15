@@ -7,7 +7,8 @@
       :before-close="handleClose"
       title="编辑文件夾"
       top="50px"
-      width="450px">
+      width="450px"
+      append-to-body>
       <el-form ref="folder" :model="folder" :rules="rule" label-width="100px">
         <el-form-item label="文件夹名:" prop="name">
           <el-input v-model="folder.name" @submit.native.prevent/>
@@ -22,7 +23,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 const _ = require('lodash')
 
@@ -38,6 +38,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       dialogVisible: false,
       folder: {
         id: 0,
@@ -48,9 +49,6 @@ export default {
         name: [{ required: true, message: '请输入文件名', trigger: 'blur' }]
       }
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
@@ -64,6 +62,7 @@ export default {
     handleSubmit() {
       this.$refs['folder'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.document.editFolder(this.folder.id, this.folder).then(_ => {
             this.$message({
               message: '操作成功',
@@ -72,6 +71,9 @@ export default {
             })
             this.$store.dispatch('document/FetchFolderById', { id: 1 })
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

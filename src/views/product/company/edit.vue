@@ -1,12 +1,13 @@
 <template>
   <span>
-    <el-button :loading="loading" type="text" icon="el-icon-edit" size="mini" style="margin-right: 10px" @click="initForm">编辑</el-button>
+    <el-button :loading="loading" type="text" icon="el-icon-edit" size="mini" @click="initForm">编辑</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑公司"
-      width="500px">
+      width="500px"
+      append-to-body>
       <el-form ref="company" :model="company" :rules="rule" label-width="120px">
         <el-form-item label="公司名(英文)" prop="en">
           <el-input v-model="company.en"/>

@@ -19,7 +19,7 @@
         :height="height"
         row-key="id"
         stripe>
-        <el-table-column prop="acronym" label="公司缩写" width="120px"/>
+        <el-table-column prop="acronym" label="公司缩写"/>
         <el-table-column prop="name" label="公司名" show-overflow-tooltip/>
         <el-table-column prop="level" label="级别" width="150px">
           <template slot-scope="scope">
@@ -32,15 +32,28 @@
           prop="contractEffectiveDate"
           label="签约时间"
           min-width="100px"/>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="80px">
           <template slot-scope="scope">
-            <edit :id="scope.row.id"/>
-            <el-button
-              :loading="deleteLoading"
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.row)">删除</el-button>
+            <el-dropdown>
+              <el-button type="primary" plain size="mini">
+                <i class="el-icon-more"/>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <edit :id="scope.row.id"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button
+                    :loading="deleteLoading"
+                    size="mini"
+                    type="text"
+                    icon="el-icon-delete"
+                    @click="handleDelete(scope.row)">删除</el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <!--<edit :id="scope.row.id"/>-->
+
           </template>
         </el-table-column>
       </el-table>

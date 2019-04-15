@@ -14,7 +14,7 @@
       </el-form>
       <pagination :total="client.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
-        v-loading="loading"
+        v-loading="clientLoading"
         :height="height"
         :data="client.list"
         stripe
@@ -57,13 +57,24 @@
           min-width="120"/>
         <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope">
-            <edit :data="scope.row"/>
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.$index, scope.row)">删除
-            </el-button>
+            <el-dropdown>
+              <el-button type="primary" plain size="mini">
+                <i class="el-icon-more"/>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <edit :data="scope.row"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    icon="el-icon-delete"
+                    @click="handleDelete(scope.$index, scope.row)">删除
+                  </el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -74,7 +85,7 @@
 
 <script>
 import { parseTime } from '@/utils'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import add from './add'
 import edit from './edit'
 import pagination from '@/components/Pagination'
@@ -96,9 +107,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState(
       {
+        clientLoading: state => state.client.clientLoading,
         client: state => state.client.clientList
       })
   },
@@ -120,16 +131,27 @@ export default {
       this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.client.deleteClient(row.id).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getClient()
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       }).then(() => {
-        this.$api.client.deleteClient(row.id).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          this.getClient()
-        })
       })
     },
 

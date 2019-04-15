@@ -1,7 +1,7 @@
 <template>
   <el-col span.number="24" class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button class="el-table-add-row" type="primary" @click="initForm">+ 添加</el-button>
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"

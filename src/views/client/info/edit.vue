@@ -1,12 +1,14 @@
 <template>
   <span>
-    <el-button type="primary" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑客户资料"
-      width="450px">
+      width="450px"
+      top="50px"
+      append-to-body>
       <el-form ref="client" :model="client" :rules="rule" label-width="100px">
         <el-form-item label="客户姓名:" prop="name">
           <el-input v-model="client.name"/>
@@ -54,7 +56,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import { country } from '@/utils/country'
 import Cookies from 'js-cookie'
 import elDragDialog from '@/directive/el-dragDialog'
@@ -82,6 +83,7 @@ export default {
         options: country
       }],
       dialogVisible: false,
+      loading: false,
       client: {},
       rule: {
         name: [{ required: true, message: '请输入客户姓名', trigger: 'blur' }],
@@ -89,9 +91,6 @@ export default {
         email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]
       }
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
@@ -106,6 +105,7 @@ export default {
     handleSubmit() {
       this.$refs['client'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.client.updateClient(this.client.id, this.client).then(_ => {
             this.$message({
               message: '操作成功',
@@ -114,6 +114,9 @@ export default {
             })
             this.$store.dispatch('client/FetchClientList', {})
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

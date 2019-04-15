@@ -1,6 +1,7 @@
 <template>
   <el-col span.number="24" class="el-table-add-col">
-    <div class="el-table-add-row" @click="initForm"><span>+ 添加文件夾</span></div>
+    <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加文件夾</span></div>-->
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加文件夾</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -22,13 +23,13 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import elDragDialog from '@/directive/el-dragDialog'
 export default {
   directives: { elDragDialog },
   data() {
     return {
       dialogVisible: false,
+      loading: false,
       folder: {
         name: '',
         parent: '2'
@@ -37,9 +38,6 @@ export default {
         name: [{ required: true, message: '请输入文件名', trigger: 'blur' }]
       }
     }
-  },
-  computed: {
-    ...mapGetters(['loading'])
   },
   methods: {
     initForm() {
@@ -52,6 +50,7 @@ export default {
     handleSubmit() {
       this.$refs['folder'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.document.createFolder(this.folder).then(_ => {
             this.$message({
               message: '操作成功',
@@ -60,6 +59,9 @@ export default {
             })
             this.$store.dispatch('document/FetchFolderById', { id: 2 })
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

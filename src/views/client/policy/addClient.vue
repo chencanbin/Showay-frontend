@@ -54,7 +54,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { country } from '@/utils/country'
 import elDragDialog from '@/directive/el-dragDialog'
 import Cookies from 'js-cookie'
@@ -81,6 +81,7 @@ export default {
         phone: '',
         email: ''
       },
+      loading: false,
       rule: {
         name: [{ required: true, message: '请输入客户姓名', trigger: 'blur' }],
         idNumber: [{ required: true, message: '请输入证件号', trigger: 'blur' }],
@@ -89,7 +90,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loading']),
     ...mapState({ companyList: state => state.company.companyList.list })
   },
   methods: {
@@ -104,6 +104,7 @@ export default {
     handleSubmit() {
       this.$refs['client'].validate((valid) => {
         if (valid) {
+          this.loading = true
           this.$api.client.createClient(this.client).then(_ => {
             this.$message({
               message: '操作成功',
@@ -112,6 +113,9 @@ export default {
             })
             this.$store.dispatch('client/FetchClientList', {})
             this.handleClose()
+            this.loading = false
+          }).catch(_ => {
+            this.loading = false
           })
         } else {
           return false

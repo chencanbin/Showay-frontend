@@ -237,8 +237,6 @@ export default {
             done()
           }
         }
-      }).then(() => {
-
       })
     }
   }
