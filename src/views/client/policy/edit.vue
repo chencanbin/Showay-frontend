@@ -375,8 +375,7 @@ export default {
               type: 'success',
               duration: 5 * 1000
             })
-            const params = { sort: 'submitDate', order: 'desc' }
-            this.$store.dispatch('client/FetchInsurancePolicyList', { params })
+            this.$store.dispatch('client/FetchInsurancePolicyList', { params: { sort: 'submitDate,sn', order: 'asc,asc' }})
             this.submitLoading = false
             this.handleClose()
           }).catch(_ => {

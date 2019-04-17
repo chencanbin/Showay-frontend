@@ -23,6 +23,7 @@
           type="selection"
           width="55" />
         <el-table-column label="保单号" prop="insurancePolicy.number" show-overflow-tooltip/>
+        <el-table-column label="受保人" prop="insurancePolicy.beneficiary" width="80"/>
         <el-table-column label="期序" width="80">
           <template slot-scope="scope">
             <span>第 {{ scope.row.year }} 期</span>

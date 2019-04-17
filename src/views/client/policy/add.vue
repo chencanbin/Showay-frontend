@@ -171,7 +171,7 @@ export default {
       agents: [],
       products: [],
       queryProduct: {
-        name: '',
+        wildcard: '',
         company: '',
         offset: 0,
         max: 50
@@ -275,11 +275,11 @@ export default {
       })
     },
     searchProduct(query) {
-      this.queryProduct.name = query
+      this.queryProduct.wildcard = query
       this.getProducts()
     },
     onProductFocus() {
-      this.queryProduct.name = ''
+      this.queryProduct.wildcard = ''
       this.getProducts()
     },
     searchCompany(query) {
@@ -316,7 +316,7 @@ export default {
               type: 'success',
               duration: 5 * 1000
             })
-            this.$store.dispatch('client/FetchInsurancePolicyList', {})
+            this.$store.dispatch('client/FetchInsurancePolicyList', { params: { sort: 'submitDate,sn', order: 'asc,asc' }})
             this.$refs['insurancePolicy'].resetFields()
             this.$refs['premium'].currencyValue = 0
             this.$refs['amountInsured'].currencyValue = 0

@@ -2,9 +2,6 @@
   <span>
     <el-badge :value="events.length" :max="99" style="line-height: 35px">
       <svg-icon icon-class="calendar" style="vertical-align: 1.1em; font-size: 20px" @click="initForm"/>
-      <!--<el-button type="primary" @click="initForm">-->
-      <!--续保日历-->
-      <!--</el-button>-->
     </el-badge>
     <el-dialog
       id="renewalCalendar"
@@ -18,9 +15,28 @@
             placement="top-start"
             trigger="hover">
             <el-card>
-              <div class="renewDetail">{{ p.event.title }}</div>
-              <div class="renewDetail">时间: {{ getFormattedDate(p.event.start) }}</div>
-              <div class="renewDetail">产品: {{ p.event.detail.product.name }}</div>
+              <el-form label-width="80px">
+                <el-form-item label="投保人:" class="detail-item">
+                  {{ p.event.detail.applicant.name }}
+                </el-form-item>
+                <el-form-item label="电话:" class="detail-item">
+                  {{ p.event.detail.applicant.phone }}
+                </el-form-item>
+                <el-form-item label="邮箱:" class="detail-item">
+                  {{ p.event.detail.applicant.email }}
+                </el-form-item>
+                <el-form-item label="续保时间:" class="detail-item">
+                  {{ getFormattedDate(p.event.start) }}
+                </el-form-item>
+                <el-form-item label="产品:" class="detail-item">
+                  {{ p.event.detail.product.name }}
+                </el-form-item>
+              </el-form>
+              <!--<div class="renewDetail">投保人: {{ p.event.detail.applicant.name }}</div>-->
+              <!--<div class="renewDetail">电话: {{ p.event.detail.applicant.phone }}</div>-->
+              <!--<div class="renewDetail">邮箱: {{ p.event.detail.applicant.email }}</div>-->
+              <!--<div class="renewDetail">时间: {{ getFormattedDate(p.event.start) }}</div>-->
+              <!--<div class="renewDetail">产品: {{ p.event.detail.product.name }}</div>-->
             </el-card>
             <p slot="reference">{{ p.event.title }}</p>
           </el-popover>
@@ -83,7 +99,7 @@ export default {
 }
 </script>
 
-<style type="text/scss"  lang="scss">
+<style type="text/scss" lang="scss">
   #renewalCalendar {
     line-height: 10px;
     .el-dialog__body {
@@ -117,7 +133,7 @@ export default {
       /*top: 15px;*/
     /*}*/
   }
-  .renewDetail {
-    line-height: 2;
+  .detail-item {
+    margin-bottom: 5px!important;
   }
 </style>

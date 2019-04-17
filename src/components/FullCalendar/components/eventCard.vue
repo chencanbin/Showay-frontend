@@ -27,7 +27,7 @@ export default {
       }
     },
     firstDay: {
-      type: Object,
+      type: Object | Number,
       default: function() {
         return {}
       }

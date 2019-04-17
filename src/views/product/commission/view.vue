@@ -55,7 +55,6 @@
 
 <script type="text/ecmascript-6">
 import pagination from '@/components/Pagination'
-import { mapGetters } from 'vuex'
 const _ = require('lodash')
 export default {
   name: 'CommissionView',
@@ -84,11 +83,9 @@ export default {
       max: 50
     }
   },
-  computed: {
-    ...mapGetters(['loading'])
-  },
   methods: {
     search: _.debounce(function() {
+      this.listQuery = { page: 1, limit: 50 }
       this.getCommissionTableList({ wildcard: this.wildcard })
     }, 500),
     openDialog(id) {
@@ -118,6 +115,7 @@ export default {
       })
     },
     getCommissionTableList(p) {
+      this.viewLoading = true
       const params = { offset: this.offset, max: this.max, ffyap: this.ffyap, wildcard: this.wildcard }
       this.$api.commission.fetchCommissionTable(this.id, params).then(res => {
         this.data = res.data.list
@@ -134,9 +132,14 @@ export default {
             this.columnYear.push('第' + item + '年')
           }
         })
+        this.viewLoading = false
+      }).catch(_ => {
+        this.viewLoading = true
       })
     },
     handleClose() {
+      this.wildcard = ''
+      this.listQuery = { page: 1, limit: 50 }
       this.dialogVisible = false
     },
     numberFormatter(value) {

@@ -1,6 +1,6 @@
 <template>
-  <span style="margin-right: 5px">
-    <el-button icon="el-icon-setting" type="text" size="mini" style="margin-left: 5px" @click="initForm" >
+  <span>
+    <el-button icon="el-icon-setting" type="text" size="mini" @click="initForm" >
       编辑
     </el-button>
     <el-dialog
@@ -9,7 +9,8 @@
       :before-close="handleClose"
       :fullscreen="true"
       :title="title"
-      center>
+      center
+      append-to-body>
       <el-table v-loading="loading" id="channelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
         <!--<el-table-column
           label="优先级"
@@ -26,7 +27,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="term" label="年期" width="60" align="center"/>
-        <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="70" align="center">
+        <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="80" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.conditions[index] ? scope.row.conditions[index].ratio + '%' : '-' }}</span>
           </template>
@@ -46,7 +47,7 @@
       <!-- 佣金生效时间弹框 -->
       <el-dialog
         :visible.sync="timeDialogVisible"
-        width="300px"
+        width="400px"
         title="渠道佣金生效时间 / 备注"
         append-to-body>
         <el-form ref="configForm" label-width="80px">
@@ -93,6 +94,18 @@ export default {
         return 0
       }
     },
+    channelName: {
+      type: String,
+      default() {
+        return ''
+      }
+    },
+    channelId: {
+      type: Number,
+      default() {
+        return 0
+      }
+    },
     remarks: {
       type: String,
       default() {
@@ -122,7 +135,7 @@ export default {
 
   methods: {
     initForm() {
-      this.title = `编辑渠道佣金策略 ( ${parseTime(this.effectiveDate, '{y}-{m}-{d}')} )`
+      this.title = `编辑渠道佣金策略 - ${this.channelName} ( ${parseTime(this.effectiveDate, '{y}-{m}-{d}')} )`
       this.loading = true
       this.dialogVisible = true
       this.$api.channel.fetchChannelCommissionPolicy(this.id).then(res => {
@@ -170,22 +183,24 @@ export default {
     handleSubmit() {
       this.saveLoading = true
       //  处理companies 和 products 字段, 只提交id的数组
-      _.forEach(this.originalPolicies, item => {
+      const data = _.cloneDeep(this.originalPolicies)
+      _.forEach(data, function(item) {
         const products = []
         const companies = []
-        _.forEach(item.products, product => {
+        _.forEach(item.products, function(product) {
           products.push(product.id)
         })
-        _.forEach(item.companies, company => {
+        _.forEach(item.companies, function(company) {
           companies.push(company.id)
         })
         item.products = products
         item.companies = companies
       })
-      this.$api.channel.editChannelCommissionPolicy(this.id, { policies: this.originalPolicies, effectiveDate: this.effectiveDate, remarks: this.remarks }).then(res => {
+      this.$api.channel.editChannelCommissionPolicy(this.id, { policies: data, effectiveDate: this.effectiveDate, remarks: this.remarks }).then(res => {
         this.dialogVisible = false
         this.timeDialogVisible = false
         this.saveLoading = false
+        this.$store.dispatch('client/FetchChannelCommissionTable', { channel: this.channelId })
       }).catch(_ => {
         this.saveLoading = false
       })

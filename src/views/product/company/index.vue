@@ -19,14 +19,22 @@
         :height="height"
         row-key="id"
         stripe>
-        <el-table-column prop="acronym" label="公司缩写"/>
-        <el-table-column prop="name" label="公司名" show-overflow-tooltip/>
+        <el-table-column prop="name" label="公司名" min-width="150px" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ scope.row.acronym }}  - {{ scope.row.name }}
+          </template>
+        </el-table-column>
         <el-table-column prop="level" label="级别" width="150px">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.secondary" type="warning">二级</el-tag>
             <el-tag v-else type="success">一级</el-tag>
           </template>
         </el-table-column>
+        <!--<el-table-column prop="contact" label="联系人" show-overflow-tooltip/>-->
+        <!--<el-table-column prop="phone" label="联系电话" show-overflow-tooltip/>-->
+        <!--<el-table-column prop="email" label="电子邮箱" show-overflow-tooltip/>-->
+        <!--<el-table-column prop="address" label="联系地址" show-overflow-tooltip/>-->
+        <!--<el-table-column prop="website" label="系统地址" show-overflow-tooltip/>-->
         <el-table-column
           :formatter="dateFormat"
           prop="contractEffectiveDate"

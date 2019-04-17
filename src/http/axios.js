@@ -84,7 +84,8 @@ export default function $axios(options) {
             Message({
               message: data.message,
               type: 'error',
-              duration: 5 * 1000
+              showClose: true,
+              duration: 50 * 1000
             })
             return reject(data)
           }
@@ -108,7 +109,7 @@ export default function $axios(options) {
               err.message = `请求地址出错: ${err.response.config.url}`
               break
             case 408:
-              err.message = '请求超时'
+              err.message = `请求超时: ${err.response.config.url}`
               break
             case 500:
               err.message = `服务器内部错误: ${err.response.config.url}`
@@ -117,7 +118,7 @@ export default function $axios(options) {
               err.message = '服务未实现'
               break
             case 502:
-              err.message = '网关错误'
+              err.message = `网关错误: ${err.response.config.url} `
               break
             case 503:
               err.message = '服务不可用'
@@ -133,7 +134,8 @@ export default function $axios(options) {
         }
         Notification.error({
           title: '错误',
-          message: err.message
+          message: err.message,
+          duration: 0
         })
         return reject(err.response) // 返回接口返回的错误信息
       }

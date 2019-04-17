@@ -54,14 +54,21 @@
       </el-tabs>
       <el-dialog
         :visible.sync="timeDialogVisible"
-        width="300px"
+        width="400px"
         title="佣金生效时间"
         append-to-body>
-        <el-date-picker
-          v-model="effectiveDate"
-          type="datetime"
-          value-format="timestamp"
-          style="width: 100%"/>
+        <el-form ref="configForm" label-width="70px">
+          <el-form-item label="生效时间">
+            <el-date-picker
+              v-model="effectiveDate"
+              type="datetime"
+              value-format="timestamp"
+              style="width: 100%"/>
+          </el-form-item>
+          <el-form-item label="备注" prop="remarks">
+            <el-input v-model="remarks" placeholder="请输入备注"/>
+          </el-form-item>
+        </el-form>
         <div slot="footer" class="dialog-footer" style="text-align: center">
           <el-button :loading="buttonLoading" type="primary" @click="handlePublish">确定</el-button>
         </div>
@@ -101,6 +108,10 @@ export default {
       type: Number,
       default: 0
     },
+    commissionRemarks: {
+      type: String,
+      default: ''
+    },
     created: {
       type: Boolean,
       default: false
@@ -131,6 +142,7 @@ export default {
       errorCoordinate: [],
       selectedRows: [], // 选中行数的数组
       effectiveDate: '', // 有效时间
+      remarks: '',
       fullscreen: true,
       dialogVisible: false,
       timeDialogVisible: false,
@@ -465,6 +477,7 @@ export default {
       this.initOverAll()
       this.activeName = 'basic'
       this.editStatus = ''
+      this.remarks = this.commissionRemarks
       this.$nextTick(() => {
         this.basicHotInstance = this.$refs.basicTable.hotInstance
         this.overrideHotInstance = this.$refs.overrideTable.hotInstance
@@ -550,14 +563,14 @@ export default {
     },
     handlePublish() {
       this.buttonLoading = true
-      this.$api.commission.publishCommissionTableDraft(this.id, this.effectiveDate).then(res => {
+      this.$api.commission.publishCommissionTableDraft(this.id, this.effectiveDate, this.remarks).then(res => {
         this.buttonLoading = false
         this.timeDialogVisible = false
         this.dialogVisible = false
         this.$store.dispatch('commission/FetchCommissionTableList', { id: this.companyId })
       }).catch(error => {
-        const data = error.data
         this.buttonLoading = false
+        const data = error.data
         if (data && data.coordinate) {
           this.errorCoordinate = data.coordinate
           data.coordinate.forEach(item => {

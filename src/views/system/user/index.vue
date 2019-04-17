@@ -21,7 +21,7 @@
           :label="$t('user.table_header.create_time')"
           prop="creationDay"
           min-width="100px"/>
-        <el-table-column :label="$t('common.action')">
+        <el-table-column :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown v-if="!scope.row.isBuiltin">
               <el-button type="primary" plain size="mini">
@@ -35,6 +35,7 @@
                   <el-button
                     v-if="!scope.row.isBuiltin"
                     type="text"
+                    size="small"
                     icon="el-icon-delete"
                     @click="handleDelete(scope.$index, scope.row)">{{ $t('action.del') }}
                   </el-button>

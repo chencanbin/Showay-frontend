@@ -44,12 +44,13 @@ export function commissionTableDraft(id, data) {
   })
 }
 
-export function publishCommissionTableDraft(id, effectiveDate) {
+export function publishCommissionTableDraft(id, effectiveDate, remarks) {
   return request({
     url: `/commissionTableDraft/${id}/publish`,
     method: 'post',
     data: {
-      effectiveDate
+      effectiveDate,
+      remarks
     }
   })
 }

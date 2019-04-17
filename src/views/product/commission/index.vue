@@ -33,59 +33,62 @@
       >
         <el-table-column type="expand" width="60px">
           <template slot-scope="scope" style="width: 50%;">
-            <el-timeline v-loading="commissionTableListLoading" id="commissionTableList">
-              <div v-if="commissionTableList.list && commissionTableList.list.length === 0" style="text-align: center; color: #909399;">
-                无佣金表
-              </div>
-              <el-timeline-item v-for="(commissionTable, index) in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="index" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
-                <el-dropdown class="action-dropdown">
-                  <el-button type="primary" plain size="mini">
-                    <i class="el-icon-more"/>
-                  </el-button>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>
-                      <el-button
-                        v-if="commissionTable.status !== 0"
-                        size="mini"
-                        type="text"
-                        icon="el-icon-view"
-                        style="margin-right: 5px"
-                        @click="handleView(commissionTable.id)">
-                        查看
-                      </el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <commission-table :id="commissionTable.id" :company-id="scope.row.id" :title="commissionTable.company.name"/>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button
-                        v-if="commissionTable.status !== 0"
-                        :ref="`export_${commissionTable.id}`"
-                        size="mini"
-                        type="text"
-                        icon="el-icon-download"
-                        @click="exportExcel(commissionTable)">导出Excel</el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button
-                        size="mini"
-                        type="text"
-                        icon="el-icon-delete"
-                        @click="handleDelete(commissionTable, scope.row.id)">删除
-                      </el-button>
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-                <el-card>
-                  <p style="display: inline-block">状态 :
-                    <el-tag v-if="commissionTable.status === 0" type="info" size="mini">未发布</el-tag>
-                    <el-tag v-if="commissionTable.status === 1" type="success" size="mini">已发布</el-tag>
-                    <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">有改动</el-tag>
-                  </p>
-                  <p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>
-                </el-card>
-              </el-timeline-item>
-            </el-timeline>
+            <div v-loading="commissionTableListLoading" class="clearfix">
+              <el-timeline v-loading="commissionTableListLoading" id="commissionTableList">
+                <div v-if="commissionTableList.list && commissionTableList.list.length === 0" style="text-align: center; color: #909399;">
+                  无佣金表
+                </div>
+                <el-timeline-item v-for="(commissionTable, index) in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="index" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
+                  <el-dropdown class="action-dropdown">
+                    <el-button type="primary" plain size="mini">
+                      <i class="el-icon-more"/>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item>
+                        <el-button
+                          v-if="commissionTable.status !== 0"
+                          size="mini"
+                          type="text"
+                          icon="el-icon-view"
+                          style="margin-right: 5px"
+                          @click="handleView(commissionTable.id)">
+                          查看
+                        </el-button>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <commission-table :id="commissionTable.id" :company-id="scope.row.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name"/>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <el-button
+                          v-if="commissionTable.status !== 0"
+                          :ref="`export_${commissionTable.id}`"
+                          size="mini"
+                          type="text"
+                          icon="el-icon-download"
+                          @click="exportExcel(commissionTable)">导出Excel</el-button>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <el-button
+                          size="mini"
+                          type="text"
+                          icon="el-icon-delete"
+                          @click="handleDelete(commissionTable, scope.row.id)">删除
+                        </el-button>
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                  <el-card>
+                    <p style="display: inline-block">状态 :
+                      <el-tag v-if="commissionTable.status === 0" type="info" size="mini">未发布</el-tag>
+                      <el-tag v-if="commissionTable.status === 1" type="success" size="mini">已发布</el-tag>
+                      <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">有改动</el-tag>
+                    </p>
+                    <p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>
+                    <p v-if="commissionTable.remarks" style="display: inline-block; margin: 0 0 0 20px">备注 : {{ commissionTable.remarks }}</p>
+                  </el-card>
+                </el-timeline-item>
+              </el-timeline>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="acronym" label="公司缩写"/>
@@ -308,6 +311,7 @@ export default {
               axios.get(url, {
                 responseType: 'blob'
               }).then(res => {
+                console.log(res.data)
                 const blob = new Blob([res.data])
                 const downloadElement = document.createElement('a')
                 const href = window.URL.createObjectURL(blob) //  创建下载的链接
@@ -320,6 +324,7 @@ export default {
                 instance.confirmButtonLoading = false
                 done()
               }).catch(_ => {
+                console.log(_)
                 instance.confirmButtonLoading = false
               })
             } else {

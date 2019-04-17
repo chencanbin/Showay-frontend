@@ -144,7 +144,8 @@ export default {
     handleSubmit() {
       this.saveLoading = true
       // 处理companies 和 products 字段, 只提交id的数组
-      _.forEach(this.originalPolicies, item => {
+      const data = _.cloneDeep(this.originalPolicies)
+      _.forEach(data, item => {
         const products = []
         const companies = []
         _.forEach(item.products, product => {
@@ -156,7 +157,7 @@ export default {
         item.products = products
         item.companies = companies
       })
-      this.$api.channel.createChannelCommissionPolicy({ channel: this.id, policies: this.originalPolicies, effectiveDate: this.effectiveDate, remarks: this.remarks }).then(res => {
+      this.$api.channel.createChannelCommissionPolicy({ channel: this.id, policies: data, effectiveDate: this.effectiveDate, remarks: this.remarks }).then(res => {
         this.dialogVisible = false
         this.timeDialogVisible = false
         this.saveLoading = false

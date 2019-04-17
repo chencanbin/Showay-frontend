@@ -224,6 +224,7 @@ export default {
   },
   methods: {
     search: _.debounce(function() {
+      this.listQuery = { page: 1, limit: 50 }
       this.getCommissionCreditList({ wildcard: this.wildcard })
     }, 500),
     getCommissionCreditSum(params) {

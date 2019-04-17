@@ -89,3 +89,11 @@ export function deleteFile(id) {
     method: 'delete'
   })
 }
+
+export function getHomePageFileList(params) {
+  return request({
+    url: '/doc',
+    method: 'get',
+    params
+  })
+}

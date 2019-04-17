@@ -118,9 +118,11 @@ export default {
   },
   methods: {
     getClient(params) {
+      params = Object.assign({ wildcard: this.wildcard, ...params })
       this.$store.dispatch('client/FetchClientList', { params })
     },
     search: _.debounce(function() {
+      this.listQuery = { page: 1, limit: 50 }
       this.getClient({ wildcard: this.wildcard })
     }, 500),
     dateFormat(row, column) {

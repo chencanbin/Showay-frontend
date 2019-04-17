@@ -123,7 +123,7 @@ export default {
     },
     handleClose() {
       this.dialogVisible = false
-      const params = { sort: 'submitDate', order: 'desc' }
+      const params = { sort: 'submitDate,sn', order: 'asc,asc' }
       this.$store.dispatch('client/FetchInsurancePolicyList', { params })
     },
     // 处理删除保单事件
@@ -148,7 +148,7 @@ export default {
           type: 'success',
           duration: 5 * 1000
         })
-        const params = { sort: 'submitDate', order: 'asc' }
+        const params = { sort: 'submitDate,sn', order: 'asc,asc' }
         this.$store.dispatch('client/FetchInsurancePolicyList', { params })
         this.handleClose()
         this.saveLoading = false

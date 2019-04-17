@@ -129,7 +129,7 @@ export default {
       }
     },
     firstDay: {
-      type: Number | String,
+      type: Number | String | Object,
       validator(val) {
         const res = parseInt(val)
         return res >= 0 && res <= 6

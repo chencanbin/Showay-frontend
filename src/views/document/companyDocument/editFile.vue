@@ -58,6 +58,7 @@ export default {
   methods: {
     initForm() {
       this.file = _.cloneDeep(this.data)
+      this.file.showInHomePage = true
       this.dialogVisible = true
     },
     handleClose() {

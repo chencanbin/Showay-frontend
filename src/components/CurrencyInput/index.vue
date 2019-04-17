@@ -14,7 +14,7 @@ export default {
   name: 'CurrencyInput',
   props: {
     value: {
-      type: String,
+      type: String | Number,
       default: '',
       desc: '数值'
     },

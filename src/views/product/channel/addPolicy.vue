@@ -19,13 +19,14 @@
           <el-select v-model="policy.type" style="width: 100%" placeholder="请选择策略类型" @change="onTypeChange">
             <el-option key="0" label="所有" value="all"/>
             <el-option key="1" label="公司" value="companies"/>
-            <el-option key="2" label="產品" value="products"/>
+            <el-option key="2" label="产品" value="products"/>
           </el-select>
         </el-form-item>
         <el-form-item v-if="policy.type === 'products'" label="产品" prop="products">
           <el-select
             v-if="policy.type === 'products'"
             ref="product"
+            :loading="productLoading"
             :remote-method="searchProduct"
             v-model="policy.products"
             multiple
@@ -45,6 +46,7 @@
           <el-select
             v-if="policy.type === 'companies'"
             ref="product"
+            :loading="companyLoading"
             :remote-method="searchCompany"
             v-model="policy.companies"
             multiple
@@ -84,7 +86,8 @@
           :key="item.id"
           :prop="`conditions.${item.value}`"
           :rules="[
-            {required: true, message: '请输入佣金率', trigger: 'blur'}
+            {required: true, message: '请输入佣金率', trigger: 'blur'},
+            { required: true, trigger: 'blur', validator: validateNumber }
           ]"
         >
           <el-input v-model="policy.conditions[item.value]">
@@ -107,11 +110,14 @@
 import elDragDialog from '@/directive/el-dragDialog'
 
 const _ = require('lodash')
+
 export default {
   directives: { elDragDialog },
   data() {
     return {
       dialogVisible: false,
+      productLoading: false,
+      companyLoading: false,
       products: [],
       companies: [],
       policy: {
@@ -133,7 +139,9 @@ export default {
   },
   computed: {
     generateDefinedYear() {
-      return _.range(1, this.policy.term + 1)
+      let years = []
+      years = _.range(1, Number(this.policy.term) + 1)
+      return years
     },
     getUserDefined() {
       const result = []
@@ -190,13 +198,21 @@ export default {
       })
     },
     searchProduct(query) {
-      this.$api.product.fetchProductList({ name: query }).then(res => {
+      this.productLoading = true
+      this.$api.product.fetchProductList({ wildcard: query }).then(res => {
         this.products = res.data.list
+        this.productLoading = false
+      }).catch(_ => {
+        this.productLoading = false
       })
     },
     searchCompany(query) {
-      this.$api.company.fetchCompanyList({ name: query }).then(res => {
+      this.companyLoading = true
+      this.$api.company.fetchCompanyList({ wildcard: query }).then(res => {
         this.companies = res.data.list
+        this.companyLoading = false
+      }).catch(_ => {
+        this.companyLoading = false
       })
     },
     onTypeChange(value) {
@@ -213,6 +229,16 @@ export default {
     },
     userDefinedChange(value) {
       this.policy.conditions = []
+    },
+    validateNumber(rule, value, callback) {
+      const reg = /^[0-9]+.?[0-9]*$/
+      if (value > 100) {
+        callback(new Error('佣金率不能超过100  '))
+      }
+      if (reg.test(value)) {
+        callback()
+      }
+      callback(new Error('佣金率必须为数字'))
     }
   }
 }

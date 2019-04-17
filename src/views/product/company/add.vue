@@ -7,8 +7,9 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       title="添加公司"
-      width="500px">
-      <el-form ref="company" :model="company" :rules="rule" label-width="120px">
+      top="50px"
+      width="700px">
+      <el-form ref="company" :model="company" :rules="rule" inline label-width="110px">
         <el-form-item label="公司名(英文)" prop="en">
           <el-input ref="en" v-model="company.en" autofocus/>
         </el-form-item>
@@ -18,14 +19,29 @@
         <el-form-item label="公司缩写" prop="acronym">
           <el-input v-model="company.acronym"/>
         </el-form-item>
+        <!--<el-form-item label="联系人" prop="contact">-->
+        <!--<el-input v-model="company.contact"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="联系电话" prop="phone">-->
+        <!--<el-input v-model="company.phone"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="电子邮箱" prop="email">-->
+        <!--<el-input v-model="company.email"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="联系地址" prop="address">-->
+        <!--<el-input v-model="company.address"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="系统地址" prop="website">-->
+        <!--<el-input v-model="company.website"/>-->
+        <!--</el-form-item>-->
         <el-form-item label="签约时间" prop="contractEffectiveDate">
           <el-date-picker
             v-model="company.contractEffectiveDate"
             type="date"
             value-format="timestamp"
-            style="width: 100%"/>
+            style="width: 87%"/>
         </el-form-item>
-        <el-form-item label="二级供应商" prop="secondary">
+        <el-form-item label="二级供应商" prop="secondary" style="margin-right: 20px">
           <el-switch
             v-model="company.secondary"/>
         </el-form-item>
@@ -53,7 +69,8 @@ export default {
       rule: {
         en: [{ required: true, message: '公司名(英文)必须填', trigger: 'blur' }],
         zhCN: [{ required: true, message: '公司名(中文)必须填', trigger: 'blur' }],
-        acronym: [{ required: true, message: '公司缩写必须填', trigger: 'blur' }]
+        acronym: [{ required: true, message: '公司缩写必须填', trigger: 'blur' }],
+        email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'blur'] }]
       }
     }
   },
@@ -75,6 +92,11 @@ export default {
           const data = { acronym: '', localizedNames: [] }
           data.acronym = this.company.acronym
           data.secondary = this.company.secondary
+          // data.contact = this.company.contact
+          // data.address = this.company.address
+          // data.email = this.company.email
+          // data.phone = this.company.phone
+          // data.website = this.company.website
           data.contractEffectiveDate = this.company.contractEffectiveDate
           data.localizedNames.push({ name: this.company.en, locale: 'en' })
           data.localizedNames.push({ name: this.company.zhCN, locale: 'zh_CN' })

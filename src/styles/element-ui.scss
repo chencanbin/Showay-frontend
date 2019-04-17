@@ -118,7 +118,9 @@
  .el-form-item {
    margin-bottom: 18px;
  }
-
+ .el-timeline-item__timestamp.is-top {
+   min-height: 20px;
+ }
  .el-dialog {
    box-shadow: 0px 0px 10px 2px rgba(251, 249, 249, 0.4);
    border: solid 1px #AAA;
@@ -158,5 +160,13 @@
  .el-dropdown-menu--medium .el-dropdown-menu__item {
    padding: 0 10px;
  }
+ .el-dropdown-menu {
+   overflow: hidden;
+ }
+
+ body .el-table th.gutter{
+   display: table-cell!important;
+ }
+
 
 

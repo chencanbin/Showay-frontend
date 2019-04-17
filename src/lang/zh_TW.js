@@ -1,7 +1,7 @@
 export default {
   route: {
     home: '首頁',
-    product: '產品',
+    product: '产品',
     company: '保險公司',
     commission: '佣金',
     client: '客戶',

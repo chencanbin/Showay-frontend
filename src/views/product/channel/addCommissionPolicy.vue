@@ -2,7 +2,7 @@
   <span style="margin-right: 5px">
     <el-col span.number="24" style="margin-bottom: 20px">
       <!--<div class="el-table-add-row" style="margin-top: 0" @click="initForm"><span>+ 添加</span></div>-->
-
+      <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加</el-button>
     </el-col>
     <el-dialog
       v-el-drag-dialog
@@ -16,7 +16,7 @@
           <el-select v-model="policy.type" style="width: 100%" placeholder="请选择策略类型" @change="onTypeChange">
             <el-option key="0" label="所有" value="all"/>
             <el-option key="1" label="公司" value="companies"/>
-            <el-option key="2" label="產品" value="products"/>
+            <el-option key="2" label="产品" value="products"/>
           </el-select>
         </el-form-item>
         <el-form-item v-if="policy.type === 'products'" label="产品" prop="products">
@@ -199,7 +199,7 @@ export default {
     },
     searchProduct(query) {
       this.productLoading = true
-      this.$api.product.fetchProductList({ name: query }).then(res => {
+      this.$api.product.fetchProductList({ wildcard: query }).then(res => {
         this.products = res.data.list
         this.productLoading = false
       }).catch(_ => {
@@ -208,7 +208,7 @@ export default {
     },
     searchCompany(query) {
       this.companyLoading = true
-      this.$api.company.fetchCompanyList({ name: query }).then(res => {
+      this.$api.company.fetchCompanyList({ wildcard: query }).then(res => {
         this.companies = res.data.list
         this.companyLoading = false
       }).catch(_ => {

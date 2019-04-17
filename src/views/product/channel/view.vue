@@ -19,6 +19,14 @@
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
         </el-form-item>
+        <el-form-item>
+          <el-button
+            :loading="exportLoading"
+            type="primary"
+            size="small"
+            icon="el-icon-download"
+            @click="exportPDF()">导出</el-button>
+        </el-form-item>
       </el-form>
       <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <div class="table-container">
@@ -37,9 +45,9 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
 import { parseTime } from '@/utils'
 import pagination from '@/components/Pagination'
+import axios from 'axios'
 
 const _ = require('lodash')
 export default {
@@ -51,29 +59,32 @@ export default {
     return {
       activeName: 'basic',
       tableHeight: document.body.clientHeight - 140,
+      loading: false,
+      exportLoading: false,
       wildcard: '',
       dialogVisible: false,
       id: '',
       title: '',
       timestamp: '',
+      channelName: '',
       data: [],
       total: 0,
       columnYear: [],
+      params: {},
       listQuery: {
         page: 1,
         limit: 50
       }
     }
   },
-  computed: {
-    ...mapGetters(['loading'])
-  },
   methods: {
     search: _.debounce(function() {
+      this.listQuery = { page: 1, limit: 50 }
       this.getViewData(this.id, { wildcard: this.wildcard })
     }, 500),
     openDialog(channelPolicyObj, channelName) {
       this.id = channelPolicyObj.id
+      this.channelName = channelName
       this.timestamp = channelPolicyObj.timestamp
       this.title = `渠道佣金预览 - ${channelName} ( ${parseTime(channelPolicyObj.timestamp, '{y}-{m}-{d}')} )`
       // this.$api.channel.previewChannelCommission(id).then(res => {
@@ -97,8 +108,9 @@ export default {
       this.getViewData(this.id)
     },
     getViewData(id, params) {
-      params = Object.assign({ timestamp: this.timestamp }, params)
-      this.$api.channel.previewChannelCommission(id, params).then(res => {
+      this.params = Object.assign({ timestamp: this.timestamp, wildcard: this.wildcard }, params)
+      this.loading = true
+      this.$api.channel.previewChannelCommission(id, this.params).then(res => {
         this.data = res.data.list
         this.total = res.data.total
         this.id = id
@@ -115,6 +127,9 @@ export default {
           }
         })
         this.dialogVisible = true
+        this.loading = false
+      }).catch(_ => {
+        this.loading = false
       })
     },
     handleClose() {
@@ -129,8 +144,31 @@ export default {
     handleTabClick(tab, event) {
       this.activeName = tab.name
     },
-    exportExcel() {
-      window.location.href = process.env.BASE_API + `/commissionTable/${this.id}/export`
+    // exportExcel() {
+    //   window.location.href = process.env.BASE_API + `/commissionTable/${this.id}/export`
+    // },
+    exportPDF() {
+      const url = process.env.BASE_API + `/channelCommissionTable/${this.id}/export`
+      const fileName = `${this.channelName} ( ${parseTime(this.timestamp, '{y}-{m}-{d}')} ).pdf`
+      this.exportLoading = true
+      axios.get(url, {
+        responseType: 'blob',
+        params: this.params
+      }).then(res => {
+        const blob = new Blob([res.data])
+        const downloadElement = document.createElement('a')
+        const href = window.URL.createObjectURL(blob) //  创建下载的链接
+        downloadElement.href = href
+        downloadElement.download = fileName //  下载后文件名
+        document.body.appendChild(downloadElement)
+        downloadElement.click() //  点击下载
+        document.body.removeChild(downloadElement) // 下载完成移除元素
+        window.URL.revokeObjectURL(href) // 释放blob对象
+        this.exportLoading = false
+      }).catch(_ => {
+        console.log(_)
+        this.exportLoading = false
+      })
     },
     updatePage(val) {
       this.listQuery.page = val

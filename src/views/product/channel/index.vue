@@ -25,34 +25,51 @@
         @expand-change="expandChange">
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <el-timeline v-loading="channelCommissionLoading" id="channelCommissionTableList">
-              <div v-if="channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399;">
-                无渠道佣金策略
-              </div>
-              <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
-                <el-card>
-                  <!--<p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>-->
-                  <div class="bottom clearfix">
-                    <el-button
-                      v-if="item.status !== 0"
-                      type="text"
-                      size="mini"
-                      icon="el-icon-view"
-                      @click="handleTimestampDialog(item.id, item.effectiveDate, scope.row.name)">
-                      查看
+            <div v-loading="channelCommissionLoading" class="clearfix">
+              <el-timeline id="channelCommissionTableList">
+                <div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399;">
+                  无渠道佣金策略
+                </div>
+                <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
+                  <el-dropdown class="action-dropdown">
+                    <el-button type="primary" plain size="mini">
+                      <i class="el-icon-more"/>
                     </el-button>
-                    <el-button
-                      type="text"
-                      size="mini"
-                      icon="el-icon-download"
-                      @click="exportPDF(item.id)">导出</el-button>
-                    <editChannelCommissionTable :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks"/>
-                    <el-button type="text" size="mini" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">删除</el-button>
-                  </div>
-                </el-card>
-              </el-timeline-item>
-            </el-timeline>
-            <addChannelCommissionTable :effective-date="scope.row.effectiveDate" :id="scope.row.id"/>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item>
+                        <el-button
+                          v-if="item.status !== 0"
+                          type="text"
+                          size="mini"
+                          icon="el-icon-view"
+                          @click="handleTimestampDialog(item.id, item.effectiveDate, scope.row.name)">
+                          查看
+                        </el-button>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <editChannelCommissionTable :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks" :channel-name="scope.row.name" :channel-id="scope.row.id"/>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <el-button type="text" size="mini" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">删除</el-button>
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                  <el-card v-if="item.remarks">
+                    <!--<p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>-->
+                    <div class="bottom clearfix">
+
+                      <!--<el-button-->
+                      <!--type="text"-->
+                      <!--size="mini"-->
+                      <!--icon="el-icon-download"-->
+                      <!--@click="exportPDF(item.id)">导出</el-button>-->
+                      <p style="display: inline-block; margin: 0">备注 : {{ item.remarks }}</p>
+                    </div>
+                  </el-card>
+                </el-timeline-item>
+              </el-timeline>
+              <addChannelCommissionTable :effective-date="scope.row.effectiveDate" :id="scope.row.id"/>
+            </div>
           </template>
         </el-table-column>
         <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
@@ -161,6 +178,7 @@ export default {
   methods: {
     parseTime,
     search: _.debounce(function() {
+      this.listQuery = { page: 1, limit: 50 }
       this.getUsers({ role: 2, wildcard: this.wildcard })
     }, 500),
     handleDelete(index, row) {
@@ -219,6 +237,7 @@ export default {
       return ''
     },
     getUsers(params = { role: 2 }) {
+      params = Object.assign({ wildcard: this.wildcard, ...params })
       this.$store.dispatch('FetchUserList', params)
     },
     getChannelCommissionTableList(params) {
@@ -262,9 +281,7 @@ export default {
       this.$refs.channelCommissionView.openDialog(this.channelPolicyObj, this.channelName)
       this.timeDialogVisible = false
     },
-    exportPDF(id) {
-      window.location.href = process.env.BASE_API + `/channelCommissionTable/${id}/export`
-    },
+
     updatePage(val) {
       this.listQuery.page = val
     },
@@ -294,7 +311,6 @@ export default {
     p {
      font-size: 14px;
      color: #5e6d82;
-     line-height: 1.5em;
     }
    .el-card {
      padding: 15px;
@@ -312,6 +328,15 @@ export default {
    }
    .el-card.is-always-shadow {
      box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+   }
+   .action-dropdown {
+     display: inline-block;
+     position: relative;
+     color: #606266;
+     font-size: 14px;
+     position: absolute;
+     top: -2px;
+     left: 110px;
    }
  }
 </style>

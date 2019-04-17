@@ -2,8 +2,11 @@
   <div class="dashboard-editor-container">
     <panel-group :overall="overall" @panelClick="panelClick"/>
     <el-row :gutter="8">
-      <el-col :xs="24" :sm="24" :lg="24">
+      <el-col :xs="16" :sm="16" :lg="16">
         <profit/>
+      </el-col>
+      <el-col :xs="8" :sm="8" :lg="8">
+        <fileList/>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="24">
         <cleared-credit/>
@@ -34,7 +37,7 @@ import clearedCredit from './components/ClearedCredit'
 import profit from './components/profit'
 import channelProfit from './components/ChannelProfit'
 import ChannelPie from './components/ChannelPie'
-
+import fileList from './components/fileList'
 export default {
   name: 'DashboardAdmin',
   components: {
@@ -50,7 +53,8 @@ export default {
     clearedCredit,
     profit,
     channelProfit,
-    ChannelPie
+    ChannelPie,
+    fileList
   },
   data() {
     return {
@@ -88,11 +92,13 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" type="text/scss" scoped>
+<style rel="stylesheet/scss" lang="scss" type="text/scss">
   .dashboard-editor-container {
     padding: 32px;
     background-color: rgb(240, 242, 245);
-
+    .el-card__header {
+      padding: 10px;
+    }
     .chart-wrapper {
       background: #fff;
       padding: 16px 16px 0;

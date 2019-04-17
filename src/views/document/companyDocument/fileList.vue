@@ -26,6 +26,11 @@
           {{ bytesToSize(scope.row.size) }}
         </template>
       </el-table-column>
+      <el-table-column label="首页展示" width="100">
+        <template slot-scope="scope">
+          <show-in-home-page-switch :file="scope.row"/>
+        </template>
+      </el-table-column>
       <el-table-column
         :formatter="dateFormat"
         label="创建时间"
@@ -80,6 +85,7 @@
 
 <script>
 import fileUpload from './fileUpload'
+import showInHomePageSwitch from './showInHomePageSwitch'
 import { mapState } from 'vuex'
 import { fileType } from '@/utils/constant'
 import edit from './editFile'
@@ -90,7 +96,8 @@ export default {
   name: 'CompanyDocument',
   components: {
     fileUpload,
-    edit
+    edit,
+    showInHomePageSwitch
   },
   data() {
     return {

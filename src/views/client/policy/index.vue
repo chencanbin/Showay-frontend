@@ -19,6 +19,7 @@
         v-loading="insurancePolicyLoading"
         :height="height"
         :data="insurancePolicy.list"
+        :default-sort = "{prop: 'sn', order: 'descending'}"
         stripe
         row-key="id"
         @sort-change="handleSubmitDateSort"
@@ -42,40 +43,9 @@
                 <el-form-item label="生效时间:" class="policy-form-item">
                   <span>{{ getFormattedDate(scope.row.issueDate) }}</span>
                 </el-form-item>
-                <el-form-item class="policy-form-item action">
+                <el-form-item label="渠道:" class="policy-form-item" style="width: 25%">
                   <!--<detail :data="scope.row"/>-->
-                  <el-dropdown style="margin-left: 10px">
-                    <el-button type="primary" plain size="mini">
-                      <i class="el-icon-more"/>
-                    </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>
-                        <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row"/>
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency"/>
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <el-button
-                          type="text"
-                          size="mini"
-                          icon="el-icon-refresh"
-                          @click="handleReset(scope.row.id)">重置
-                        </el-button>
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <el-button
-                          type="text"
-                          size="mini"
-                          icon="el-icon-delete"
-                          @click="handleDelete(scope.$index, scope.row)">删除
-                        </el-button>
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                  <span>{{ scope.row.channel.name }}</span>
                 </el-form-item>
               </el-form>
               <!--<div v-if="scope.row.riderBenefits && scope.row.riderBenefits.length > 0">-->
@@ -116,7 +86,13 @@
             <el-tag v-if="isIneffectiveStatus(scope.row.policyStatus)" type="danger">
               {{ formatterPolicyStatus(scope.row.policyStatus) }}
             </el-tag>
-            <el-tag v-else type="success">
+            <el-tag v-else-if="scope.row.policyStatus === 1" type="warning">
+              {{ formatterPolicyStatus(scope.row.policyStatus) }}
+            </el-tag>
+            <el-tag v-else-if="scope.row.policyStatus === 2" type="success">
+              {{ formatterPolicyStatus(scope.row.policyStatus) }}
+            </el-tag>
+            <el-tag v-else style="margin-right: 10px; margin-bottom: 5px; color:#409EFF; background-color: rgba(64, 158, 255, 0.1); border: 1px solid rgba(64, 158, 255, 0.2)">
               {{ formatterPolicyStatus(scope.row.policyStatus) }}
             </el-tag>
           </template>
@@ -139,11 +115,47 @@
           min-width="200"
           show-overflow-tooltip
           label="产品"/>
-        <el-table-column
-          prop="channel.name"
-          min-width="150"
-          show-overflow-tooltip
-          label="渠道"/>
+        <!--<el-table-column-->
+        <!--prop="channel.name"-->
+        <!--min-width="150"-->
+        <!--show-overflow-tooltip-->
+        <!--label="渠道"/>-->
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-dropdown>
+              <el-button type="primary" plain size="mini">
+                <i class="el-icon-more"/>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    icon="el-icon-refresh"
+                    @click="handleReset(scope.row.id)">重置
+                  </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    icon="el-icon-delete"
+                    @click="handleDelete(scope.$index, scope.row)">删除
+                  </el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </el-table-column>
       </el-table>
       <add/>
     </basic-container>
@@ -197,13 +209,14 @@ export default {
   },
   watch: {
     year(val) {
-      if (val) {
-        const geSubmitDate = getYearFirst(val)
-        const leSubmitDate = getYearLast(val)
-        this.getInsurancePolicyList({ geSubmitDate, leSubmitDate })
-      } else {
-        this.getInsurancePolicyList()
-      }
+      this.getInsurancePolicyList()
+      // if (val) {
+      //   const geSubmitDate = getYearFirst(val)
+      //   const leSubmitDate = getYearLast(val)
+      //   this.getInsurancePolicyList({ geSubmitDate, leSubmitDate })
+      // } else {
+      //   this.getInsurancePolicyList()
+      // }
     }
   },
   created() {
@@ -213,11 +226,17 @@ export default {
   },
   methods: {
     search: _.debounce(function() {
-      this.getInsurancePolicyList({ wildcard: this.wildcard })
+      this.listQuery = { page: 1, limit: 50 }
+      this.getInsurancePolicyList()
     }, 500),
     // 获取保单列表
     getInsurancePolicyList(params) {
-      params = Object.assign({ sort: 'submitDate,sn', order: 'desc,desc', ...params })
+      params = Object.assign({ sort: 'submitDate,sn', order: 'asc,asc', wildcard: this.wildcard, ...params })
+      if (this.year) {
+        const geSubmitDate = getYearFirst(this.year)
+        const leSubmitDate = getYearLast(this.year)
+        params = Object.assign({ geSubmitDate, leSubmitDate, ...params })
+      }
       this.$store.dispatch('client/FetchInsurancePolicyList', { params })
     },
     // 格式化事件
@@ -324,7 +343,6 @@ export default {
       this.getInsurancePolicyList(params)
     },
     updatePage(val) {
-      console.log(val)
       this.listQuery.page = val
     },
     updateLimit(val) {
@@ -372,9 +390,6 @@ export default {
       label {
         color: #99a9bf;
       }
-    }
-    .action {
-      width: 25%;
     }
   }
 

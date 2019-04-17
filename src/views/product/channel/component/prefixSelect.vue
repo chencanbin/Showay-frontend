@@ -2,7 +2,7 @@
   <el-select v-model="value" placeholder="请选择" @change="valueChange">
     <el-option key="0" label="所有" value="all"/>
     <el-option key="1" label="公司" value="companies"/>
-    <el-option key="2" label="產品" value="products"/>
+    <el-option key="2" label="产品" value="products"/>
   </el-select>
 </template>
 

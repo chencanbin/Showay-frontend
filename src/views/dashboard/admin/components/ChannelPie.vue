@@ -41,7 +41,6 @@ export default {
     },
     drawChart: function() {
       const total = this.total
-      console.log(total)
       this.chart && this.chart.destroy()
       this.chart = new G2.Chart({
         container: 'channelPie',
@@ -59,6 +58,9 @@ export default {
       })
       this.chart.intervalStack().position('value').color('key').label('value', {
         formatter: function formatter(val, item) {
+          if (Number(val) === 0) {
+            return
+          }
           return item.point.key + ': ' + (accounting.unformat(val) / total).toFixed(2) + '%'
         }
       }).tooltip('key*value', function(key, value) {
