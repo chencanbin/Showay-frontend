@@ -8,6 +8,7 @@
       <template v-if="device!=='mobile'">
         <error-log class="errLog-container right-menu-item"/>
         <el-tooltip
+          :enterable="false"
           content="续保日历"
           effect="dark"
           placement="bottom">

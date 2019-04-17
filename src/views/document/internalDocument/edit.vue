@@ -11,7 +11,7 @@
       append-to-body>
       <el-form ref="folder" :model="folder" :rules="rule" label-width="100px">
         <el-form-item label="文件夹名:" prop="name">
-          <el-input v-model="folder.name" @submit.native.prevent/>
+          <el-input ref="folderName" v-model="folder.name" autofocus @submit.native.prevent/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -54,6 +54,9 @@ export default {
     initForm() {
       this.folder = _.cloneDeep(this.data)
       this.dialogVisible = true
+      this.$nextTick(function() {
+        this.$refs.folderName.focus()
+      })
     },
     handleClose() {
       this.$refs['folder'].resetFields()

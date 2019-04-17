@@ -8,7 +8,8 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       :fullscreen="true"
-      title= "续保日历">
+      title= "续保日历"
+      append-to-body>
       <full-calendar :events="events" locale="zh-cn" @changeMonth="changeMonth">
         <template slot="fc-event-card" slot-scope="p">
           <el-popover
@@ -134,6 +135,6 @@ export default {
     /*}*/
   }
   .detail-item {
-    margin-bottom: 5px!important;
+    margin-bottom: 0px!important;
   }
 </style>

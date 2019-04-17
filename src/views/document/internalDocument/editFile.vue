@@ -10,7 +10,7 @@
       append-to-body>
       <el-form ref="file" :model="file" :rules="rule" label-width="100px">
         <el-form-item label="文件名:" prop="name">
-          <el-input v-model="file.name" @submit.native.prevent/>
+          <el-input ref="fileName" v-model="file.name" autofocus @submit.native.prevent/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -59,6 +59,9 @@ export default {
     initForm() {
       this.file = _.cloneDeep(this.data)
       this.dialogVisible = true
+      this.$nextTick(function() {
+        this.$refs.fileName.focus()
+      })
     },
     handleClose() {
       this.$refs['file'].resetFields()
