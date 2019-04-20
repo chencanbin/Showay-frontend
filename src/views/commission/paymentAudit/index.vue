@@ -72,6 +72,7 @@ import detail from './detail'
 import clear from './clear'
 import Viewer from 'viewerjs'
 import 'viewerjs/dist/viewer.css'
+
 const currencyFormatter = require('currency-formatter')
 const _ = require('lodash')
 export default {

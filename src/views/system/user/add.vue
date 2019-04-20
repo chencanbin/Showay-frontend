@@ -12,6 +12,9 @@
         <el-form-item :label="$t('user.form_label.name')" prop="name">
           <el-input v-model="account.name"/>
         </el-form-item>
+        <el-form-item label="缩写" prop="acronym">
+          <el-input v-model="account.acronym"/>
+        </el-form-item>
         <el-form-item :label="$t('user.form_label.account')" prop="login">
           <el-input v-model="account.login"/>
         </el-form-item>
@@ -28,7 +31,21 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
+        <el-form-item v-if="isChannel" label="上级" prop="superior">
+          <el-select
+            v-model="account.superior"
+            clearable
+            placeholder="请选择账户上级"
+            style="width: 100%">
+            <el-option
+              v-for="item in users"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"/>
+          </el-select>
+        </el-form-item>
       </el-form>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
         <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
@@ -50,6 +67,7 @@ export default {
       account: {
         name: '',
         login: '',
+        acronym: '',
         roles: []
       },
       ruleAccount: {
@@ -59,8 +77,19 @@ export default {
       }
     }
   },
+  computed: {
+    isChannel() {
+      if (this.account.roles.includes(2)) {
+        return true
+      }
+      return false
+    }
+  },
   methods: {
     initForm() {
+      this.$api.user.fetchUserList({ role: 2 }).then(res => {
+        this.users = res.data.list
+      })
       this.$api.role.fetchRoleList().then(res => {
         this.roles = res.data.list
         this.dialogVisible = true

@@ -16,9 +16,7 @@ function hasPermission(roles, permissionRoles) {
   // if (roles.indexOf('admin') >= 0) return true // admin permission passed directly
   if (!permissionRoles) return true
   return roles.some(role => {
-    permissionRoles.forEach(item => {
-      item.id === role.id
-    })
+    return permissionRoles.includes(role.id)
   })
 }
 const whiteList = ['/login', '/auth-redirect']// no redirect whitelist

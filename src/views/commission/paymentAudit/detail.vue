@@ -7,7 +7,7 @@
       :title= "generateTitle()"
       :fullscreen="true"
       center>
-      <el-row style="margin-bottom: 10px">
+      <el-row v-permission="[1]" style="margin-bottom: 10px">
         <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">提交审核</el-button>
       </el-row>
       <el-table
@@ -18,7 +18,7 @@
         border
         @selection-change="handleSelectionChange">
         <el-table-column
-          v-if="status === '-1'"
+          v-if="checkPermission([1]) && status === '-1'"
           align="center"
           type="selection"
           width="55" />
@@ -73,13 +73,13 @@
             <div style="float: right">{{ formatPercent(scope.row.commissionRate) }}</div>
           </template>
         </el-table-column>
-        <el-table-column v-if="status === '-1'" label="操作">
+        <el-table-column v-if="checkPermission([1]) && status === '-1'" label="操作">
           <template slot-scope="scope">
             <edit :payment="scope.row" :key="scope.row.id"/>
           </template>
         </el-table-column>
       </el-table>
-      <div v-if="status === '0'" slot="footer" class="dialog-footer">
+      <div v-permission="[1, 3]" v-if="status === '0'" slot="footer" class="dialog-footer">
         <el-button :loading="rejectLoading" @click="handleReject">拒绝</el-button>
         <el-button :loading="approveLoading" type="primary" @click="handleApprove">批准</el-button>
       </div>
@@ -91,6 +91,8 @@
 import { mapState } from 'vuex'
 import edit from './edit'
 import { getSymbol } from '@/utils'
+import checkPermission from '@/utils/permission' // 权限判断函数
+import permission from '@/directive/permission/index.js' // 权限判断指令
 
 const _ = require('lodash')
 const currencyFormatter = require('currency-formatter')
@@ -99,6 +101,7 @@ export default {
   components: {
     edit
   },
+  directives: { permission },
   props: {
     channel: {
       type: Object,
@@ -138,6 +141,7 @@ export default {
     }
   },
   methods: {
+    checkPermission,
     initForm() {
       this.getMergedPayment()
       this.dialogVisible = true

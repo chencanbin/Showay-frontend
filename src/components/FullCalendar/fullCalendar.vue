@@ -163,10 +163,8 @@ export default {
   methods: {
     emitChangeMonth(firstDayOfMonth) {
       this.currentMonth = firstDayOfMonth
-
       const start = dateFunc.getMonthViewStartDate(firstDayOfMonth, this.firstDay)
       const end = dateFunc.getMonthViewEndDate(firstDayOfMonth, this.firstDay)
-
       this.$emit('changeMonth', start, end, firstDayOfMonth)
     },
     moreTitle(date) {

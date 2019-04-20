@@ -5,7 +5,16 @@
     </div>
     <div class="header-center">
       <span class="prev-month" @click.stop="goPrev">{{ leftArrow }}</span>
-      <span class="title">{{ title }}</span>
+      <!--<span class="title">{{ title }}</span>-->
+      <el-date-picker
+        :editable="false"
+        :clearable="false"
+        v-model="currentMonth"
+        prefix-icon="false"
+        type="month"
+        placeholder="选择日期"
+        style="width:120px"
+        @change="handleDateChange"/>
       <span class="next-month" @click.stop="goNext">{{ rightArrow }}</span>
     </div>
     <div class="header-right">
@@ -58,7 +67,9 @@ export default {
   computed: {
     title() {
       if (!this.currentMonth) return
-      return this.currentMonth.locale(this.locale).format('MMMM YYYY')
+      return this.currentMonth.locale(this.locale)
+      // return this.currentMonth.locale(this.locale).format('MMMM YYYY')
+      // return this.currentMonth
     }
   },
   methods: {
@@ -68,6 +79,10 @@ export default {
     },
     goNext() {
       const newMonth = moment(this.currentMonth).add(1, 'months').startOf('month')
+      this.$emit('change', newMonth)
+    },
+    handleDateChange(val) {
+      const newMonth = moment(this.currentMonth)
       this.$emit('change', newMonth)
     }
   }
@@ -89,6 +104,9 @@ export default {
     .prev-month,.next-month{
       cursor: pointer;
     }
+  }
+  .el-input__inner {
+    border: 0px;
   }
 }
 </style>

@@ -40,7 +40,7 @@
           prop="contractEffectiveDate"
           label="签约时间"
           min-width="100px"/>
-        <el-table-column label="操作" width="80px">
+        <el-table-column v-if="checkPermission([1])" label="操作" width="80px">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button type="primary" plain size="mini">
@@ -65,7 +65,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <add/>
+      <add v-permission="[1]"/>
     </basic-container>
   </div>
 </template>
@@ -76,6 +76,9 @@ import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
 import add from './add'
 import edit from './edit'
+import permission from '@/directive/permission/index.js' // 权限判断指令
+import checkPermission from '@/utils/permission' // 权限判断函数
+
 const _ = require('lodash')
 
 export default {
@@ -85,6 +88,7 @@ export default {
     add,
     edit
   },
+  directives: { permission },
   data() {
     return {
       height: document.body.clientHeight - 190,
@@ -103,10 +107,14 @@ export default {
       companyLoading: state => state.company.companyLoading
     })
   },
-  mounted() {
+  created() {
+    if (!this.checkPermission([1])) {
+      this.height = document.body.clientHeight - 130
+    }
     this.getCompanyList()
   },
   methods: {
+    checkPermission,
     search: _.debounce(function() {
       this.getCompanyList({ wildcard: this.wildcard })
     }, 500),

@@ -6,8 +6,32 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <error-log class="errLog-container right-menu-item"/>
+        <!--<error-log class="errLog-container right-menu-item"/>-->
+        <el-badge v-permission="[1, 2, 4]" :value="credit.total + payment.total" :max="99" style="right: 12px">
+          <el-popover width="150" trigger="click">
+            <div v-permission="[1, 4]" class="notification-list-item">
+              <a @click="handleCreditClick">
+                <svg-icon icon-class="earning" class-name="icon-earning" />
+                {{ credit.desc }}
+                <div class="notification-badge-content">
+                  {{ credit.total }}
+                </div>
+              </a>
+            </div>
+            <div class="notification-list-item">
+              <a @click="handlePaymentClick">
+                <svg-icon icon-class="paymentSum" class-name="icon-payment" />
+                {{ payment.desc }}
+                <div class="notification-badge-content is-fixed">
+                  {{ payment.total }}
+                </div>
+              </a>
+            </div>
+            <svg-icon slot="reference" icon-class="notification" class="notification"/>
+          </el-popover>
+        </el-badge>
         <el-tooltip
+          v-permission="[1, 3]"
           :enterable="false"
           content="续保日历"
           effect="dark"
@@ -100,6 +124,10 @@ import ThemePicker from '@/components/ThemePicker'
 import RenewalCalendar from '@/views/client/policy/renewalCalendar'
 import sha256 from 'sha256'
 import { getUserId } from '@/utils/auth'
+import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
+import permission from '@/directive/permission/index.js' // 权限判断指令
+import checkPermission from '@/utils/permission' // 权限判断函数
+
 export default {
   components: {
     Breadcrumb,
@@ -111,8 +139,9 @@ export default {
     ThemePicker,
     RenewalCalendar
   },
+  directives: { permission },
   data() {
-    var validatePass = (rule, value, callback) => {
+    const validatePass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
       } else if (value !== this.form.password) {
@@ -132,7 +161,9 @@ export default {
         oldPassword: [{ required: true, message: '旧密码必须填', trigger: 'blur' }],
         password: [{ required: true, message: '新密码必须填', trigger: 'blur' }],
         password_confirm: [{ required: true, message: '密码确认必须填', trigger: 'blur' }, { validator: validatePass, trigger: 'blur' }]
-      }
+      },
+      credit: { desc: '待收', total: 0 },
+      payment: { desc: '待发', total: 0 }
     }
   },
   computed: {
@@ -142,7 +173,16 @@ export default {
       'device'
     ])
   },
+  created() {
+    if (checkPermission([1, 4])) {
+      this.getCreditList()
+    }
+    if (checkPermission([1, 2, 4])) {
+      this.getPayment()
+    }
+  },
   methods: {
+    checkPermission,
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
@@ -177,12 +217,29 @@ export default {
           })
         }
       })
+    },
+    getCreditList() {
+      const params = { status: 0, geDueDate: getCurrentYearFirst(), leDueDate: getCurrentYearLast() }
+      this.$api.commission.fetchCommissionCredit(params).then(res => {
+        this.credit.total = res.data.total
+      })
+    },
+    getPayment() {
+      this.$api.commission.fetchAuditPayment({ status: -1 }).then(res => {
+        this.payment.total = res.data.total
+      })
+    },
+    handleCreditClick() {
+      this.$router.push({ path: '/commission/commissionCredit', query: { type: '0' }})
+    },
+    handlePaymentClick() {
+      this.$router.push({ path: '/commission/paymentAudit' })
     }
   }
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
+<style rel="stylesheet/scss" lang="scss" type="text/scss">
 .navbar {
   height: 50px;
   line-height: 50px;
@@ -240,12 +297,52 @@ export default {
       border: 1px solid #eee;
       vertical-align: baseline;
     }
+    .notification {
+      font-size: 20px;
+      position: relative;
+      margin-bottom: 17px;
+    }
   }
-
   .transverse {
     border-right: solid 1px #ccc;
     height: 50px;
     line-height: 50px;
   }
+}
+.el-popover {
+  padding: 0!important;
+}
+.notification-list-item {
+  padding: 15px;
+  color: rgba(0,0,0,.65);
+  font-size: 14px;
+  line-height: 22px;
+}
+.notification-list-item:hover {
+  background: #e6f7ff
+}
+.notification-badge-content {
+  float: right;
+  border-radius: 10px;
+  color: #FFF;
+  display: inline-block;
+  font-size: 12px;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 6px;
+  text-align: center;
+  white-space: nowrap;
+  border: 1px solid #FFF;
+  background-color: #F56C6C;
+}
+.icon-earning {
+  font-size: 18px;
+  margin-right: 5px;
+  color: #36a3f7;
+}
+.icon-payment {
+  font-size: 18px;
+  margin-right: 5px;
+  color: #E6A23C;
 }
 </style>

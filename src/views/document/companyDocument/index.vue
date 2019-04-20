@@ -20,7 +20,7 @@
           label="创建时间"
           prop="creationDate"
           width="200px"/>
-        <el-table-column label="操作" width="150">
+        <el-table-column v-if="checkPermission([1])" label="操作" width="150">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button type="primary" plain size="mini">
@@ -43,7 +43,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <add/>
+      <add v-permission="[1]"/>
       <file-list ref="fileList"/>
     </basic-container>
   </div>
@@ -57,6 +57,8 @@ import add from './add'
 import edit from './edit'
 import fileList from './fileList'
 import { parseTime } from '@/utils'
+import permission from '@/directive/permission/index.js' // 权限判断指令
+import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   name: 'CompanyDocument',
@@ -66,6 +68,7 @@ export default {
     edit,
     fileList
   },
+  directives: { permission },
   data() {
     return {
       tableHeight: document.body.clientHeight - 130
@@ -79,10 +82,14 @@ export default {
       })
   },
   created() {
+    if (!this.checkPermission([1])) {
+      this.tableHeight = document.body.clientHeight - 70
+    }
     this.getFolder()
   },
 
   methods: {
+    checkPermission,
     dateFormat(row, column) {
       const date = row[column.property]
       return parseTime(date)

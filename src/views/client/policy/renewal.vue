@@ -23,11 +23,11 @@
             <div v-if="scope.row.renewals.length === 0" style="text-align: center; color: #909399;">
               无续保记录
             </div>
-            <el-form v-for="item in scope.row.renewals" :key="item.id">
+            <el-form v-for="item in scope.row.renewals" :key="item.id" inline>
               <el-form-item label="年期:" style="width: 10%;">
                 <span>{{ item.year }}</span>
               </el-form-item>
-              <el-form-item label="保费:" style="width: 20%">
+              <el-form-item label="保费:" style="width: 15%">
                 <span>{{ formatterCurrency(item.premium) }}</span>
               </el-form-item>
               <el-form-item style="width: 20%;">

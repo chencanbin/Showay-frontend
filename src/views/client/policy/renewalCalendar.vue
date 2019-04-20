@@ -15,7 +15,7 @@
           <el-popover
             placement="top-start"
             trigger="hover">
-            <el-card>
+            <el-card style="padding:10px">
               <el-form label-width="80px">
                 <el-form-item label="投保人:" class="detail-item">
                   {{ p.event.detail.applicant.name }}
@@ -51,6 +51,7 @@
 import { mapGetters } from 'vuex'
 import FullCalendar from '@/components/FullCalendar'
 import { parseTime } from '@/utils'
+import checkPermission from '@/utils/permission' // 权限判断函数
 
 const currencyFormatter = require('currency-formatter')
 
@@ -69,14 +70,18 @@ export default {
     ...mapGetters(['loading'])
   },
   created() {
-    this.$api.client.calendarRenewal().then(res => {
-      this.events = res.data
-    })
+    if (this.checkPermission([1])) {
+      this.$api.client.calendarRenewal().then(res => {
+        this.events = res.data
+      })
+    }
   },
   methods: {
+    checkPermission,
     changeMonth(start, end, current) {
       const from = start.format('x')
       const to = end.format('x')
+      console.log(to)
       this.$api.client.calendarRenewal({ from, to }).then(res => {
         this.events = res.data
       })

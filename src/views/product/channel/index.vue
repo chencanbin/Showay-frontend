@@ -1,6 +1,6 @@
 <template>
   <div id="channel" class="table-container">
-    <basic-container>
+    <basic-container v-permission="[1]">
       <el-form :inline="true" class="search-input" @submit.native.prevent>
         <el-form-item label="" prop="wildcard">
           <el-input
@@ -75,7 +75,7 @@
         <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
         <el-table-column :label="$t('user.table_header.account')" prop="login"/>
         <el-table-column label="上级" prop="superior.name"/>
-        <el-table-column :label="$t('common.action')" width="250px">
+        <el-table-column :label="$t('common.action')" width="100px">
           <template slot-scope="scope">
             <!--<el-button type="text" size="mini" style="margin-right: 10px" @click="toggleChannelPolicy(scope.row)">-->
             <!--<svg-icon icon-class="commissionPolicy"/>-->
@@ -106,21 +106,61 @@
         </el-table-column>
       </el-table>
       <add/>
-      <channelCommissionView ref="channelCommissionView"/>
-      <el-dialog
-        :visible.sync="timeDialogVisible"
-        width="400px"
-        title="选择参考时间">
-        <el-date-picker
-          v-model="channelPolicyObj.timestamp"
-          type="date"
-          value-format="timestamp"
-          style="width: 100%"/>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="handleView">确定</el-button>
-        </div>
-      </el-dialog>
     </basic-container>
+    <basic-container v-permission="[2]" style="height: 100%;">
+      <div v-loading="channelCommissionLoading" class="clearfix" style="padding:30px 15px 10px 15px">
+        <el-timeline id="channelCommissionTableList">
+          <div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399;">
+            无渠道佣金策略
+          </div>
+          <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
+            <el-dropdown class="action-dropdown">
+              <el-button type="primary" plain size="mini">
+                <i class="el-icon-more"/>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <el-button
+                    v-if="item.status !== 0"
+                    type="text"
+                    size="mini"
+                    icon="el-icon-view"
+                    @click="handleTimestampDialog(item.id, item.effectiveDate)">
+                    查看
+                  </el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <el-card v-if="item.remarks">
+              <!--<p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>-->
+              <div class="bottom clearfix">
+
+                <!--<el-button-->
+                <!--type="text"-->
+                <!--size="mini"-->
+                <!--icon="el-icon-download"-->
+                <!--@click="exportPDF(item.id)">导出</el-button>-->
+                <p style="display: inline-block; margin: 0">备注 : {{ item.remarks }}</p>
+              </div>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
+      </div>
+    </basic-container>
+    <el-dialog
+      :visible.sync="timeDialogVisible"
+      width="400px"
+      title="选择参考时间">
+      <el-date-picker
+        v-model="channelPolicyObj.timestamp"
+        type="date"
+        value-format="timestamp"
+        style="width: 100%"/>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="handleView">确定</el-button>
+      </div>
+    </el-dialog>
+    <channelCommissionView ref="channelCommissionView"/>
   </div>
 </template>
 
@@ -134,6 +174,9 @@ import commissionPolicy from './commissionPolicy'
 import pagination from '@/components/Pagination'
 import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
+import permission from '@/directive/permission/index.js' // 权限判断指令
+import checkPermission from '@/utils/permission' // 权限判断函数
+
 const _ = require('lodash')
 export default {
   name: 'Channel',
@@ -146,6 +189,7 @@ export default {
     channelCommissionView,
     commissionPolicy
   },
+  directives: { permission },
   data() {
     return {
       height: document.body.clientHeight - 190,
@@ -173,9 +217,15 @@ export default {
     })
   },
   created() {
-    this.getUsers()
+    if (this.checkPermission([1])) {
+      this.getUsers()
+    }
+    if (this.checkPermission([2])) {
+      this.getChannelCommissionTableList()
+    }
   },
   methods: {
+    checkPermission,
     parseTime,
     search: _.debounce(function() {
       this.listQuery = { page: 1, limit: 50 }

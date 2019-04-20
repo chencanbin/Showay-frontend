@@ -85,7 +85,7 @@ export default function $axios(options) {
               message: data.message,
               type: 'error',
               showClose: true,
-              duration: 50 * 1000
+              duration: 5 * 1000
             })
             return reject(data)
           }

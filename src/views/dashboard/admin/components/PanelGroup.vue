@@ -1,6 +1,6 @@
 <template>
   <el-row :gutter="40" class="panel-group">
-    <el-col :xs="24" :sm="24" :lg="6" class="card-panel-col">
+    <el-col v-permission="[1]" :xs="24" :sm="24" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="panelClick('creditSum')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="income" class-name="card-panel-icon" />
@@ -11,7 +11,7 @@
         </div>
       </div>
     </el-col>
-    <el-col :xs="24" :sm="24" :lg="6" class="card-panel-col">
+    <el-col v-permission="[1]" :xs="24" :sm="24" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="panelClick('pendingCreditSum')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="earning" class-name="card-panel-icon" />
@@ -22,7 +22,7 @@
         </div>
       </div>
     </el-col>
-    <el-col :xs="24" :sm="24" :lg="6" class="card-panel-col">
+    <el-col v-permission="[1, 2]" :xs="24" :sm="24" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="panelClick('paymentSum')">
         <div class="card-panel-icon-wrapper icon-payment-sum">
           <svg-icon icon-class="paymentSum" class-name="card-panel-icon" />
@@ -33,7 +33,7 @@
         </div>
       </div>
     </el-col>
-    <el-col :xs="24" :sm="24" :lg="6" class="card-panel-col">
+    <el-col v-permission="[1, 3]" :xs="24" :sm="24" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="panelClick('policyCount')">
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="order" class-name="card-panel-icon" />
@@ -49,11 +49,13 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import permission from '@/directive/permission/index.js' // 权限判断指令
 
 export default {
   components: {
     CountTo
   },
+  directives: { permission },
   props: {
     overall: {
       type: Object,
@@ -72,7 +74,6 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
 .panel-group {
-  margin-top: 18px;
   .card-panel-col{
     margin-bottom: 32px;
   }

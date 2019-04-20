@@ -4,8 +4,10 @@
       <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table v-loading="userLoading" :data="users.list" :height="height" stripe>
         <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
+        <el-table-column label="缩写" prop="acronym" show-overflow-tooltip/>
         <el-table-column :label="$t('user.table_header.account')" prop="login"/>
-        <el-table-column :label="$t('user.table_header.role')" prop="roles" min-width="150px">
+        <el-table-column label="上级" prop="superior.name" show-overflow-tooltip/>
+        <el-table-column :label="$t('user.table_header.role')" prop="roles" min-width="100px">
           <template slot-scope="scope">
             <el-tag
               v-for="role in scope.row.roles"
@@ -16,11 +18,11 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          :formatter="dateFormat"
-          :label="$t('user.table_header.create_time')"
-          prop="creationDay"
-          min-width="100px"/>
+        <!--<el-table-column-->
+        <!--:formatter="dateFormat"-->
+        <!--:label="$t('user.table_header.create_time')"-->
+        <!--prop="creationDay"-->
+        <!--min-width="100px"/>-->
         <el-table-column :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown v-if="!scope.row.isBuiltin">
@@ -85,7 +87,7 @@ export default {
   },
   methods: {
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该管理员账号, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该账号, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',

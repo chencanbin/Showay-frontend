@@ -1,5 +1,5 @@
 <template>
-  <el-card style="padding:16px 16px 0;margin-bottom:32px;">
+  <el-card v-loading="loading" style="padding:16px 16px 0;margin-bottom:32px;">
     <div slot="header" class="clearfix">
       <span>渠道业绩比例分布</span>
     </div>
@@ -10,13 +10,15 @@
 <script>
 import G2 from '@antv/g2'
 import accounting from 'accounting'
+import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   name: '',
   data() {
     return {
       afyp: [],
-      total: 0
+      total: 0,
+      loading: false
     }
   },
   watch: {
@@ -25,18 +27,23 @@ export default {
     }
   },
   created() {
-    this.getAFYP(8, 3, 5)
+    if (this.checkPermission([1])) {
+      this.getAFYP(8, 3, 5)
+    }
   },
   mounted() {
     this.drawChart()
   },
   methods: {
+    checkPermission,
     getAFYP(item, groupBy, max) {
+      this.loading = true
       this.$api.statistics.fetchTop({ item, groupBy, max, other: '' }).then(res => {
         this.afyp = res.data
         this.afyp.forEach(item => {
           this.total += item.value
         })
+        this.loading = false
       })
     },
     drawChart: function() {

@@ -11,15 +11,16 @@
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
         </el-form-item>
+        <el-form-item>
+          <el-date-picker v-model="year" type="year" clearable style="width: 180px" placeholder="根据申请日期过滤"/>
+        </el-form-item>
       </el-form>
-      <el-date-picker v-model="year" type="year" clearable style="width: 180px" placeholder="根据申请日期过滤"/>
-      <add-client style="display:inline-block; margin-top: 9px"/>
+      <add-client v-permission="[1, 3]" style="display:inline-block; margin-top: 9px"/>
       <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
         v-loading="insurancePolicyLoading"
         :height="height"
         :data="insurancePolicy.list"
-        :default-sort = "{prop: 'sn', order: 'descending'}"
         stripe
         row-key="id"
         @sort-change="handleSubmitDateSort"
@@ -120,7 +121,7 @@
         <!--min-width="150"-->
         <!--show-overflow-tooltip-->
         <!--label="渠道"/>-->
-        <el-table-column label="操作">
+        <el-table-column v-if="checkPermission([1, 3])" label="操作">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button type="primary" plain size="mini">
@@ -136,7 +137,7 @@
                 <el-dropdown-item>
                   <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
                 </el-dropdown-item>
-                <el-dropdown-item>
+                <el-dropdown-item v-permission="[1]">
                   <el-button
                     type="text"
                     size="mini"
@@ -157,14 +158,17 @@
           </template>
         </el-table-column>
       </el-table>
-      <add/>
+      <add v-permission="[1, 3]"/>
     </basic-container>
   </div>
 </template>
 
 <script>
 import { parseTime, getYearFirst, getYearLast } from '@/utils'
+import checkPermission from '@/utils/permission' // 权限判断函数
+import permission from '@/directive/permission/index.js' // 权限判断指令
 import { policyStatus, premiumPlan } from '@/utils/constant'
+
 import Cookies from 'js-cookie'
 import { mapState } from 'vuex'
 import add from './add'
@@ -187,6 +191,7 @@ export default {
     renewal,
     pagination
   },
+  directives: { permission },
   data() {
     return {
       height: document.body.clientHeight - 190,
@@ -220,11 +225,13 @@ export default {
     }
   },
   created() {
-  },
-  mounted() {
     this.getInsurancePolicyList()
+    if (!this.checkPermission([1, 3])) {
+      this.height = document.body.clientHeight - 130
+    }
   },
   methods: {
+    checkPermission,
     search: _.debounce(function() {
       this.listQuery = { page: 1, limit: 50 }
       this.getInsurancePolicyList()

@@ -11,13 +11,11 @@ const dateFunc = {
     if (startOfMonth.day() < firstDay) {
       start.subtract(7, 'days')
     }
-
     start.add(firstDay, 'days')
-
     return start
   },
-  getMonthViewEndDate(date) {
-    return this.getMonthViewStartDate().add(6, 'weeks')
+  getMonthViewEndDate(date, firstDay) {
+    return this.getMonthViewStartDate(date, firstDay).add(6, 'weeks')
   }
 }
 export default dateFunc

@@ -85,25 +85,25 @@ export const asyncRouterMap = [
   {
     path: '/product',
     component: Layout,
-    meta: { title: 'product', icon: 'product' },
+    meta: { title: 'product', icon: 'product', roles: [1, 2] },
     children: [
       {
         path: 'company',
         component: () => import('@/views/product/company'),
         name: 'company',
-        meta: { title: '合作机构', icon: 'company', noCache: true, roles: [3] }
+        meta: { title: '合作机构', icon: 'company', noCache: true, roles: [1, 2] }
       },
       {
         path: 'commission',
         component: () => import('@/views/product/commission/index'),
         name: '产品佣金',
-        meta: { title: '产品佣金', icon: 'commission', noCache: true }
+        meta: { title: '产品佣金', icon: 'commission', noCache: true, roles: [1] }
       },
       {
         path: 'channel_strategy',
         component: () => import('@/views/product/channel/index'),
-        name: '渠道策略',
-        meta: { title: '渠道策略', icon: 'client', noCache: true }
+        name: '渠道佣金',
+        meta: { title: '渠道佣金', icon: 'client', noCache: true, roles: [1, 2] }
       }
     ]
   },
@@ -123,7 +123,7 @@ export const asyncRouterMap = [
         path: '/info',
         component: () => import('@/views/client/info'),
         name: '客户资料',
-        meta: { title: '客户资料', icon: 'info', noCache: true }
+        meta: { title: '客户资料', icon: 'info', noCache: true, roles: [1, 3] }
       }
     ]
   },
@@ -131,13 +131,13 @@ export const asyncRouterMap = [
     path: '/commission',
     component: Layout,
     redirect: 'noredirect',
-    meta: { title: '佣金', icon: 'channel', noCache: true },
+    meta: { title: '佣金', icon: 'channel', noCache: true, roles: [1, 2, 4] },
     children: [
       {
         path: 'commissionCredit',
         component: () => import('@/views/commission/commissionCredit/index'),
         name: '到账记录',
-        meta: { title: '到账记录', icon: 'credit', noCache: true }
+        meta: { title: '到账记录', icon: 'credit', noCache: true, roles: [1, 3] }
       },
       // {
       //   path: 'channelCommissionPayment',
@@ -149,7 +149,7 @@ export const asyncRouterMap = [
         path: 'paymentAudit',
         component: () => import('@/views/commission/paymentAudit/index'),
         name: '发放记录',
-        meta: { title: '发放记录', icon: 'payment', noCache: true }
+        meta: { title: '发放记录', icon: 'payment', noCache: true, roles: [1, 2] }
       }
     ]
   },
@@ -157,6 +157,7 @@ export const asyncRouterMap = [
     path: '/audit',
     component: Layout,
     redirect: 'audit',
+    meta: { roles: [1] },
     children: [
       {
         path: '',
@@ -202,13 +203,13 @@ export const asyncRouterMap = [
         path: 'internalDocument',
         component: () => import('@/views/document/internalDocument'),
         name: '内部',
-        meta: { title: '内部文档', icon: 'int_document', noCache: true }
+        meta: { title: '内部文档', icon: 'int_document', noCache: true, roles: [1] }
       },
       {
         path: 'companyDocument',
         component: () => import('@/views/document/companyDocument'),
-        name: '保险公司',
-        meta: { title: '保险公司', icon: 'company_document', noCache: true }
+        name: '公司文档',
+        meta: { title: '公司文档', icon: 'company_document', noCache: true }
       }
     ]
   },

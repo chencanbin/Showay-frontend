@@ -1,7 +1,23 @@
 <template>
-  <el-card style="padding:16px 16px 0;margin-bottom:32px;" class="clearedCredit">
+  <el-card v-loading="loading" style="padding:16px 16px 0;margin-bottom:32px;" class="clearedCredit">
     <div slot="header" class="clearfix">
       <span>公司业绩同比</span>
+      <el-select
+        :remote-method="searchCompany"
+        :loading="companyLoading"
+        v-model="company"
+        placeholder="请选择公司"
+        filterable
+        remote
+        clearable
+        style="margin-left: 20px"
+        @focus="onCompanyFocus">
+        <el-option
+          v-for="item in companies"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"/>
+      </el-select>
       <el-button-group style="margin-left: 20px">
         <el-button :type="buttonClearCreditMonth" size="small" @click="clearCreditMonth()">按月统计</el-button>
         <el-button :type="buttonClearCreditQuarter" size="small" @click="clearCreditQuarter()">按季统计</el-button>
@@ -13,9 +29,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import G2 from '@antv/g2'
 import accounting from 'accounting'
 import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
+import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   data() {
@@ -24,15 +42,30 @@ export default {
       buttonClearCreditQuarter: '',
       buttonClearCreditYear: '',
       clearedCredit: [],
+      insurancePolicyCount: [],
+      sourceData: [],
       chart: null,
-      Shape: G2.Shape
+      Shape: G2.Shape,
+      loading: false,
+      company: '',
+      groupBy: 7
     }
+  },
+  computed: {
+    ...mapState({
+      companyLoading: state => state.company.companyLoading,
+      companies: state => state.company.companyList.list
+    })
   },
   // 监听API接口传过来的数据  2018-08-21更新
   watch: {
-    clearedCredit: function(val, oldVal) { // 监听charData，当放生变化时，触发这个回调函数绘制图表
+    sourceData: function(val, oldVal) { // 监听charData，当放生变化时，触发这个回调函数绘制图表
       console.log('new: %s, old: %s', val, oldVal)
       this.drawChart(val)
+    },
+    company: function(val) {
+      this.company = val
+      this.getTrend(0, 1)
     }
   },
   created() {
@@ -107,39 +140,74 @@ export default {
         return polygon // 将自定义Shape返回
       }
     })
-    this.getClearedCreditTrend(0, 7, 0, 1)
+    if (this.checkPermission([1])) {
+      this.getTrend(0, 1)
+    }
   },
   mounted() {
     this.drawChart()
   },
   methods: {
+    checkPermission,
+    onCompanyFocus() {
+      this.getCompanies()
+    },
+    searchCompany(query) {
+      this.getCompanies({ wildcard: query })
+    },
+    getCompanies(params) {
+      this.$store.dispatch('company/FetchCompanyList', params)
+    },
     clearCreditYear() {
-      this.getClearedCreditTrend(0, 5, 0)
+      this.groupBy = 5
+      this.getTrend(0, 0)
       this.buttonClearCreditMonth = ''
       this.buttonClearCreditQuarter = ''
       this.buttonClearCreditYear = 'primary'
     },
     clearCreditQuarter() {
-      this.getClearedCreditTrend(0, 6, 0, 1)
+      this.groupBy = 6
+      this.getTrend(0, 1)
       this.buttonClearCreditMonth = ''
       this.buttonClearCreditQuarter = 'primary'
       this.buttonClearCreditYear = ''
     },
     clearCreditMonth() {
-      this.getClearedCreditTrend(0, 7, 0, 1)
+      this.groupBy = 7
+      this.getTrend(0, 1)
       this.buttonClearCreditMonth = 'primary'
       this.buttonClearCreditQuarter = ''
       this.buttonClearCreditYear = ''
     },
-    getClearedCreditTrend(item, groupBy, delta, lastYear) {
-      let params = {}
+    getTrend(delta, lastYear) {
+      this.loading = true
+      let clearedCreditParams = { item: 0, groupBy: this.groupBy, delta, from: getCurrentYearFirst(), to: getCurrentYearLast() }
+      let insurancePolicyCount = { item: 5, groupBy: this.groupBy, delta, from: getCurrentYearFirst(), to: getCurrentYearLast() }
       if (lastYear) {
-        params = { item, groupBy, delta, lastYear, from: getCurrentYearFirst(), to: getCurrentYearLast() }
-      } else {
-        params = { item, groupBy, delta, from: getCurrentYearFirst(), to: getCurrentYearLast() }
+        clearedCreditParams = Object.assign({ lastYear }, clearedCreditParams)
+        insurancePolicyCount = Object.assign({ lastYear }, insurancePolicyCount)
+        // clearedCreditParams = { item: 0, groupBy, delta, lastYear, from: getCurrentYearFirst(), to: getCurrentYearLast(), target }
+        // insurancePolicyCount = { item: 5, groupBy, delta, lastYear, from: getCurrentYearFirst(), to: getCurrentYearLast(), target }
       }
-      this.$api.statistics.fetchTrend({ ...params }).then(res => {
+      if (this.company) {
+        clearedCreditParams = Object.assign({ target: this.company }, clearedCreditParams)
+        insurancePolicyCount = Object.assign({ target: this.company }, insurancePolicyCount)
+      }
+      this.$api.statistics.fetchTrend({ ...clearedCreditParams }).then(res => {
         this.clearedCredit = res.data
+        const sourceData = []
+        this.$api.statistics.fetchTrend({ ...insurancePolicyCount }).then(res => {
+          this.insurancePolicyCount = res.data
+          this.insurancePolicyCount.forEach((item, index) => {
+            if (item.series) {
+              sourceData.push({ key: item.key, value: this.clearedCredit[index].value, series: this.clearedCredit[index].series, count: item.value, countSeries: item.series })
+            } else {
+              sourceData.push({ key: item.key, value: this.clearedCredit[index].value, series: this.clearedCredit[index].key, count: item.value, countSeries: item.key })
+            }
+          })
+          this.sourceData = sourceData
+          this.loading = false
+        })
       })
     },
     drawChart: function() {
@@ -150,7 +218,21 @@ export default {
         height: 300,
         padding: [20, 30, 70, 80]
       })
-      this.chart.source(this.clearedCredit)
+      this.chart.source(this.sourceData, {
+        series: {
+          formatter: val => {
+            return val + ' 销售额'
+          }
+        },
+        countSeries: {
+          formatter: val => {
+            return val + ' 出单量'
+          }
+        }
+      })
+      this.chart.axis('count', {
+        grid: null
+      })
       this.chart.tooltip({
         showTitle: false
       })
@@ -164,7 +246,11 @@ export default {
         type: 'dodge',
         marginRatio: 1 / 32
       }])
-      //  this.chart.interval().position('key*value').color('#E4E4E4').shape('fallFlag')
+      this.chart.line().position('key*count').color('countSeries').size(1)
+      // this.chart.interval().position('key*count').color('series').adjust([{
+      //   type: 'dodge',
+      //   marginRatio: 1 / 32
+      // }])
       this.chart.render()
     }
   }

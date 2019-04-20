@@ -12,6 +12,9 @@
         <el-form-item :label="$t('user.form_label.name')" prop="name">
           <el-input v-model="account.name"/>
         </el-form-item>
+        <el-form-item label="缩写" prop="acronym">
+          <el-input v-model="account.acronym"/>
+        </el-form-item>
         <el-form-item :label="$t('user.form_label.role')" prop="roles">
           <el-select
             v-model="account.roles"
@@ -20,6 +23,19 @@
             style="width: 100%">
             <el-option
               v-for="item in roles"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isChannel" label="上级" prop="superior">
+          <el-select
+            v-model="account.superior"
+            clearable
+            placeholder="请选择账户上级"
+            style="width: 100%">
+            <el-option
+              v-for="item in users"
               :key="item.id"
               :label="item.name"
               :value="item.id"/>
@@ -50,10 +66,13 @@ export default {
     return {
       loading: false,
       roles: [],
+      users: [],
       account: {
         id: '',
         name: '',
         login: '',
+        acronym: '',
+        superior: '',
         roles: []
       },
       dialogVisible: false,
@@ -64,14 +83,31 @@ export default {
       }
     }
   },
+  computed: {
+    isChannel() {
+      if (this.account.roles.includes(2)) {
+        return true
+      }
+      return false
+    }
+  },
   methods: {
     initForm() {
+      this.$api.user.fetchUserList({ nid: this.user.id, role: 2 }).then(res => {
+        this.users = res.data.list
+        if (this.user.superior) {
+          this.account.superior = this.user.superior.id
+          // this.account.superiorCommissionRate = _.toNumber(this.user.superior.superiorCommissionRate).toFixed(2)
+        }
+      })
       // 初始化参数，将传进来的对象字段复制给account
       this.user.roles.forEach(item => {
         this.account.roles.push(item.id)
       })
       this.account.id = this.user.id
       this.account.name = this.user.name
+      this.account.acronym = this.user.acronym
+      this.account.superior = this.user.superior
       // 调用roles接口拿到所有权限
       this.$api.role.fetchRoleList().then(res => {
         this.roles = res.data.list

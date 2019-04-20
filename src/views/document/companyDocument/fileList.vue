@@ -6,7 +6,7 @@
     :fullscreen="true"
     :title="title">
     <el-row style="margin-bottom: 5px; padding: 5px">
-      <file-upload @afterComplete="afterComplete"/>
+      <file-upload v-permission="[1]" @afterComplete="afterComplete"/>
     </el-row>
     <el-table
       v-loading="fileLoading"
@@ -26,7 +26,7 @@
           {{ bytesToSize(scope.row.size) }}
         </template>
       </el-table-column>
-      <el-table-column label="首页展示" width="100">
+      <el-table-column v-if="checkPermission([1])" label="首页展示" width="100">
         <template slot-scope="scope">
           <show-in-home-page-switch :file="scope.row"/>
         </template>
@@ -51,10 +51,10 @@
                   @click="handleDownload(scope.$index, scope.row)">下载
                 </el-button>
               </el-dropdown-item>
-              <el-dropdown-item>
+              <el-dropdown-item v-if="checkPermission([1])">
                 <edit :data="scope.row" :id="id"/>
               </el-dropdown-item>
-              <el-dropdown-item>
+              <el-dropdown-item v-if="checkPermission([1])">
                 <el-button
                   type="text"
                   size="mini"
@@ -91,6 +91,8 @@ import { fileType } from '@/utils/constant'
 import edit from './editFile'
 import { parseTime } from '@/utils'
 import axios from 'axios'
+import permission from '@/directive/permission/index.js' // 权限判断指令
+import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   name: 'CompanyDocument',
@@ -99,6 +101,7 @@ export default {
     edit,
     showInHomePageSwitch
   },
+  directives: { permission },
   data() {
     return {
       id: '',
@@ -115,7 +118,11 @@ export default {
       })
   },
   methods: {
+    checkPermission,
     openDialog(id, name) {
+      if (!this.checkPermission([1])) {
+        this.tableHeight = document.body.clientHeight - 100
+      }
       this.id = id
       this.title = name
       this.dialogVisible = true

@@ -2,22 +2,25 @@
   <div class="dashboard-editor-container">
     <panel-group :overall="overall" @panelClick="panelClick"/>
     <el-row :gutter="8">
-      <el-col :xs="16" :sm="16" :lg="16">
-        <profit/>
+      <el-col :xs="24" :sm="24" :lg="16">
+        <profit-channel-trend v-permission="[2]"/>
       </el-col>
-      <el-col :xs="8" :sm="8" :lg="8">
+      <el-col v-permission="[1, 2]" :xs="24" :sm="24" :lg="8">
         <fileList/>
       </el-col>
-      <el-col :xs="24" :sm="24" :lg="24">
+      <el-col v-permission="[1]" :xs="24" :sm="24" :lg="checkPermission([2]) ? 24 : 16">
+        <profit-trend v-permission="[1]"/>
+      </el-col>
+      <el-col v-permission="[1]" :xs="24" :sm="24" :lg="24">
         <cleared-credit/>
       </el-col>
     </el-row>
     <el-row :gutter="8">
       <el-col :xs="24" :sm="24" :lg="12">
-        <channel-profit/>
+        <channel-profit v-permission="[1]"/>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="12">
-        <channel-pie/>
+        <channel-pie v-permission="[1]"/>
       </el-col>
     </el-row>
   </div>
@@ -25,37 +28,29 @@
 
 <script>
 import PanelGroup from './components/PanelGroup'
-import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
-import BarChart from './components/BarChart'
-import TodoList from './components/TodoList'
-import BoxCard from './components/BoxCard'
-import G2Bar from '@/components/Charts/G2Bar'
-import G2Pie from '@/components/Charts/G2Pie'
 import clearedCredit from './components/ClearedCredit'
-import profit from './components/profit'
+import profitTrend from './components/profitTrend'
+import profitChannelTrend from './components/profitChannelTrend'
 import channelProfit from './components/ChannelProfit'
 import ChannelPie from './components/ChannelPie'
 import fileList from './components/fileList'
+import permission from '@/directive/permission/index.js' // 权限判断指令
+import checkPermission from '@/utils/permission' // 权限判断函数
+
 export default {
   name: 'DashboardAdmin',
   components: {
-    G2Bar,
-    G2Pie,
     PanelGroup,
-    LineChart,
-    RaddarChart,
     PieChart,
-    BarChart,
-    TodoList,
-    BoxCard,
     clearedCredit,
-    profit,
+    profitTrend,
+    profitChannelTrend,
     channelProfit,
     ChannelPie,
     fileList
   },
+  directives: { permission },
   data() {
     return {
       overall: {
@@ -77,6 +72,7 @@ export default {
     })
   },
   methods: {
+    checkPermission,
     panelClick(type) {
       if (type === 'creditSum') {
         this.$router.push({ path: '/commission/commissionCredit', query: { type: '1' }})

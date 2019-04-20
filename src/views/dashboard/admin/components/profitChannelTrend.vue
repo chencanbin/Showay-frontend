@@ -1,22 +1,24 @@
 <template>
-  <el-card style="background:#fff;padding:16px 16px 0;margin-bottom:32px;" class="profit">
+  <el-card v-loading="loading" style="background:#fff;padding:16px 16px 0;margin-bottom:32px;" class="profit">
     <div slot="header" class="clearfix">
-      <span>公司收益趋势</span>
+      <span>{{ name }} 收益趋势</span>
       <el-button-group style="margin-left: 20px">
         <el-button :type="buttonProfitMonth" size="small" @click="profitMonth()">按月统计</el-button>
         <el-button :type="buttonProfitQuarter" size="small" @click="profitQuarter()">按季统计</el-button>
         <el-button :type="buttonProfitYear" size="small" @click="profitYear()">按年统计</el-button>
       </el-button-group>
     </div>
-    <div id="profit"/>
+    <div id="profitChannelTrend"/>
   </el-card>
 
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import G2 from '@antv/g2'
 import accounting from 'accounting'
 import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
+import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   name: '',
@@ -26,8 +28,14 @@ export default {
       buttonProfitQuarter: '',
       buttonProfitYear: '',
       profit: [],
-      chart: null
+      chart: null,
+      loading: false
     }
+  },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
   },
   // 监听API接口传过来的数据  2018-08-21更新
   watch: {
@@ -37,36 +45,41 @@ export default {
     }
   },
   created() {
-    this.getProfit(4, 7)
+    if (this.checkPermission([2])) {
+      this.getProfit(8, 7)
+    }
   },
   methods: {
+    checkPermission,
     profitYear() {
-      this.getProfit(4, 5)
+      this.getProfit(8, 5)
       this.buttonProfitMonth = ''
       this.buttonProfitQuarter = ''
       this.buttonProfitYear = 'primary'
     },
     profitQuarter() {
-      this.getProfit(4, 6)
+      this.getProfit(8, 6)
       this.buttonProfitMonth = ''
       this.buttonProfitQuarter = 'primary'
       this.buttonProfitYear = ''
     },
     profitMonth() {
-      this.getProfit(4, 7)
+      this.getProfit(8, 7)
       this.buttonProfitMonth = 'primary'
       this.buttonProfitQuarter = ''
       this.buttonProfitYear = ''
     },
     getProfit(item, groupBy) {
+      this.loading = true
       this.$api.statistics.fetchTrend({ item, groupBy, from: getCurrentYearFirst(), to: getCurrentYearLast() }).then(res => {
         this.profit = res.data
+        this.loading = false
       })
     },
     drawChart: function() {
       this.chart && this.chart.destroy()
       this.chart = new G2.Chart({
-        container: 'profit',
+        container: 'profitChannelTrend',
         forceFit: true,
         height: 300,
         padding: [20, 40, 50, 90]
