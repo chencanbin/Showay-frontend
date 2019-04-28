@@ -7,37 +7,6 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <!--<error-log class="errLog-container right-menu-item"/>-->
-        <el-badge v-permission="[1, 2, 4]" :value="credit.total + payment.total" :max="99" style="right: 12px">
-          <el-popover width="150" trigger="click">
-            <div v-permission="[1, 4]" class="notification-list-item">
-              <a @click="handleCreditClick">
-                <svg-icon icon-class="earning" class-name="icon-earning" />
-                {{ credit.desc }}
-                <div class="notification-badge-content">
-                  {{ credit.total }}
-                </div>
-              </a>
-            </div>
-            <div class="notification-list-item">
-              <a @click="handlePaymentClick">
-                <svg-icon icon-class="paymentSum" class-name="icon-payment" />
-                {{ payment.desc }}
-                <div class="notification-badge-content is-fixed">
-                  {{ payment.total }}
-                </div>
-              </a>
-            </div>
-            <svg-icon slot="reference" icon-class="notification" class="notification"/>
-          </el-popover>
-        </el-badge>
-        <el-tooltip
-          v-permission="[1, 3]"
-          :enterable="false"
-          content="续保日历"
-          effect="dark"
-          placement="bottom">
-          <renewal-calendar class="calendar right-menu-item" style="margin-right: 15px"/>
-        </el-tooltip>
         <el-tooltip
           :content="$t('navbar.screenfull')"
           effect="dark"
@@ -51,16 +20,47 @@
           placement="bottom">
           <size-select class="international right-menu-item"/>
         </el-tooltip>
+        <lang-select class="international right-menu-item"/>
         <div style="display: inline-block;width: 1px;height: 25px; background: rgb(216, 208, 208); margin-bottom: 8px; margin-right: 5px "/>
-        <!--<lang-select class="international right-menu-item"/>-->
-
-      <!--<el-tooltip-->
+        <!--<el-tooltip-->
         <!--:content="$t('navbar.theme')"-->
         <!--effect="dark"-->
         <!--placement="bottom">-->
         <!--<theme-picker class="theme-switch right-menu-item"/>-->
-      <!--</el-tooltip>-->
+        <!--</el-tooltip>-->
       </template>
+      <el-badge v-permission="[1, 2, 4]" :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" style="right: 12px">
+        <el-popover width="150" trigger="click">
+          <div v-permission="[1, 4]" class="notification-list-item">
+            <a @click="handleCreditClick">
+              <svg-icon icon-class="earning" class-name="icon-earning" />
+              {{ credit.desc }}
+              <div class="notification-badge-content">
+                {{ credit.total }}
+              </div>
+            </a>
+          </div>
+          <div class="notification-list-item">
+            <a @click="handlePaymentClick">
+              <svg-icon icon-class="paymentSum" class-name="icon-payment" />
+              {{ payment.desc }}
+              <div class="notification-badge-content is-fixed">
+                {{ payment.total }}
+              </div>
+            </a>
+          </div>
+          <svg-icon slot="reference" icon-class="notification" class="notification" style="margin-left: 10px"/>
+        </el-popover>
+      </el-badge>
+      <el-tooltip
+        v-permission="[1, 3]"
+        :enterable="false"
+        :content="$t('navbar.calendar')"
+        effect="dark"
+        placement="bottom">
+        <renewal-calendar class="calendar right-menu-item" style="margin-right: 15px"/>
+      </el-tooltip>
+
       <!--<el-tooltip-->
       <!--effect="dark"-->
       <!--content="用户头像"-->
@@ -75,13 +75,13 @@
           <i class="el-icon-arrow-down el-icon--right"/>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>
+          <el-dropdown-item style="padding: 5px 10px">
             <span style="display:block;" @click="handleOpenUpdateUserDialog">
-              <svg-icon icon-class="password" style="margin-right: 5px"/>修改密码
+              <svg-icon icon-class="password" style="margin-right: 5px"/>{{ $t('navbar.password') }}
             </span>
           </el-dropdown-item>
-          <el-dropdown-item divided @click.native="logout">
-            <svg-icon icon-class="logout" style="margin-right: 5px"/>退出系统
+          <el-dropdown-item divided style="padding: 5px 10px" @click.native="logout">
+            <svg-icon icon-class="logout" style="margin-right: 5px"/>{{ $t('navbar.logOut') }}
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -89,24 +89,24 @@
 
     <el-dialog
       :visible="showEditPasswordDialog"
-      title="修改管理员密码"
+      :title="$t('navbar.password')"
       width="400px"
       class="passwordDialog"
       @close="handleCloseUpdateUserDialog">
-      <el-form ref="password" :rules="rulePassword" :model="form" label-width="80px">
-        <el-form-item label="旧密码" prop="oldPassword">
-          <el-input v-model="form.oldPassword" type="password" placeholder="请输入旧密码"/>
+      <el-form ref="password" :rules="rulePassword" :model="form">
+        <el-form-item :label="$t('navbar.oldPassword')" prop="oldPassword">
+          <el-input v-model="form.oldPassword" :placeholder="$t('navbar.password_tip.oldPassword')" type="password"/>
         </el-form-item>
-        <el-form-item label="新密码" prop="password">
-          <el-input v-model.trim="form.password" type="password" placeholder="请输入新密码"/>
+        <el-form-item :label="$t('navbar.newPassword')" prop="password">
+          <el-input v-model.trim="form.password" :placeholder="$t('navbar.password_tip.newPassword')" type="password"/>
         </el-form-item>
-        <el-form-item label="确认密码" prop="password_confirm">
-          <el-input v-model.trim="form.password_confirm" type="password" placeholder="请确认新密码"/>
+        <el-form-item :label="$t('navbar.confirmPassword')" prop="password_confirm">
+          <el-input v-model.trim="form.password_confirm" :placeholder="$t('navbar.password_tip.password_confirm')" type="password"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCloseUpdateUserDialog">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleUpdatePassword">提交</el-button>
+        <el-button @click="handleCloseUpdateUserDialog">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="loading" type="primary" @click="handleUpdatePassword">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -143,9 +143,9 @@ export default {
   data() {
     const validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请再次输入密码'))
+        callback(new Error(this.$t('navbar.password_tip.enter_password_again')))
       } else if (value !== this.form.password) {
-        callback(new Error('两次输入密码不一致!'))
+        callback(new Error(this.$t('navbar.password_tip.difference_password')))
       } else {
         callback()
       }
@@ -158,12 +158,12 @@ export default {
         password: ''
       },
       rulePassword: {
-        oldPassword: [{ required: true, message: '旧密码必须填', trigger: 'blur' }],
-        password: [{ required: true, message: '新密码必须填', trigger: 'blur' }],
-        password_confirm: [{ required: true, message: '密码确认必须填', trigger: 'blur' }, { validator: validatePass, trigger: 'blur' }]
+        oldPassword: [{ required: true, message: this.$t('navbar.password_tip.difference_password'), trigger: 'blur' }],
+        password: [{ required: true, message: this.$t('navbar.password_tip.password'), trigger: 'blur' }],
+        password_confirm: [{ required: true, message: this.$t('navbar.password_tip.password_confirm'), trigger: 'blur' }, { validator: validatePass, trigger: 'blur' }]
       },
-      credit: { desc: '待收', total: 0 },
-      payment: { desc: '待发', total: 0 }
+      credit: { desc: this.$t('navbar.credit'), total: 0 },
+      payment: { desc: this.$t('navbar.payment'), total: 0 }
     }
   },
   computed: {
@@ -310,6 +310,7 @@ export default {
   }
 }
 .el-popover {
+  min-width: 200px!important;
   padding: 0!important;
 }
 .notification-list-item {

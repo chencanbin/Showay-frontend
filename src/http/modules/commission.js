@@ -78,6 +78,14 @@ export function fetchCommissionCredit(params) {
   })
 }
 
+export function fetchCleared(params) {
+  return request({
+    url: `/commissionCredit/cleared`,
+    method: 'get',
+    params
+  })
+}
+
 export function CommissionCreditReject(data) {
   return request({
     url: `/commissionCredit/reject`,

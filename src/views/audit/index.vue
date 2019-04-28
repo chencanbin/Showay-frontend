@@ -5,8 +5,8 @@
         <el-form-item label="" prop="wildcard">
           <el-input
             v-model="wildcard"
+            :placeholder="$t('audit.search')"
             clearable
-            placeholder="请输入搜索内容"
             @input="search">
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
@@ -19,36 +19,36 @@
         :data="insurancePolicy.list"
         stripe>
         <el-table-column
+          :label="$t('client.insurance_policy.number')"
           prop="number"
-          label="保单号"
           show-overflow-tooltip
           min-width="120"/>
         <el-table-column
           :formatter="dateFormat"
+          :label="$t('client.insurance_policy.submitDate')"
           prop="submitDate"
-          label="申请日期"
           min-width="150"/>
         <el-table-column
+          :label="$t('client.insurance_policy.applicant_name')"
           prop="applicant.name"
           show-overflow-tooltip
-          label="申请人"
           min-width="150"/>
         <el-table-column
+          :label="$t('client.insurance_policy.beneficiary_name')"
           prop="beneficiary.name"
           show-overflow-tooltip
-          label="受保人"
           min-width="150"/>
         <el-table-column
+          :label="$t('client.insurance_policy.company_name')"
           prop="company.name"
           min-width="150"
-          show-overflow-tooltip
-          label="保险公司"/>
+          show-overflow-tooltip/>
         <el-table-column
+          :label="$t('client.insurance_policy.product_name')"
           prop="product.name"
           min-width="200"
-          show-overflow-tooltip
-          label="产品"/>
-        <el-table-column label="操作" width="150">
+          show-overflow-tooltip/>
+        <el-table-column :label="$t('common.action')" width="150">
           <template slot-scope="scope">
             <trace :number="scope.row.number"/>
           </template>

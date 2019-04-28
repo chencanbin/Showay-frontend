@@ -5,14 +5,14 @@
         <el-form-item label="" prop="wildcard">
           <el-input
             v-model="wildcard"
+            :placeholder="$t('client.insurance_policy.search')"
             clearable
-            placeholder="请输入搜索内容"
             @input="search">
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-date-picker v-model="year" type="year" clearable style="width: 180px" placeholder="根据申请日期过滤"/>
+          <el-date-picker v-model="year" :placeholder="$t('client.insurance_policy.date_filter')" type="year" clearable style="width: 180px"/>
         </el-form-item>
       </el-form>
       <add-client v-permission="[1, 3]" style="display:inline-block; margin-top: 9px"/>
@@ -29,22 +29,22 @@
           <template slot-scope="scope">
             <div>
               <el-form id="policy-table-expand" label-position="left" inline >
-                <el-form-item label="签单员:" class="policy-form-item">
+                <el-form-item :label="$t('client.insurance_policy.agent_name')" class="policy-form-item">
                   <span>{{ scope.row.agent.name }}</span>
                 </el-form-item>
-                <el-form-item label="保额:" class="policy-form-item">
-                  <span>{{ numberFormat(scope.row, scope.row.amountInsured) }}</span>
-                </el-form-item>
-                <el-form-item label="保费:" class="policy-form-item">
-                  <span>{{ numberFormat(scope.row, scope.row.premium) }}</span>
-                </el-form-item>
-                <el-form-item label="续保计划" class="policy-form-item" style="width: 17%;">
-                  <span>{{ formatterPremiumPlan(scope.row.premiumPlan) }}</span>
-                </el-form-item>
-                <el-form-item label="生效时间:" class="policy-form-item">
+                <el-form-item :label="$t('client.insurance_policy.issueDate')" class="policy-form-item">
                   <span>{{ getFormattedDate(scope.row.issueDate) }}</span>
                 </el-form-item>
-                <el-form-item label="渠道:" class="policy-form-item" style="width: 25%">
+                <el-form-item :label="$t('client.insurance_policy.amountInsured')" class="policy-form-item">
+                  <span>{{ numberFormat(scope.row, scope.row.amountInsured) }}</span>
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.premium')" class="policy-form-item">
+                  <span>{{ numberFormat(scope.row, scope.row.premium) }}</span>
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.premiumPlan')" class="policy-form-item" style="width: 17%;">
+                  <span>{{ formatterPremiumPlan(scope.row.premiumPlan) }}</span>
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.channel')" class="policy-form-item" style="width: 25%">
                   <!--<detail :data="scope.row"/>-->
                   <span>{{ scope.row.channel.name }}</span>
                 </el-form-item>
@@ -63,25 +63,25 @@
           </template>
         </el-table-column>
         <el-table-column
+          :label="$t('client.insurance_policy.number')"
           prop="number"
-          label="保单号"
           show-overflow-tooltip
           min-width="120"/>
         <el-table-column
+          :label="$t('client.insurance_policy.sn')"
           prop="sn"
-          label="内部编号"
           show-overflow-tooltip
           min-width="120"
           sortable="custom"/>
         <el-table-column
           :formatter="dateFormat"
+          :label="$t('client.insurance_policy.submitDate')"
           prop="submitDate"
-          label="申请日期"
           min-width="100"
           sortable="custom"/>
         <el-table-column
+          :label="$t('client.insurance_policy.policyStatus')"
           prop="policyStatus"
-          label="保单状态"
           min-width="100">
           <template slot-scope="scope">
             <el-tag v-if="isIneffectiveStatus(scope.row.policyStatus)" type="danger">
@@ -99,29 +99,29 @@
           </template>
         </el-table-column>
         <el-table-column
+          :label="$t('client.insurance_policy.applicant_name')"
           prop="applicant.name"
-          show-overflow-tooltip
-          label="申请人"/>
+          show-overflow-tooltip/>
         <el-table-column
+          :label="$t('client.insurance_policy.beneficiary_name')"
           prop="beneficiary.name"
-          show-overflow-tooltip
-          label="受保人"/>
+          show-overflow-tooltip/>
         <el-table-column
+          :label="$t('client.insurance_policy.company_name')"
           prop="company.name"
           min-width="150"
-          show-overflow-tooltip
-          label="保险公司"/>
+          show-overflow-tooltip/>
         <el-table-column
+          :label="$t('client.insurance_policy.product_name')"
           prop="product.name"
           min-width="200"
-          show-overflow-tooltip
-          label="产品"/>
+          show-overflow-tooltip/>
         <!--<el-table-column-->
         <!--prop="channel.name"-->
         <!--min-width="150"-->
         <!--show-overflow-tooltip-->
         <!--label="渠道"/>-->
-        <el-table-column v-if="checkPermission([1, 3])" label="操作">
+        <el-table-column v-if="checkPermission([1, 3])" :label="$t('common.action')">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button type="primary" plain size="mini">
@@ -140,17 +140,17 @@
                 <el-dropdown-item v-permission="[1]">
                   <el-button
                     type="text"
-                    size="mini"
+                    size="small"
                     icon="el-icon-refresh"
-                    @click="handleReset(scope.row.id)">重置
+                    @click="handleReset(scope.row.id)">{{ $t('common.reset') }}
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-button
                     type="text"
-                    size="mini"
+                    size="small"
                     icon="el-icon-delete"
-                    @click="handleDelete(scope.$index, scope.row)">删除
+                    @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
                   </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -259,16 +259,16 @@ export default {
     },
     // 处理删除保单事件
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该保单, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('client.insurance_policy.tooltip.delete'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             this.$api.client.deleteInsurancePolicy(row.id).then(res => {
               this.$message({
-                message: '操作成功',
+                message: this.$t('common.success'),
                 type: 'success',
                 duration: 5 * 1000
               })
@@ -285,16 +285,16 @@ export default {
       })
     },
     handleReset(id) {
-      this.$confirm('此操作将重置保单, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('client.insurance_policy.tooltip.reset'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             this.$api.client.resetInsurancePolicy(id).then(res => {
               this.$message({
-                message: '操作成功',
+                message: this.$t('common.success'),
                 type: 'success',
                 duration: 5 * 1000
               })

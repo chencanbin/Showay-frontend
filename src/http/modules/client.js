@@ -112,3 +112,10 @@ export function calendarRenewal(params) {
     params
   })
 }
+
+export function editCalendarRenewal(id) {
+  return request({
+    url: `/calendar/renewal/${id}`,
+    method: 'put'
+  })
+}

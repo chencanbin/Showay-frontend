@@ -4,9 +4,9 @@
       <svg-icon class-name="international-icon" icon-class="language" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item :disabled="language==='zh-TW'" command="zh-TW">繁體中文</el-dropdown-item>
-      <el-dropdown-item :disabled="language==='zh-CN'" command="zh-CN">简体中文</el-dropdown-item>
-      <el-dropdown-item :disabled="language==='en'" command="en">English</el-dropdown-item>
+      <el-dropdown-item :disabled="language==='zh-TW'" command="zh-TW" style="padding: 5px 10px" >繁體中文</el-dropdown-item>
+      <el-dropdown-item :disabled="language==='zh-CN'" command="zh-CN" style="padding: 5px 10px" >简体中文</el-dropdown-item>
+      <el-dropdown-item :disabled="language==='en'" command="en" style="padding: 5px 10px" >English</el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
 </template>
@@ -22,10 +22,11 @@ export default {
     handleSetLanguage(lang) {
       this.$i18n.locale = lang
       this.$store.dispatch('setLanguage', lang)
-      this.$message({
-        message: 'Switch Language Success',
-        type: 'success'
-      })
+      // this.$message({
+      //   message: 'Switch Language Success',
+      //   type: 'success'
+      // })
+      location.reload(true)
     }
   }
 }

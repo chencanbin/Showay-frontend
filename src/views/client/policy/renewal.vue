@@ -1,14 +1,14 @@
 <template>
   <span>
-    <el-button type="text" size="mini" @click="initForm">
+    <el-button type="text" size="small" @click="initForm">
       <svg-icon icon-class="renewal" style="margin-right: 5px"/>
-      续保
+      {{ $t('client.insurance_policy.renewal') }}
     </el-button>
     <el-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       :fullscreen="true"
-      title= "续保记录"
+      :title= "$t('client.insurance_policy.renewal_title')"
       append-to-body>
       <el-table
         v-loading="renewalLoading"
@@ -21,29 +21,29 @@
         <el-table-column type="expand">
           <template slot-scope="scope">
             <div v-if="scope.row.renewals.length === 0" style="text-align: center; color: #909399;">
-              无续保记录
+              {{ $t('client.insurance_policy.no_renewal_record') }}
             </div>
             <el-form v-for="item in scope.row.renewals" :key="item.id" inline>
-              <el-form-item label="年期:" style="width: 10%;">
+              <el-form-item :label="$t('client.insurance_policy.term')" style="width: 10%;">
                 <span>{{ item.year }}</span>
               </el-form-item>
-              <el-form-item label="保费:" style="width: 15%">
+              <el-form-item :label="$t('client.insurance_policy.premium')" style="width: 15%">
                 <span>{{ formatterCurrency(item.premium) }}</span>
               </el-form-item>
               <el-form-item style="width: 20%;">
                 <edit :data="scope.row" :renewal="item" :id="id" :currency="currency"/>
                 <el-button
                   type="text"
-                  size="mini"
+                  size="small"
                   icon="el-icon-delete"
-                  @click="handleDelete(item.id)">删除
+                  @click="handleDelete(item.id)">{{ $t('common.delete') }}
                 </el-button>
               </el-form-item>
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="product.name" label="产品"/>
-        <el-table-column label="操作" width="150">
+        <el-table-column :label="$t('client.insurance_policy.product_name')" prop="product.name" />
+        <el-table-column :label="$t('common.action')" width="150">
           <template slot-scope="scope">
             <renew v-if="(premiumPlan === 3 && scope.row.type === 0) || (scope.row.type === 1 && scope.row.status === 0)" :data="scope.row" :id="id" :currency="currency"/>
           </template>
@@ -106,7 +106,7 @@ export default {
   methods: {
     getSymbol,
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: this.getSymbol(this.currency) })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: this.getSymbol(this.currency) })
     },
     initForm() {
       this.getRenewal(this.id)
@@ -128,16 +128,16 @@ export default {
     },
     // 处理删除保单事件
     handleDelete(id) {
-      this.$confirm('此操作将删除该续费记录, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('client.insurance_policy.tooltip.delete_renew_record'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             this.$api.client.deleteRenewal(id).then(res => {
               this.$message({
-                message: '操作成功',
+                message: this.$t('common.success'),
                 type: 'success',
                 duration: 5 * 1000
               })

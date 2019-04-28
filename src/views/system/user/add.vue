@@ -1,27 +1,27 @@
 <template>
   <el-col span.number="24" class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加</el-button>
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t('common.add') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      :title="$t('user.dialog_title.add')"
+      :title="$t('user.set.add_title')"
       width="500px">
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="80px">
-        <el-form-item :label="$t('user.form_label.name')" prop="name">
-          <el-input v-model="account.name"/>
+        <el-form-item :label="$t('user.name')" prop="name">
+          <el-input v-model="account.name" :placeholder="$t('user.set.name')"/>
         </el-form-item>
-        <el-form-item label="缩写" prop="acronym">
-          <el-input v-model="account.acronym"/>
+        <el-form-item :label="$t('user.acronym')" prop="acronym">
+          <el-input v-model="account.acronym" :placeholder="$t('user.set.acronym')"/>
         </el-form-item>
-        <el-form-item :label="$t('user.form_label.account')" prop="login">
-          <el-input v-model="account.login"/>
+        <el-form-item :label="$t('user.account')" prop="login">
+          <el-input v-model="account.login" :placeholder="$t('user.set.account')"/>
         </el-form-item>
-        <el-form-item :label="$t('user.form_label.role')" prop="roles">
+        <el-form-item :label="$t('user.role')" prop="roles">
           <el-select
             v-model="account.roles"
-            placeholder="请选择账户角色"
+            :placeholder="$t('user.set.role')"
             multiple
             style="width: 100%">
             <el-option
@@ -31,24 +31,11 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isChannel" label="上级" prop="superior">
-          <el-select
-            v-model="account.superior"
-            clearable
-            placeholder="请选择账户上级"
-            style="width: 100%">
-            <el-option
-              v-for="item in users"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </el-col>
@@ -71,25 +58,14 @@ export default {
         roles: []
       },
       ruleAccount: {
-        name: [{ required: true, message: '姓名必须填', trigger: 'blur' }],
-        login: [{ required: true, message: '账号必须填', trigger: 'blur' }],
-        roles: [{ required: true, message: '角色必须选', trigger: 'blur' }]
+        name: [{ required: true, message: this.$t('user.set.name'), trigger: 'blur' }],
+        login: [{ required: true, message: this.$t('user.set.account'), trigger: 'blur' }],
+        roles: [{ required: true, message: this.$t('user.set.role'), trigger: 'blur' }]
       }
-    }
-  },
-  computed: {
-    isChannel() {
-      if (this.account.roles.includes(2)) {
-        return true
-      }
-      return false
     }
   },
   methods: {
     initForm() {
-      this.$api.user.fetchUserList({ role: 2 }).then(res => {
-        this.users = res.data.list
-      })
       this.$api.role.fetchRoleList().then(res => {
         this.roles = res.data.list
         this.dialogVisible = true
@@ -105,7 +81,7 @@ export default {
           this.loading = true
           this.$api.user.addUser(this.account).then(_ => {
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })

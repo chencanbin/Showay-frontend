@@ -5,6 +5,8 @@ import { Message, MessageBox, Notification } from 'element-ui'
 // 使用vuex做全局loading时使用
 import store from '@/store'
 const _ = require('lodash')
+let errorMessage
+let errorNotification
 export default function $axios(options) {
   return new Promise((resolve, reject) => {
     // 初始化参数配置
@@ -81,7 +83,10 @@ export default function $axios(options) {
               })
             })
           } else {
-            Message({
+            if (errorMessage) {
+              errorMessage.close()
+            }
+            errorMessage = Message({
               message: data.message,
               type: 'error',
               showClose: true,
@@ -132,7 +137,10 @@ export default function $axios(options) {
             default:
           }
         }
-        Notification.error({
+        if (errorNotification) {
+          errorNotification.close()
+        }
+        errorNotification = Notification.error({
           title: '错误',
           message: err.message,
           duration: 0

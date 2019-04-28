@@ -1,50 +1,114 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <el-table
-        v-loading="fileLoading"
-        :data="folder.items"
-        :height="tableHeight"
-        stripe>
-        <el-table-column
-          prop="name"
-          label="文件夹名称">
-          <template slot-scope="scope">
-            <svg-icon v-if="!scope.row.extention" icon-class="folder" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>
-            <svg-icon v-else :icon-class="getFileType(scope.row.extention)" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>
-            <a class="folderLink" @click="handleFileList(scope.row.id, scope.row.name)">{{ scope.row.name }}</a>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :formatter="dateFormat"
-          label="创建时间"
-          prop="creationDate"
-          width="200px"/>
-        <el-table-column v-if="checkPermission([1])" label="操作" width="150">
-          <template slot-scope="scope">
-            <el-dropdown>
-              <el-button type="primary" plain size="mini">
-                <i class="el-icon-more"/>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <edit :data="scope.row"/>
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    icon="el-icon-delete"
-                    @click="handleDelete(scope.$index, scope.row)">删除
-                  </el-button>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-      <add v-permission="[1]"/>
+      <el-col :span="5" :style="treeWrapper" style="overflow: auto">
+        <el-tree
+          ref="tree"
+          :load="loadFolder"
+          :data="folderTree"
+          :key="randomKey"
+          :props="props"
+          :default-expanded-keys="expandArray"
+          node-key="id"
+          highlight-current
+          lazy
+          style="margin-top: 10px;"
+          @node-click="nodeExpand">
+          <span slot-scope="{ node, data }" :title="data.name" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap">
+            <svg-icon v-if="!data.extention" icon-class="folder" style="font-size: 20px; margin-right: 15px; vertical-align: middle"/>
+            <svg-icon v-else :icon-class="getFileType(data.extention)" style="font-size: 20px; margin-right: 15px; vertical-align: middle"/>
+            <a class="folderLink">{{ data.name }}</a>
+          </span>
+        </el-tree>
+      </el-col>
+
+      <el-col :span="19" style="border-left: 1px solid #cccccc; padding: 20px 10px 10px 10px;">
+        <el-row style="margin-bottom: 5px">
+          <el-breadcrumb separator-class="el-icon-arrow-right" style="font-size:14px">
+            <el-breadcrumb-item v-for="item in levelList" :key="item.id">
+              <a class="folderLink" @click="handleFolderClick(item)">{{ item.data.name }}</a>
+            </el-breadcrumb-item>
+          </el-breadcrumb>
+          <add :folder-id="folderId" @afterAddFolder="afterAddFolder"/>
+        </el-row>
+        <el-table
+          v-loading="fileLoading"
+          :height="tableHeight"
+          :data="folder.items"
+          :show-header="false"
+          stripe>
+          <el-table-column
+            show-overflow-tooltip
+            prop="name">
+            <template slot-scope="scope">
+              <svg-icon v-if="!scope.row.extention" icon-class="folder" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>
+              <svg-icon v-else :icon-class="getFileType(scope.row.extention)" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>
+              <a v-if="!scope.row.resourceKey" class="folderLink" @click="handleTableFolderClick(scope.row.id)">{{ scope.row.name }}</a>
+              <span v-else>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="checkPermission([1])" width="150">
+            <template slot-scope="scope">
+              <show-in-home-page-switch v-if="scope.row.resourceKey" :file="scope.row"/>
+            </template>
+          </el-table-column>
+          <el-table-column width="150">
+            <template slot-scope="scope">
+              {{ scope.row.size && bytesToSize(scope.row.size) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            :formatter="dateFormat"
+            prop="creationDate"
+            width="150px"/>
+          <el-table-column :label="$t('common.action')" width="100" align="center">
+            <template slot-scope="scope">
+              <el-dropdown>
+                <el-button type="primary" plain size="mini">
+                  <i class="el-icon-more"/>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>
+                    <el-button
+                      v-if="scope.row.resourceKey"
+                      type="text"
+                      size="small"
+                      icon="el-icon-download"
+                      @click="handleDownload(scope.$index, scope.row)">下载
+                    </el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <edit :data="scope.row" :folder-id="folderId"/>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button
+                      type="text"
+                      size="small"
+                      icon="el-icon-delete"
+                      @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
+                    </el-button>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <file-upload @afterComplete="afterComplete"/>
+      </el-col>
       <file-list ref="fileList"/>
+      <!--鼠标右键点击出现页面-->
+      <!--<div v-show="menuVisible">-->
+      <!--<el-menu-->
+      <!--id = "rightClickMenu"-->
+      <!--class="el-menu-vertical"-->
+      <!--@select="handleRightSelect"-->
+      <!--active-text-color="#fff">-->
+      <!--<el-menu-item index="3" class="menuItem">-->
+      <!--<span slot="title">删除</span>-->
+      <!--</el-menu-item>-->
+      <!--</el-menu>-->
+      <!--</div>-->
     </basic-container>
   </div>
 </template>
@@ -55,23 +119,41 @@ import { mapState } from 'vuex'
 import { fileType } from '@/utils/constant'
 import add from './add'
 import edit from './edit'
-import fileList from './fileList'
 import { parseTime } from '@/utils'
+import fileList from './fileList'
+import axios from 'axios'
+import showInHomePageSwitch from './showInHomePageSwitch'
 import permission from '@/directive/permission/index.js' // 权限判断指令
 import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   name: 'CompanyDocument',
+  directives: { permission },
   components: {
     fileUpload,
     add,
     edit,
-    fileList
+    fileList,
+    showInHomePageSwitch
   },
-  directives: { permission },
   data() {
     return {
-      tableHeight: document.body.clientHeight - 130
+      tableHeight: document.body.clientHeight - 310,
+      treeWrapper: {
+        height: (document.body.clientHeight - 70) + 'px'
+      },
+      menuVisible: false,
+      levelList: [],
+      expandArray: [1],
+      folderTree: [],
+      folderId: '',
+      randomKey: 0,
+      currencyNode: '',
+      props: {
+        label: 'name',
+        isLeaf: 'isLeaf',
+        children: 'items'
+      }
     }
   },
   computed: {
@@ -82,65 +164,228 @@ export default {
       })
   },
   created() {
-    if (!this.checkPermission([1])) {
-      this.tableHeight = document.body.clientHeight - 70
-    }
-    this.getFolder()
+    this.getFolder(1)
+    this.levelList = [{ id: 1, data: { name: this.$t('document.company_file') }}]
   },
 
   methods: {
     checkPermission,
+    nodeExpand(data, node) {
+      if (!node) {
+        return
+      }
+      if (data.resourceKey) {
+        return
+      }
+      if (node === this.currencyNode) {
+        return
+      } else {
+        this.levelList = []
+        this.getBreadcrumb(node)
+        this.levelList.reverse()
+        this.currencyNode = node
+        this.getFolder(node.data.id)
+      }
+    },
+    getBreadcrumb(node) {
+      if (node && node.parent) {
+        this.levelList.push(node)
+        this.getBreadcrumb(node.parent)
+      }
+    },
+    loadFolder(node, resolve) {
+      if (node.level === 0) {
+        this.folderTree = [{ name: this.$t('document.company_file'), id: 1, items: this.folder.items }]
+      } else {
+        this.$api.document.fetchFolderById(node.data.id).then(res => {
+          const items = res.data.items
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].resourceKey) {
+              items[i]['isLeaf'] = true
+            }
+          }
+          return resolve(items)
+        })
+      }
+
+      // this.$api.document.fetchFolderById(node.id, params).then(res => {
+      //   resolve(res.data.items)
+      // })
+    },
     dateFormat(row, column) {
       const date = row[column.property]
       return parseTime(date)
+    },
+    renderTree() {
+      this.randomKey = +new Date()
     },
     getFileType(val) {
       const type = fileType[val] || 'default'
       return `file_${type}`
     },
-    getFolder() {
-      this.$store.dispatch('document/FetchFolderById', { id: 1 })
+    getFolder(id, params) {
+      this.folderId = id
+      this.$store.dispatch('document/FetchFolderById', { id, params })
     },
     handleFileList(id, name) {
       this.$refs.fileList.openDialog(id, name)
     },
+    handleFolderClick(node) {
+      this.nodeExpand([], node)
+    },
+    handleTableFolderClick(id) {
+      this.expandArray.push(id)
+      this.nodeExpand([], this.$refs.tree.getNode(id))
+    },
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该文件夹, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('document.tooltip.delete'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            this.$api.document.deleteFolder(row.id).then(res => {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 5 * 1000
+            if (row.resourceKey) {
+              this.$api.document.deleteFile(row.id).then(res => {
+                this.$message({
+                  message: this.$t('common.success'),
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.$refs.tree.remove(row)
+                this.getFolder(this.folderId)
+                instance.confirmButtonLoading = false
+                done()
+              }).catch(_ => {
+                instance.confirmButtonLoading = false
               })
-              this.getFolder()
-              instance.confirmButtonLoading = false
-              done()
-            }).catch(_ => {
-              instance.confirmButtonLoading = false
-            })
+            } else {
+              this.$api.document.deleteFolder(row.id).then(res => {
+                this.$message({
+                  message: this.$t('common.success'),
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.$refs.tree.remove(row)
+                this.getFolder(this.folderId)
+                instance.confirmButtonLoading = false
+                done()
+              }).catch(_ => {
+                instance.confirmButtonLoading = false
+              })
+            }
           } else {
             done()
           }
         }
+      }).then(() => {
+      })
+    },
+    handleRightSelect(key) {
+      if (key === 1) {
+        this.NodeAdd(this.NODE, this.DATA)
+        this.menuVisible = false
+      } else if (key === 2) {
+        this.NodeEdit(this.NODE, this.DATA)
+        this.menuVisible = false
+      } else if (key === 3) {
+        this.NodeDel(this.NODE, this.DATA)
+        this.menuVisible = false
+      } else if (key === 4) {
+        console.log('4')
+      }
+    },
+    rihgtClick(event, object, value, element) {
+      if (this.objectID !== object.id) {
+        this.objectID = object.id
+        this.menuVisible = true
+        this.DATA = object
+        this.NODE = value
+      } else {
+        this.menuVisible = !this.menuVisible
+      }
+      document.addEventListener('click', (e) => {
+        this.menuVisible = false
+      })
+      const menu = document.querySelector('#rightClickMenu')
+      /* 菜单定位基于鼠标点击位置 */
+      menu.style.left = event.clientX + 20 + 'px'
+      menu.style.top = event.clientY - 30 + 'px'
+      menu.style.position = 'absolute' // 为新创建的DIV指定绝对定位
+      menu.style.width = 160 + 'px'
+    },
+    afterComplete(_file) {
+      this.$api.document.createFile({
+        'name': _file.name,
+        'parent': this.folderId,
+        'size': _file.size,
+        'extension': _file.type || '-',
+        'resourceKey': _file.uid
+      }).then(_ => {
+        this.getFolder(this.folderId)
+      })
+    },
+    afterAddFolder(folder) {
+      this.getFolder(this.folderId)
+      this.$refs.tree.append(folder, this.folderId)
+    },
+    bytesToSize(bytes) {
+      if (bytes === 0) return '0 B'
+      const k = 1000 // or 1024
+      const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+      const i = Math.floor(Math.log(bytes) / Math.log(k))
+      return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
+    },
+    handleDownload(index, row) {
+      this.$api.document.getPrivateDownloadLink(row.resourceKey).then(res => {
+        this.download(res.data.url, row.name)
+      })
+    },
+    download(url, fileName) {
+      axios.get(url, {
+        responseType: 'blob'
+      }).then(res => {
+        const blob = new Blob([res.data])
+        const downloadElement = document.createElement('a')
+        const href = window.URL.createObjectURL(blob) //  创建下载的链接
+        downloadElement.href = href
+        downloadElement.download = fileName //  下载后文件名
+        document.body.appendChild(downloadElement)
+        downloadElement.click() //  点击下载
+        document.body.removeChild(downloadElement) // 下载完成移除元素
+        window.URL.revokeObjectURL(href) // 释放blob对象
       })
     }
   }
 }
 </script>
 
-<style scoped type="text/scss">
+<style type="text/scss" rel="stylesheet/scss">
+  /*.upload-demo .el-upload {*/
+    /*margin-top: 20px;*/
+    /*width: 100%;*/
+    /*height: 200px;*/
+  /*}*/
+  /*.upload-demo .el-upload-dragger {*/
+    /*width: 100%;*/
+    /*height: 200px;*/
+  /*}*/
   .folderLink {
     color: #424e67;
+  }
+  .el-tree-node__content {
+    font-size: 14px;
+    height: 32px!important;
   }
   .folderLink:active, .folderLink:hover {
     cursor: pointer;
     text-decoration: none;
     color: #00701A;
   }
+  .el-breadcrumb {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 20px;
+  }
+
 </style>

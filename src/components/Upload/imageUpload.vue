@@ -47,7 +47,7 @@ export default {
         return false
       }
       let url = ''
-      await this.$api.document.getCompanyToken(_file.name).then(res => {
+      await this.$api.document.getCompanyToken(_file.uid).then(res => {
         url = res.data.url
       }).catch(_ => {
         this.percentCompleted = 0
@@ -67,9 +67,9 @@ export default {
         this.percentCompleted = 0
         this.disableUpload = false
         if (res.status === 200) {
-          this.$api.document.getCompanyDownloadLink(_file.name).then(res => {
+          this.$api.document.getCompanyDownloadLink(_file.uid).then(res => {
             this.imgSrc = res.data.url
-            this.$emit('afterComplete', _file.name)
+            this.$emit('afterComplete', _file.uid)
           })
           this.$message({
             type: 'success',

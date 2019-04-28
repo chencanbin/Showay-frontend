@@ -1,11 +1,11 @@
 <template>
   <el-card v-loading="loading" style="background:#fff;padding:16px 16px 0;margin-bottom:32px;" class="profit">
     <div slot="header" class="clearfix">
-      <span>{{ name }} 收益趋势</span>
+      <span>{{ $t('home.channelProfitTrend', [name]) }}</span>
       <el-button-group style="margin-left: 20px">
-        <el-button :type="buttonProfitMonth" size="small" @click="profitMonth()">按月统计</el-button>
-        <el-button :type="buttonProfitQuarter" size="small" @click="profitQuarter()">按季统计</el-button>
-        <el-button :type="buttonProfitYear" size="small" @click="profitYear()">按年统计</el-button>
+        <el-button :type="buttonProfitMonth" size="small" @click="profitMonth()">{{ $t('home.month') }}</el-button>
+        <el-button :type="buttonProfitQuarter" size="small" @click="profitQuarter()">{{ $t('home.quarter') }}</el-button>
+        <el-button :type="buttonProfitYear" size="small" @click="profitYear()">{{ $t('home.year') }}</el-button>
       </el-button-group>
     </div>
     <div id="profitChannelTrend"/>

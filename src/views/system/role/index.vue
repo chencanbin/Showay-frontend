@@ -11,12 +11,12 @@
           prop="id"
           label="ID"/>
         <el-table-column
-          prop="name"
-          label="角色名"/>
+          :label="$t('role.name')"
+          prop="name"/>
         <el-table-column
           :formatter="dateFormat"
-          prop="creationDay"
-          label="创建时间"/>
+          :label="$t('user.create_time')"
+          prop="creationDay"/>
       </el-table>
     </basic-container>
   </div>

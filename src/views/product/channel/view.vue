@@ -13,8 +13,8 @@
         <el-form-item label="" prop="wildcard">
           <el-input
             v-model="wildcard"
+            :placeholder="$t('product.channel.view.search')"
             clearable
-            placeholder="搜索 (供应商 | 产品)"
             @input="search">
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
@@ -25,14 +25,14 @@
             type="primary"
             size="small"
             icon="el-icon-download"
-            @click="exportPDF()">导出</el-button>
+            @click="exportPDF()">{{ $t('common.export') }}</el-button>
         </el-form-item>
       </el-form>
       <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <div class="table-container">
         <el-table v-loading="loading" :data="data" :height="tableHeight" stripe>
-          <el-table-column fixed prop="company.name" label="供应商" min-width="200"/>
-          <el-table-column fixed prop="product.name" label="产品名称" min-width="200"/>
+          <el-table-column :label="$t('product.channel.view.company')" fixed prop="company.name" min-width="200"/>
+          <el-table-column :label="$t('product.channel.view.product')" fixed prop="product.name" min-width="200"/>
           <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="100">
             <template slot-scope="scope">
               <span>{{ scope.row.conditions[index] ? formatToPercent(scope.row.conditions[index].rate) : '-' }}</span>
@@ -86,7 +86,7 @@ export default {
       this.id = channelPolicyObj.id
       this.channelName = channelName
       this.timestamp = channelPolicyObj.timestamp
-      this.title = `渠道佣金预览 - ${channelName} ( ${parseTime(channelPolicyObj.timestamp, '{y}-{m}-{d}')} )`
+      this.title = `${this.$t('product.channel.view.title')} - ${channelName} ( ${parseTime(channelPolicyObj.timestamp, '{y}-{m}-{d}')} )`
       // this.$api.channel.previewChannelCommission(id).then(res => {
       //   this.data = res.data.list
       //   this.total = res.data.total
@@ -121,9 +121,9 @@ export default {
         })
         _.forEach(_.range(1, _.max(conditionLengthArray) + 1), item => {
           if (item > 15) {
-            this.columnYear.push('15年之后')
+            this.columnYear.push(this.$t('common.after_15_year'))
           } else {
-            this.columnYear.push('第' + item + '年')
+            this.columnYear.push(this.$t('common.year', [item]))
           }
         })
         this.dialogVisible = true

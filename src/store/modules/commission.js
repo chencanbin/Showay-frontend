@@ -1,10 +1,11 @@
-import { fetchCommissionTableList, fetchCommissionCredit, fetchAuditPayment, fetchMergedPayment, fetchCommissionPolicy } from '@/http/modules/commission'
+import { fetchCommissionTableList, fetchCommissionCredit, fetchAuditPayment, fetchMergedPayment, fetchCommissionPolicy, fetchCleared } from '@/http/modules/commission'
 
 const commission = {
   namespaced: true,
   state: {
     commissionTableList: [],
     commissionPolicy: [],
+    cleared: {},
     commissionTableListLoading: false,
     commissionTableDialogVisible: false,
     commissionTableId: '',
@@ -13,9 +14,16 @@ const commission = {
     auditPayment: {},
     commissionCreditLoading: false,
     auditPaymentLoading: false,
-    mergedPaymentLoading: false
+    mergedPaymentLoading: false,
+    clearedLoading: false
   },
   mutations: {
+    SHOW_CLEARED_LOADING: (state) => {
+      state.clearedLoading = true
+    },
+    HIDE_CLEARED_LOADING: (state) => {
+      state.clearedLoading = false
+    },
     SHOW_MERGED_PAYMENT_LOADING: (state) => {
       state.mergedPaymentLoading = true
     },
@@ -61,6 +69,9 @@ const commission = {
     },
     SET_COMMISSION_POLICY: (state, commissionPolicy) => {
       state.commissionPolicy = commissionPolicy
+    },
+    SET_CLEARED: (state, cleared) => {
+      state.cleared = cleared
     }
   },
   actions: {
@@ -105,8 +116,16 @@ const commission = {
       return fetchCommissionPolicy(params).then(res => {
         commit('SET_COMMISSION_POLICY', res.data)
       })
+    },
+    FetchCleared({ commit }, params) {
+      commit('SHOW_CLEARED_LOADING')
+      return fetchCleared(params).then(res => {
+        commit('SET_CLEARED', res.data)
+        commit('HIDE_CLEARED_LOADING')
+      }).catch(_ => {
+        commit('HIDE_CLEARED_LOADING')
+      })
     }
-
   }
 }
 export default commission

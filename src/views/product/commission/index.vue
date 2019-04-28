@@ -2,24 +2,17 @@
   <div class="table-container">
     <basic-container>
       <commission-table ref="commissionTable" :id="commissionTableId" :company-id="companyId" :created="true" :show-button="false"/>
-      <!--<el-form :inline="true" class="search-input" @submit.native.prevent>-->
-      <!--<el-form-item label="" prop="company">-->
-      <!--<el-select-->
-      <!--v-model="companyId"-->
-      <!--:remote-method="remoteSearch"-->
-      <!--filterable-->
-      <!--clearable-->
-      <!--remote-->
-      <!--placeholder="搜索(供应商)"-->
-      <!--@change="companyChange">-->
-      <!--<el-option-->
-      <!--v-for="company in companyList"-->
-      <!--:key="company.id"-->
-      <!--:value="company.id"-->
-      <!--:label="company.name"/>-->
-      <!--</el-select>-->
-      <!--</el-form-item>-->
-      <!--</el-form>-->
+      <el-form :inline="true" class="search-input" @submit.native.prevent>
+        <el-form-item label="" prop="wildcard">
+          <el-input
+            v-model="wildcard"
+            :placeholder="$t('product.company.search_company_placeholder')"
+            clearable
+            @input="search">
+            <i slot="prefix" class="el-input__icon el-icon-search"/>
+          </el-input>
+        </el-form-item>
+      </el-form>
       <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
         v-loading="companyLoading"
@@ -36,7 +29,7 @@
             <div v-loading="commissionTableListLoading" class="clearfix">
               <el-timeline v-loading="commissionTableListLoading" id="commissionTableList">
                 <div v-if="commissionTableList.list && commissionTableList.list.length === 0" style="text-align: center; color: #909399;">
-                  无佣金表
+                  {{ $t('product.commission.no_commission_table') }}
                 </div>
                 <el-timeline-item v-for="(commissionTable, index) in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="index" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
                   <el-dropdown class="action-dropdown">
@@ -47,12 +40,12 @@
                       <el-dropdown-item>
                         <el-button
                           v-if="commissionTable.status !== 0"
-                          size="mini"
+                          size="small"
                           type="text"
                           icon="el-icon-view"
                           style="margin-right: 5px"
                           @click="handleView(commissionTable.id)">
-                          查看
+                          {{ $t('common.view') }}
                         </el-button>
                       </el-dropdown-item>
                       <el-dropdown-item>
@@ -62,47 +55,50 @@
                         <el-button
                           v-if="commissionTable.status !== 0"
                           :ref="`export_${commissionTable.id}`"
-                          size="mini"
+                          size="small"
                           type="text"
                           icon="el-icon-download"
-                          @click="exportExcel(commissionTable)">导出Excel</el-button>
+                          @click="exportExcel(commissionTable)">{{ $t('common.export') }}</el-button>
                       </el-dropdown-item>
                       <el-dropdown-item>
                         <el-button
-                          size="mini"
+                          size="small"
                           type="text"
                           icon="el-icon-delete"
-                          @click="handleDelete(commissionTable, scope.row.id)">删除
+                          @click="handleDelete(commissionTable, scope.row.id)">{{ $t('common.delete') }}
                         </el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                   <el-card>
-                    <p style="display: inline-block">状态 :
-                      <el-tag v-if="commissionTable.status === 0" type="info" size="mini">未发布</el-tag>
-                      <el-tag v-if="commissionTable.status === 1" type="success" size="mini">已发布</el-tag>
-                      <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">有改动</el-tag>
+                    <p style="display: inline-block">{{ $t('product.commission.commission_table_list.status') }} :
+                      <el-tag v-if="commissionTable.status === 0" type="info" size="mini">{{ $t('product.commission.commission_table_list.status_info') }}</el-tag>
+                      <el-tag v-if="commissionTable.status === 1" type="success" size="mini">{{ $t('product.commission.commission_table_list.status_success') }}</el-tag>
+                      <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">{{ $t('product.commission.commission_table_list.product_count') }}</el-tag>
                     </p>
-                    <p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>
-                    <p v-if="commissionTable.remarks" style="display: inline-block; margin: 0 0 0 20px">备注 : {{ commissionTable.remarks }}</p>
+                    <p style="display: inline-block; margin-left: 20px">{{ $t('product.commission.commission_table_list.product_count') }} : {{ commissionTable.policyCount }}</p>
+                    <p v-if="commissionTable.remarks" style="display: inline-block; margin: 0 0 0 20px">{{ $t('common.remarks') }} : {{ commissionTable.remarks }}</p>
                   </el-card>
                 </el-timeline-item>
               </el-timeline>
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="acronym" label="公司缩写"/>
-        <el-table-column prop="name" label="公司名" show-overflow-tooltip min-width="200px"/>
-        <el-table-column prop="level" label="级别">
+        <el-table-column :label="$t('product.company.table_header.name')" prop="name" min-width="150px" show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.secondary" type="warning">二级</el-tag>
-            <el-tag v-else type="success">一级</el-tag>
+            {{ scope.row.acronym }}  - {{ scope.row.name }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('product.company.table_header.level')" prop="level" width="150px">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.secondary" type="warning">{{ $t('product.company.levelTab.level2') }}</el-tag>
+            <el-tag v-else type="success">{{ $t('product.company.levelTab.level1') }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column
           :formatter="dateFormat"
+          :label="$t('product.company.table_header.contractEffectiveDate')"
           prop="contractEffectiveDate"
-          label="签约时间"
           min-width="100px"/>
           <!--<el-table-column label="操作">-->
           <!--<template slot-scope="scope">-->
@@ -174,7 +170,7 @@ import commissionTable from './commissionTable'
 import add from './add'
 import commissionView from './view'
 import axios from 'axios'
-
+const _ = require('lodash')
 export default {
   components: {
     add,
@@ -184,6 +180,7 @@ export default {
   },
   data: function() {
     return {
+      wildcard: '',
       expandKeys: [],
       showExpandRow: false,
       height: document.body.clientHeight - 190,
@@ -209,6 +206,9 @@ export default {
     // this.getCommissionTableList()
   },
   methods: {
+    search: _.debounce(function() {
+      this.getCompanyList({ wildcard: this.wildcard })
+    }, 500),
     getCommissionTableList(id, params) {
       this.$store.dispatch('commission/FetchCommissionTableList', { id, params })
     },
@@ -238,16 +238,16 @@ export default {
       this.$store.dispatch('company/FetchCompanyList', { name: query })
     },
     handleDelete(row, companyId) {
-      this.$confirm('此操作将永久删除该策略表, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('product.commission.tooltip.delete'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             this.$api.commission.deleteCommission(row.id).then(res => {
               this.$message({
-                message: '操作成功',
+                message: this.$t('common.success'),
                 type: 'success',
                 duration: 5 * 1000
               })
@@ -271,9 +271,9 @@ export default {
       const fileName = `${row.company.name} EffectiveDate ${effectiveDate}.xlsx`
       const url = process.env.BASE_API + `/commissionTable/${row.id}/export`
       if (row.status === 2) {
-        this.$confirm('导出的部分不包含未发布的内容, 是否继续导出?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        this.$confirm(this.$t('product.commission.tooltip.export'), this.$t('common.prompt'), {
+          confirmButtonText: this.$t('common.confirmButton'),
+          cancelButtonText: this.$t('common.cancelButton'),
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action === 'confirm') {
@@ -301,9 +301,9 @@ export default {
           }
         })
       } else {
-        this.$confirm('导出文件需要较多时间, 是否继续导出?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        this.$confirm(this.$t('product.commission.tooltip.download'), this.$t('common.prompt'), {
+          confirmButtonText: this.$t('common.confirmButton'),
+          cancelButtonText: this.$t('common.cancelButton'),
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action === 'confirm') {
@@ -311,7 +311,6 @@ export default {
               axios.get(url, {
                 responseType: 'blob'
               }).then(res => {
-                console.log(res.data)
                 const blob = new Blob([res.data])
                 const downloadElement = document.createElement('a')
                 const href = window.URL.createObjectURL(blob) //  创建下载的链接
@@ -396,6 +395,9 @@ export default {
 }
 </script>
 <style type="text/scss" lang="scss">
+  .el-table__body-wrapper {
+    overflow-y: auto!important;
+  }
   #commissionTableList {
     .el-table__expanded-cell {
       padding: 20px;

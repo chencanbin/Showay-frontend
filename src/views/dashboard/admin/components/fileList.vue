@@ -1,7 +1,7 @@
 <template>
   <el-card style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
     <div slot="header" class="clearfix">
-      <span style="height: 32px;display: inline-block">最新动态</span>
+      <span style="height: 32px;display: inline-block">{{ $t('home.news') }}</span>
     </div>
     <el-table
       v-loading="loading"
@@ -14,7 +14,7 @@
         show-overflow-tooltip>
         <template slot-scope="scope">
           <!--<svg-icon :icon-class="getFileType(scope.row.extention)" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>-->
-          <a class="folderLink" @click="handleDownload(scope.row)">{{ scope.row.name }}</a>
+          <a class="folderLink" @click="handleDownload(scope.row)">{{ fileNameFormatter(scope.row.name) }}</a>
         </template>
       </el-table-column>
     </el-table>
@@ -38,6 +38,14 @@ export default {
     this.getFileList(6)
   },
   methods: {
+    fileNameFormatter(name) {
+      const pattern = /\.{1}[a-z]{1,}$/
+      if (pattern.exec(name) !== null) {
+        return (name.slice(0, pattern.exec(name).index))
+      } else {
+        return name
+      }
+    },
     getFileList(id, params) {
       // this.$store.dispatch('document/FetchFolderById', { id, params })
       this.loading = true

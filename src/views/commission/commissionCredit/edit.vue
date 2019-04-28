@@ -1,11 +1,11 @@
 <template>
   <span class="credit-edit">
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{ $t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="编辑到账记录"
+      :title="$t('commission.credit.set.edit_credit_title')"
       top="50px"
       width="400px">
       <div v-if="locked && credit.currency !== 'HKD'" class="lock-icon" @click="unlockCalculate()">
@@ -15,37 +15,37 @@
         <svg-icon icon-class="unlock" />
       </div>
       <el-form ref="credit" :model="credit" label-width="90px">
-        <el-form-item label="保单号" prop="name">
+        <el-form-item :label="$t('client.insurance_policy.number')" prop="name">
           {{ commissionCredit.insurancePolicy.number }}
         </el-form-item>
-        <el-form-item label="期序" prop="name">
-          第{{ commissionCredit.year }}期
+        <el-form-item :label="$t('commission.credit.year')" prop="name">
+          {{ $t('commission.credit.years',[commissionCredit.year]) }}
         </el-form-item>
-        <el-form-item label="保费" prop="name">
+        <el-form-item :label="$t('client.insurance_policy.premium')" prop="name">
           {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.premium) }}
         </el-form-item>
-        <el-form-item label="佣金率" prop="name">
+        <el-form-item :label="$t('common.commission_rate')" prop="name">
           {{ formatterNumber(commissionCredit.commissionRate) + '%' }}
         </el-form-item>
-        <el-form-item label="应收" prop="name">
+        <el-form-item :label="$t('common.calculatedAmount')" prop="name">
           {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmount) }}
         </el-form-item>
-        <el-form-item v-if="credit.currency !== 'HKD'" label="汇率" prop="exchangeRateToHkd" >
-          <el-input v-model="credit.exchangeRateToHkd" placeholder="请输入汇率" @input="onExchangeRateInput"/>
+        <el-form-item v-if="credit.currency !== 'HKD'" :label="$t('common.exchangeRate')" prop="exchangeRateToHkd" >
+          <el-input v-model="credit.exchangeRateToHkd" :placeholder="$t('commission.credit.set.exchangeRate')" @input="onExchangeRateInput"/>
         </el-form-item>
-        <el-form-item label="实收">
+        <el-form-item :label="$t('common.amount')">
           <currency-input ref="amount" :value="credit.amount" symbol="HK$ " @input="onAmountInput" />
         </el-form-item>
-        <el-form-item label="备注" prop="remarks">
-          <el-input v-model="credit.remarks" placeholder="请输入备注"/>
+        <el-form-item :label="$t('common.remarks')" prop="remarks">
+          <el-input v-model="credit.remarks" :placeholder="$t('common.remarks_placeholder')"/>
         </el-form-item>
         <el-form-item v-if="isBoolean(credit.ffyap)" label="FFYAP" prop="name">
           <el-checkbox v-model="credit.ffyap"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -64,6 +64,18 @@ export default {
     currencyInput
   },
   props: {
+    sort: {
+      type: String,
+      default() {
+        return ''
+      }
+    },
+    order: {
+      type: String,
+      default() {
+        return ''
+      }
+    },
     wildcard: {
       type: String,
       default() {
@@ -122,7 +134,7 @@ export default {
       this.dialogVisible = false
     },
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: '' })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
     getSymbol,
     handleSubmit() {
@@ -131,14 +143,14 @@ export default {
           this.loading = true
           this.$api.commission.editCommissionCredit(this.credit.id, this.credit).then(_ => {
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })
             if (this.dateRange) {
-              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard })
+              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard, sort: this.sort, order: this.order })
             } else {
-              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard })
+              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard, sort: this.sort, order: this.order })
             }
             this.handleClose()
             this.loading = false
@@ -182,10 +194,14 @@ export default {
   .credit-edit {
     .el-form-item {
       margin-bottom: 10px;
+      text-align: left;
     }
-    .el-form-item--medium .el-form-item__content, .el-form-item--medium .el-form-item__label {
-      line-height: 30px;
+    .el-form-item__content {
+      padding-left: 10px;
     }
+    /*.el-form-item--medium .el-form-item__content, .el-form-item--medium .el-form-item__label {*/
+      /*line-height: 30px;*/
+    /*}*/
   }
   .lock-icon {
     display: inline-block;

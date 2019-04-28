@@ -98,7 +98,7 @@ export default {
       this.dialogVisible = true
     },
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: '' })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
     getSymbol,
     handleClose() {

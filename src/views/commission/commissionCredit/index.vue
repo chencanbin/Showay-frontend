@@ -16,13 +16,13 @@
         <el-row>
           <el-form :inline="true" class="filter-form" @submit.native.prevent>
             <el-form-item v-if="activeName === '1' && selectData.length > 0">
-              <el-button type="primary" size="small" @click="batchPay">批量外发</el-button>
+              <el-button type="primary" size="small" @click="batchPay">{{ $t('commission.credit.batchPay') }}</el-button>
             </el-form-item>
             <el-form-item label="" prop="wildcard">
               <el-input
                 v-model="wildcard"
+                :placeholder="$t('commission.credit.search')"
                 clearable
-                placeholder="搜索(保单号 | 投保人)"
                 @input="search">
                 <i slot="prefix" class="el-input__icon el-icon-search"/>
               </el-input>
@@ -30,14 +30,15 @@
             <el-form-item label="" prop="dateRange">
               <el-date-picker
                 v-model="dateRange"
+                :unlink-panels="true"
+                :start-placeholder="$t('commission.credit.start')"
+                :end-placeholder="$t('commission.credit.end')"
+                value-format="timestamp"
                 type="daterange"
                 range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="timestamp"
                 @change="onDateRangeChange"/>
             </el-form-item>
-            <el-form-item label="切换排序">
+            <el-form-item :label="$t('commission.credit.switch_sort')">
               <el-switch v-model="mode" @change="onSwitchChange"/>
             </el-form-item>
           </el-form>
@@ -48,7 +49,7 @@
                 :start-val="0"
                 :end-val="selectTotal"
                 :duration="2000"
-                suffix="条"
+                :suffix="$t('commission.credit.count')"
                 style="font-weight: bold;"/>
             </span>
             <span style="margin-right: 30px">{{ selectSumText }}:
@@ -64,7 +65,7 @@
                 :start-val="0"
                 :end-val="commissionCredit.total"
                 :duration="2000"
-                suffix="条"
+                :suffix="$t('commission.credit.count')"
                 style="font-weight: bold;"/>
             </span>
             <span>{{ sumText }}:
@@ -85,36 +86,36 @@
           border
           @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="40" align="center"/>
-          <el-table-column label="保单号" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip/>
-          <el-table-column label="保费" min-width="140">
+          <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip/>
+          <el-table-column :label="$t('client.insurance_policy.premium')" min-width="140">
             <template slot-scope="scope">
               <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.premium) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="投保人" prop="insurancePolicy.applicant.name" show-overflow-tooltip/>
-          <el-table-column label="期序" prop="year" align="center"/>
+          <el-table-column :label="$t('client.insurance_policy.applicant_name')" prop="insurancePolicy.applicant.name" show-overflow-tooltip/>
+          <el-table-column :label="$t('commission.credit.year')" prop="year" align="center"/>
           <el-table-column
-            :formatter="formatterIssueDate"
-            label="申请日期"
+            :formatter="formatterSubmitDate"
+            :label="$t('client.insurance_policy.submitDate')"
             prop="insurancePolicy.submitDate"
             min-width="100"/>
           <el-table-column
             :formatter="formatterIssueDate"
-            label="生效日期"
+            :label="$t('client.insurance_policy.issueDate')"
             prop="insurancePolicy.issueDate"
             min-width="100"/>
-          <el-table-column label="应收" min-width="120">
+          <el-table-column :label="$t('common.calculatedAmount')" min-width="120">
             <template slot-scope="scope">
               <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmount) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="实收" prop="amount" min-width="120">
+          <el-table-column :label="$t('common.amount')" prop="amount" min-width="120">
             <template slot-scope="scope">
               <span class="left_text">HK$ </span>
               <span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="状态" min-width="80" align="center">
+          <el-table-column :label="$t('common.status')" min-width="80" align="center">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.status === 0" style="color: #409eff;" >{{ statusFormatter(scope.row.status) }}</el-tag>
               <el-tag v-if="scope.row.status === 1" type="warning">{{ statusFormatter(scope.row.status) }}</el-tag>
@@ -127,7 +128,7 @@
             </template>
           </el-table-column>
           <!--<el-table-column label="备注" prop="remarks" min-width="140"/>-->
-          <el-table-column v-if="activeName !== '2'" label="操作">
+          <el-table-column v-if="activeName !== '2'" :label="$t('common.action')" width="100">
             <template slot-scope="scope">
               <edit
                 v-if="scope.row.status === 0"
@@ -135,8 +136,17 @@
                 :wildcard="wildcard"
                 :date-range="dateRange"
                 :active-name="activeName"
-                :key="scope.row.id"/>
-              <audit v-if="scope.row.status === 1" :commission-credit="scope.row" :active-name="activeName"/>
+                :key="scope.row.id"
+                :sort="sort"
+                :order="order"/>
+              <audit
+                v-if="scope.row.status === 1"
+                :commission-credit="scope.row"
+                :active-name="activeName"
+                :wildcard="wildcard"
+                :date-range="dateRange"
+                :sort="sort"
+                :order="order"/>
             </template>
           </el-table-column>
         </el-table>
@@ -175,12 +185,14 @@ export default {
   data() {
     return {
       mode: false,
+      sort: 'year,submitDate',
+      order: 'asc,desc',
       dateRange: [getCurrentYearFirst(), getCurrentYearLast()],
       totalText: '',
       sumText: '',
       selectTotalText: '',
       selectSumText: '',
-      height: document.body.clientHeight - 310,
+      height: document.body.clientHeight - 300,
       creditStatus,
       language: Cookies.get('language') || 'zh-CN',
       activeName: '0',
@@ -247,31 +259,35 @@ export default {
       this.queryCondition = _.assign(this.queryCondition, params)
       this.$store.dispatch('commission/FetchCommissionCredit', this.queryCondition)
       if (this.activeName === '0') {
-        this.totalText = '预计待收总数'
-        this.sumText = '预计待收总额'
-        this.selectTotalText = '已选预计待收总数'
-        this.selectSumText = '已选预计待收总额'
+        this.totalText = this.$t('commission.credit.calculated_count')
+        this.sumText = this.$t('commission.credit.calculated_amount_total')
+        this.selectTotalText = this.$t('commission.credit.calculated_selected_count')
+        this.selectSumText = this.$t('commission.credit.calculated_selected_sum')
         this.getCommissionCreditSum({ calculated: '' })
       } else if (this.activeName === '1') {
-        this.totalText = '已到账总数'
-        this.sumText = '已到账总额'
-        this.selectTotalText = '已选已到账总数'
-        this.selectSumText = '已选已到账总额'
+        this.totalText = this.$t('commission.credit.amount_count')
+        this.sumText = this.$t('commission.credit.amount_total')
+        this.selectTotalText = this.$t('commission.credit.amount_selected_count')
+        this.selectSumText = this.$t('commission.credit.amount_selected_sum')
         this.getCommissionCreditSum({ amount: '' })
       } else if (this.activeName === '3') {
-        this.totalText = '已结清总数'
-        this.sumText = '已结清总额'
-        this.selectTotalText = '已选已结清总数'
-        this.selectSumText = '已选已结清总额'
+        this.totalText = this.$t('commission.credit.cleared_count')
+        this.sumText = this.$t('commission.credit.cleared_total')
+        this.selectTotalText = this.$t('commission.credit.cleared_selected_count')
+        this.selectSumText = this.$t('commission.credit.cleared_selected_sum')
         this.getCommissionCreditSum({ amount: '' })
       }
     },
     getSymbol,
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: '' })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
     formatterIssueDate(row, column) {
       const date = row.insurancePolicy.issueDate
+      return parseTime(date, '{y}-{m}-{d}')
+    },
+    formatterSubmitDate(row, column) {
+      const date = row.insurancePolicy.submitDate
       return parseTime(date, '{y}-{m}-{d}')
     },
     statusFormatter(value) {
@@ -308,11 +324,15 @@ export default {
     },
     onSwitchChange() {
       if (this.mode) {
-        const query = { status: this.activeName, sort: 'number,issueDate', order: 'desc,desc', wildcard: this.wildcard }
+        this.sort = 'number,issueDate'
+        this.order = 'desc,desc'
+        const query = { status: this.activeName, sort: this.sort, order: this.order, wildcard: this.wildcard }
         this.queryCondition = query
         this.getCommissionCreditList()
       } else {
-        const query = { status: this.activeName, sort: 'year,submitDate', order: 'asc,desc', wildcard: this.wildcard }
+        this.sort = 'year,submitDate'
+        this.order = 'asc,desc'
+        const query = { status: this.activeName, sort: this.sort, order: this.order, wildcard: this.wildcard }
         this.queryCondition = query
         this.getCommissionCreditList()
       }
@@ -336,15 +356,15 @@ export default {
       _.forEach(this.selectData, item => {
         ids.push(item.id)
       })
-      this.$confirm('是否批量处理已选中的记录?', '提示', {
-        confirmButtonText: '外发',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('commission.credit.tooltip.batchPay'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('commission.credit.pay'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         callback: (action, instance) => {
           if (action === 'confirm') {
             this.$api.commission.CommissionCreditClear({ ids: ids }).then(_ => {
               this.$message({
-                message: '操作成功',
+                message: this.$t('common.success'),
                 type: 'success',
                 duration: 5 * 1000
               })

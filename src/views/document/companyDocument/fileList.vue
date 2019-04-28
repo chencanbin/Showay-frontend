@@ -46,7 +46,7 @@
               <el-dropdown-item>
                 <el-button
                   type="text"
-                  size="mini"
+                  size="small"
                   icon="el-icon-download"
                   @click="handleDownload(scope.$index, scope.row)">下载
                 </el-button>
@@ -57,9 +57,9 @@
               <el-dropdown-item v-if="checkPermission([1])">
                 <el-button
                   type="text"
-                  size="mini"
+                  size="small"
                   icon="el-icon-delete"
-                  @click="handleDelete(scope.$index, scope.row)">删除
+                  @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
                 </el-button>
               </el-dropdown-item>
             </el-dropdown-menu>

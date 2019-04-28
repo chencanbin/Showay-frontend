@@ -1,6 +1,6 @@
 <template>
   <span id="paymentDetail">
-    <el-button v-loading="loading" type="text" size="mini" @click="initForm">{{ generateButtonText() }}</el-button>
+    <el-button type="text" size="small" @click="initForm">{{ generateButtonText() }}</el-button>
     <el-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
@@ -8,7 +8,16 @@
       :fullscreen="true"
       center>
       <el-row v-permission="[1]" style="margin-bottom: 10px">
-        <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">提交审核</el-button>
+        <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">{{ $t('commission.payment.submit_audit') }}</el-button>
+        <span style="margin-left: 20px;">已选中实发金额:
+          <count-to
+            :start-val="0"
+            :end-val="selectSum"
+            :duration="2000"
+            decimals="2"
+            prefix="HK$ "
+            style="font-weight: bold;"/>
+        </span>
       </el-row>
       <el-table
         v-loading="mergedPaymentLoading"
@@ -22,43 +31,43 @@
           align="center"
           type="selection"
           width="55" />
-        <el-table-column label="保单号" prop="insurancePolicy.number" show-overflow-tooltip/>
-        <el-table-column label="受保人" prop="insurancePolicy.beneficiary" width="80"/>
-        <el-table-column label="期序" width="80">
+        <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip/>
+        <el-table-column :label="$t('client.insurance_policy.beneficiary_name')" prop="insurancePolicy.beneficiary" width="80"/>
+        <el-table-column :label="$t('commission.credit.year')" width="80">
           <template slot-scope="scope">
-            <span>第 {{ scope.row.year }} 期</span>
+            <span>{{ $t('commission.credit.years',[scope.row.year]) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="保费">
+        <el-table-column :label="$t('client.insurance_policy.premium')" min-width="100px">
           <template slot-scope="scope">
             <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.premium) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="保费等额港币">
+        <el-table-column :label="$t('commission.payment.premiumInHkd')" min-width="120px">
           <template slot-scope="scope">
             <div v-if="scope.row.currency !== 'HKD'">
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.premiumInHkd) }}</span>
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="汇率" prop="exchangeRateToHkd" width="80">
+        <el-table-column :label="$t('common.exchangeRate')" prop="exchangeRateToHkd" width="80">
           <template slot-scope="scope">
             <div v-if="scope.row.currency !== 'HKD'" style="float: right">
               {{ scope.row.exchangeRateToHkd }}
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="预计应发">
+        <el-table-column :label="$t('commission.payment.calculatedAmountInHkd')" min-width="100px">
           <template slot-scope="scope">
             <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmountInHkd) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="预计实发" prop="amount">
+        <el-table-column :label="$t('commission.payment.predictedAmountInHkd')" prop="amount" min-width="100px">
           <template slot-scope="scope">
             <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.predictedAmountInHkd) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="实发" prop="amount">
+        <el-table-column :label="$t('commission.payment.amount')" prop="amount" min-width="100px">
           <template slot-scope="scope">
             <div v-if="scope.row.amount">
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
@@ -68,20 +77,20 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="佣金率">
+        <el-table-column :label="$t('common.commission_rate')">
           <template slot-scope="scope">
             <div style="float: right">{{ formatPercent(scope.row.commissionRate) }}</div>
           </template>
         </el-table-column>
-        <el-table-column v-if="checkPermission([1]) && status === '-1'" label="操作">
+        <el-table-column v-if="checkPermission([1]) && status === '-1'" :label="$t('common.action')">
           <template slot-scope="scope">
             <edit :payment="scope.row" :key="scope.row.id"/>
           </template>
         </el-table-column>
       </el-table>
       <div v-permission="[1, 3]" v-if="status === '0'" slot="footer" class="dialog-footer">
-        <el-button :loading="rejectLoading" @click="handleReject">拒绝</el-button>
-        <el-button :loading="approveLoading" type="primary" @click="handleApprove">批准</el-button>
+        <el-button :loading="rejectLoading" @click="handleReject">{{ $t('common.reject') }}</el-button>
+        <el-button :loading="approveLoading" type="primary" @click="handleApprove">{{ $t('common.approve') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -92,6 +101,8 @@ import { mapState } from 'vuex'
 import edit from './edit'
 import { getSymbol } from '@/utils'
 import checkPermission from '@/utils/permission' // 权限判断函数
+import CountTo from 'vue-count-to'
+
 import permission from '@/directive/permission/index.js' // 权限判断指令
 
 const _ = require('lodash')
@@ -99,7 +110,8 @@ const currencyFormatter = require('currency-formatter')
 export default {
   name: 'MergedPayment',
   components: {
-    edit
+    edit,
+    CountTo
   },
   directives: { permission },
   props: {
@@ -128,7 +140,8 @@ export default {
       dialogVisible: false,
       selectedRow: [],
       rejectLoading: false,
-      approveLoading: false
+      approveLoading: false,
+      selectSum: 0
     }
   },
   computed: {
@@ -151,16 +164,16 @@ export default {
     },
     generateTitle() {
       if (this.status === '-1') {
-        return `${this.channel.name} 待发放佣金`
+        return `${this.channel.name} ${this.$t('commission.payment.audit_commission')}`
       } else if (this.status === '0') {
-        return `${this.channel.name} 待审核佣金`
+        return `${this.channel.name} ${this.$t('commission.payment.audit_commission')}`
       }
     },
     generateButtonText() {
       if (this.status === '-1') {
-        return '待发放列表'
+        return this.$t('commission.payment.generated_list')
       } else if (this.status === '0') {
-        return '待审核列表'
+        return this.$t('commission.payment.audit_list')
       }
     },
     getSymbol,
@@ -171,10 +184,19 @@ export default {
       this.$store.dispatch('commission/FetchMergedPayment', { id: this.id, params: { channel: this.channel.id }})
     },
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: '' })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
     handleSelectionChange(val) {
       this.selectedRow = val
+      let selectSum = 0
+      _.forEach(val, item => {
+        if (item.amount) {
+          selectSum = selectSum + _.toFinite(item.amount)
+        } else {
+          selectSum = selectSum + _.toFinite(item.predictedAmountInHkd)
+        }
+      })
+      this.selectSum = selectSum
     },
     formatPercent(value) {
       return _.toNumber(value).toFixed(2) + '%'
@@ -183,7 +205,7 @@ export default {
       this.rejectLoading = true
       this.$api.commission.mergedPaymentReject(this.id).then(_ => {
         this.$message({
-          message: '操作成功',
+          message: this.$t('common.success'),
           type: 'success',
           duration: 5 * 1000
         })
@@ -198,7 +220,7 @@ export default {
       this.approveLoading = true
       this.$api.commission.mergedPaymentApprove(this.id).then(_ => {
         this.$message({
-          message: '操作成功',
+          message: this.$t('common.success'),
           type: 'success',
           duration: 5 * 1000
         })
@@ -210,9 +232,9 @@ export default {
       })
     },
     handleSubmit() {
-      this.$confirm('此操作会将选中的渠道佣金记录提交审核, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('commission.payment.tooltip.audit'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {

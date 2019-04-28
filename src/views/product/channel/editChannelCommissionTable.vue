@@ -1,7 +1,7 @@
 <template>
   <span>
-    <el-button icon="el-icon-setting" type="text" size="mini" @click="initForm" >
-      编辑
+    <el-button icon="el-icon-setting" type="text" size="small" @click="initForm" >
+      {{ $t('common.edit') }}
     </el-button>
     <el-dialog
       id="channelCommissionTableDialog"
@@ -35,35 +35,35 @@
         <el-table-column prop="remarks" label="备注" align="center" min-width="150"/>
         <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
-            <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.$index)">删除</el-button>
+            <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.$index)">{{ $t('common.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <addPolicy @addPolicy="onAddPolicy"/>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="timeDialogVisible = true">保存</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="timeDialogVisible = true">{{ $t('common.submitButton') }}</el-button>
       </div>
       <!-- 佣金生效时间弹框 -->
       <el-dialog
         :visible.sync="timeDialogVisible"
+        :title="$t('product.channel.set.save_dialog_title')"
         width="400px"
-        title="渠道佣金生效时间 / 备注"
         append-to-body>
         <el-form ref="configForm" label-width="80px">
-          <el-form-item label="生效时间">
+          <el-form-item :label="$t('product.channel.set.effectiveDate')">
             <el-date-picker
               v-model="effectiveDate"
               type="datetime"
               value-format="timestamp"
               style="width: 100%"/>
           </el-form-item>
-          <el-form-item label="备注" prop="remarks">
-            <el-input v-model="remarks" placeholder="请输入备注"/>
+          <el-form-item :label="$t('common.remarks')" prop="remarks">
+            <el-input v-model="remarks" :placeholder="$t('common.remarks_placeholder')"/>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer" style="text-align: center">
-          <el-button :loading="saveLoading" type="primary" @click="handleSubmit">确定</el-button>
+          <el-button :loading="saveLoading" type="primary" @click="handleSubmit">{{ this.$t('common.confirmButton') }}</el-button>
         </div>
       </el-dialog>
     </el-dialog>
@@ -135,7 +135,7 @@ export default {
 
   methods: {
     initForm() {
-      this.title = `编辑渠道佣金策略 - ${this.channelName} ( ${parseTime(this.effectiveDate, '{y}-{m}-{d}')} )`
+      this.title = `${this.$t('product.channel.set.edit_title')} - ${this.channelName} ( ${parseTime(this.effectiveDate, '{y}-{m}-{d}')} )`
       this.loading = true
       this.dialogVisible = true
       this.$api.channel.fetchChannelCommissionPolicy(this.id).then(res => {
@@ -165,16 +165,16 @@ export default {
       this.policies = policies
       _.forEach(_.range(1, _.max(conditionLengthArray) + 1), item => {
         if (item > 15) {
-          this.columnYear.push('15年之后')
+          this.columnYear.push(this.$t('common.after_15_year'))
         } else {
-          this.columnYear.push('第' + item + '年')
+          this.columnYear.push(this.$t('common.year', [item]))
         }
       })
     },
     handleClose() {
-      this.$confirm('是否需要关闭次页面?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('common.tooltip.close'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning'
       }).then(() => {
         this.dialogVisible = false

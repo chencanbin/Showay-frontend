@@ -1,10 +1,11 @@
 import { logout, getUserInfo, loginByUsername } from '@/http/modules/login'
-import { fetchUserList } from '@/http/modules/user'
+import { fetchUserList, fetchChannelHierarchy } from '@/http/modules/user'
 import { setLoginStatus, removeLoginStatus, setUserId } from '@/utils/auth'
 
 const user = {
   state: {
     user: '',
+    channelHierarchy: {},
     status: '',
     code: '',
     name: '',
@@ -13,10 +14,17 @@ const user = {
     roles: [],
     users: [],
     id: '',
-    userLoading: false
+    userLoading: false,
+    channelHierarchyLoading: false
   },
 
   mutations: {
+    SHOW_CHANNEL_HIERARCHY_LOADING: (state) => {
+      state.channelHierarchyLoading = true
+    },
+    HIDE_CHANNEL_HIERARCHY_LOADING: (state) => {
+      state.channelHierarchyLoading = false
+    },
     SHOW_USER_LOADING: (state) => {
       state.userLoading = true
     },
@@ -46,6 +54,9 @@ const user = {
     },
     SET_ID: (state, id) => {
       state.id = id
+    },
+    SET_CHANNEL_HIERARCHY: (state, channelHierarchy) => {
+      state.channelHierarchy = channelHierarchy
     }
   },
 
@@ -95,6 +106,18 @@ const user = {
         commit('HIDE_USER_LOADING')
       })
     },
+
+    FetchChannelHierarchy({ commit }, params) {
+      commit('SHOW_CHANNEL_HIERARCHY_LOADING')
+      commit('SET_CHANNEL_HIERARCHY', {})
+      return fetchChannelHierarchy(params).then(res => {
+        commit('SET_CHANNEL_HIERARCHY', res.data)
+        commit('HIDE_CHANNEL_HIERARCHY_LOADING')
+      }).catch(_ => {
+        commit('HIDE_CHANNEL_HIERARCHY_LOADING')
+      })
+    },
+
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

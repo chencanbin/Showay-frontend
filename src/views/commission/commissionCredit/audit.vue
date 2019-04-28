@@ -1,38 +1,38 @@
 <template>
   <span id="audit">
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">外发</el-button>
+    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">外发</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="到账审核"
+      :title="$t('commission.credit.set.audit_title')"
       width="400px">
       <el-form ref="audit" label-width="150px">
-        <el-form-item label="保单号" prop="name">
+        <el-form-item :label="$t('client.insurance_policy.number')" prop="name">
           {{ commissionCredit.insurancePolicy.number }}
         </el-form-item>
-        <el-form-item label="期序" prop="name">
-          第{{ commissionCredit.year }}期
+        <el-form-item :label="$t('commission.credit.year')" prop="name">
+          {{ $t('commission.credit.years',[commissionCredit.year]) }}
         </el-form-item>
-        <el-form-item label="应收" prop="name">
+        <el-form-item :label="$t('common.calculatedAmount')" prop="name">
           {{ getSymbol(commissionCredit.currency) + ' ' + formatterCurrency(commissionCredit.calculatedAmount) }}
         </el-form-item>
-        <el-form-item v-if="commissionCredit.currency !== 'HKD'" label="应收等额港币" prop="name">
+        <el-form-item v-if="commissionCredit.currency !== 'HKD'" :label="$t('commission.credit.calculatedAmountInHkd')" prop="name">
           {{ 'HK$ ' + formatterCurrency(commissionCredit.calculatedAmountInHkd) }}
         </el-form-item>
-        <el-form-item v-if="commissionCredit.currency !== 'HKD'" label="汇率" prop="name">
+        <el-form-item v-if="commissionCredit.currency !== 'HKD'" :label="$t('common.exchangeRate')" prop="name">
           {{ commissionCredit.exchangeRateToHkd }}
         </el-form-item>
-        <el-form-item label="实收" prop="name">
+        <el-form-item :label="$t('common.amount')" prop="name">
           {{ 'HK$ ' + formatterCurrency(commissionCredit.amount) }}
         </el-form-item>
-        <el-form-item label="备注" prop="remarks">
+        <el-form-item :label="$t('common.remarks')" prop="remarks">
           {{ commissionCredit.remarks }}
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button :loading="rejectLoading" @click="handleReject">退回待发</el-button>
-        <el-button :loading="clearLoading" type="primary" @click="handleClear">外发</el-button>
+        <el-button :loading="rejectLoading" @click="handleReject">{{ $t('commission.credit.rollback') }}</el-button>
+        <el-button :loading="clearLoading" type="primary" @click="handleClear">{{ $t('commission.credit.pay') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -46,6 +46,30 @@ const currencyFormatter = require('currency-formatter')
 export default {
   directives: { elDragDialog },
   props: {
+    sort: {
+      type: String,
+      default() {
+        return ''
+      }
+    },
+    order: {
+      type: String,
+      default() {
+        return ''
+      }
+    },
+    wildcard: {
+      type: String,
+      default() {
+        return ''
+      }
+    },
+    dateRange: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     activeName: {
       type: String,
       default() {
@@ -74,11 +98,15 @@ export default {
       this.rejectLoading = true
       this.$api.commission.CommissionCreditReject({ ids: [this.commissionCredit.id] }).then(_ => {
         this.$message({
-          message: '操作成功',
+          message: this.$t('common.success'),
           type: 'success',
           duration: 5 * 1000
         })
-        this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName })
+        if (this.dateRange) {
+          this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard, sort: this.sort, order: this.order })
+        } else {
+          this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard, sort: this.sort, order: this.order })
+        }
         this.dialogVisible = false
         this.rejectLoading = false
       }).catch(_ => {
@@ -86,14 +114,14 @@ export default {
       })
     },
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: '' })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
     getSymbol,
     handleClear() {
       this.clearLoading = true
       this.$api.commission.CommissionCreditClear({ ids: [this.commissionCredit.id] }).then(_ => {
         this.$message({
-          message: '操作成功',
+          message: this.$t('common.success'),
           type: 'success',
           duration: 5 * 1000
         })

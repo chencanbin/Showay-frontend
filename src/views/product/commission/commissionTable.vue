@@ -3,30 +3,28 @@
     <el-button
       v-if="showButton"
       :loading="loading"
-      size="mini"
+      size="small"
       type="text"
       icon="el-icon-edit"
-      style="margin-right: 5px"
-      @click="initForm">编辑</el-button>
+      @click="initForm">{{ $t('common.edit') }}</el-button>
     <el-dialog
       id="commissionTableDialog"
       :fullscreen="fullscreen"
       :visible="dialogVisible"
       :before-close="handleClose"
-      :title="'佣金策略表( ' + title + ' )'"
       class="dialog-body"
       append-to-body>
       <!--<el-button icon="el-icon-plus" type="text" @click="addNewRow">添加新行</el-button>-->
       <el-row slot="title" class="title" style="position: relative">
         <el-col :xs="24" :sm="24" :lg="8" style="height: 40px;line-height: 40px;">
-          <span style="font-size: 16px">{{ title + ' 佣金策略表' }}</span>
+          <span style="font-size: 16px">{{ $t('product.commission.commission_table.title', [title]) }}</span>
           <span style="color: #999; font-family: YouYuan; margin-left: 10px">{{ editStatus }}</span>
         </el-col>
         <el-col :xs="24" :sm="24" :lg="{span: 8, offset: 7}">
           <el-input
             ref="search"
             v-model="wildcard"
-            placeholder="请输入搜索内容"
+            :placeholder="$t('product.commission.commission_table.search_placeholder')"
             @input="search">
             <div v-if="wildcard" slot="suffix" style="margin-top: 10px">
               {{ currentCount }} / {{ matchCount }}
@@ -39,13 +37,13 @@
       </el-row>
 
       <el-tabs v-model="activeName" type="border-card" tab-position="bottom" @tab-click="handleTabClick">
-        <el-tab-pane label="基础佣金表" name="basic">
+        <el-tab-pane :label="$t('product.commission.commission_table.basic_tab')" name="basic">
           <hot-table v-loading="loading" ref="basicTable" :settings="settings"/>
         </el-tab-pane>
-        <el-tab-pane label="Override佣金表" name="override">
+        <el-tab-pane :label="$t('product.commission.commission_table.override_tab')" name="override">
           <hot-table v-loading="loading" ref="overrideTable" :settings="settings"/>
         </el-tab-pane>
-        <el-tab-pane label="总佣金表" name="overall">
+        <el-tab-pane :label="$t('product.commission.commission_table.overall_tab')" name="overall">
           <span style="margin-bottom: 10px; display: inline-block">
             <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange"/>
           </span>
@@ -54,23 +52,23 @@
       </el-tabs>
       <el-dialog
         :visible.sync="timeDialogVisible"
+        :title="$t('product.commission.commission_table.effectDateTitle')"
         width="400px"
-        title="佣金生效时间"
         append-to-body>
         <el-form ref="configForm" label-width="70px">
-          <el-form-item label="生效时间">
+          <el-form-item :label="$t('product.commission.commission_table.effectDate')">
             <el-date-picker
               v-model="effectiveDate"
               type="datetime"
               value-format="timestamp"
               style="width: 100%"/>
           </el-form-item>
-          <el-form-item label="备注" prop="remarks">
-            <el-input v-model="remarks" placeholder="请输入备注"/>
+          <el-form-item :label="$t('common.remarks')" prop="remarks">
+            <el-input v-model="remarks" :placeholder="$t('common.remarks_placeholder')"/>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer" style="text-align: center">
-          <el-button :loading="buttonLoading" type="primary" @click="handlePublish">确定</el-button>
+          <el-button :loading="buttonLoading" type="primary" @click="handlePublish">{{ $t('common.submitButton') }}</el-button>
         </div>
       </el-dialog>
 
@@ -82,13 +80,13 @@
         append-to-body>
         <hot-table v-loading="loading" ref="setOverrideHotInstance" :settings="setOverrideSettings"/>
         <div slot="footer" class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="handleCloseSetOverrideDialog">确定</el-button>
+          <el-button :loading="buttonLoading" type="primary" @click="handleCloseSetOverrideDialog">{{ $t('common.submitButton') }}</el-button>
         </div>
       </el-dialog>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="handleTimeDialogOpen">发布</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="handleTimeDialogOpen">{{ $t('product.commission.commission_table.publish_button') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -216,7 +214,7 @@ export default {
         contextMenu: {
           items: {
             'override': { // Own custom option
-              name: '设置Override',
+              name: this.$t('product.commission.commission_table.override_setting'),
               callback: (key, selection, clickEvent) => {
                 const serialNumberArray = []
                 const rowLengthArray = []
@@ -246,7 +244,7 @@ export default {
           }
         },
         afterBeginEditing: (row, coloumn) => {
-          this.editStatus = '正在修改.....'
+          this.editStatus = this.$t('product.commission.commission_table.edit_status.modifying')
         },
         afterChange: (changes, source) => {
           if (source === 'loadData') {
@@ -254,6 +252,15 @@ export default {
           }
           if (changes) {
             const data = []
+            let type = 0
+            let instance = this.basicHotInstance
+            if (this.activeName === 'override') {
+              type = 1
+              instance = this.overrideHotInstance
+            } else if (this.activeName === 'overall') {
+              type = 2
+              instance = this.overallHotInstance
+            }
             changes.forEach(([row, column, oldValue, newValue]) => {
               let value = ''
               if (newValue) {
@@ -262,18 +269,18 @@ export default {
               if (value && value.substr(-1) === '%') {
                 value = value.substr(0, value.length - 1)
               }
-              data.push({ row, column, value })
+              const sourceData = _.compact(instance.getSourceDataAtRow(row))
+              if (sourceData.length === 0) {
+                data.push({ row, value })
+              } else {
+                data.push({ row, column, value })
+              }
             })
-            this.editStatus = '正在保存.....'
-            let type = 0
-            if (this.activeName === 'override') {
-              type = 1
-            } else if (this.activeName === 'overall') {
-              type = 2
-            }
+            this.editStatus = this.$t('product.commission.commission_table.edit_status.saving')
+
             this.$api.commission.commissionTableDraft(this.id, { data, type }).then(res => {
               const date = new Date()
-              this.editStatus = '最近保存 ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+              this.editStatus = this.$t('product.commission.commission_table.edit_status.latest_save', [':' + date.getMinutes() + ':' + date.getSeconds()])
             }).catch(_ => {
               this.basicHotInstance.undo()
               this.overallHotInstance.undo()
@@ -323,7 +330,7 @@ export default {
         contextMenu: {
           items: {
             'override': { // Own custom option
-              name: '设置Override',
+              name: this.$t('product.commission.commission_table.override_setting'),
               callback: (key, selection, clickEvent) => {
                 const serialNumberArray = []
                 const rowLengthArray = []
@@ -365,17 +372,22 @@ export default {
   },
   methods: {
     initColumn() {
-      const colHeaders = ['计划名称', 'ENG name', '产品编号', '年期']
+      const colHeaders = [
+        this.$t('product.commission.commission_table.col_header.product_name'),
+        this.$t('product.commission.commission_table.col_header.ENG_name'),
+        this.$t('product.commission.commission_table.col_header.product_id'),
+        this.$t('product.commission.commission_table.col_header.period')
+      ]
       // const columns = [{ data: 'zh', renderer: this.textFormatter }, { data: 'en', renderer: this.textFormatter }, { data: 'pId' }, { data: 'years' }]
       const columns = [{ renderer: this.textFormatter }, { renderer: this.textFormatter }, {}, {}]
       const colWidths = []
       for (let i = 1; i <= 15; i++) {
         colWidths.push(85)
-        colHeaders.push('第' + i + '年')
+        colHeaders.push(this.$t('product.commission.commission_table.col_header.year', [i]))
         columns.push({ renderer: this.toPercent })
       }
       colWidths.push(85)
-      colHeaders.push('15年以后')
+      colHeaders.push(this.$t('product.commission.commission_table.col_header.after_15_year'))
       columns.push({ renderer: this.toPercent })
       if (this.activeName === 'basic') {
         colWidths.push(85)
@@ -387,16 +399,21 @@ export default {
       this.settings.columns = columns
     },
     initOverAll() {
-      const colHeaders = ['计划名称', 'ENG name', '产品编号', '年期']
+      const colHeaders = [
+        this.$t('product.commission.commission_table.col_header.product_name'),
+        this.$t('product.commission.commission_table.col_header.ENG_name'),
+        this.$t('product.commission.commission_table.col_header.product_id'),
+        this.$t('product.commission.commission_table.col_header.period')
+      ]
       const columns = [{ renderer: this.textFormatter, readOnly: true }, { renderer: this.textFormatter, readOnly: true }, { readOnly: true }, { readOnly: true }]
       const colWidths = []
       for (let i = 1; i <= 15; i++) {
         colWidths.push(85)
-        colHeaders.push('第' + i + '年')
+        colHeaders.push(this.$t('product.commission.commission_table.col_header.year', [i]))
         columns.push({ renderer: this.toPercent, readOnly: true })
       }
       colWidths.push(85)
-      colHeaders.push('15年以后')
+      colHeaders.push(this.$t('product.commission.commission_table.col_header.after_15_year'))
       columns.push({ renderer: this.toPercent, readOnly: true })
       this.overAllSettings.colHeaders = colHeaders
       this.overAllSettings.colWidths = _.concat(this.settings.colWidths, colWidths)
@@ -411,10 +428,10 @@ export default {
         this.setOverrideHotInstance = this.$refs.setOverrideHotInstance.hotInstance
         _.forEach(_.range(1, minLength - 3, 1), i => {
           if (i > 15) {
-            overrideHeaders.push('15年以后')
+            overrideHeaders.push(this.$t('product.commission.commission_table.col_header.after_15_year'))
             overrideColumns.push({ renderer: this.toPercent })
           } else {
-            overrideHeaders.push('第' + i + '年')
+            overrideHeaders.push(this.$t('product.commission.commission_table.col_header.year', [i]))
             overrideColumns.push({ renderer: this.toPercent })
           }
         })
@@ -487,6 +504,13 @@ export default {
     },
     loadBasicData() {
       this.loading = true
+      const initData = []
+      for (let x = 0; x < 21; x++) {
+        for (let y = 0; y < 1000; y++) {
+          initData.push([y, x, ''])
+        }
+      }
+      this.basicHotInstance.setDataAtRowProp(initData, 'loadData')
       this.$api.commission.fetchCommissionList(this.id).then(res => {
         const result = []
         if (this.created && res.data.list.length === 0) {
@@ -509,11 +533,19 @@ export default {
     },
     loadOverrideData() {
       this.loading = true
+      const initData = []
+      for (let x = 0; x < 21; x++) {
+        for (let y = 0; y < 1000; y++) {
+          initData.push([y, x, ''])
+        }
+      }
+      this.overrideHotInstance.setDataAtRowProp(initData, 'loadData')
       this.$api.commission.fetchCommissionList(this.id).then(res => {
         const result = []
         res.data.list.forEach(item => {
           result.push([item.row, item.column, item.value.override])
         })
+
         this.overrideHotInstance.setDataAtRowProp(result, 'loadData')
         this.overrideHotInstance.render()
         this.loading = false
@@ -523,6 +555,13 @@ export default {
     },
     loadOverallData() {
       this.loading = true
+      const initData = []
+      for (let x = 0; x < 21; x++) {
+        for (let y = 0; y < 1000; y++) {
+          initData.push([y, x, ''])
+        }
+      }
+      this.overallHotInstance.setDataAtRowProp(initData, 'loadData')
       this.$api.commission.fetchCommissionList(this.id, { ffyap: this.ffyap }).then(res => {
         const result = []
         res.data.list.forEach(item => {
@@ -537,9 +576,9 @@ export default {
       })
     },
     handleClose() {
-      this.$confirm('是否需要关闭次页面?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('common.tooltip.close'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning'
       }).then(() => {
         this.wildcard = ''

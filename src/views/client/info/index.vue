@@ -5,8 +5,8 @@
         <el-form-item label="" prop="wildcard">
           <el-input
             v-model="wildcard"
+            :placeholder="$t('client.info.search')"
             clearable
-            placeholder="搜索(客户姓名 | 证件号)"
             @input="search">
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
@@ -20,42 +20,42 @@
         stripe
       >
         <el-table-column
+          :label="$t('client.info.name')"
           prop="name"
-          label="客户姓名"
           show-overflow-tooltip/>
         <el-table-column
+          :label="$t('client.info.idNumber')"
           prop="idNumber"
-          label="证件号"
           min-width="120"
           show-overflow-tooltip/>
         <el-table-column
+          :label="$t('client.info.locale')"
           prop="locale"
-          width="100"
-          label="国籍"/>
+          width="100"/>
         <el-table-column
+          :label="$t('client.info.sex')"
           prop="sex"
-          label="性别"
           width="70">
           <template slot-scope="scope">
-            {{ scope.row.sex === 0 ? '男' : '女' }}
+            {{ scope.row.sex === 0 ? $t('client.info.male') : $t('client.info.female') }}
           </template>
         </el-table-column>
         <el-table-column
+          :label="$t('client.info.birthday')"
           :formatter="dateFormat"
           prop="birthday"
-          label="出生日期"
           width="100"/>
         <el-table-column
+          :label="$t('client.info.phone')"
           prop="phone"
-          label="电话号码"
           min-width="120"
           show-overflow-tooltip/>
         <el-table-column
+          :label="$t('client.info.email')"
           prop="email"
-          label="电子邮箱"
           show-overflow-tooltip
           min-width="120"/>
-        <el-table-column label="操作" width="180" align="center">
+        <el-table-column :label="$t('common.action')" width="180" align="center">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button type="primary" plain size="mini">
@@ -68,9 +68,9 @@
                 <el-dropdown-item>
                   <el-button
                     type="text"
-                    size="mini"
+                    size="small"
                     icon="el-icon-delete"
-                    @click="handleDelete(scope.$index, scope.row)">删除
+                    @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
                   </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -130,16 +130,16 @@ export default {
       return parseTime(date, '{y}-{m}-{d}')
     },
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('client.info.tooltip.delete'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             this.$api.client.deleteClient(row.id).then(res => {
               this.$message({
-                message: '操作成功',
+                message: this.$t('common.success'),
                 type: 'success',
                 duration: 5 * 1000
               })

@@ -1,5 +1,5 @@
 <template>
-  <el-switch :value="file.showInHomePage" @change="handleChange"/>
+  <el-switch :active-text="$t('document.advertising')" :value="file.showInHomePage" @change="handleChange"/>
 </template>
 
 <script>
@@ -24,7 +24,7 @@ export default {
       this.loading = true
       this.$api.document.editFile(this.file.id, this.file).then(_ => {
         this.$message({
-          message: '操作成功',
+          message: this.$t('common.success'),
           type: 'success',
           duration: 5 * 1000
         })

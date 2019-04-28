@@ -1,32 +1,32 @@
 <template>
   <span id="riderBenefits">
-    <el-button type="text" size="mini" style="margin-right: 5px" @click="initForm">
+    <el-button type="text" size="small" style="margin-right: 5px" @click="initForm">
       <svg-icon icon-class="riderBenefit" style="margin-right: 5px"/>
-      副险
+      {{ $t('client.insurance_policy.riderBenefits') }}
     </el-button>
     <el-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
       :fullscreen="true"
-      title= "副险列表"
+      :title= " $t('client.insurance_policy.riderBenefits_title') "
       append-to-body>
       <el-table
         :data="riderBenefits"
         stripe>
-        <el-table-column prop="product.name" label="产品"/>
-        <el-table-column label="保费">
+        <el-table-column :label="$t('client.insurance_policy.product')" prop="product.name"/>
+        <el-table-column :label="$t('client.insurance_policy.premium')">
           <template slot-scope="scope">
             <span class="left_text">{{ getSymbol(currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.premium) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="premium" label="保额">
+        <el-table-column :label="$t('client.insurance_policy.amountInsured')" prop="amountInsured">
           <template slot-scope="scope">
             <span class="left_text">{{ getSymbol(currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.amountInsured) }}</span>
           </template>
         </el-table-column>
         <el-table-column
+          :label="$t('client.insurance_policy.riderBenefits_status')"
           prop="policyStatus"
-          label="副险状态"
           min-width="100">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.status === 1" type="danger">
@@ -37,22 +37,22 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="160">
+        <el-table-column :label="$t('common.action')" width="160">
           <template slot-scope="scope">
             <edit :rider-benefit="scope.row" :company-id="companyId" :currency="currency"/>
             <el-button
               type="text"
-              size="mini"
+              size="small"
               icon="el-icon-delete"
-              @click="handleDelete(scope.$index, scope.row)">删除
+              @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
       <add :company-id="companyId" :currency="currency" style="margin-top: 10px" @afterAdd="afterAdd" />
       <div slot="footer" style="text-align: center">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="saveLoading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="saveLoading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -111,7 +111,7 @@ export default {
   methods: {
     getSymbol,
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: '' })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
     initForm() {
       this.language = Cookies.get('language') || 'zh-CN'
@@ -128,9 +128,9 @@ export default {
     },
     // 处理删除保单事件
     handleDelete(index, row) {
-      this.$confirm('此操作将删除该副险, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('client.insurance_policy.tooltip.delete_riderBenefit'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning'
       }).then(() => {
         this.riderBenefits.splice(index, 1)
@@ -144,7 +144,7 @@ export default {
       })
       this.$api.client.editInsurancePolicy(this.id, { riderBenefits: data }).then(_ => {
         this.$message({
-          message: '操作成功',
+          message: this.$t('common.success'),
           type: 'success',
           duration: 5 * 1000
         })

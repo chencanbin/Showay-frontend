@@ -30,3 +30,34 @@ export function deleteUser(id) {
     method: 'delete'
   })
 }
+
+export function addChannelHierarchy(data) {
+  return request({
+    url: `/channelHierarchy`,
+    method: 'post',
+    data
+  })
+}
+
+export function editChannelHierarchy(id, data) {
+  return request({
+    url: `/channelHierarchy/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteChannelHierarchy(id) {
+  return request({
+    url: `/channelHierarchy/${id}`,
+    method: 'delete'
+  })
+}
+
+export function fetchChannelHierarchy(params) {
+  return request({
+    url: `/channelHierarchy`,
+    method: 'get',
+    params
+  })
+}

@@ -1,7 +1,7 @@
 <template>
   <el-card v-loading="loading" style="padding:16px 16px 0;margin-bottom:32px;">
     <div slot="header" class="clearfix">
-      <span>渠道业绩比例分布</span>
+      <span>{{ $t('home.channelPerformanceScale') }}</span>
     </div>
     <div id="channelPie"/>
   </el-card>

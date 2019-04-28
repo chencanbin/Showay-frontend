@@ -1,28 +1,28 @@
 <template>
   <span>
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">编辑</el-button>
+    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ $t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       id="editRenew"
       :before-close="handleClose"
       :visible="dialogVisible"
-      title="续费"
+      :title= "$t('client.insurance_policy.renewal')"
       width="400px"
       append-to-body>
       <el-form id="editRenew" ref="renewal" :model="form" label-width="60px">
-        <el-form-item label="产品:">
+        <el-form-item :label="$t('client.insurance_policy.product_name')">
           <span>{{ data.product.name }}</span>
         </el-form-item>
-        <el-form-item label="年期:" prop="year">
+        <el-form-item :label="$t('client.insurance_policy.term')" prop="year">
           <span>{{ renewal.year }}</span>
         </el-form-item>
-        <el-form-item label="保费:" prop="premium">
-          <currency-input ref="premium" v-model="form.premium" :symbol="getSymbol(currency)" placeholder="请输入保费"/>
+        <el-form-item :label="$t('client.insurance_policy.premium')" prop="premium">
+          <currency-input ref="premium" v-model="form.premium" :symbol="getSymbol(currency)" :placeholder="$t('client.insurance_policy.set.premium')"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">保存</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -90,7 +90,7 @@ export default {
           this.loading = true
           this.$api.client.editRenewal(this.renewal.id, { insurancePolicy: this.id, product: this.data.product.id, premium: this.form.premium, year: this.renewal.year }).then(res => {
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })

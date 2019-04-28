@@ -1,27 +1,35 @@
 <template>
   <span>
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">结清</el-button>
+    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">结清</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="结清佣金"
+      :title="$t('commission.payment.cleared_title')"
       top="50px"
       width="600px">
       <el-form ref="clear" :model="clear" label-width="100px">
-        <el-form-item label="支票号码" prop="chequeNumber">
-          <el-input v-model="clear.chequeNumber" placeholder="请输入支票号码"/>
+        <el-form-item :label="$t('commission.payment.chequeNumber')" prop="chequeNumber">
+          <el-input v-model="clear.chequeNumber" :placeholder="$t('commission.payment.set.chequeNumber')"/>
         </el-form-item>
-        <el-form-item label="支票扫描件" prop="chequeCopy">
+        <el-form-item :label="$t('commission.payment.chequeCopy')" prop="chequeCopy">
           <image-upload :cheque-copy="clear.chequeCopy" @afterComplete="setChequeCopy"/>
         </el-form-item>
-        <el-form-item label="备注" prop="chequeNumber">
-          <el-input v-model="clear.remarks" placeholder="请输入备注"/>
+        <el-form-item :label="$t('user.effectiveDate')" prop="effectiveDate">
+          <el-date-picker
+            v-model="clear.chequeIssueDate"
+            :placeholder="$t('user.set.effectiveDate')"
+            type="date"
+            value-format="timestamp"
+            style="width: 100%"/>
+        </el-form-item>
+        <el-form-item :label="$t('common.remarks')" prop="chequeNumber">
+          <el-input v-model="clear.remarks" :placeholder="$t('common.remarks_placeholder')"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -49,6 +57,7 @@ export default {
       clear: {
         chequeNumber: '',
         chequeCopy: '',
+        chequeIssueDate: '',
         remarks: ''
       },
       dialogVisible: false,
@@ -69,7 +78,7 @@ export default {
           this.loading = true
           this.$api.commission.mergedPaymentClear(this.id, this.clear).then(_ => {
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })
@@ -85,6 +94,7 @@ export default {
       })
     },
     setChequeCopy(key) {
+      console.log(key)
       this.clear.chequeCopy = key
     }
   }

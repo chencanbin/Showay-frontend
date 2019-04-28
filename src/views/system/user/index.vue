@@ -1,13 +1,54 @@
 <template>
-  <div class="table-container">
+  <div id="user" class="table-container">
     <basic-container>
       <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
-      <el-table v-loading="userLoading" :data="users.list" :height="height" stripe>
-        <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
-        <el-table-column label="缩写" prop="acronym" show-overflow-tooltip/>
-        <el-table-column :label="$t('user.table_header.account')" prop="login"/>
-        <el-table-column label="上级" prop="superior.name" show-overflow-tooltip/>
-        <el-table-column :label="$t('user.table_header.role')" prop="roles" min-width="100px">
+      <el-table
+        v-loading="userLoading"
+        :data="users.list"
+        :row-class-name="setClassName"
+        :height="height"
+        :expand-row-keys="expandKeys"
+        row-key="id"
+        stripe
+        @expand-change="expandChange">
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <div v-loading="channelHierarchyLoading" class="clearfix">
+              <el-timeline id="channelCommissionTableList">
+                <div v-if="channelHierarchy.list && channelHierarchy.list.length === 0" style="text-align: center; color: #909399;">
+                  {{ $t('user.set.none_superior') }}
+                </div>
+                <el-timeline-item v-for="(item, index) in channelHierarchy.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
+                  <el-dropdown class="action-dropdown">
+                    <el-button type="primary" plain size="mini">
+                      <i class="el-icon-more"/>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item>
+                        <edit-channel-hierarchy :hierarchy="item"/>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <el-button type="text" size="small" icon="el-icon-delete" @click="handleDeleteChannelHierarchy(item.id)">{{ $t('common.delete') }}</el-button>
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                  <el-card>
+                    <div class="bottom clearfix">
+                      <p style="display: inline-block; margin-left: 12px">{{ $t('user.superior') }} : {{ item.superior ? item.superior.name: '-' }}</p>
+                      <p style="display: inline-block; margin: 0 0 0 20px">{{ $t('common.remarks') }} : {{ item.remarks }}</p>
+                    </div>
+                  </el-card>
+                </el-timeline-item>
+              </el-timeline>
+              <add-channel-hierarchy :user="scope.row"/>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('user.name')" prop="name" show-overflow-tooltip/>
+        <el-table-column :label="$t('user.acronym')" prop="acronym" show-overflow-tooltip/>
+        <el-table-column :label="$t('user.account')" prop="login"/>
+        <!--<el-table-column :label="$t('user.superior')" prop="superior.name" show-overflow-tooltip/>-->
+        <el-table-column :label="$t('user.role')" prop="roles" min-width="100px">
           <template slot-scope="scope">
             <el-tag
               v-for="role in scope.row.roles"
@@ -39,7 +80,7 @@
                     type="text"
                     size="small"
                     icon="el-icon-delete"
-                    @click="handleDelete(scope.$index, scope.row)">{{ $t('action.del') }}
+                    @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
                   </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -55,6 +96,8 @@
 <script>
 import add from './add'
 import edit from './edit'
+import addChannelHierarchy from './addChannelHierarchy'
+import editChannelHierarchy from './editChannelHierarchy'
 import pagination from '@/components/Pagination'
 import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
@@ -64,11 +107,13 @@ export default {
   components: {
     add,
     edit,
+    addChannelHierarchy,
+    editChannelHierarchy,
     pagination
   },
   data() {
     return {
-      events: [],
+      expandKeys: [],
       height: document.body.clientHeight - 190,
       listQuery: {
         page: 1,
@@ -79,6 +124,8 @@ export default {
   computed: {
     ...mapState({
       userLoading: state => state.user.userLoading,
+      channelHierarchy: state => state.user.channelHierarchy,
+      channelHierarchyLoading: state => state.user.channelHierarchyLoading,
       users: state => state.user.users
     })
   },
@@ -86,21 +133,57 @@ export default {
     this.getUsers()
   },
   methods: {
+    setClassName(scope) {
+      let result = 'no_expand'
+      scope.row.roles.forEach(item => {
+        if (item.id === 2) {
+          result = 'expand'
+        }
+      })
+      return result
+    },
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该账号, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('user.tooltip.delete'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             this.$api.user.deleteUser(row.id).then(res => {
               this.$message({
-                message: '操作成功',
+                message: this.$t('common.success'),
                 type: 'success',
                 duration: 5 * 1000
               })
               this.getUsers()
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
+      }).then(() => {
+      })
+    },
+    handleDeleteChannelHierarchy(id) {
+      this.$confirm(this.$t('user.tooltip.delete_superior'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.user.deleteChannelHierarchy(id).then(res => {
+              this.$message({
+                message: this.$t('common.success'),
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getChannelHierarchy()
               instance.confirmButtonLoading = false
               done()
             }).catch(_ => {
@@ -120,6 +203,26 @@ export default {
     getUsers(param) {
       this.$store.dispatch('FetchUserList', param)
     },
+    getChannelHierarchy(params) {
+      this.$store.dispatch('FetchChannelHierarchy', params)
+    },
+    getFormattedDate(value) {
+      return parseTime(value, '{y}-{m}-{d}')
+    },
+    expandChange(row, expandedRows) {
+      if (this.expandKeys.indexOf(row.id) >= 0) {
+        // 收起当前行
+        this.expandKeys.shift()
+        return
+      }
+      this.getChannelHierarchy({ owner: row.id })
+      this.expandKeys.shift()
+      this.expandKeys.push(row.id)
+      if (expandedRows.length > 1) {
+        // 只展开当前选项
+        expandedRows.shift()
+      }
+    },
     pagination(pageObj) {
       const offset = (pageObj.page - 1) * pageObj.limit
       const max = pageObj.limit
@@ -135,3 +238,31 @@ export default {
   }
 }
 </script>
+<style lang="scss" rel="stylesheet/scss" type="text/scss">
+  #user {
+    p {
+      font-size: 14px;
+      line-height: 1.5em;
+      color: #5e6d82;
+    }
+    .action-dropdown {
+      display: inline-block;
+      position: relative;
+      color: #606266;
+      font-size: 14px;
+      position: absolute;
+      top: -2px;
+      left: 110px;
+    }
+    .el-card.is-always-shadow {
+      box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    }
+    .no_expand .el-table__expand-column .cell {
+      display: none;
+    }
+    .el-table__expanded-cell {
+      padding: 10px;
+    }
+  }
+
+</style>

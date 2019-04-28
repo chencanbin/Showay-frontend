@@ -54,7 +54,7 @@
                   type="text"
                   size="mini"
                   icon="el-icon-delete"
-                  @click="handleDelete(scope.$index, scope.row)">删除
+                  @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
                 </el-button>
               </el-dropdown-item>
             </el-dropdown-menu>

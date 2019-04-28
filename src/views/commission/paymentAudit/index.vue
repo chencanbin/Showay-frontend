@@ -6,8 +6,8 @@
           <el-form-item label="" prop="wildcard">
             <el-input
               v-model="wildcard"
+              :placeholder="$t('commission.payment.search')"
               clearable
-              placeholder="搜索"
               @input="search">
               <i slot="prefix" class="el-input__icon el-icon-search"/>
             </el-input>
@@ -15,29 +15,29 @@
         </el-form>
         <pagination :total="auditPayment.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
         <el-table v-loading="auditPaymentLoading" :height="height" :data="auditPayment.list" stripe border>
-          <el-table-column label="渠道" prop="channel.name" min-width="150"/>
-          <el-table-column label="预计应发总额" min-width="120">
+          <el-table-column :label="$t('commission.payment.channel')" prop="channel.name" min-width="150"/>
+          <el-table-column :label="$t('commission.payment.calculatedTotalInHkd')" min-width="120">
             <template slot-scope="scope">
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.calculatedTotalInHkd) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="预计实发总额" min-width="120">
+          <el-table-column :label="$t('commission.payment.predictedTotalInHkd')" min-width="120">
             <template slot-scope="scope">
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.predictedTotalInHkd) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="实发总额" min-width="120">
+          <el-table-column :label="$t('commission.payment.amountInHkd')" min-width="120">
             <template slot-scope="scope">
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.amountInHkd) }}</span>
             </template>
           </el-table-column>
-          <el-table-column v-if="activeName === '3'" label="支票号码" prop="chequeNumber"/>
-          <el-table-column v-if="activeName === '3'" label="支票扫描件" prop="chequeCopy" align="center">
+          <el-table-column v-if="activeName === '3'" :label="$t('commission.payment.chequeNumber')" prop="chequeNumber"/>
+          <el-table-column v-if="activeName === '3'" :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" align="center">
             <template slot-scope="scope">
-              <el-button type="text" @click="viewScanFile(scope.row.chequeCopy)">查看</el-button>
+              <el-button type="text" @click="viewScanFile(scope.row.chequeCopy)">{{ $t('common.view') }}</el-button>
             </template>
           </el-table-column>
-          <el-table-column label="状态" width="100" align="center">
+          <el-table-column :label="$t('common.status')" width="100" align="center">
             <template slot-scope="scope">
               <el-tag v-if="activeName === '-1'" style="color: #409eff;">{{ statusFormatter(activeName) }}</el-tag>
               <el-tag v-if="activeName === '0'" type="warning">{{ statusFormatter(activeName) }}</el-tag>
@@ -49,7 +49,7 @@
               <!--<statusBadge v-if="activeName === '3'" :text="statusFormatter(activeName)"/>-->
             </template>
           </el-table-column>
-          <el-table-column v-if="activeName !== '3'" label="操作" width="150" align="center">
+          <el-table-column v-if="activeName !== '3'" :label="$t('common.action')" width="150" align="center">
             <template slot-scope="scope">
               <detail v-if="activeName === '-1'" :channel="scope.row.channel" :id="scope.row.id || 0" :status="activeName"/>
               <detail v-if="activeName === '0'" :channel="scope.row.channel" :id="scope.row.id || 0" :status="activeName"/>
@@ -121,7 +121,7 @@ export default {
       return result
     },
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: '' })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
     percentFormatter(row, column) {
       const number = row[column.property]

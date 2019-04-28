@@ -2,35 +2,35 @@
   <span style="margin-right: 5px">
     <el-col span.number="24" style="margin-bottom: 20px">
       <!--<div class="el-table-add-row" style="margin-top: 0" @click="initForm"><span>+ 添加</span></div>-->
-      <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加</el-button>
+      <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t('common.add') }}</el-button>
     </el-col>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
+      :title="$t('product.channel.set.add_policy.title')"
       append-to-body
-      title="添加渠道佣金策略"
       width="600px">
       <el-form ref="policy" :model="policy" :rules="rulePolicy" label-width="100px">
-        <el-form-item label="类型" prop="type">
-          <el-select v-model="policy.type" style="width: 100%" placeholder="请选择策略类型" @change="onTypeChange">
-            <el-option key="0" label="所有" value="all"/>
-            <el-option key="1" label="公司" value="companies"/>
-            <el-option key="2" label="产品" value="products"/>
+        <el-form-item :label="$t('product.channel.set.add_policy.type')" prop="type">
+          <el-select v-model="policy.type" :placeholder="$t('product.channel.set.add_policy.type_placeholder')" style="width: 100%" @change="onTypeChange">
+            <el-option key="0" :label="$t('product.channel.set.add_policy.all')" value="all"/>
+            <el-option key="1" :label="$t('product.channel.set.add_policy.company')" value="companies"/>
+            <el-option key="2" :label="$t('product.channel.set.add_policy.product')" value="products"/>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="policy.type === 'products'" label="产品" prop="products">
+        <el-form-item v-if="policy.type === 'products'" :label="$t('product.channel.set.add_policy.product')" prop="products">
           <el-select
             v-if="policy.type === 'products'"
             ref="product"
             :remote-method="searchProduct"
             :loading="productLoading"
+            :placeholder="$t('product.channel.set.add_policy.product_placeholder')"
             v-model="policy.products"
             multiple
             remote
             filterable
             value-key="id"
-            placeholder="请选择产品"
             style="width: 100%">
             <el-option
               v-for="item in products"
@@ -39,18 +39,18 @@
               :value="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="policy.type === 'companies'" label="供应商" prop="companies">
+        <el-form-item v-if="policy.type === 'companies'" :label="$t('product.channel.set.add_policy.company')" prop="companies">
           <el-select
             v-if="policy.type === 'companies'"
             ref="product"
             :loading="companyLoading"
             :remote-method="searchCompany"
+            :placeholder="$t('product.channel.set.add_policy.company_placeholder')"
             v-model="policy.companies"
             multiple
             remote
             filterable
             value-key="id"
-            placeholder="请选择公司"
             style="width: 100%">
             <el-option
               v-for="item in companies"
@@ -59,21 +59,21 @@
               :value="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="policy.type" label="年期" prop="term" >
-          <el-select v-model="policy.term" style="width: 100%" placeholder="请选择年期">
+        <el-form-item v-if="policy.type" :label="$t('product.channel.set.add_policy.term')" prop="term" >
+          <el-select v-model="policy.term" :placeholder="$t('product.channel.set.add_policy.term_placeholder')" style="width: 100%" >
             <el-option
               v-for="item in totalYear"
               :key="item"
-              :label= "`${item}年`"
+              :label= "`${item}`"
               :value="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="policy.term > 1" label="自定义年期" prop="userDefined">
-          <el-select v-if="policy.term > 1" v-model="policy.userDefined" placeholder="请选择自定义年期" style="width: 100%" @change="userDefinedChange">
+        <el-form-item v-if="policy.term > 1" :label="$t('product.channel.set.add_policy.userDefined')" prop="userDefined">
+          <el-select v-if="policy.term > 1" v-model="policy.userDefined" :placeholder="$t('product.channel.set.add_policy.user_defined_placeholder')" style="width: 100%" @change="userDefinedChange">
             <el-option
               v-for="item in generateDefinedYear"
               :key="item"
-              :label= "`${item}年`"
+              :label= "`${item}`"
               :value="item"/>
           </el-select>
         </el-form-item>
@@ -83,20 +83,20 @@
           :key="item.id"
           :prop="`conditions.${item.value}`"
           :rules="[
-            {required: true, message: '请输入佣金率', trigger: 'blur'}
+            {required: true, message: $t('product.channel.set.add_policy.verify_message.commission_rate'), trigger: 'blur'}
           ]"
         >
           <el-input v-model="policy.conditions[item.value]">
             <template slot="append">%</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
+        <el-form-item :label="$t('common.remarks')" prop="remark">
           <el-input v-model="policy.remark"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -126,9 +126,9 @@ export default {
       },
       totalYear: _.range(1, 16),
       rulePolicy: {
-        type: [{ required: true, message: '请选择策略类型', trigger: ['blur', 'change'] }],
-        term: [{ required: true, message: '年期必须选', trigger: 'blur' }],
-        userDefined: [{ required: true, message: '自定义年期必须选', trigger: 'blur' }]
+        type: [{ required: true, message: this.$t('product.channel.set.add_policy.verify_message.type'), trigger: ['blur', 'change'] }],
+        term: [{ required: true, message: this.$t('product.channel.set.add_policy.verify_message.term'), trigger: 'blur' }],
+        userDefined: [{ required: true, message: this.$t('product.channel.set.add_policy.verify_message.userDefined'), trigger: 'blur' }]
       }
     }
   },
@@ -140,14 +140,14 @@ export default {
       const result = []
       // this.policy.commissionRates = []
       if (this.policy.term === 1 || this.policy.userDefined === 1) {
-        result.push({ label: `第1年`, value: 1 })
+        result.push({ label: this.$t('common.year', [1]), value: 1 })
       } else if (this.policy.userDefined > 1) {
         for (let i = 0; i < this.policy.userDefined; i++) {
-          result.push({ label: `第${i + 1}年`, value: i })
+          result.push({ label: this.$t('common.year', [i + 1]), value: i })
         }
       }
       if (this.policy.userDefined && this.policy.userDefined < this.policy.term) {
-        result.push({ label: `第${this.policy.userDefined}年之后`, value: this.policy.userDefined + 1 })
+        result.push({ label: this.$t('common.after_i_year', [this.policy.userDefined]), value: this.policy.userDefined + 1 })
       }
       return result
     }
@@ -169,7 +169,7 @@ export default {
           })
           this.$emit('addPolicy', result)
           this.$message({
-            message: '操作成功',
+            message: this.$t('common.success'),
             type: 'success',
             duration: 5 * 1000
           })

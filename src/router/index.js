@@ -91,19 +91,19 @@ export const asyncRouterMap = [
         path: 'company',
         component: () => import('@/views/product/company'),
         name: 'company',
-        meta: { title: '合作机构', icon: 'company', noCache: true, roles: [1, 2] }
+        meta: { title: 'company', icon: 'company', noCache: true, roles: [1, 2] }
       },
       {
-        path: 'commission',
+        path: 'productCommission',
         component: () => import('@/views/product/commission/index'),
-        name: '产品佣金',
-        meta: { title: '产品佣金', icon: 'commission', noCache: true, roles: [1] }
+        name: 'productCommission',
+        meta: { title: 'productCommission', icon: 'commission', noCache: true, roles: [1] }
       },
       {
-        path: 'channel_strategy',
+        path: 'channelCommission',
         component: () => import('@/views/product/channel/index'),
-        name: '渠道佣金',
-        meta: { title: '渠道佣金', icon: 'client', noCache: true, roles: [1, 2] }
+        name: 'channelCommission',
+        meta: { title: 'channelCommission', icon: 'client', noCache: true, roles: [1, 2] }
       }
     ]
   },
@@ -114,16 +114,16 @@ export const asyncRouterMap = [
     meta: { title: 'client', icon: 'client', noCache: true },
     children: [
       {
-        path: '/policy',
+        path: '/insurancePolicy',
         component: () => import('@/views/client/policy'),
-        name: '保单',
-        meta: { title: '保单', icon: 'policy', noCache: true }
+        name: 'insurancePolicy',
+        meta: { title: 'insurancePolicy', icon: 'policy', noCache: true }
       },
       {
-        path: '/info',
+        path: '/clientInfo',
         component: () => import('@/views/client/info'),
-        name: '客户资料',
-        meta: { title: '客户资料', icon: 'info', noCache: true, roles: [1, 3] }
+        name: 'clientInfo',
+        meta: { title: 'clientInfo', icon: 'info', noCache: true, roles: [1, 3] }
       }
     ]
   },
@@ -131,13 +131,13 @@ export const asyncRouterMap = [
     path: '/commission',
     component: Layout,
     redirect: 'noredirect',
-    meta: { title: '佣金', icon: 'channel', noCache: true, roles: [1, 2, 4] },
+    meta: { title: 'commission', icon: 'channel', noCache: true, roles: [1, 2, 4] },
     children: [
       {
         path: 'commissionCredit',
         component: () => import('@/views/commission/commissionCredit/index'),
-        name: '到账记录',
-        meta: { title: '到账记录', icon: 'credit', noCache: true, roles: [1, 3] }
+        name: 'commissionCredit',
+        meta: { title: 'commissionCredit', icon: 'credit', noCache: true, roles: [1, 3] }
       },
       // {
       //   path: 'channelCommissionPayment',
@@ -148,8 +148,14 @@ export const asyncRouterMap = [
       {
         path: 'paymentAudit',
         component: () => import('@/views/commission/paymentAudit/index'),
-        name: '发放记录',
-        meta: { title: '发放记录', icon: 'payment', noCache: true, roles: [1, 2] }
+        name: 'paymentAudit',
+        meta: { title: 'paymentAudit', icon: 'payment', noCache: true, roles: [1, 2] }
+      },
+      {
+        path: 'cleared',
+        component: () => import('@/views/commission/cleared/index'),
+        name: 'cleared',
+        meta: { title: 'cleared', icon: 'cleared', noCache: true, roles: [1, 2] }
       }
     ]
   },
@@ -161,9 +167,9 @@ export const asyncRouterMap = [
     children: [
       {
         path: '',
-        name: '保单审计',
+        name: 'audit',
         component: () => import('@/views/audit/index'),
-        meta: { title: '保单审计', icon: 'audit', noCache: true }
+        meta: { title: 'audit', icon: 'audit', noCache: true }
       }
     ]
   },
@@ -197,19 +203,19 @@ export const asyncRouterMap = [
     path: '/document',
     component: Layout,
     redirect: 'noredirect',
-    meta: { title: '文档', icon: 'document', noCache: true },
+    meta: { title: 'document', icon: 'document', noCache: true },
     children: [
       {
         path: 'internalDocument',
         component: () => import('@/views/document/internalDocument'),
-        name: '内部',
-        meta: { title: '内部文档', icon: 'int_document', noCache: true, roles: [1] }
+        name: 'internalDocument',
+        meta: { title: 'internalDocument', icon: 'int_document', noCache: true, roles: [1] }
       },
       {
         path: 'companyDocument',
         component: () => import('@/views/document/companyDocument'),
-        name: '公司文档',
-        meta: { title: '公司文档', icon: 'company_document', noCache: true }
+        name: 'companyDocument',
+        meta: { title: 'companyDocument', icon: 'company_document', noCache: true }
       }
     ]
   },

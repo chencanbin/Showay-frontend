@@ -1,54 +1,54 @@
 <template>
   <el-col :span="24" class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加</el-button>
+    <el-button class="el-table-add-row" plain type="primary" size="small" @click="initForm">+ {{ $t('common.add') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="添加公司"
+      :title="$t('product.company.set.add_title')"
       top="50px"
       width="700px">
       <el-form ref="company" :model="company" :rules="rule" inline label-width="110px">
-        <el-form-item label="公司名(英文)" prop="en">
+        <el-form-item :label="$t('product.company.set.name_en')" prop="en">
           <el-input ref="en" v-model="company.en" autofocus/>
         </el-form-item>
-        <el-form-item label="公司名(中文)" prop="zhCN">
+        <el-form-item :label="$t('product.company.set.name_zh')" prop="zhCN">
           <el-input v-model="company.zhCN"/>
         </el-form-item>
-        <el-form-item label="公司缩写" prop="acronym">
+        <el-form-item :label="$t('product.company.set.acronym')" prop="acronym">
           <el-input v-model="company.acronym"/>
         </el-form-item>
         <!--<el-form-item label="联系人" prop="contact">-->
         <!--<el-input v-model="company.contact"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item label="联系电话" prop="phone">-->
-        <!--<el-input v-model="company.phone"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="电子邮箱" prop="email">-->
-        <!--<el-input v-model="company.email"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="联系地址" prop="address">-->
-        <!--<el-input v-model="company.address"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="系统地址" prop="website">-->
-        <!--<el-input v-model="company.website"/>-->
-        <!--</el-form-item>-->
-        <el-form-item label="签约时间" prop="contractEffectiveDate">
+        <el-form-item label="联系电话" prop="phone">
+          <el-input v-model="company.phone"/>
+        </el-form-item>
+        <el-form-item label="电子邮箱" prop="email">
+          <el-input v-model="company.email"/>
+        </el-form-item>
+        <el-form-item label="联系地址" prop="address">
+          <el-input v-model="company.address"/>
+        </el-form-item>
+        <el-form-item label="系统地址" prop="website">
+          <el-input v-model="company.website"/>
+        </el-form-item>
+        <el-form-item :label="$t('product.company.set.contractEffectiveDate')" prop="contractEffectiveDate">
           <el-date-picker
             v-model="company.contractEffectiveDate"
             type="date"
             value-format="timestamp"
             style="width: 87%"/>
         </el-form-item>
-        <el-form-item label="二级供应商" prop="secondary" style="margin-right: 20px">
+        <el-form-item :label="$t('product.company.set.secondary')" prop="secondary" style="margin-right: 20px">
           <el-switch
             v-model="company.secondary"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </el-col>
@@ -67,10 +67,9 @@ export default {
         names: {}
       },
       rule: {
-        en: [{ required: true, message: '公司名(英文)必须填', trigger: 'blur' }],
-        zhCN: [{ required: true, message: '公司名(中文)必须填', trigger: 'blur' }],
-        acronym: [{ required: true, message: '公司缩写必须填', trigger: 'blur' }],
-        email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'blur'] }]
+        en: [{ required: true, message: this.$t('product.company.set.verify_message.name_en'), trigger: 'blur' }],
+        zhCN: [{ required: true, message: this.$t('product.company.set.verify_message.name_zh'), trigger: 'blur' }],
+        acronym: [{ required: true, message: this.$t('product.company.set.verify_message.acronym'), trigger: 'blur' }]
       }
     }
   },
@@ -93,16 +92,16 @@ export default {
           data.acronym = this.company.acronym
           data.secondary = this.company.secondary
           // data.contact = this.company.contact
-          // data.address = this.company.address
-          // data.email = this.company.email
-          // data.phone = this.company.phone
-          // data.website = this.company.website
+          data.address = this.company.address
+          data.email = this.company.email
+          data.phone = this.company.phone
+          data.website = this.company.website
           data.contractEffectiveDate = this.company.contractEffectiveDate
           data.localizedNames.push({ name: this.company.en, locale: 'en' })
           data.localizedNames.push({ name: this.company.zhCN, locale: 'zh_CN' })
           this.$api.company.addCompany(data).then(_ => {
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })

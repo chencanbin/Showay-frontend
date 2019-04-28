@@ -1,12 +1,12 @@
 <template>
   <el-col span.number="24" class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加</el-button>
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t('common.add') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="添加保单"
+      :title="$t('client.insurance_policy.set.add_title')"
       top="10px"
       width="70%">
       <el-form
@@ -15,28 +15,28 @@
         inline
         class="insurance-policy-form"
         label-width="80px">
-        <el-form-item label="保单号:" prop="number">
-          <el-input ref="number" v-model="insurancePolicy.number" autofocus placeholder="请输入保单号"/>
+        <el-form-item :label="$t('client.insurance_policy.number')" prop="number">
+          <el-input ref="number" v-model="insurancePolicy.number" :placeholder="$t('client.insurance_policy.set.number')" autofocus/>
         </el-form-item>
-        <el-form-item label="内部编号:" prop="sn" >
-          <el-input v-model="insurancePolicy.sn" placeholder="请输入内部编号"/>
+        <el-form-item :label="$t('client.insurance_policy.sn')" prop="sn" >
+          <el-input v-model="insurancePolicy.sn" :placeholder="$t('client.insurance_policy.set.sn')"/>
         </el-form-item>
-        <el-form-item label="申请日期:" prop="submitDate">
+        <el-form-item :label="$t('client.insurance_policy.submitDate')" prop="submitDate">
           <el-date-picker
             v-model="insurancePolicy.submitDate"
+            :placeholder="$t('client.insurance_policy.set.submitDate')"
             style="width: 100%"
-            type="date"
-            placeholder="选择日期"/>
+            type="date"/>
         </el-form-item>
-        <el-form-item label="生效日期:" prop="issueDate">
+        <el-form-item :label="$t('client.insurance_policy.issueDate')" prop="issueDate">
           <el-date-picker
             v-model="insurancePolicy.issueDate"
+            :placeholder="$t('client.insurance_policy.set.issueDate')"
             style="width: 100%"
-            type="date"
-            placeholder="选择日期"/>
+            type="date"/>
         </el-form-item>
-        <el-form-item label="申请人:" prop="applicant.id">
-          <el-select v-model="insurancePolicy.applicant.id" placeholder="请选择申请人" filterable style="width: 100%">
+        <el-form-item :label="$t('client.insurance_policy.applicant_name')" prop="applicant.id">
+          <el-select v-model="insurancePolicy.applicant.id" :placeholder="$t('client.insurance_policy.set.applicant_name')" filterable style="width: 100%">
             <el-option
               v-for="item in client.list"
               :key="item.id"
@@ -46,8 +46,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="受保人:" prop="beneficiary.id">
-          <el-select v-model="insurancePolicy.beneficiary.id" placeholder="请选择受保人" filterable style="width: 100%">
+        <el-form-item :label="$t('client.insurance_policy.beneficiary_name')" prop="beneficiary.id">
+          <el-select v-model="insurancePolicy.beneficiary.id" :placeholder="$t('client.insurance_policy.set.beneficiary_name')" filterable style="width: 100%">
             <el-option
               v-for="item in client.list"
               :key="item.id"
@@ -57,8 +57,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="保单状态:" prop="policyStatus">
-          <el-select v-model="insurancePolicy.policyStatus" placeholder="请选择保单状态" filterable style="width: 100%">
+        <el-form-item :label="$t('client.insurance_policy.policyStatus')" prop="policyStatus">
+          <el-select v-model="insurancePolicy.policyStatus" :placeholder="$t('client.insurance_policy.set.policyStatus')" filterable style="width: 100%">
             <el-option
               v-for="item in policyStatus"
               :key="item.id"
@@ -66,26 +66,26 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="币种:" prop="currency">
-          <el-select v-model="insurancePolicy.currency" placeholder="请选中币种" style="width: 100%">
+        <el-form-item :label="$t('client.insurance_policy.currency')" prop="currency">
+          <el-select v-model="insurancePolicy.currency" :placeholder="$t('client.insurance_policy.set.currency')" style="width: 100%">
             <el-option v-for="item in currencyArray" :key="item.id" :value="item.id" :label="item.desc"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="保费:" prop="premium">
-          <currency-input ref="premium" v-model="insurancePolicy.premium" :symbol="currency" placeholder="请输入保费"/>
+        <el-form-item :label="$t('client.insurance_policy.premium')" prop="premium">
+          <currency-input ref="premium" v-model="insurancePolicy.premium" :symbol="currency" :placeholder="$t('client.insurance_policy.set.premium')"/>
           <!--<el-input v-model="insurancePolicy.premium" placeholder="请输入保费" />-->
         </el-form-item>
-        <el-form-item label="保额:" prop="amountInsured">
-          <currency-input ref="amountInsured" v-model="insurancePolicy.amountInsured" :symbol="currency" placeholder="请输入保额" />
+        <el-form-item :label="$t('client.insurance_policy.amountInsured')" prop="amountInsured">
+          <currency-input ref="amountInsured" v-model="insurancePolicy.amountInsured" :symbol="currency" :placeholder="$t('client.insurance_policy.set.amountInsured')" />
           <!--<el-input v-model="insurancePolicy.amountInsured" placeholder="请输入保额" />-->
         </el-form-item>
-        <el-form-item label="续保计划:" prop="premiumPlan">
-          <el-select v-model="insurancePolicy.premiumPlan" placeholder="请选择续保计划" style="width: 100%">
+        <el-form-item :label="$t('client.insurance_policy.premiumPlan')" prop="premiumPlan">
+          <el-select v-model="insurancePolicy.premiumPlan" :placeholder="$t('client.insurance_policy.set.premiumPlan')" style="width: 100%">
             <el-option v-for="item in premiumPlan" :key="item.id" :value="item.id" :label="item[language]"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="渠道:" prop="channel.id">
-          <el-select v-model="insurancePolicy.channel.id" placeholder="请选择渠道" filterable style="width: 100%">
+        <el-form-item :label="$t('client.insurance_policy.channel')" prop="channel.id">
+          <el-select v-model="insurancePolicy.channel.id" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable style="width: 100%">
             <el-option
               v-for="item in channels.list"
               :key="item.id"
@@ -93,8 +93,8 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="签单员:" prop="agent.id">
-          <el-select v-model="insurancePolicy.agent.id" placeholder="请选择签单员" filterable style="width: 100%">
+        <el-form-item :label="$t('client.insurance_policy.agent_name')" prop="agent.id">
+          <el-select v-model="insurancePolicy.agent.id" :placeholder="$t('client.insurance_policy.set.agent_name')" filterable style="width: 100%">
             <el-option
               v-for="item in agents"
               :key="item.id"
@@ -102,12 +102,12 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="公司:" prop="company.id">
+        <el-form-item :label="$t('client.insurance_policy.company')" prop="company.id">
           <el-select
             :remote-method="searchCompany"
             :loading="companyLoading"
             v-model="insurancePolicy.company.id"
-            placeholder="请选择公司"
+            :placeholder="$t('client.insurance_policy.set.company_name')"
             filterable
             remote
             clearable
@@ -120,12 +120,12 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品:" prop="product.id" style="width: 124%;">
+        <el-form-item :label="$t('client.insurance_policy.product')" prop="product.id" style="width: 124%;">
           <el-select
             v-model="insurancePolicy.product.id"
             :remote-method="searchProduct"
             :loading="productLoading"
-            placeholder="请输入产品名或产品编号"
+            :placeholder="$t('client.insurance_policy.set.product_name')"
             filterable
             remote
             clearable
@@ -142,8 +142,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="submitLoading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="submitLoading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </el-col>
@@ -267,6 +267,9 @@ export default {
       this.productLoading = true
       this.products = []
       this.queryProduct.company = this.insurancePolicy.company.id
+      if (this.insurancePolicy.submitDate) {
+        this.queryProduct.timestamp = new Date(this.insurancePolicy.submitDate).valueOf()
+      }
       this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
         this.productLoading = false
@@ -289,9 +292,9 @@ export default {
       this.getCompanies()
     },
     handleClose() {
-      this.$confirm('窗口即将关闭, 是否放弃编辑?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('common.tooltip.close'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning'
       }).then(() => {
         this.$refs['insurancePolicy'].resetFields()
@@ -312,7 +315,7 @@ export default {
           data.riderBenefits = [] // 副险暂时不参与编辑
           this.$api.client.createInsurancePolicy(data).then(_ => {
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })

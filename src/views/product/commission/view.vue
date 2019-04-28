@@ -9,8 +9,8 @@
     <div style="display: inline-block; position: absolute; right: 30px; top: 61px; z-index: 3000;">
       <el-input
         v-model="wildcard"
+        :placeholder="$t('product.commission.view.search')"
         clearable
-        placeholder="搜索 (编号 | 中文 | 英文)"
         style="width: 300px;"
         @input="search">
         <i slot="prefix" class="el-input__icon el-icon-search"/>
@@ -18,7 +18,7 @@
       <el-button :loading="loading" size="small" plain icon="el-icon-download" type="primary" @click="exportExcel()">导出</el-button>
     </div>
     <el-tabs v-model="activeName" type="border-card">
-      <el-tab-pane label="基础佣金表" name="basic">
+      <el-tab-pane :label="$t('product.commission.view.basic_tab')" name="basic">
         <el-table v-loading="viewLoading" :data="data" :max-height="tableHeight" stripe>
           <el-table-column prop="product.acronym" label="编号" width="100" fixed="left" show-overflow-tooltip/>
           <el-table-column prop="product.name" label="产品名称(中文)" show-overflow-tooltip min-width="180" fixed="left"/>
@@ -32,15 +32,15 @@
         </el-table>
         <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       </el-tab-pane>
-      <el-tab-pane label="总佣金表" name="overall">
+      <el-tab-pane :label="$t('product.commission.view.overall_tab')" name="overall">
         <span style="margin-bottom: 10px; display: inline-block">
           <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange"/>
         </span>
         <el-table v-loading="viewLoading" :data="data" :max-height="tableHeight" stripe>
-          <el-table-column prop="product.acronym" label="编号" width="120" fixed="left" show-overflow-tooltip/>
-          <el-table-column prop="product.name" label="产品名称(中文)" fixed="left" min-width="180" show-overflow-tooltip/>
-          <el-table-column prop="product.enName" label="产品名称(英文)" fixed="left" min-width="180" show-overflow-tooltip/>
-          <el-table-column prop="product.period" label="年期" width="80"/>
+          <el-table-column :label="$t('product.commission.view.table_header.acronym')" prop="product.acronym" width="120" fixed="left" show-overflow-tooltip/>
+          <el-table-column :label="$t('product.commission.view.table_header.name')" prop="product.name" fixed="left" min-width="180" show-overflow-tooltip/>
+          <el-table-column :label="$t('product.commission.view.table_header.enName')" prop="product.enName" fixed="left" min-width="180" show-overflow-tooltip/>
+          <el-table-column :label="$t('product.commission.view.table_header.period')" prop="product.period" width="80"/>
           <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" align="right" width="90">
             <template slot-scope="scope">
               <div>{{ scope.row.conditions[index] ? numberFormatter(scope.row.conditions[index].overallCommissionRate) : '-' }}</div>
@@ -96,7 +96,7 @@ export default {
         this.data = res.data.list
         this.total = res.data.total
         this.id = id
-        this.title = res.data.company.name + ' 佣金表'
+        this.title = this.$t('product.commission.view.title', [res.data.company.name])
         const conditionLengthArray = []
         this.columnYear = []
         _.forEach(res.data.list, item => {
@@ -104,9 +104,9 @@ export default {
         })
         _.forEach(_.range(1, _.max(conditionLengthArray) + 1), item => {
           if (item > 15) {
-            this.columnYear.push('15年之后')
+            this.columnYear.push(this.$t('product.commission.view.after_15_year'))
           } else {
-            this.columnYear.push('第' + item + '年')
+            this.columnYear.push(this.$t('product.commission.view.year', [item]))
           }
         })
         this.viewLoading = false
@@ -127,9 +127,9 @@ export default {
         })
         _.forEach(_.range(1, _.max(conditionLengthArray) + 1), item => {
           if (item > 15) {
-            this.columnYear.push('15年之后')
+            this.columnYear.push(this.$t('product.commission.view.after_15_year'))
           } else {
-            this.columnYear.push('第' + item + '年')
+            this.columnYear.push(this.$t('product.commission.view.year', [item]))
           }
         })
         this.viewLoading = false

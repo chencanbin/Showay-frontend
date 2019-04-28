@@ -1,6 +1,6 @@
 <template>
   <span style="margin-right: 5px">
-    <el-button icon="el-icon-setting" type="text" size="mini" @click="initForm" >
+    <el-button icon="el-icon-setting" type="text" size="small" @click="initForm" >
       佣金策略
     </el-button>
     <el-dialog
@@ -8,16 +8,16 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       :fullscreen="true"
+      :title="$t('product.channel.set.edit_commission_policy_title')"
       center
-      append-to-body
-      title="编辑渠道佣金策略">
+      append-to-body>
       <el-table v-loading="loading" id="channelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
         <!--<el-table-column
           label="优先级"
           type="index"
           width="80">
         </el-table-column>-->
-        <el-table-column label="公司 / 产品" prop="name" min-width="300">
+        <el-table-column :label="$t('product.channel.set.name')" prop="name" min-width="300">
           <template slot-scope="scope">
             <el-tag v-for="product in scope.row.products" :key="product.id" type="warning" style="margin-right: 10px; margin-bottom: 5px">{{ product.name }}</el-tag>
             <el-tag v-for="company in scope.row.companies" :key="company.id" style="margin-right: 10px; margin-bottom: 5px; color:#409EFF; background-color: rgba(64, 158, 255, 0.1); border: 1px solid rgba(64, 158, 255, 0.2)">{{ company.name }}</el-tag>
@@ -26,23 +26,23 @@
             <!--<el-tag v-if="scope.row.products.length === 0 && scope.row.companies.length === 0" type="success">ALL</el-tag>-->
           </template>
         </el-table-column>
-        <el-table-column prop="term" label="年期" width="60" align="center"/>
+        <el-table-column :label="$t('product.channel.set.term')" prop="term" width="60" align="center"/>
         <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="70" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.conditions[index] ? formatterNumber(scope.row.conditions[index].commissionRate) + '%' : '-' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="remarks" label="备注" align="center" min-width="150"/>
+        <el-table-column :label="$t('common.remarks')" prop="remarks" align="center" min-width="150"/>
         <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
-            <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.$index)">删除</el-button>
+            <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.$index)">{{ $t('common.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <addPolicy @addPolicy="onAddPolicy"/>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="saveLoading" type="primary" @click="handleSubmit">保存</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="saveLoading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
       <!-- 佣金生效时间弹框 -->
     </el-dialog>
@@ -124,16 +124,16 @@ export default {
       this.policies = policies
       _.forEach(_.range(1, _.max(conditionLengthArray) + 1), item => {
         if (item > 15) {
-          this.columnYear.push('15年之后')
+          this.columnYear.push(this.$t('common.after_15_year'))
         } else {
-          this.columnYear.push('第' + item + '年')
+          this.columnYear.push(this.$t('common.year', [item]))
         }
       })
     },
     handleClose() {
-      this.$confirm('是否需要关闭次页面?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('common.tooltip.close'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning'
       }).then(() => {
         this.dialogVisible = false
@@ -156,7 +156,7 @@ export default {
       })
       this.$api.commission.editCommissionPolicy({ channel: this.id, policies: this.originalPolicies }).then(res => {
         this.$message({
-          message: '操作成功',
+          message: this.$t('common.success'),
           type: 'success',
           duration: 5 * 1000
         })

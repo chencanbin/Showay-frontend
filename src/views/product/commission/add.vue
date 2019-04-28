@@ -1,21 +1,21 @@
 <template>
   <el-col span.number="24" class="el-table-add-col">
-    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加</el-button>
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t('common.add') }}</el-button>
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <!--<el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>-->
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="添加佣金表"
+      :title="$t('product.commission.add.title')"
       width="500px">
       <el-form ref="commission" :model="commission" :rules="rule" label-width="100px">
-        <el-form-item label="供应商:" prop="companyId">
+        <el-form-item :label="$t('product.commission.add.company')" prop="companyId">
           <el-select
             ref="company"
             v-model="commission.companyId"
             :remote-method="remoteSearch"
-            placeholder="请选择供应商"
+            :placeholder="$t('product.commission.add.company_rule_message')"
             remote
             filterable
             style="width: 100%;"
@@ -27,11 +27,11 @@
               :label="company.name"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="佣金模板:" prop="template">
+        <el-form-item :label="$t('product.commission.add.template')" prop="template">
           <el-select
             ref="commissionTableList"
             v-model="commission.template"
-            placeholder="请选择佣金模板(不选默认创建空白佣金表)"
+            :placeholder="$t('product.commission.add.template_placeholder')"
             clearable
             style="width: 100%;">
             <el-option
@@ -41,7 +41,7 @@
               :label="getFormattedDate(commissionTable.effectiveDate)"/>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="commission.template" label="生成佣金率:" prop="generateRates">
+        <el-form-item v-if="commission.template" :label="$t('product.commission.add.generate_commission_rate')" prop="generateRates">
           <el-checkbox v-model="commission.generateRates"/>
         </el-form-item>
         <!--<el-form-item>-->
@@ -52,8 +52,8 @@
         <!--</el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </el-col>
@@ -77,7 +77,7 @@ export default {
       },
       commissionTableList: [],
       rule: {
-        companyId: [{ required: true, message: '请选择供应商', trigger: 'blur' }]
+        companyId: [{ required: true, message: this.$t('product.commission.add.company_rule_message'), trigger: 'blur' }]
       }
     }
   },
@@ -126,7 +126,7 @@ export default {
           this.$api.commission.addCommission(data).then(res => {
             this.$emit('afterAddCommissionTable', res.data.id, this.commission.companyId)
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })

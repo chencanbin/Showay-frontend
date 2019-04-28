@@ -1,22 +1,22 @@
 <template>
   <span>
-    <el-button type="text" size="mini" icon="el-icon-edit" @click="initForm">{{ this.$t('action.edit') }}</el-button>
+    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{ this.$t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      :title="$t('user.dialog_title.edit')"
+      :title="$t('user.set.edit_channel_title')"
       append-to-body
       width="500px">
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="100px">
-        <el-form-item :label="$t('user.form_label.name')" prop="name">
+        <el-form-item :label="$t('user.set.name')" prop="name">
           <el-input v-model="account.name"/>
         </el-form-item>
-        <el-form-item label="上级" prop="superior">
+        <el-form-item :label="$t('user.set.superior')" prop="superior">
           <el-select
             v-model="account.superior"
+            :placeholder="$t('user.set.superior_placeholder')"
             clearable
-            placeholder="请选择账户上级"
             style="width: 100%">
             <el-option
               v-for="item in users"
@@ -32,8 +32,8 @@
       <!--</el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -63,7 +63,7 @@ export default {
       },
       dialogVisible: false,
       ruleAccount: {
-        name: [{ required: true, message: '姓名必须填', trigger: 'blur' }]
+        name: [{ required: true, message: this.$t('user.set.verify_message.name'), trigger: 'blur' }]
       }
     }
   },
@@ -90,7 +90,7 @@ export default {
           this.loading = true
           this.$api.user.editUser(this.account.id, this.account).then(_ => {
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })

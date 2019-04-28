@@ -1,7 +1,7 @@
 <template>
   <el-card v-loading="loading" class="channelProfit" style="padding:16px 16px 0;margin-bottom:32px;">
     <div slot="header" class="clearfix">
-      <span>渠道业绩Top5</span>
+      <span>{{ $t('home.channelPerformanceTop') }}</span>
     </div>
     <div id="channelProfit"/>
   </el-card>
@@ -53,7 +53,7 @@ export default {
       })
       this.chart.source(this.afyp)
       this.chart.scale('value', {
-        alias: '销售额',
+        alias: this.$t('home.sale'),
         min: 0,
         formatter: function(val) {
           return accounting.formatMoney(val, '', 2)

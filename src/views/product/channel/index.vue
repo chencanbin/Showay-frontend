@@ -5,8 +5,8 @@
         <el-form-item label="" prop="wildcard">
           <el-input
             v-model="wildcard"
+            :placeholder="$t('product.channel.search_channel_placeholder')"
             clearable
-            placeholder="搜索 (姓名 | 账号)"
             @input="search">
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
@@ -28,7 +28,7 @@
             <div v-loading="channelCommissionLoading" class="clearfix">
               <el-timeline id="channelCommissionTableList">
                 <div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399;">
-                  无渠道佣金策略
+                  {{ $t('product.channel.no_channel_policy') }}
                 </div>
                 <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
                   <el-dropdown class="action-dropdown">
@@ -40,17 +40,17 @@
                         <el-button
                           v-if="item.status !== 0"
                           type="text"
-                          size="mini"
+                          size="small"
                           icon="el-icon-view"
                           @click="handleTimestampDialog(item.id, item.effectiveDate, scope.row.name)">
-                          查看
+                          {{ $t('common.view') }}
                         </el-button>
                       </el-dropdown-item>
                       <el-dropdown-item>
                         <editChannelCommissionTable :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks" :channel-name="scope.row.name" :channel-id="scope.row.id"/>
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <el-button type="text" size="mini" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">删除</el-button>
+                        <el-button type="text" size="small" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">{{ $t('common.delete') }}</el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -63,7 +63,7 @@
                       <!--size="mini"-->
                       <!--icon="el-icon-download"-->
                       <!--@click="exportPDF(item.id)">导出</el-button>-->
-                      <p style="display: inline-block; margin: 0">备注 : {{ item.remarks }}</p>
+                      <p style="display: inline-block; margin: 0">{{ $t('common.remarks') }} : {{ item.remarks }}</p>
                     </div>
                   </el-card>
                 </el-timeline-item>
@@ -72,8 +72,8 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('user.table_header.name')" prop="name" show-overflow-tooltip/>
-        <el-table-column :label="$t('user.table_header.account')" prop="login"/>
+        <el-table-column :label="$t('user.name')" prop="name" show-overflow-tooltip/>
+        <el-table-column :label="$t('user.account')" prop="login"/>
         <el-table-column label="上级" prop="superior.name"/>
         <el-table-column :label="$t('common.action')" width="100px">
           <template slot-scope="scope">
@@ -86,9 +86,9 @@
                 <i class="el-icon-more"/>
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <edit v-if="!scope.row.isBuiltin" :user="scope.row"/>
-                </el-dropdown-item>
+                <!--<el-dropdown-item>-->
+                <!--<edit v-if="!scope.row.isBuiltin" :user="scope.row"/>-->
+                <!--</el-dropdown-item>-->
                 <el-dropdown-item>
                   <commission-policy :id="scope.row.id"/>
                 </el-dropdown-item>
@@ -107,57 +107,56 @@
       </el-table>
       <add/>
     </basic-container>
-    <basic-container v-permission="[2]" style="height: 100%;">
-      <div v-loading="channelCommissionLoading" class="clearfix" style="padding:30px 15px 10px 15px">
-        <el-timeline id="channelCommissionTableList">
-          <div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399;">
-            无渠道佣金策略
-          </div>
-          <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
-            <el-dropdown class="action-dropdown">
-              <el-button type="primary" plain size="mini">
-                <i class="el-icon-more"/>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <el-button
-                    v-if="item.status !== 0"
-                    type="text"
-                    size="mini"
-                    icon="el-icon-view"
-                    @click="handleTimestampDialog(item.id, item.effectiveDate)">
-                    查看
-                  </el-button>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <el-card v-if="item.remarks">
-              <!--<p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>-->
-              <div class="bottom clearfix">
-
-                <!--<el-button-->
-                <!--type="text"-->
-                <!--size="mini"-->
-                <!--icon="el-icon-download"-->
-                <!--@click="exportPDF(item.id)">导出</el-button>-->
-                <p style="display: inline-block; margin: 0">备注 : {{ item.remarks }}</p>
-              </div>
-            </el-card>
-          </el-timeline-item>
-        </el-timeline>
-      </div>
-    </basic-container>
+    <!--<basic-container v-permission="[2]" style="height: 100%;">-->
+    <!--<div v-loading="channelCommissionLoading" class="clearfix" style="padding:30px 15px 10px 15px">-->
+    <!--<el-timeline id="channelCommissionTableList">-->
+    <!--<div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399;">-->
+    <!--{{ $t('product.channel.no_channel_policy') }}-->
+    <!--</div>-->
+    <!--<el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">-->
+    <!--<el-dropdown class="action-dropdown">-->
+    <!--<el-button type="primary" plain size="mini">-->
+    <!--<i class="el-icon-more"/>-->
+    <!--</el-button>-->
+    <!--<el-dropdown-menu slot="dropdown">-->
+    <!--<el-dropdown-item>-->
+    <!--<el-button-->
+    <!--v-if="item.status !== 0"-->
+    <!--type="text"-->
+    <!--size="mini"-->
+    <!--icon="el-icon-view"-->
+    <!--@click="handleTimestampDialog(item.id, item.effectiveDate)">-->
+    <!--{{ $t('common.view') }}-->
+    <!--</el-button>-->
+    <!--</el-dropdown-item>-->
+    <!--</el-dropdown-menu>-->
+    <!--</el-dropdown>-->
+    <!--<el-card v-if="item.remarks">-->
+    <!--&lt;!&ndash;<p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>&ndash;&gt;-->
+    <!--<div class="bottom clearfix">-->
+    <!--&lt;!&ndash;<el-button&ndash;&gt;-->
+    <!--&lt;!&ndash;type="text"&ndash;&gt;-->
+    <!--&lt;!&ndash;size="mini"&ndash;&gt;-->
+    <!--&lt;!&ndash;icon="el-icon-download"&ndash;&gt;-->
+    <!--&lt;!&ndash;@click="exportPDF(item.id)">导出</el-button>&ndash;&gt;-->
+    <!--<p style="display: inline-block; margin: 0">{{ $t('common.remarks') }} : {{ item.remarks }}</p>-->
+    <!--</div>-->
+    <!--</el-card>-->
+    <!--</el-timeline-item>-->
+    <!--</el-timeline>-->
+    <!--</div>-->
+    <!--</basic-container>-->
     <el-dialog
       :visible.sync="timeDialogVisible"
-      width="400px"
-      title="选择参考时间">
+      :title="$t('product.channel.reference_time_title')"
+      width="400px">
       <el-date-picker
         v-model="channelPolicyObj.timestamp"
         type="date"
         value-format="timestamp"
         style="width: 100%"/>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleView">确定</el-button>
+        <el-button type="primary" @click="handleView">{{ $t('common.confirmButton') }}</el-button>
       </div>
     </el-dialog>
     <channelCommissionView ref="channelCommissionView"/>
@@ -226,20 +225,24 @@ export default {
   },
   methods: {
     checkPermission,
+    // checkPanelPermission() {
+    //   const hasAdminRole = checkPermission(['1'])
+    //   const hasChannel = checkPermission(['2'])
+    // },
     parseTime,
     search: _.debounce(function() {
       this.listQuery = { page: 1, limit: 50 }
       this.getUsers({ role: 2, wildcard: this.wildcard })
     }, 500),
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该渠道账号, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('product.channel.tooltip.delete'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning'
       }).then(() => {
         this.$api.user.deleteUser(row.id).then(res => {
           this.$message({
-            message: '操作成功',
+            message: this.$t('common.success'),
             type: 'success',
             duration: 5 * 1000
           })
@@ -248,16 +251,16 @@ export default {
       })
     },
     handleDeleteChannelCommissionTable(scope) {
-      this.$confirm('此操作将永久删除该渠道佣金表, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('product.channel.tooltip.delete_channel_commission_table'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             this.$api.channel.deleteChannelCommissionPolicy(scope.id).then(res => {
               this.$message({
-                message: '操作成功',
+                message: this.$t('common.success'),
                 type: 'success',
                 duration: 5 * 1000
               })

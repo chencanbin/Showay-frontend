@@ -5,7 +5,7 @@
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="保单审计列表"
+      :title="$t('audit.detail_title')"
       top="10px"
       width="450px">
       <div class="block" style="min-height: 200px">
@@ -13,7 +13,7 @@
           <el-timeline-item v-for="trace in traceList" :key="trace.id" :timestamp="dateFormat(trace.timestamp)" placement="top">
             <el-card>
               <h4>{{ getTraceDesc(trace.type) }}</h4>
-              <p>操作者: {{ trace.doer.name }}</p>
+              <p>{{ $t('audit.doer') }}: {{ trace.doer.name }}</p>
             </el-card>
           </el-timeline-item>
         </el-timeline>

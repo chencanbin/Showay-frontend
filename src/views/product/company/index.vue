@@ -5,8 +5,8 @@
         <el-form-item label="" prop="wildcard">
           <el-input
             v-model="wildcard"
+            :placeholder="$t('product.company.search_company_placeholder')"
             clearable
-            placeholder="搜索(公司缩写 | 公司名)"
             @input="search">
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
@@ -19,28 +19,28 @@
         :height="height"
         row-key="id"
         stripe>
-        <el-table-column prop="name" label="公司名" min-width="150px" show-overflow-tooltip>
+        <el-table-column :label="$t('product.company.table_header.name')" prop="name" min-width="150px" show-overflow-tooltip>
           <template slot-scope="scope">
             {{ scope.row.acronym }}  - {{ scope.row.name }}
           </template>
         </el-table-column>
-        <el-table-column prop="level" label="级别" width="150px">
+        <el-table-column :label="$t('product.company.table_header.level')" prop="level" width="150px">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.secondary" type="warning">二级</el-tag>
-            <el-tag v-else type="success">一级</el-tag>
+            <el-tag v-if="scope.row.secondary" type="warning">{{ $t('product.company.levelTab.level2') }}</el-tag>
+            <el-tag v-else type="success">{{ $t('product.company.levelTab.level1') }}</el-tag>
           </template>
         </el-table-column>
         <!--<el-table-column prop="contact" label="联系人" show-overflow-tooltip/>-->
-        <!--<el-table-column prop="phone" label="联系电话" show-overflow-tooltip/>-->
-        <!--<el-table-column prop="email" label="电子邮箱" show-overflow-tooltip/>-->
-        <!--<el-table-column prop="address" label="联系地址" show-overflow-tooltip/>-->
-        <!--<el-table-column prop="website" label="系统地址" show-overflow-tooltip/>-->
+        <el-table-column prop="phone" label="联系电话" show-overflow-tooltip/>
+        <el-table-column prop="email" label="电子邮箱" show-overflow-tooltip/>
+        <el-table-column prop="address" label="联系地址" show-overflow-tooltip/>
+        <el-table-column prop="website" label="系统地址" show-overflow-tooltip/>
         <el-table-column
           :formatter="dateFormat"
+          :label="$t('product.company.table_header.contractEffectiveDate')"
           prop="contractEffectiveDate"
-          label="签约时间"
           min-width="100px"/>
-        <el-table-column v-if="checkPermission([1])" label="操作" width="80px">
+        <el-table-column v-if="checkPermission([1])" :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button type="primary" plain size="mini">
@@ -53,10 +53,10 @@
                 <el-dropdown-item>
                   <el-button
                     :loading="deleteLoading"
-                    size="mini"
+                    size="small"
                     type="text"
                     icon="el-icon-delete"
-                    @click="handleDelete(scope.row)">删除</el-button>
+                    @click="handleDelete(scope.row)">{{ $t('common.delete') }}</el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -119,16 +119,16 @@ export default {
       this.getCompanyList({ wildcard: this.wildcard })
     }, 500),
     handleDelete(row) {
-      this.$confirm('此操作将永久删除该供应商, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('product.company.tooltip.delete'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             this.$api.company.delCompany(row.id).then(res => {
               this.$message({
-                message: '操作成功',
+                message: this.$t('common.success'),
                 type: 'success',
                 duration: 5 * 1000
               })

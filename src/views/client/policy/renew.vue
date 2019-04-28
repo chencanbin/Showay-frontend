@@ -1,22 +1,22 @@
 <template>
   <span>
-    <el-button type="text" size="mini" style="margin-right: 10px" @click="initForm">
+    <el-button type="text" size="small" style="margin-right: 10px" @click="initForm">
       <svg-icon icon-class="renew"/>
-      续费
+      {{ $t('client.insurance_policy.renewal') }}
     </el-button>
     <el-dialog
       v-el-drag-dialog
       :before-close="handleClose"
       :visible="dialogVisible"
-      title="续费"
+      :title= "$t('client.insurance_policy.renewal')"
       width="400px"
       append-to-body>
       <el-form ref="renewal" :model="form" label-width="60px" style="width: 100%">
-        <el-form-item label="产品:">
+        <el-form-item :label="$t('client.insurance_policy.product_name')">
           <span>{{ data.product.name }}</span>
         </el-form-item>
-        <el-form-item label="年期:" prop="year">
-          <el-select v-model="form.year" placeholder="请选择年期" style="width: 100%">
+        <el-form-item :label="$t('client.insurance_policy.term')" prop="year">
+          <el-select v-model="form.year" :placeholder="$t('client.insurance_policy.set.term')" style="width: 100%">
             <el-option
               v-for="item in years"
               :key="item"
@@ -24,13 +24,13 @@
               :value="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="保费:" prop="premium">
-          <currency-input ref="premium" v-model="form.premium" :symbol="getSymbol(currency)" placeholder="请输入保费"/>
+        <el-form-item :label="$t('client.insurance_policy.premium')" prop="premium">
+          <currency-input ref="premium" v-model="form.premium" :symbol="getSymbol(currency)" :placeholder="$t('client.insurance_policy.set.premium')"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">保存</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -97,7 +97,7 @@ export default {
           this.loading = true
           this.$api.client.createRenewal(this.id, { product: this.data.product.id, premium: this.form.premium, year: this.form.year }).then(res => {
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })

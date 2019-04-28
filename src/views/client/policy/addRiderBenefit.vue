@@ -4,22 +4,22 @@
     <!--<el-button type="primary" icon="el-icon-plus" style="margin-right: 10px" @click="initForm">添加副险</el-button>-->
     <!--</el-row>-->
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加副险</span></div>-->
-    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ 添加副险</el-button>
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t('common.add') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="添加副险"
+      :title="$t('client.insurance_policy.set.add_riderBenefits_title')"
       width="600px"
       append-to-body>
       <el-form ref="riderBenefit" :model="riderBenefit" :rules="riderBenefitRule" label-width="80px" class="riderBenefit">
-        <el-form-item label="产品:" prop="product" style="width: 100%;">
+        <el-form-item :label="$t('client.insurance_policy.product')" prop="product" style="width: 100%;">
           <el-select
             v-model="riderBenefit.product"
             :loading="productLoading"
             :remote-method="searchProduct"
+            :placeholder="$t('client.insurance_policy.set.product_name')"
             value-key="id"
-            placeholder="请输入产品关键词"
             filterable
             clearable
             remote
@@ -35,16 +35,16 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="保费:" prop="premium">
-          <currency-input ref="premium" v-model="riderBenefit.premium" :symbol="getSymbol(currency)" placeholder="请输入保费"/>
+        <el-form-item :label="$t('client.insurance_policy.premium')" prop="premium">
+          <currency-input ref="premium" v-model="riderBenefit.premium" :symbol="getSymbol(currency)" :placeholder="$t('client.insurance_policy.set.premium')"/>
         </el-form-item>
-        <el-form-item label="保额:" prop="amountInsured">
-          <currency-input ref="amountInsured" v-model="riderBenefit.amountInsured" :symbol="getSymbol(currency)" placeholder="请输入保额"/>
+        <el-form-item :label="$t('client.insurance_policy.amountInsured')" prop="amountInsured">
+          <currency-input ref="amountInsured" v-model="riderBenefit.amountInsured" :symbol="getSymbol(currency)" :placeholder="$t('client.insurance_policy.set.amountInsured')"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="handleSubmit">保存</el-button>
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </el-col>
@@ -90,8 +90,8 @@ export default {
         max: 50
       },
       riderBenefitRule: {
-        premium: [{ required: true, message: '保费必须填', trigger: 'blur' }],
-        product: [{ required: true, message: '请选择保险产品', trigger: 'blur' }]
+        premium: [{ required: true, message: this.$t('client.insurance_policy.set.premium'), trigger: 'blur' }],
+        product: [{ required: true, message: this.$t('client.insurance_policy.set.product_name'), trigger: 'blur' }]
       },
       productLoading: false
     }

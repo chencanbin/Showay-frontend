@@ -1,10 +1,15 @@
 <template>
   <el-upload
+    v-loading="loading"
     :disabled="disabled"
     :http-request="uploadFile"
     :show-file-list="false"
+    class="file-upload"
+    drag
     action="">
-    <el-button :loading="loading" size="small" icon="el-icon-upload" type="primary" disable>{{ buttonText + percentCompleted }}</el-button>
+    <i class="el-icon-upload"/>
+    <div class="el-upload__text">{{ $t('document.upload_tips') }}</div>
+    <!--<el-button :loading="loading" size="small" icon="el-icon-upload" type="primary" disable>{{ buttonText + percentCompleted }}</el-button>-->
   </el-upload>
 </template>
 
@@ -32,7 +37,7 @@ export default {
       const isLt20M = _file.size / 1024 / 1024 < 20
       // 通过 FormData 对象上传文件
       if (!isLt20M) {
-        this.$message.error('请上传20M以下的文件')
+        this.$message.error(this.$t('document.upload_error'))
         return false
       }
       let url = ''
@@ -61,7 +66,7 @@ export default {
         if (res.status === 200) {
           this.$message({
             type: 'success',
-            message: '上传成功'
+            message: this.$t('common.success')
           })
           this.$emit('afterComplete', _file)
         } else {
@@ -84,3 +89,15 @@ export default {
   }
 }
 </script>
+<style type="text/scss" rel="stylesheet/scss">
+  .file-upload .el-upload {
+    margin-top: 20px;
+    width: 100%;
+    height: 150px;
+  }
+  .file-upload .el-upload-dragger {
+    width: 100%;
+    background-color: rgb(230, 241, 232);
+    height: 150px;
+  }
+</style>

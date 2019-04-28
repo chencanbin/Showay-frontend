@@ -14,7 +14,7 @@
       </div>
     </fc-header>
     <!-- body display date day and events -->
-    <div class="full-calendar-body">
+    <div class="full-calendar-body" @click="showMore = false">
       <div class="weeks">
         <strong v-for="(dayIndex, index) in 7" :key="index" class="week" >{{ (dayIndex - 1) | localeWeekDay(firstDay, locale) }}</strong>
       </div>
@@ -42,8 +42,8 @@
               :key="index"
               :class="{ 'today' : day.isToday, 'not-cur-month' : !day.isCurMonth }"
               track-by="$index"
-              class="events-day"
-              @click.stop="dayClick(day.date, $event)">
+              class="events-day">
+              <!--@click.stop="dayClick(day.date, $event)"-->
               <p class="day-number">{{ day.monthDay }}</p>
               <div class="event-box">
                 <event-card
@@ -86,9 +86,8 @@
                 :key="index"
                 class="body-item"
                 @click="eventClick(event, $event)">
-                {{ event.title }}
+                <slot :event="event" name="fc-event-more-item"/>
               </li>
-
             </ul>
           </div>
         </div>
@@ -274,7 +273,7 @@ export default {
   }
 
   .full-calendar-body{
-    margin-top: 20px;
+    margin-top: 0;
   .weeks{
     display: flex;
     border-top:1px solid #e0e0e0;
@@ -340,17 +339,17 @@ export default {
   .event-item{
     cursor: pointer;
     font-size:12px;
-    background-color:#C7E6FD;
+    //background-color:#C7E6FD;
     margin-bottom:2px;
-    color: rgba(0,0,0,.87);
-    padding:0 0 0 4px;
+    //color: rgba(0,0,0,.87);
+    padding:0;
     height: 18px;
     line-height: 18px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   &.is-start{
-     margin-left: 4px;
+     margin-left: 0;
    // border-top-left-radius:4px;
    // border-bottom-left-radius:4px;
    }
@@ -377,7 +376,7 @@ export default {
   }
   .more-events{
     position:absolute;
-    width: 150px;
+    width: 350px;
     z-index: 2;
     border:1px solid #eee;
     box-shadow: 0 2px 6px rgba(0,0,0,.15);
@@ -407,12 +406,11 @@ export default {
   .body-item{
     cursor: pointer;
     font-size:12px;
-    background-color:#C7E6FD;
-    margin-bottom:2px;
+    margin-bottom:4px;
     color: rgba(0,0,0,.87);
     padding:0 0 0 4px;
-    height: 18px;
-    line-height: 18px;
+    height: 30px;
+    line-height: 30px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

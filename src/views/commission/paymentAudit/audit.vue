@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">审核</el-button>
+    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">审核</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -79,7 +79,7 @@ export default {
       })
     },
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: '' })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
     getSymbol,
     handleClear() {

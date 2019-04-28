@@ -6,7 +6,7 @@
           <svg-icon icon-class="income" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">已到账</div>
+          <div class="card-panel-text">{{ $t('home.creditSum') }}</div>
           <count-to :start-val="0" :end-val="overall.creditSum" :duration="2600" class="card-panel-num"/>
         </div>
       </div>
@@ -17,8 +17,8 @@
           <svg-icon icon-class="earning" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">预计待收</div>
-          <count-to :start-val="0" :end-val="overall.pendingCreditSum" :duration="3000" class="card-panel-num"/>
+          <div class="card-panel-text">{{ $t('home.pendingCreditSum') }}</div>
+          <count-to :start-val="0" :end-val="overall.pendingCreditSum" :duration="2600" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -28,8 +28,8 @@
           <svg-icon icon-class="paymentSum" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">预计待发</div>
-          <count-to :start-val="0" :end-val="overall.pendingPaymentSum" :duration="3000" class="card-panel-num"/>
+          <div class="card-panel-text">{{ $t('home.pendingPaymentSum') }}</div>
+          <count-to :start-val="0" :end-val="overall.pendingPaymentSum" :duration="2600" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -39,7 +39,7 @@
           <svg-icon icon-class="order" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">总成单数</div>
+          <div class="card-panel-text">{{ $t('home.policyCount') }}</div>
           <count-to :start-val="0" :end-val="overall.policyCount" :duration="1000" class="card-panel-num"/>
         </div>
       </div>

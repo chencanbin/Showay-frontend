@@ -30,7 +30,7 @@
  .fixed-width{
   .el-button--mini{
     padding: 7px 10px;
-    width: 60px;
+    width: 100px;
   }
  }
 
@@ -156,10 +156,31 @@
  .el-button--mini {
    padding: 4px 10px;
  }
+ .el-button--small {
+   padding: 10px;
+   min-width: 80px;
+   //position: relative;
+ }
+// .el-button--small::after {
+//   content: "";
+//　　position: absolute;
+//　　left: -10px;
+//　　top: -10px;
+//　　right: -10px;
+//　　bottom: -10px;
+// }
 
  .el-dropdown-menu--medium .el-dropdown-menu__item {
-   padding: 0 10px;
+   padding: 0;
  }
+// button::after{
+// 　　content: "";
+// 　　position: absolute;
+// 　　left: -10px;
+// 　　top: -10px;
+// 　　right: -10px;
+// 　　bottom: -10px;
+// }
  .el-dropdown-menu {
    overflow: hidden;
  }

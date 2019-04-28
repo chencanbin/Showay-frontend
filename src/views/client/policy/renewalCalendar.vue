@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-badge :value="events.length" :max="99" style="line-height: 35px">
+    <el-badge :hidden="events.length === 0" :value="events.length" :max="99" style="line-height: 35px">
       <svg-icon icon-class="calendar" style="vertical-align: 1.1em; font-size: 20px" @click="initForm"/>
     </el-badge>
     <el-dialog
@@ -8,38 +8,70 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       :fullscreen="true"
-      title= "续保日历"
+      :title= "$t('client.insurance_policy.renewal_calendar')"
       append-to-body>
-      <full-calendar :events="events" locale="zh-cn" @changeMonth="changeMonth">
+      <full-calendar ref="fullCalendar" :events="events" locale="zh-cn" @changeMonth="changeMonth">
         <template slot="fc-event-card" slot-scope="p">
           <el-popover
             placement="top-start"
-            trigger="hover">
+            trigger="click">
             <el-card style="padding:10px">
               <el-form label-width="80px">
-                <el-form-item label="投保人:" class="detail-item">
+                <el-form-item :label="$t('client.insurance_policy.applicant_name')" class="detail-item">
                   {{ p.event.detail.applicant.name }}
                 </el-form-item>
-                <el-form-item label="电话:" class="detail-item">
+                <el-form-item :label="$t('client.info.phone')" class="detail-item">
                   {{ p.event.detail.applicant.phone }}
                 </el-form-item>
-                <el-form-item label="邮箱:" class="detail-item">
+                <el-form-item :label="$t('client.info.email')" class="detail-item">
                   {{ p.event.detail.applicant.email }}
                 </el-form-item>
-                <el-form-item label="续保时间:" class="detail-item">
+                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
                   {{ getFormattedDate(p.event.start) }}
                 </el-form-item>
-                <el-form-item label="产品:" class="detail-item">
+                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
                   {{ p.event.detail.product.name }}
                 </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                  <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)"/>
+                </el-form-item>
               </el-form>
-              <!--<div class="renewDetail">投保人: {{ p.event.detail.applicant.name }}</div>-->
-              <!--<div class="renewDetail">电话: {{ p.event.detail.applicant.phone }}</div>-->
-              <!--<div class="renewDetail">邮箱: {{ p.event.detail.applicant.email }}</div>-->
-              <!--<div class="renewDetail">时间: {{ getFormattedDate(p.event.start) }}</div>-->
-              <!--<div class="renewDetail">产品: {{ p.event.detail.product.name }}</div>-->
             </el-card>
-            <p slot="reference">{{ p.event.title }}</p>
+            <!--<p slot="reference" :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>-->
+            <el-tooltip slot="reference" :content="p.event.title" effect="dark" open-delay="1000" placement="top-start">
+              <p :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>
+            </el-tooltip>
+          </el-popover>
+        </template>
+        <template slot="fc-event-more-item" slot-scope="p">
+          <el-popover
+            placement="top-start"
+            trigger="click">
+            <el-card style="padding:10px">
+              <el-form label-width="80px">
+                <el-form-item :label="$t('client.insurance_policy.applicant_name')" class="detail-item">
+                  {{ p.event.detail.applicant.name }}
+                </el-form-item>
+                <el-form-item :label="$t('client.info.phone')" class="detail-item">
+                  {{ p.event.detail.applicant.phone }}
+                </el-form-item>
+                <el-form-item :label="$t('client.info.email')" class="detail-item">
+                  {{ p.event.detail.applicant.email }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
+                  {{ getFormattedDate(p.event.start) }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
+                  {{ p.event.detail.product.name }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                  <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)"/>
+                </el-form-item>
+              </el-form>
+            </el-card>
+            <el-tooltip slot="reference" :content="p.event.title" effect="dark" open-delay="1000" placement="top-start">
+              <p :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>
+            </el-tooltip>
           </el-popover>
         </template>
       </full-calendar>
@@ -52,6 +84,7 @@ import { mapGetters } from 'vuex'
 import FullCalendar from '@/components/FullCalendar'
 import { parseTime } from '@/utils'
 import checkPermission from '@/utils/permission' // 权限判断函数
+import moment from 'moment'
 
 const currencyFormatter = require('currency-formatter')
 
@@ -63,7 +96,11 @@ export default {
   data() {
     return {
       events: [],
-      dialogVisible: false
+      dialogVisible: false,
+      renewed: false,
+      from: '',
+      to: '',
+      count: ''
     }
   },
   computed: {
@@ -71,31 +108,54 @@ export default {
   },
   created() {
     if (this.checkPermission([1])) {
-      this.$api.client.calendarRenewal().then(res => {
-        this.events = res.data
-      })
+      this.getCalendarRenewal()
     }
   },
   methods: {
     checkPermission,
     changeMonth(start, end, current) {
-      const from = start.format('x')
-      const to = end.format('x')
-      console.log(to)
-      this.$api.client.calendarRenewal({ from, to }).then(res => {
+      this.from = start.format('x')
+      this.to = end.format('x')
+      this.$api.client.calendarRenewal({ from: this.from, to: this.to }).then(res => {
         this.events = res.data
       })
     },
+    getCalendarRenewal(params) {
+      this.$api.client.calendarRenewal(params).then(res => {
+        this.events = res.data
+      })
+    },
+    judgeEventStatus(event) {
+      const now = new Date().valueOf()
+      if (event.detail.status === 1) {
+        return 'el-tag--success'
+      } else if (event.detail.status === 0 && event.start < now) {
+        return 'el-tag--danger'
+      } else {
+        return 'el-tag--warning'
+      }
+    },
+    renewalChange(val) {
+      this.$api.client.editCalendarRenewal(val.detail.id).then(res => {
+        this.$message({
+          message: this.$t('common.success'),
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.getCalendarRenewal({ from: this.from, to: this.to })
+      })
+    },
     formatterCurrency(value) {
-      return currencyFormatter.format(value, { symbol: this.getSymbol(this.currency) })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: this.getSymbol(this.currency) })
     },
     initForm() {
       this.dialogVisible = true
     },
     handleClose() {
-      this.$api.client.calendarRenewal().then(res => {
-        this.events = res.data
-      })
+      // this.$api.client.calendarRenewal({ from: this.from, to: this.to }).then(res => {
+      //   this.events = res.data
+      // })
+      this.$refs.fullCalendar.emitChangeMonth(moment().startOf('month'))
       this.dialogVisible = false
     },
     getFormattedDate(value) {
@@ -118,8 +178,8 @@ export default {
         line-height: 40px;
       }
       .event-item, .body-item {
-        background-color: rgb(225, 238, 220);
-        font-size: 13px;
+        padding: 1px 4px;
+        font-size: 12px;
         width: 100%;
         height: 25px;
         line-height: 25px;

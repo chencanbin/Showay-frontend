@@ -1,12 +1,12 @@
 <template>
   <el-card v-loading="loading" style="padding:16px 16px 0;margin-bottom:32px;" class="clearedCredit">
     <div slot="header" class="clearfix">
-      <span>公司业绩同比</span>
+      <span>{{ $t('home.comparison') }}</span>
       <el-select
         :remote-method="searchCompany"
         :loading="companyLoading"
         v-model="company"
-        placeholder="请选择公司"
+        :placeholder="$t('common.company_placeholder')"
         filterable
         remote
         clearable
@@ -19,9 +19,9 @@
           :value="item.id"/>
       </el-select>
       <el-button-group style="margin-left: 20px">
-        <el-button :type="buttonClearCreditMonth" size="small" @click="clearCreditMonth()">按月统计</el-button>
-        <el-button :type="buttonClearCreditQuarter" size="small" @click="clearCreditQuarter()">按季统计</el-button>
-        <el-button :type="buttonClearCreditYear" size="small" @click="clearCreditYear()">按年统计</el-button>
+        <el-button :type="buttonClearCreditMonth" size="small" @click="clearCreditMonth()">{{ $t('home.month') }}</el-button>
+        <el-button :type="buttonClearCreditQuarter" size="small" @click="clearCreditQuarter()">{{ $t('home.quarter') }}</el-button>
+        <el-button :type="buttonClearCreditYear" size="small" @click="clearCreditYear()">{{ $t('home.year') }}</el-button>
       </el-button-group>
     </div>
     <div id="clearedCredit"/>
@@ -221,12 +221,12 @@ export default {
       this.chart.source(this.sourceData, {
         series: {
           formatter: val => {
-            return val + ' 销售额'
+            return val + ' ' + this.$t('home.sale')
           }
         },
         countSeries: {
           formatter: val => {
-            return val + ' 出单量'
+            return val + ' ' + this.$t('home.count')
           }
         }
       })
