@@ -40,7 +40,6 @@ export default {
   // 监听API接口传过来的数据  2018-08-21更新
   watch: {
     profit: function(val, oldVal) { // 监听charData，当放生变化时，触发这个回调函数绘制图表
-      console.log('new: %s, old: %s', val, oldVal)
       this.drawChart(val)
     }
   },
@@ -73,6 +72,8 @@ export default {
       this.loading = true
       this.$api.statistics.fetchTrend({ item, groupBy, from: getCurrentYearFirst(), to: getCurrentYearLast() }).then(res => {
         this.profit = res.data
+        this.loading = false
+      }).catch(_ => {
         this.loading = false
       })
     },

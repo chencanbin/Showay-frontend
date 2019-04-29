@@ -131,7 +131,7 @@ export const asyncRouterMap = [
     path: '/commission',
     component: Layout,
     redirect: 'noredirect',
-    meta: { title: 'commission', icon: 'channel', noCache: true, roles: [1, 2, 4] },
+    meta: { title: 'commission', icon: 'commission', noCache: true, roles: [1, 2, 4] },
     children: [
       {
         path: 'commissionCredit',

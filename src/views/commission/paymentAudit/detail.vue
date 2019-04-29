@@ -9,7 +9,7 @@
       center>
       <el-row v-permission="[1]" style="margin-bottom: 10px">
         <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">{{ $t('commission.payment.submit_audit') }}</el-button>
-        <span style="margin-left: 20px;">已选中实发金额:
+        <span v-if="status === '-1'" style="margin-left: 20px;">已选中实发金额:
           <count-to
             :start-val="0"
             :end-val="selectSum"
@@ -164,7 +164,7 @@ export default {
     },
     generateTitle() {
       if (this.status === '-1') {
-        return `${this.channel.name} ${this.$t('commission.payment.audit_commission')}`
+        return `${this.channel.name} ${this.$t('commission.payment.generated_list')}`
       } else if (this.status === '0') {
         return `${this.channel.name} ${this.$t('commission.payment.audit_commission')}`
       }
@@ -269,8 +269,14 @@ export default {
   }
 }
 </script>
-<style lang="scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss" type="text/scss">
   #paymentDetail .el-dialog__body {
     padding: 5px 20px;
+    tr:nth-child(odd) td {
+      background-color: #ffffff;
+    }
+    tr:nth-child(even) td {
+      background-color: #fafafa;
+    }
   }
 </style>

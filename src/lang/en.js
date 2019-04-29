@@ -422,6 +422,7 @@ export default {
       amountInHkd: 'Amount Paid',
       chequeNumber: 'Cheque Number',
       chequeCopy: 'Cheque Copy',
+      chequeIssueDate: 'Issue Date',
       premiumInHkd: 'HKD Equivalent',
       calculatedAmountInHkd: 'Calculated Amount Due',
       predictedAmountInHkd: 'Amount Due',

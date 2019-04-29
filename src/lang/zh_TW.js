@@ -423,6 +423,7 @@ export default {
       amountInHkd: '實發總額',
       chequeNumber: '支票號碼',
       chequeCopy: '支票掃描件',
+      chequeIssueDate: '簽發時間',
       premiumInHkd: '保費等額港幣',
       calculatedAmountInHkd: '預計應發',
       predictedAmountInHkd: '預計實發',

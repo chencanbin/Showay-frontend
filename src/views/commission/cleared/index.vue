@@ -1,61 +1,45 @@
 <template>
-  <div id="cleared" class="table-container">
+  <div id="paymentAudit" class="table-container">
     <basic-container>
-      <el-form :inline="true" class="search-input" @submit.native.prevent>
-        <!--<el-form-item label="" prop="wildcard">-->
-        <!--<el-input-->
-        <!--v-model="wildcard"-->
-        <!--clearable-->
-        <!--:placeholder="$t('commission.payment.search')"-->
-        <!--@input="search">-->
-        <!--<i slot="prefix" class="el-input__icon el-icon-search"/>-->
-        <!--</el-input>-->
-        <!--</el-form-item>-->
+      <el-form :inline="true" class="search-input" style="margin-left: 10px" @submit.native.prevent>
+        <el-form-item label="" prop="wildcard">
+          <el-input
+            v-model="wildcard"
+            :placeholder="$t('commission.payment.search')"
+            clearable
+            @input="search">
+            <i slot="prefix" class="el-input__icon el-icon-search"/>
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-date-picker
+            :clearable="true"
+            :unlink-panels="true"
+            v-model="year"
+            type="daterange"
+            value-format="timestamp"
+            style="margin-left: 20px;"/>
+        </el-form-item>
       </el-form>
-      <!--<pagination :total="cleared.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>-->
-      <el-table
-        v-loading="clearedLoading"
-        :height="height"
-        :data="cleared.list"
-        stripe
-        border
-        row-key="id"
-        @expand-change="expandChange">
-        <el-table-column type="expand">
+      <pagination :total="auditPayment.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
+      <el-table v-loading="auditPaymentLoading" :height="height" :data="auditPayment.list" stripe border>
+        <el-table-column :label="$t('commission.payment.channel')" prop="channel.name" min-width="150"/>
+        <el-table-column :label="$t('commission.payment.amountInHkd')" min-width="150">
           <template slot-scope="scope">
-            <div>
-              <el-form id="policy-table-expand" label-position="left" inline >
-                <el-form-item :label="$t('client.insurance_policy.premium')" class="cleared-form-item">
-                  <span>{{ numberFormat(scope.row, scope.row.premium) }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('common.exchangeRate')" class="cleared-form-item">
-                  <span>{{ scope.row.exchangeRateToHkd }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('common.commission_rate')" class="cleared-form-item">
-                  <span>{{ Math.floor(scope.row.commissionRate * 100) / 100 }}%</span>
-                </el-form-item>
-              </el-form>
-            </div>
+            <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.amountInHkd) }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip/>
-        <el-table-column :label="$t('client.insurance_policy.sn')" prop="insurancePolicy.sn" min-width="100px" show-overflow-tooltip/>
-        <el-table-column :label="$t('common.amount')" prop="amount" min-width="120">
+        <el-table-column :label="$t('commission.payment.chequeNumber')" prop="chequeNumber" min-width="150"/>
+        <el-table-column :label="$t('common.remarks')" prop="remarks" min-width="150"/>
+        <el-table-column :label="$t('common.chequeIssueDate')" :formatter="dateFormat" prop="chequeIssueDate"/>
+        <el-table-column :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" align="center">
           <template slot-scope="scope">
-            <span class="left_text">HK$ </span>
-            <span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
+            <el-button type="text" @click="viewScanFile(scope.row.chequeCopy)">{{ $t('common.view') }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.profit')" prop="profit" min-width="120">
+        <el-table-column :label="$t('common.action')" width="150" align="center">
           <template slot-scope="scope">
-            <span class="left_text">HK$ </span>
-            <span class="right_text">{{ formatterCurrency(scope.row.profit) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('common.remarks')" prop="remarks" min-width="120"/>
-        <el-table-column width="120">
-          <template slot-scope="scope">
-            <detail :payments="scope.row.payments"/>
+            <detail :channel="scope.row.channel" :id="scope.row.id" :cheque-number="scope.row.chequeNumber"/>
           </template>
         </el-table-column>
       </el-table>
@@ -64,12 +48,14 @@
 </template>
 
 <script>
+import { parseTime, getYearFirst, getYearLast } from '@/utils'
 import pagination from '@/components/Pagination'
-import detail from './detail'
 import { mapState } from 'vuex'
-import { commissionPaymentStatus } from '@/utils/constant'
-import { getSymbol } from '@/utils'
 import Cookies from 'js-cookie'
+import detail from './detail'
+import Viewer from 'viewerjs'
+import 'viewerjs/dist/viewer.css'
+
 const currencyFormatter = require('currency-formatter')
 const _ = require('lodash')
 export default {
@@ -80,11 +66,11 @@ export default {
   },
   data() {
     return {
+      year: [getYearFirst(new Date()), getYearLast(new Date())],
       wildcard: '',
-      commissionPaymentStatus,
       language: Cookies.get('language') || 'zh-CN',
       height: document.body.clientHeight - 120,
-      expandKeys: [],
+      chequeCopy: [],
       listQuery: {
         page: 1,
         limit: 50
@@ -93,27 +79,25 @@ export default {
   },
   computed: {
     ...mapState({
-      cleared: state => state.commission.cleared,
-      clearedLoading: state => state.commission.clearedLoading
+      auditPayment: state => state.commission.auditPayment,
+      auditPaymentLoading: state => state.commission.auditPaymentLoading
     })
   },
+  watch: {
+    year: function(val) {
+      console.log(val)
+      this.getAuditPayment({ status: 3, wildcard: this.wildcard })
+    }
+  },
   created() {
-    this.getCleared()
+    this.getAuditPayment({ status: 3 })
   },
   methods: {
-    getSymbol,
     search: _.debounce(function() {
-      this.getCleared({ wildcard: this.wildcard })
+      this.getAuditPayment({ status: 3, wildcard: this.wildcard })
     }, 500),
-    statusFormatter(value) {
-      let result = ''
-      _.forEach(commissionPaymentStatus, item => {
-        if (value === item.id) {
-          result = item[this.language]
-          return
-        }
-      })
-      return result
+    formatterCurrency(value) {
+      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
     percentFormatter(row, column) {
       const number = row[column.property]
@@ -122,17 +106,29 @@ export default {
     formatterPercent(value) {
       return _.toNumber(value).toFixed(2) + '%'
     },
-    getCleared(params) {
-      this.$store.dispatch('commission/FetchCleared', params)
+    // 格式化事件
+    dateFormat(row, column) {
+      const date = row[column.property]
+      return parseTime(date, '{y}-{m}-{d}')
     },
-    handleClick(tab, event) {
-      this.getAuditPayment({ status: tab.name })
+    viewScanFile(key) {
+      this.$api.document.getCompanyDownloadLink(key).then(res => {
+        this.chequeCopy = [res.data.url]
+        const image = new Image()
+        image.src = this.chequeCopy
+        const viewer = new Viewer(image, {
+          hidden: function() {
+            viewer.destroy()
+          }
+        })
+        viewer.show()
+      })
     },
-    formatterCurrency(value) {
-      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
-    },
-    numberFormat(row, value) {
-      return currencyFormatter.format(value, { code: row.currency })
+    getAuditPayment(params) {
+      if (this.year) {
+        params = Object.assign({ geDate: this.year[0], leDate: this.year[1] }, params)
+      }
+      this.$store.dispatch('commission/FetchAuditPayment', params)
     },
     pagination(pageObj) {
       const offset = (pageObj.page - 1) * pageObj.limit
@@ -145,27 +141,23 @@ export default {
     },
     updateLimit(val) {
       this.listQuery.limit = val
-    },
-    expandChange(row, expandedRows) {
-      if (this.expandKeys.indexOf(row.id) >= 0) {
-        // 收起当前行
-        this.expandKeys.shift()
-        return
-      }
-      this.expandKeys.shift()
-      this.expandKeys.push(row.id)
-      if (expandedRows.length > 1) {
-        // 只展开当前选项
-        expandedRows.shift()
-      }
     }
   }
 }
 </script>
 <style type="text/scss" lang="scss">
-  .viewer-container {
-    z-index: 5000;
+  .channelCommissionPayment-table-expand {
+    font-size: 0;
+    .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+      width: 33.3%;
+      label {
+        color: #99a9bf;
+      }
+    }
   }
+
   .left_text {
     display: inline-block;
     float: left;
@@ -175,18 +167,7 @@ export default {
     display: inline-block;
     float: right;
   }
-  #cleared {
-    .el-table__expanded-cell {
-      padding: 20px;
-    }
-    .cleared-form-item{
-      margin-right: 0;
-      margin-bottom: 0;
-      width: 20%;
-      label {
-        color: #99a9bf;
-      }
-    }
+  #paymentAudit {
     .search-input {
       margin-left: 0;
     }

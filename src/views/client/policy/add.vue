@@ -36,7 +36,14 @@
             type="date"/>
         </el-form-item>
         <el-form-item :label="$t('client.insurance_policy.applicant_name')" prop="applicant.id">
-          <el-select v-model="insurancePolicy.applicant.id" :placeholder="$t('client.insurance_policy.set.applicant_name')" filterable style="width: 100%">
+          <el-select
+            v-model="insurancePolicy.applicant.id"
+            :placeholder="$t('client.insurance_policy.set.applicant_name')"
+            :remote-method="searchClient"
+            filterable
+            remote
+            style="width: 100%"
+            @focus="onClientFocus">
             <el-option
               v-for="item in client.list"
               :key="item.id"
@@ -47,7 +54,14 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('client.insurance_policy.beneficiary_name')" prop="beneficiary.id">
-          <el-select v-model="insurancePolicy.beneficiary.id" :placeholder="$t('client.insurance_policy.set.beneficiary_name')" filterable style="width: 100%">
+          <el-select
+            v-model="insurancePolicy.beneficiary.id"
+            :placeholder="$t('client.insurance_policy.set.beneficiary_name')"
+            :remote-method="searchClient"
+            filterable
+            remote
+            style="width: 100%"
+            @focus="onClientFocus">
             <el-option
               v-for="item in client.list"
               :key="item.id"
@@ -288,6 +302,13 @@ export default {
     },
     onCompanyFocus() {
       this.getCompanies()
+    },
+    searchClient(query) {
+      console.log(query)
+      this.getClient({ wildcard: query })
+    },
+    onClientFocus() {
+      this.getClient()
     },
     handleClose() {
       this.$confirm(this.$t('common.tooltip.close'), this.$t('common.prompt'), {

@@ -128,13 +128,15 @@ export const commissionPaymentStatus = [
     'zh-TW': '待結清',
     'zh-CN': '待结清',
     'en': 'Approved'
-  },
-  {
-    id: '3',
-    'zh-TW': '已結清',
-    'zh-CN': '已结清',
-    'en': 'Clear'
-  }]
+  }
+  // ,
+  // {
+  //   id: '3',
+  //   'zh-TW': '已結清',
+  //   'zh-CN': '已结清',
+  //   'en': 'Clear'
+  // }
+]
 
 export const currencyArray = [
   {
