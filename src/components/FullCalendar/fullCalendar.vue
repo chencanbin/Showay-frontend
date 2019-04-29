@@ -71,7 +71,7 @@
 
         <!-- full events when click show more -->
         <div
-          v-show="showMore"
+          v-if="showMore"
           :style="{left: morePos.left + 'px', top: morePos.top + 'px'}"
           class="more-events">
           <div class="more-header">
@@ -82,7 +82,7 @@
             <ul class="body-list">
               <li
                 v-for="(event, index) in selectDay.events"
-                v-show="event.isShow"
+                v-if="event.isShow"
                 :key="index"
                 class="body-item"
                 @click="eventClick(event, $event)">
@@ -294,7 +294,7 @@ export default {
     display: flex;
   .day-cell{
     flex:1;
-    min-height: 112px;
+    min-height: 150px;
     padding:4px;
     border-right:1px solid #e0e0e0;
     border-bottom:1px solid #e0e0e0;
@@ -322,7 +322,7 @@ export default {
   .events-day{
     cursor: pointer;
     flex:1;
-    min-height: 112px;
+    min-height: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
   .day-number{
@@ -367,6 +367,7 @@ export default {
   // text-align: right;
     padding-left: 8px;
     padding-right: 2px;
+    margin-top: 7px;
     color: rgba(0,0,0,.38);
     font-size: 14px;
   }

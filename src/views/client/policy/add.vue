@@ -171,10 +171,8 @@ export default {
       agents: [],
       products: [],
       queryProduct: {
-        wildcard: '',
-        company: '',
-        offset: 0,
-        max: 50
+        name: '',
+        company: ''
       },
       currencyArray,
       premiumPlan,
@@ -278,11 +276,11 @@ export default {
       })
     },
     searchProduct(query) {
-      this.queryProduct.wildcard = query
+      this.queryProduct.name = query
       this.getProducts()
     },
     onProductFocus() {
-      this.queryProduct.wildcard = ''
+      this.queryProduct.name = ''
       this.getProducts()
     },
     searchCompany(query) {

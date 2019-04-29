@@ -9,7 +9,7 @@
       :title="$t('client.info.set.add_title')"
       top="50px"
       width="450px">
-      <el-form ref="client" :model="client" :rules="rule" label-width="100px">
+      <el-form ref="client" :model="client" :rules="rule" label-width="120px">
         <el-form-item :label="$t('client.info.name')" prop="name">
           <el-input v-model="client.name" :placeholder="$t('client.info.set.name')"/>
         </el-form-item>

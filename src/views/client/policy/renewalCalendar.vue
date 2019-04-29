@@ -11,6 +11,37 @@
       :title= "$t('client.insurance_policy.renewal_calendar')"
       append-to-body>
       <full-calendar ref="fullCalendar" :events="events" locale="zh-cn" @changeMonth="changeMonth">
+        <template slot="fc-event-more-item" slot-scope="p">
+          <el-popover
+            placement="top-start"
+            trigger="click">
+            <el-card style="padding:10px">
+              <el-form label-width="80px">
+                <el-form-item :label="$t('client.insurance_policy.applicant_name')" class="detail-item">
+                  {{ p.event.detail.applicant.name }}
+                </el-form-item>
+                <el-form-item :label="$t('client.info.phone')" class="detail-item">
+                  {{ p.event.detail.applicant.phone }}
+                </el-form-item>
+                <el-form-item :label="$t('client.info.email')" class="detail-item">
+                  {{ p.event.detail.applicant.email }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
+                  {{ getFormattedDate(p.event.start) }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
+                  {{ p.event.detail.product.name }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                  <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)"/>
+                </el-form-item>
+              </el-form>
+            </el-card>
+            <el-tooltip slot="reference" :content="p.event.title" :open-delay="1000" effect="dark" placement="top-start">
+              <p :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>
+            </el-tooltip>
+          </el-popover>
+        </template>
         <template slot="fc-event-card" slot-scope="p">
           <el-popover
             placement="top-start"
@@ -38,38 +69,7 @@
               </el-form>
             </el-card>
             <!--<p slot="reference" :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>-->
-            <el-tooltip slot="reference" :content="p.event.title" effect="dark" open-delay="1000" placement="top-start">
-              <p :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>
-            </el-tooltip>
-          </el-popover>
-        </template>
-        <template slot="fc-event-more-item" slot-scope="p">
-          <el-popover
-            placement="top-start"
-            trigger="click">
-            <el-card style="padding:10px">
-              <el-form label-width="80px">
-                <el-form-item :label="$t('client.insurance_policy.applicant_name')" class="detail-item">
-                  {{ p.event.detail.applicant.name }}
-                </el-form-item>
-                <el-form-item :label="$t('client.info.phone')" class="detail-item">
-                  {{ p.event.detail.applicant.phone }}
-                </el-form-item>
-                <el-form-item :label="$t('client.info.email')" class="detail-item">
-                  {{ p.event.detail.applicant.email }}
-                </el-form-item>
-                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
-                  {{ getFormattedDate(p.event.start) }}
-                </el-form-item>
-                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
-                  {{ p.event.detail.product.name }}
-                </el-form-item>
-                <el-form-item :label="$t('client.insurance_policy.renewed')" class="detail-item">
-                  <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)"/>
-                </el-form-item>
-              </el-form>
-            </el-card>
-            <el-tooltip slot="reference" :content="p.event.title" effect="dark" open-delay="1000" placement="top-start">
+            <el-tooltip slot="reference" :content="p.event.title" :open-delay="1000" effect="dark" placement="top-start">
               <p :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>
             </el-tooltip>
           </el-popover>
@@ -178,12 +178,14 @@ export default {
         line-height: 40px;
       }
       .event-item, .body-item {
+        position: relative;
         padding: 1px 4px;
         font-size: 12px;
         width: 100%;
-        height: 25px;
-        line-height: 25px;
+        height: 35px;
+        line-height: 35px;
         .el-popover__reference {
+          padding: 1px 4px;
           overflow: hidden;
           text-overflow:ellipsis;
           white-space: nowrap;

@@ -7,6 +7,14 @@
         <el-button :type="buttonProfitQuarter" size="small" @click="profitQuarter()">{{ $t('home.quarter') }}</el-button>
         <el-button :type="buttonProfitYear" size="small" @click="profitYear()">{{ $t('home.year') }}</el-button>
       </el-button-group>
+      <el-date-picker
+        :editable="false"
+        :clearable="false"
+        :unlink-panels="true"
+        v-model="year"
+        type="daterange"
+        value-format="timestamp"
+        style="margin-left: 20px; width: 240px"/>
     </div>
     <div id="profitTrend"/>
   </el-card>
@@ -16,23 +24,34 @@
 <script>
 import G2 from '@antv/g2'
 import accounting from 'accounting'
-import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
+import { getYearFirst, getYearLast } from '@/utils'
 import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   name: '',
   data() {
     return {
+      year: [getYearFirst(new Date()), getYearLast(new Date())],
       buttonProfitMonth: 'primary',
       buttonProfitQuarter: '',
       buttonProfitYear: '',
       profit: [],
       chart: null,
-      loading: false
+      loading: false,
+      activeName: 0
     }
   },
   // 监听API接口传过来的数据  2018-08-21更新
   watch: {
+    year: function(val) {
+      if (this.activeName === 0) {
+        this.profitMonth()
+      } else if (this.activeName === 1) {
+        this.profitQuarter()
+      } else {
+        this.profitYear()
+      }
+    },
     profit: function(val, oldVal) { // 监听charData，当放生变化时，触发这个回调函数绘制图表
       this.drawChart(val)
     }
@@ -45,18 +64,21 @@ export default {
   methods: {
     checkPermission,
     profitYear() {
+      this.activeName = 2
       this.getProfit(4, 5)
       this.buttonProfitMonth = ''
       this.buttonProfitQuarter = ''
       this.buttonProfitYear = 'primary'
     },
     profitQuarter() {
+      this.activeName = 1
       this.getProfit(4, 6)
       this.buttonProfitMonth = ''
       this.buttonProfitQuarter = 'primary'
       this.buttonProfitYear = ''
     },
     profitMonth() {
+      this.activeName = 0
       this.getProfit(4, 7)
       this.buttonProfitMonth = 'primary'
       this.buttonProfitQuarter = ''
@@ -64,8 +86,10 @@ export default {
     },
     getProfit(item, groupBy) {
       this.loading = true
-      this.$api.statistics.fetchTrend({ item, groupBy, from: getCurrentYearFirst(), to: getCurrentYearLast() }).then(res => {
+      this.$api.statistics.fetchTrend({ item, groupBy, from: this.year[0], to: this.year[1] }).then(res => {
         this.profit = res.data
+        this.loading = false
+      }).catch(_ => {
         this.loading = false
       })
     },
