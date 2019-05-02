@@ -16,9 +16,9 @@
     <!-- body display date day and events -->
     <div class="full-calendar-body" @click="showMore = false">
       <div class="weeks">
-        <strong v-for="(dayIndex, index) in 7" :key="index" class="week" >{{ (dayIndex - 1) | localeWeekDay(firstDay, locale) }}</strong>
+        <strong v-for="(dayIndex, index) in 7" :key="index" class="week">{{ (dayIndex - 1) | localeWeekDay(firstDay, locale) }}</strong>
       </div>
-      <div ref="dates" class="dates" >
+      <div ref="dates" class="dates">
         <div class="dates-bg">
           <div
             v-for="(week, index) in currentDates"
@@ -45,6 +45,7 @@
               class="events-day">
               <!--@click.stop="dayClick(day.date, $event)"-->
               <p class="day-number">{{ day.monthDay }}</p>
+              <sup v-if="day.events.length > eventLimit" class="el-badge__content more-link" @click.stop="selectThisDay(day, $event)">{{ day.events[day.events.length -1].cellIndex - eventLimit }}</sup>
               <div class="event-box">
                 <event-card
                   v-for="(event, index) in day.events"
@@ -58,12 +59,12 @@
                     <slot :event="p.event" name="fc-event-card"/>
                   </template>
                 </event-card>
-                <p
-                  v-if="day.events.length > eventLimit"
-                  class="more-link"
-                  @click.stop="selectThisDay(day, $event)">
-                  + {{ day.events[day.events.length -1].cellIndex - eventLimit }} more
-                </p>
+                <!--<p-->
+                <!--v-if="day.events.length > eventLimit"-->
+                <!--class="more-link"-->
+                <!--@click.stop="selectThisDay(day, $event)">-->
+                <!--+ {{ day.events[day.events.length -1].cellIndex - eventLimit }} more-->
+                <!--</p>-->
               </div>
             </div>
           </div>
@@ -102,6 +103,7 @@ import dateFunc from './components/dateFunc'
 import moment from 'moment'
 import EventCard from './components/eventCard'
 import header from './components/header'
+
 export default {
   components: {
     'event-card': EventCard,
@@ -232,7 +234,7 @@ export default {
       this.selectDay = day
       this.showMore = true
       this.morePos = this.computePos(event.target)
-      this.morePos.top -= 100
+      this.morePos.left -= 240
       const events = day.events.filter(item => {
         return item.isShow === true
       })
@@ -260,165 +262,187 @@ export default {
 }
 </script>
 <style lang="scss" type="text/scss">
-  .comp-full-calendar{
+  .comp-full-calendar {
     // font-family: "elvetica neue", tahoma, "hiragino sans gb"
-    padding:20px;
+    padding: 20px;
     background: #fff;
     max-width: 960px;
-    margin:0 auto;
-    ul,p{
-      margin:0;
-      padding:0;
+    margin: 0 auto;
+
+    ul, p {
+      margin: 0;
+      padding: 0;
     }
   }
 
-  .full-calendar-body{
+  .full-calendar-body {
     margin-top: 0;
-  .weeks{
-    display: flex;
-    border-top:1px solid #e0e0e0;
-    border-bottom:1px solid #e0e0e0;
-    border-left:1px solid #e0e0e0;
-  .week{
-    flex:1;
-    text-align: center;
-    border-right:1px solid #e0e0e0;
-  }
-  }
-  .dates {
-    position:relative;
-  .week-row{
-  // width: 100%;
-  // position:absolute;
-    border-left:1px solid #e0e0e0;
-    display: flex;
-  .day-cell{
-    flex:1;
-    min-height: 150px;
-    padding:4px;
-    border-right:1px solid #e0e0e0;
-    border-bottom:1px solid #e0e0e0;
-  .day-number{
-    text-align: right;
-  }
-  &.today{
-     background-color:#fcf8e3;
-   }
-  &.not-cur-month{
-  .day-number{
-    color:rgba(0,0,0,.24);
-  }
-  }
-  }
-  }
-  .dates-events{
-    position:absolute;
-    top:0;
-    left:0;
-    z-index:1;
-    width: 100%;
-  .events-week{
-    display: flex;
-  .events-day{
-    cursor: pointer;
-    flex:1;
-    min-height: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  .day-number{
-    text-align: right;
-    padding:4px 5px 4px 4px;
-    opacity: 0;
-  }
-  &.not-cur-month{
-  .day-number{
-    color:rgba(0,0,0,.24);
-  }
-  }
-  .event-box{
-  .event-item{
-    cursor: pointer;
-    font-size:12px;
-    //background-color:#C7E6FD;
-    margin-bottom:2px;
-    //color: rgba(0,0,0,.87);
-    padding:0;
-    height: 18px;
-    line-height: 18px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  &.is-start{
-     margin-left: 0;
-   // border-top-left-radius:4px;
-   // border-bottom-left-radius:4px;
-   }
-  &.is-end{
-     margin-right: 4px;
-   // border-top-right-radius:4px;
-   // border-bottom-right-radius:4px;
-   }
-  &.is-opacity{
-     opacity: 0;
-   }
-  }
-  .more-link{
-    cursor: pointer;
-  // text-align: right;
-    padding-left: 8px;
-    padding-right: 2px;
-    margin-top: 7px;
-    color: rgba(0,0,0,.38);
-    font-size: 14px;
-  }
-  }
-  }
-  }
-  }
-  .more-events{
-    position:absolute;
-    width: 350px;
-    z-index: 2;
-    border:1px solid #eee;
-    box-shadow: 0 2px 6px rgba(0,0,0,.15);
-  .more-header{
-    background-color:#eee;
-    padding:5px;
-    display: flex;
-    align-items : center;
-    font-size: 14px;
-  .title{
-    flex:1;
-  }
-  .close{
-    margin-right: 2px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  }
-  .more-body{
-    height: 146px;
-    overflow: hidden;
-  .body-list{
-    height: 144px;
-    padding:5px;
-    overflow: auto;
-    background-color:#fff;
-  .body-item{
-    cursor: pointer;
-    font-size:12px;
-    margin-bottom:4px;
-    color: rgba(0,0,0,.87);
-    padding:0 0 0 4px;
-    height: 30px;
-    line-height: 30px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  }
-  }
-  }
-  }
+
+    .weeks {
+      display: flex;
+      border-top: 1px solid #e0e0e0;
+      border-bottom: 1px solid #e0e0e0;
+      border-left: 1px solid #e0e0e0;
+
+      .week {
+        flex: 1;
+        text-align: center;
+        border-right: 1px solid #e0e0e0;
+      }
+    }
+
+    .dates {
+      position: relative;
+
+      .week-row {
+        // width: 100%;
+        // position:absolute;
+        border-left: 1px solid #e0e0e0;
+        display: flex;
+
+        .day-cell {
+          flex: 1;
+          min-height: 150px;
+          padding: 4px;
+          border-right: 1px solid #e0e0e0;
+          border-bottom: 1px solid #e0e0e0;
+
+          .day-number {
+            text-align: left;
+          }
+
+          &.today {
+            background-color: #fcf8e3;
+          }
+
+          &.not-cur-month {
+            .day-number {
+              color: rgba(0, 0, 0, .24);
+            }
+          }
+        }
+      }
+
+      .dates-events {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+
+        .events-week {
+          display: flex;
+
+          .events-day {
+            cursor: pointer;
+            flex: 1;
+            min-height: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            .day-number {
+              text-align: right;
+              padding: 6px;
+              opacity: 0;
+            }
+
+            &.not-cur-month {
+              .day-number {
+                color: rgba(0, 0, 0, .24);
+              }
+            }
+            .more-link {
+              cursor: pointer;
+              // text-align: right;
+              margin-top: -14px;
+              margin-right: 4px;
+              float: right;
+            }
+            .event-box {
+              .event-item {
+                cursor: pointer;
+                font-size: 12px;
+                //background-color:#C7E6FD;
+                margin-bottom: 2px;
+                //color: rgba(0,0,0,.87);
+                padding: 0;
+                height: 18px;
+                line-height: 18px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                &.is-start {
+                  margin-left: 0;
+                  // border-top-left-radius:4px;
+                  // border-bottom-left-radius:4px;
+                }
+
+                &.is-end {
+                  margin-right: 4px;
+                  // border-top-right-radius:4px;
+                  // border-bottom-right-radius:4px;
+                }
+
+                &.is-opacity {
+                  opacity: 0;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .more-events {
+        position: absolute;
+        width: 280px;
+        z-index: 2;
+        border: 1px solid #eee;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+
+        .more-header {
+          background-color: #eee;
+          padding: 5px;
+          display: flex;
+          align-items: center;
+          font-size: 14px;
+
+          .title {
+            flex: 1;
+          }
+
+          .close {
+            margin-right: 2px;
+            cursor: pointer;
+            font-size: 16px;
+          }
+        }
+
+        .more-body {
+          height: 146px;
+          overflow: hidden;
+
+          .body-list {
+            height: 144px;
+            padding: 5px;
+            overflow: auto;
+            background-color: #fff;
+
+            .body-item {
+              cursor: pointer;
+              font-size: 12px;
+              margin-bottom: 4px;
+              color: rgba(0, 0, 0, .87);
+              padding: 0 0 0 4px;
+              height: 30px;
+              line-height: 30px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+    }
   }
 </style>

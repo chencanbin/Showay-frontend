@@ -371,6 +371,7 @@ export default {
           data.beneficiary = this.insurancePolicy.beneficiary.id
           data.channel = this.insurancePolicy.channel.id
           data.product = this.insurancePolicy.product.id
+          data.agent = this.insurancePolicy.agent.id
           delete data.riderBenefits
           this.$api.client.editInsurancePolicy(this.insurancePolicy.id, data).then(_ => {
             this.$message({

@@ -206,7 +206,7 @@ export default {
   .lock-icon {
     display: inline-block;
     position: absolute;
-    top: 310px;
+    top: 342px;
     left: 35px;
     font-size: 18px;
     z-index: 1000;

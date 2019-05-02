@@ -98,12 +98,14 @@
             :formatter="formatterSubmitDate"
             :label="$t('client.insurance_policy.submitDate')"
             prop="insurancePolicy.submitDate"
-            min-width="100"/>
+            min-width="100"
+            show-overflow-tooltip/>
           <el-table-column
             :formatter="formatterIssueDate"
             :label="$t('client.insurance_policy.issueDate')"
             prop="insurancePolicy.issueDate"
-            min-width="100"/>
+            min-width="100"
+            show-overflow-tooltip/>
           <el-table-column :label="$t('common.calculatedAmount')" min-width="120">
             <template slot-scope="scope">
               <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmount) }}</span>

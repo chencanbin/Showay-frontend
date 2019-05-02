@@ -31,7 +31,7 @@
         </el-table-column>
         <el-table-column :label="$t('commission.payment.chequeNumber')" prop="chequeNumber" min-width="150"/>
         <el-table-column :label="$t('common.remarks')" prop="remarks" min-width="150"/>
-        <el-table-column :label="$t('common.chequeIssueDate')" :formatter="dateFormat" prop="chequeIssueDate"/>
+        <el-table-column :label="$t('commission.payment.chequeIssueDate')" :formatter="dateFormat" prop="chequeIssueDate"/>
         <el-table-column :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" align="center">
           <template slot-scope="scope">
             <el-button type="text" @click="viewScanFile(scope.row.chequeCopy)">{{ $t('common.view') }}</el-button>
