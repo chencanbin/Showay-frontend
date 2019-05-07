@@ -1,11 +1,11 @@
 <template>
   <span>
-    <el-button :loading="loading" type="text" icon="el-icon-edit" size="small" @click="initForm">{{ this.$t('common.edit') }}</el-button>
+    <el-button :loading="loading" type="text" size="small" @click="initForm">{{ this.$t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="$t('product.company.set.edit_title')"
+      :title="$t('product.company.set.edit_title')"
       width="500px"
       append-to-body>
       <el-form ref="company" :model="company" :rules="rule" label-width="120px">
@@ -27,8 +27,10 @@
         <el-form-item label="联系地址" prop="address">
           <el-input v-model="company.address"/>
         </el-form-item>
-        <el-form-item label="系统地址" prop="website">
-          <el-input v-model="company.website"/>
+        <el-button type="primary" circle icon="el-icon-plus" size="mini" style="position: absolute; top: 408px; left: 12px;" @click="addWebsites"/>
+        <el-form-item v-for="(item, index) in company.websites" :key="index" :label="'系统地址' + (index + 1)">
+          <el-input v-model="item.name" :class="company.websites.length > 1 ? 'halfWidth' : 'fullWidth'"/>
+          <el-button v-if="company.websites.length > 1" icon="el-icon-remove-outline" size="small" style="min-width: 50px; font-size: 20px; padding: 6px; vertical-align: bottom;" @click="removeWebsite(index)"/>
         </el-form-item>
         <el-form-item :label="$t('product.company.set.contractEffectiveDate')" prop="contractEffectiveDate">
           <el-date-picker
@@ -52,6 +54,7 @@
 
 <script>
 import elDragDialog from '@/directive/el-dragDialog'
+const _ = require('lodash')
 export default {
   directives: { elDragDialog },
   props: {
@@ -73,7 +76,8 @@ export default {
         email: '',
         address: '',
         website: '',
-        contractEffectiveDate: ''
+        contractEffectiveDate: '',
+        websites: []
       },
       rule: {
         en: [{ required: true, message: this.$t('product.company.set.verify_message.name_en'), trigger: 'blur' }],
@@ -83,7 +87,14 @@ export default {
     }
   },
   methods: {
+    addWebsites() {
+      this.company.websites.push({ name: '' })
+    },
+    removeWebsite(index) {
+      this.company.websites.splice(index, 1)
+    },
     initForm() {
+      this.company.websites = []
       this.$api.company.getCompany(this.id).then(res => {
         this.company.acronym = res.data.acronym
         this.company.secondary = res.data.secondary
@@ -92,7 +103,15 @@ export default {
         this.company.address = res.data.address
         this.company.email = res.data.email
         this.company.phone = res.data.phone
-        this.company.website = res.data.website
+        if (res.data.websites.length === 0) {
+          this.company.websites = [{ name: '' }]
+        } else {
+          res.data.websites.forEach(item => {
+            this.company.websites.push({ name: item })
+          })
+        }
+        // this.company.websites = res.data.websites
+
         this.company.contractEffectiveDate = res.data.contractEffectiveDate
         this.dialogVisible = true
       })
@@ -105,7 +124,13 @@ export default {
       this.$refs['company'].validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$api.company.editCompany(this.id, this.company).then(_ => {
+          const data = _.cloneDeep(this.company)
+          const websites = []
+          this.company.websites.forEach(item => {
+            websites.push(item.name)
+          })
+          data.websites = websites
+          this.$api.company.editCompany(this.id, data).then(_ => {
             this.$message({
               message: this.$t('common.success'),
               type: 'success',
@@ -127,5 +152,10 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-
+  .fullWidth {
+    width: 100%;
+  }
+  .halfWidth {
+    width: 83%;
+  }
 </style>

@@ -5,9 +5,16 @@ import { asyncRouterMap, constantRouterMap } from '@/router'
  * @param roles
  * @param route
  */
-function hasPermission(roles, route) {
-  if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.includes(role.id))
+// function hasPermission(roles, route) {
+//   if (route.meta && route.meta.roles) {
+//     return roles.some(role => route.meta.roles.includes(role.id))
+//   } else {
+//     return true
+//   }
+// }
+function hasPermission(actions, route) {
+  if (route.meta && route.meta.id) {
+    return actions.some(action => action.id === route.meta.id)
   } else {
     return true
   }
@@ -18,13 +25,13 @@ function hasPermission(roles, route) {
  * @param routes asyncRouterMap
  * @param roles
  */
-function filterAsyncRouter(routes, roles) {
+function filterAsyncRouter(routes, actions) {
   const res = []
   routes.forEach(route => {
     const tmp = { ...route }
-    if (hasPermission(roles, tmp)) {
+    if (hasPermission(actions, tmp)) {
       if (tmp.children) {
-        tmp.children = filterAsyncRouter(tmp.children, roles)
+        tmp.children = filterAsyncRouter(tmp.children, actions)
       }
       res.push(tmp)
     }
@@ -46,13 +53,8 @@ const permission = {
   actions: {
     GenerateRoutes({ commit }, data) {
       return new Promise(resolve => {
-        const { roles } = data
-        let accessedRouters
-        if (roles.some(role => role.id === 1)) {
-          accessedRouters = asyncRouterMap
-        } else {
-          accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
-        }
+        const { actions } = data
+        const accessedRouters = filterAsyncRouter(asyncRouterMap, actions)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })

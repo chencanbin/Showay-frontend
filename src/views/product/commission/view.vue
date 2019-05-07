@@ -20,13 +20,18 @@
     <el-tabs v-model="activeName" type="border-card">
       <el-tab-pane :label="$t('product.commission.view.basic_tab')" name="basic">
         <el-table v-loading="viewLoading" :data="data" :max-height="tableHeight" stripe>
-          <el-table-column prop="product.acronym" label="编号" width="100" fixed="left" show-overflow-tooltip/>
-          <el-table-column prop="product.name" label="产品名称(中文)" show-overflow-tooltip min-width="180" fixed="left"/>
-          <el-table-column prop="product.enName" label="产品名称(英文)" show-overflow-tooltip min-width="180" fixed="left"/>
-          <el-table-column prop="product.period" label="年期" width="80"/>
+          <el-table-column :label="$t('product.commission.view.table_header.acronym')" prop="product.acronym" width="100" fixed="left" show-overflow-tooltip/>
+          <el-table-column :label="$t('product.commission.view.table_header.name')" prop="product.name" show-overflow-tooltip min-width="180" fixed="left"/>
+          <el-table-column :label="$t('product.commission.view.table_header.enName')" prop="product.enName" show-overflow-tooltip min-width="180" fixed="left"/>
+          <el-table-column :label="$t('product.commission.view.table_header.period')" prop="product.period" width="80"/>
           <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="90">
             <template slot-scope="scope">
               <span>{{ scope.row.conditions[index] ? numberFormatter(scope.row.conditions[index].basicCommissionRate) : '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="ffyap" width="80">
+            <template slot-scope="scope">
+              <span>{{ getFFYAP(scope.row.extraConditions) }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -144,6 +149,17 @@ export default {
     },
     numberFormatter(value) {
       return _.toNumber(value).toFixed(2) + '%'
+    },
+    getFFYAP(value) {
+      let result = ''
+      value.forEach(item => {
+        for (const i in item) {
+          if (i === 'ffyap') {
+            result = this.numberFormatter(item[i])
+          }
+        }
+      })
+      return result
     },
     exportExcel() {
       window.location.href = process.env.BASE_API + `/commissionTable/${this.id}/export`

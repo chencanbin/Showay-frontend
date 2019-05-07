@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{ $t('common.edit') }}</el-button>
+    <el-button type="text" size="small" @click="initForm">{{ $t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -10,8 +10,11 @@
       top="50px"
       append-to-body>
       <el-form ref="client" :model="client" :rules="rule" label-width="100px">
-        <el-form-item :label="$t('client.info.name')" prop="name">
-          <el-input v-model="client.name" :placeholder="$t('client.info.set.name')"/>
+        <el-form-item :label="$t('client.info.name')" prop="zh">
+          <el-input v-model="client.zh" :placeholder="$t('client.info.set.name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('client.info.enName')" prop="en">
+          <el-input v-model="client.en" :placeholder="$t('client.info.set.enName')"/>
         </el-form-item>
         <el-form-item :label="$t('client.info.idNumber')" prop="idNumber">
           <el-input v-model="client.idNumber" :placeholder="$t('client.info.set.idNumber')"/>
@@ -60,11 +63,16 @@ import { country } from '@/utils/country'
 import Cookies from 'js-cookie'
 import elDragDialog from '@/directive/el-dragDialog'
 
-const _ = require('lodash')
 export default {
   directives: { elDragDialog },
   props: {
     data: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    listQuery: {
       type: Object,
       default() {
         return {}
@@ -86,7 +94,6 @@ export default {
       loading: false,
       client: {},
       rule: {
-        name: [{ required: true, message: this.$t('client.info.set.name'), trigger: 'blur' }],
         idNumber: [{ required: true, message: this.$t('client.info.set.idNumber'), trigger: 'blur' }]
       }
     }
@@ -94,7 +101,9 @@ export default {
   methods: {
     initForm() {
       this.language = Cookies.get('language') || 'zh-CN'
-      this.client = _.cloneDeep(this.data)
+      this.$api.client.getClientById(this.data.id).then(res => {
+        this.client = res.data
+      })
       this.dialogVisible = true
     },
     handleClose() {
@@ -111,7 +120,9 @@ export default {
               type: 'success',
               duration: 5 * 1000
             })
-            this.$store.dispatch('client/FetchClientList', {})
+            const offset = (this.listQuery.page - 1) * this.listQuery.limit
+            const max = this.listQuery.limit
+            this.$store.dispatch('client/FetchClientList', { params: { offset, max }})
             this.handleClose()
             this.loading = false
           }).catch(_ => {

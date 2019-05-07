@@ -1,6 +1,6 @@
 <template>
   <span id="trace">
-    <el-button type="text" size="mini" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">审计列表</el-button>
+    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ $t('audit.detail') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"

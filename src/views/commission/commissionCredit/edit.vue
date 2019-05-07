@@ -25,7 +25,7 @@
           {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.premium) }}
         </el-form-item>
         <el-form-item :label="$t('common.commission_rate')" prop="name">
-          {{ formatterNumber(commissionCredit.commissionRate) + '%' }}
+          {{ credit.ffyap ? formatterNumber(commissionCredit.commissionRate) + '%' : formatterNumber(commissionCredit.commissionRateWithoutFfyap) + '%' }}
         </el-form-item>
         <el-form-item :label="$t('common.calculatedAmount')" prop="name">
           {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmount) }}
@@ -39,7 +39,7 @@
         <el-form-item :label="$t('common.remarks')" prop="remarks">
           <el-input v-model="credit.remarks" :placeholder="$t('common.remarks_placeholder')"/>
         </el-form-item>
-        <el-form-item v-if="isBoolean(credit.ffyap)" label="FFYAP" prop="name">
+        <el-form-item v-if="isBoolean(credit.ffyap)" label="FFYAP" prop="ffyap">
           <el-checkbox v-model="credit.ffyap"/>
         </el-form-item>
       </el-form>
@@ -199,15 +199,18 @@ export default {
     .el-form-item__content {
       padding-left: 10px;
     }
-    /*.el-form-item--medium .el-form-item__content, .el-form-item--medium .el-form-item__label {*/
-      /*line-height: 30px;*/
-    /*}*/
+    .el-dialog__body {
+      padding: 10px;
+    }
+    .el-form-item {
+      margin-bottom: 10px;
+    }
   }
   .lock-icon {
     display: inline-block;
     position: absolute;
-    top: 342px;
-    left: 35px;
+    top: 322px;
+    left: 30px;
     font-size: 18px;
     z-index: 1000;
   }

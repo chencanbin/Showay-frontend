@@ -23,13 +23,7 @@
         :max-height="height"
         :data="mergedPayment.payments"
         stripe
-        border
-        @selection-change="handleSelectionChange">
-        <!--<el-table-column-->
-        <!--v-if="checkPermission([1]) && status === '-1'"-->
-        <!--align="center"-->
-        <!--type="selection"-->
-        <!--width="55" />-->
+        border>
         <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip/>
         <el-table-column :label="$t('client.insurance_policy.beneficiary_name')" prop="insurancePolicy.beneficiary" width="120"/>
         <el-table-column :label="$t('commission.credit.year')" width="100">
@@ -154,18 +148,6 @@ export default {
     },
     formatterCurrency(value) {
       return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
-    },
-    handleSelectionChange(val) {
-      this.selectedRow = val
-      let selectSum = 0
-      _.forEach(val, item => {
-        if (item.amount) {
-          selectSum = selectSum + _.toFinite(item.amount)
-        } else {
-          selectSum = selectSum + _.toFinite(item.predictedAmountInHkd)
-        }
-      })
-      this.selectSum = selectSum
     },
     formatPercent(value) {
       return _.toNumber(value).toFixed(2) + '%'

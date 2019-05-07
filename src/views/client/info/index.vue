@@ -31,11 +31,11 @@
         <el-table-column
           :label="$t('client.info.locale')"
           prop="locale"
-          width="100"/>
+          width="135"/>
         <el-table-column
           :label="$t('client.info.sex')"
           prop="sex"
-          width="70">
+          width="80">
           <template slot-scope="scope">
             {{ scope.row.sex === 0 ? $t('client.info.male') : $t('client.info.female') }}
           </template>
@@ -63,13 +63,12 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit :data="scope.row"/>
+                  <edit :data="scope.row" :list-query="listQuery"/>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-button
                     type="text"
                     size="small"
-                    icon="el-icon-delete"
                     @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
                   </el-button>
                 </el-dropdown-item>
@@ -78,7 +77,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <add/>
+      <add :list-query="listQuery"/>
     </basic-container>
   </div>
 </template>

@@ -227,3 +227,30 @@ export const fileType = {
   'application/x-zip-compressed': 'rar'
 }
 
+export const expensesType = [
+  {
+    id: 0,
+    'zh-TW': '交通费',
+    'zh-CN': '交通費',
+    'en': 'Traffic'
+  },
+  {
+    id: 1,
+    'zh-TW': '住宿費',
+    'zh-CN': '住宿费',
+    'en': 'Accommodations'
+  },
+  {
+    id: 2,
+    'zh-TW': '手續費',
+    'zh-CN': '手续费',
+    'en': 'Fee'
+  },
+  {
+    id: 3,
+    'zh-TW': '其他',
+    'zh-CN': '其他',
+    'en': 'Misc'
+  }
+]
+

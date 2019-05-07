@@ -51,7 +51,6 @@
 import { parseTime, getYearFirst, getYearLast } from '@/utils'
 import pagination from '@/components/Pagination'
 import { mapState } from 'vuex'
-import Cookies from 'js-cookie'
 import detail from './detail'
 import Viewer from 'viewerjs'
 import 'viewerjs/dist/viewer.css'
@@ -68,7 +67,6 @@ export default {
     return {
       year: [getYearFirst(new Date()), getYearLast(new Date())],
       wildcard: '',
-      language: Cookies.get('language') || 'zh-CN',
       height: document.body.clientHeight - 120,
       chequeCopy: [],
       listQuery: {

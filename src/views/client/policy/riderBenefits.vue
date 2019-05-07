@@ -1,7 +1,6 @@
 <template>
   <span id="riderBenefits">
     <el-button type="text" size="small" style="margin-right: 5px" @click="initForm">
-      <svg-icon icon-class="riderBenefit" style="margin-right: 5px"/>
       {{ $t('client.insurance_policy.riderBenefits') }}
     </el-button>
     <el-dialog
@@ -37,9 +36,9 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.action')" width="160">
+        <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
-            <edit :rider-benefit="scope.row" :company-id="companyId" :currency="currency"/>
+            <edit :rider-benefit="scope.row" :company-id="companyId" :currency="currency" :submit-date="submitDate"/>
             <el-button
               type="text"
               size="small"
@@ -49,7 +48,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <add :company-id="companyId" :currency="currency" style="margin-top: 10px" @afterAdd="afterAdd" />
+      <add :company-id="companyId" :currency="currency" :submit-date="submitDate" style="margin-top: 10px" @afterAdd="afterAdd" />
       <div slot="footer" style="text-align: center">
         <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
         <el-button :loading="saveLoading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
@@ -82,6 +81,12 @@ export default {
       }
     },
     id: {
+      type: Number,
+      default() {
+        return 0
+      }
+    },
+    submitDate: {
       type: Number,
       default() {
         return 0

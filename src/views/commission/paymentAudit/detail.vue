@@ -9,12 +9,12 @@
       center>
       <el-row v-permission="[1]" style="margin-bottom: 10px">
         <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">{{ $t('commission.payment.submit_audit') }}</el-button>
-        <span v-if="status === '-1'" style="margin-left: 20px;">已选中实发金额:
+        <span v-show="status === '-1'" style="margin-left: 20px;">已选中实发金额:
           <count-to
             :start-val="0"
             :end-val="selectSum"
             :duration="2000"
-            decimals="2"
+            :decimals="2"
             prefix="HK$ "
             style="font-weight: bold;"/>
         </span>
@@ -62,18 +62,13 @@
             <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmountInHkd) }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commission.payment.predictedAmountInHkd')" prop="amount" min-width="100px">
-          <template slot-scope="scope">
-            <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.predictedAmountInHkd) }}</span>
-          </template>
-        </el-table-column>
         <el-table-column :label="$t('commission.payment.amount')" prop="amount" min-width="100px">
           <template slot-scope="scope">
             <div v-if="scope.row.amount">
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
             </div>
             <div v-else>
-              <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.predictedAmountInHkd) }}</span>
+              <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmountInHkd) }}</span>
             </div>
           </template>
         </el-table-column>
@@ -82,13 +77,13 @@
             <div style="float: right">{{ formatPercent(scope.row.commissionRate) }}</div>
           </template>
         </el-table-column>
-        <el-table-column v-if="checkPermission([1]) && status === '-1'" :label="$t('common.action')">
+        <el-table-column v-show="checkPermission([1]) && status === '-1'" :label="$t('common.action')">
           <template slot-scope="scope">
             <edit :payment="scope.row" :key="scope.row.id"/>
           </template>
         </el-table-column>
       </el-table>
-      <div v-permission="[1, 3]" v-if="status === '0'" slot="footer" class="dialog-footer">
+      <div v-permission="[1, 3]" v-show="status === '0'" slot="footer" class="dialog-footer">
         <el-button :loading="rejectLoading" @click="handleReject">{{ $t('common.reject') }}</el-button>
         <el-button :loading="approveLoading" type="primary" @click="handleApprove">{{ $t('common.approve') }}</el-button>
       </div>
@@ -153,6 +148,13 @@ export default {
       return this.selectedRow.length === 0
     }
   },
+  watch: {
+    mergedPayment(val) {
+      if (val.payments.length === 0) {
+        this.dialogVisible = false
+      }
+    }
+  },
   methods: {
     checkPermission,
     initForm() {
@@ -193,7 +195,7 @@ export default {
         if (item.amount) {
           selectSum = selectSum + _.toFinite(item.amount)
         } else {
-          selectSum = selectSum + _.toFinite(item.predictedAmountInHkd)
+          selectSum = selectSum + _.toFinite(item.calculatedAmountInHkd)
         }
       })
       this.selectSum = selectSum

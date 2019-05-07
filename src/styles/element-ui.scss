@@ -79,6 +79,9 @@
   a{
     display: block
   }
+  button {
+    padding: 10px 4px;
+  }
 }
 
  .el-card.is-always-shadow {
@@ -156,11 +159,19 @@
  .el-button--mini {
    padding: 4px 10px;
  }
- .el-button--small {
-   padding: 10px;
-   min-width: 80px;
-   //position: relative;
+ .el-dropdown-menu {
+   .el-button--small {
+     padding: 10px 25px;
+     //position: relative;
+   }
+   .el-dropdown-menu__item--divided {
+     margin: 0;
+   }
+   .el-dropdown-menu__item--divided:before {
+     height: 0;
+   }
  }
+
 // .el-button--small::after {
 //   content: "";
 //　　position: absolute;

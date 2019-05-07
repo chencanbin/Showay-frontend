@@ -63,6 +63,12 @@ export default {
     currencyInput
   },
   props: {
+    submitDate: {
+      type: Number,
+      default() {
+        return 0
+      }
+    },
     companyId: {
       type: Number,
       default() {
@@ -114,6 +120,7 @@ export default {
     getProducts() {
       this.products = []
       this.productLoading = true
+      this.queryProduct.timestamp = this.submitDate
       this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
         this.productLoading = false

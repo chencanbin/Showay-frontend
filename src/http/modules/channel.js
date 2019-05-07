@@ -63,3 +63,34 @@ export function editChannelCommissionPayment(id, data) {
   })
 }
 
+export function fetchChannelExpenses(params) {
+  return request({
+    url: `/channelExpenses`,
+    method: 'get',
+    params
+  })
+}
+
+export function addChannelExpenses(data) {
+  return request({
+    url: `/channelExpenses`,
+    method: 'post',
+    data
+  })
+}
+
+export function editChannelExpenses(id, data) {
+  return request({
+    url: `/channelExpenses/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteChannelExpenses(id) {
+  return request({
+    url: `/channelExpenses/${id}`,
+    method: 'delete'
+  })
+}
+

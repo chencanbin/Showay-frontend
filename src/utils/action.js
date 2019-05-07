@@ -1,0 +1,382 @@
+export const actions = [{
+  'id': 100000,
+  'name': 'Login'
+}, {
+  'id': 100001,
+  'name': 'Dashboard'
+}, {
+  'id': 100002,
+  'name': 'ChangePassword'
+}, {
+  'id': 100003,
+  'name': 'ResetPassword'
+}, {
+  'id': 100004,
+  'name': 'UpdateLocalizedName'
+}, {
+  'id': 100005,
+  'name': 'CreateInsuranceCompany'
+}, {
+  'id': 100006,
+  'name': 'ListInsuranceCompany'
+}, {
+  'id': 100007,
+  'name': 'ShowInsuranceCompany'
+}, {
+  'id': 100008,
+  'name': 'UpdateInsuranceCompany'
+}, {
+  'id': 100009,
+  'name': 'DeleteInsuranceCompany'
+}, {
+  'id': 100010,
+  'name': 'CreateProduct'
+}, {
+  'id': 100011,
+  'name': 'ListProduct'
+}, {
+  'id': 100012,
+  'name': 'ShowProduct'
+}, {
+  'id': 100013,
+  'name': 'UpdateProduct'
+}, {
+  'id': 100014,
+  'name': 'DeleteProduct'
+}, {
+  'id': 100015,
+  'name': 'CreateCommissionTable'
+}, {
+  'id': 100016,
+  'name': 'ListCommissionTable'
+}, {
+  'id': 100017,
+  'name': 'ShowCommissionTable'
+}, {
+  'id': 100018,
+  'name': 'UpdateCommissionTable'
+}, {
+  'id': 100019,
+  'name': 'DeleteCommissionTable'
+}, {
+  'id': 100020,
+  'name': 'ExportCommissionTable'
+}, {
+  'id': 100021,
+  'name': 'ShowDraft'
+}, {
+  'id': 100022,
+  'name': 'UpdateCommissionTableDraft'
+}, {
+  'id': 100023,
+  'name': 'SaveDraft'
+}, {
+  'id': 100024,
+  'name': 'CreateCommissionPolicy'
+}, {
+  'id': 100025,
+  'name': 'ListCommissionPolicy'
+}, {
+  'id': 100026,
+  'name': 'CreateChannelCommissionCondition'
+}, {
+  'id': 100027,
+  'name': 'UpdateChannelCommissionCondition'
+}, {
+  'id': 100028,
+  'name': 'DeleteChannelCommissionCondition'
+}, {
+  'id': 100029,
+  'name': 'CreateChannelCommissionTable'
+}, {
+  'id': 100030,
+  'name': 'ListChannelCommissionTable'
+}, {
+  'id': 100031,
+  'name': 'ShowChannelCommissionTable'
+}, {
+  'id': 100032,
+  'name': 'UpdateChannelCommissionTable'
+}, {
+  'id': 100033,
+  'name': 'DeleteChannelCommissionTable'
+}, {
+  'id': 100034,
+  'name': 'ExportChannelCommissionTable'
+}, {
+  'id': 100035,
+  'name': 'ViewChannelCommissionTable'
+}, {
+  'id': 100036,
+  'name': 'ShowChannelCommissionPayment'
+}, {
+  'id': 100037,
+  'name': 'ListChannelCommissionPayment'
+}, {
+  'id': 100038,
+  'name': 'UpdateChannelCommissionPayment'
+}, {
+  'id': 100039,
+  'name': 'CreateClient'
+}, {
+  'id': 100040,
+  'name': 'ListClient'
+}, {
+  'id': 100041,
+  'name': 'ShowClient'
+}, {
+  'id': 100042,
+  'name': 'UpdateClient'
+}, {
+  'id': 100043,
+  'name': 'DeleteClient'
+}, {
+  'id': 100044,
+  'name': 'CreateInsurancePolicy'
+}, {
+  'id': 100045,
+  'name': 'ListInsurancePolicy'
+}, {
+  'id': 100046,
+  'name': 'ShowInsurancePolicy'
+}, {
+  'id': 100047,
+  'name': 'UpdateInsurancePolicy'
+}, {
+  'id': 100048,
+  'name': 'DeleteInsurancePolicy'
+}, {
+  'id': 100049,
+  'name': 'TraceInsurancePolicy'
+}, {
+  'id': 100050,
+  'name': 'ResetInsurancePolicy'
+}, {
+  'id': 100051,
+  'name': 'RenewInsurancePolicy'
+}, {
+  'id': 100052,
+  'name': 'ListInsurancePolicyRenewal'
+}, {
+  'id': 100053,
+  'name': 'UpdateInsurancePolicyRenewal'
+}, {
+  'id': 100054,
+  'name': 'DeleteInsurancePolicyRenewal'
+}, {
+  'id': 100055,
+  'name': 'ListCommissionCredit'
+}, {
+  'id': 100056,
+  'name': 'ShowCommissionCredit'
+}, {
+  'id': 100057,
+  'name': 'UpdateCommissionCredit'
+}, {
+  'id': 100058,
+  'name': 'RejectCredit'
+}, {
+  'id': 100059,
+  'name': 'ClearCredit'
+}, {
+  'id': 100060,
+  'name': 'GetFilteredCreditSum'
+}, {
+  'id': 100061,
+  'name': 'ListClearedCommissionCredit'
+}, {
+  'id': 100062,
+  'name': 'CreateChannel'
+}, {
+  'id': 100063,
+  'name': 'ListChannel'
+}, {
+  'id': 100064,
+  'name': 'ShowChannel'
+}, {
+  'id': 100065,
+  'name': 'UpdateChannel'
+}, {
+  'id': 100066,
+  'name': 'DeleteChannel'
+}, {
+  'id': 100067,
+  'name': 'ListMergedPayment'
+}, {
+  'id': 100068,
+  'name': 'ShowMergedPayment'
+}, {
+  'id': 100069,
+  'name': 'CreateMergedPayment'
+}, {
+  'id': 100070,
+  'name': 'RejectMergedPayment'
+}, {
+  'id': 100071,
+  'name': 'ApproveMergedPayment'
+}, {
+  'id': 100072,
+  'name': 'ClearMergedPayment'
+}, {
+  'id': 100073,
+  'name': 'UploadInsuranceCompanyDocument'
+}, {
+  'id': 100074,
+  'name': 'DownloadInsuranceCompanyDocument'
+}, {
+  'id': 100075,
+  'name': 'DeleteInsuranceCompanyDocument'
+}, {
+  'id': 100076,
+  'name': 'RenameInsuranceCompanyDocument'
+}, {
+  'id': 100077,
+  'name': 'UploadPrivateDocument'
+}, {
+  'id': 100078,
+  'name': 'DownloadPrivateDocument'
+}, {
+  'id': 100079,
+  'name': 'DeletePrivateDocument'
+}, {
+  'id': 100080,
+  'name': 'RenamePrivateDocument'
+}, {
+  'id': 100081,
+  'name': 'CreateUser'
+}, {
+  'id': 100082,
+  'name': 'ListUser'
+}, {
+  'id': 100083,
+  'name': 'ShowUser'
+}, {
+  'id': 100084,
+  'name': 'UpdateUser'
+}, {
+  'id': 100085,
+  'name': 'DeleteUser'
+}, {
+  'id': 100086,
+  'name': 'GetUserInfo'
+}, {
+  'id': 100087,
+  'name': 'CreateRole'
+}, {
+  'id': 100088,
+  'name': 'ListRole'
+}, {
+  'id': 100089,
+  'name': 'ShowRole'
+}, {
+  'id': 100090,
+  'name': 'UpdateRole'
+}, {
+  'id': 100091,
+  'name': 'DeleteRole'
+}, {
+  'id': 100092,
+  'name': 'CreateFolder'
+}, {
+  'id': 100093,
+  'name': 'ListFolder'
+}, {
+  'id': 100094,
+  'name': 'ShowFolder'
+}, {
+  'id': 100095,
+  'name': 'UpdateFolder'
+}, {
+  'id': 100096,
+  'name': 'DeleteFolder'
+}, {
+  'id': 100097,
+  'name': 'CreateDoc'
+}, {
+  'id': 100098,
+  'name': 'ListDoc'
+}, {
+  'id': 100099,
+  'name': 'ShowDoc'
+}, {
+  'id': 100100,
+  'name': 'UpdateDoc'
+}, {
+  'id': 100101,
+  'name': 'DeleteDoc'
+}, {
+  'id': 100102,
+  'name': 'OverallStats'
+}, {
+  'id': 100103,
+  'name': 'TrendStats'
+}, {
+  'id': 100104,
+  'name': 'TopNStats'
+}, {
+  'id': 100105,
+  'name': 'ShowRenewalCalendar'
+}, {
+  'id': 100106,
+  'name': 'UpdateRenewalCalendar'
+}, {
+  'id': 100107,
+  'name': 'CreateChannelHierarchy'
+}, {
+  'id': 100108,
+  'name': 'ListChannelHierarchy'
+}, {
+  'id': 100109,
+  'name': 'ShowChannelHierarchy'
+}, {
+  'id': 100110,
+  'name': 'UpdateChannelHierarchy'
+}, {
+  'id': 100111,
+  'name': 'DeleteChannelHierarchy'
+}, {
+  'id': 100112,
+  'name': 'CreateExpense'
+}, {
+  'id': 100113,
+  'name': 'ListExpense'
+}, {
+  'id': 100114,
+  'name': 'ShowExpense'
+}, {
+  'id': 100115,
+  'name': 'UpdateExpense'
+}, {
+  'id': 100116,
+  'name': 'DeleteExpense'
+}, {
+  'id': 100117,
+  'name': 'CreateChannelExpense'
+}, {
+  'id': 100118,
+  'name': 'ListChannelExpense'
+}, {
+  'id': 100119,
+  'name': 'ShowChannelExpense'
+}, {
+  'id': 100120,
+  'name': 'UpdateChannelExpense'
+}, {
+  'id': 100121,
+  'name': 'DeleteChannelExpense'
+}, {
+  'id': 100122,
+  'name': 'CreateContact'
+}, {
+  'id': 100123,
+  'name': 'ListContact'
+}, {
+  'id': 100124,
+  'name': 'ShowContact'
+}, {
+  'id': 100125,
+  'name': 'UpdateContact'
+}, {
+  'id': 100126,
+  'name': 'DeleteContact'
+}]

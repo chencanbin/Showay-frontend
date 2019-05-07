@@ -41,12 +41,16 @@
                 <el-form-item :label="$t('client.insurance_policy.premium')" class="policy-form-item">
                   <span>{{ numberFormat(scope.row, scope.row.premium) }}</span>
                 </el-form-item>
-                <el-form-item :label="$t('client.insurance_policy.premiumPlan')" class="policy-form-item" style="width: 17%;">
+                <el-form-item :label="$t('client.insurance_policy.premiumPlan')" class="policy-form-item">
                   <span>{{ formatterPremiumPlan(scope.row.premiumPlan) }}</span>
                 </el-form-item>
-                <el-form-item :label="$t('client.insurance_policy.channel')" class="policy-form-item" style="width: 25%">
+                <el-form-item :label="$t('client.insurance_policy.channel')" class="policy-form-item">
                   <!--<detail :data="scope.row"/>-->
                   <span>{{ scope.row.channel.name }}</span>
+                </el-form-item>
+                <el-form-item label="DDA" class="policy-form-item">
+                  <!--<detail :data="scope.row"/>-->
+                  <span>{{ scope.row.dda ? 'Yes' : 'No' }}</span>
                 </el-form-item>
               </el-form>
               <!--<div v-if="scope.row.riderBenefits && scope.row.riderBenefits.length > 0">-->
@@ -77,7 +81,7 @@
           :formatter="dateFormat"
           :label="$t('client.insurance_policy.submitDate')"
           prop="submitDate"
-          min-width="100"
+          min-width="140"
           sortable="custom"/>
         <el-table-column
           :label="$t('client.insurance_policy.policyStatus')"
@@ -101,7 +105,8 @@
         <el-table-column
           :label="$t('client.insurance_policy.applicant_name')"
           prop="applicant.name"
-          show-overflow-tooltip/>
+          show-overflow-tooltip
+          width="110"/>
         <el-table-column
           :label="$t('client.insurance_policy.beneficiary_name')"
           prop="beneficiary.name"
@@ -129,36 +134,40 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row"/>
+                  <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :list-query="listQuery" :data="scope.row"/>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency"/>
+                  <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency" :submit-date="scope.row.submitDate"/>
                 </el-dropdown-item>
-                <el-dropdown-item>
+                <el-dropdown-item divided>
                   <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
                 </el-dropdown-item>
                 <el-dropdown-item v-permission="[1]">
                   <el-button
                     type="text"
                     size="small"
-                    icon="el-icon-refresh"
                     @click="handleReset(scope.row.id)">{{ $t('common.reset') }}
                   </el-button>
                 </el-dropdown-item>
-                <el-dropdown-item>
+                <el-dropdown-item divided>
                   <el-button
                     type="text"
                     size="small"
-                    icon="el-icon-delete"
                     @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
                   </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item divided>
+                  <company-expenses :policy="scope.row"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <channel-expenses :policy="scope.row"/>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <add v-permission="[1, 3]"/>
+      <add v-permission="[1, 3]" :list-query="listQuery"/>
     </basic-container>
   </div>
 </template>
@@ -177,6 +186,8 @@ import detail from './detail'
 import addClient from './addClient'
 import riderBenefits from './riderBenefits'
 import renewal from './renewal'
+import companyExpenses from './companyExpenses'
+import channelExpenses from './channelExpenses'
 import pagination from '@/components/Pagination'
 const _ = require('lodash')
 const currencyFormatter = require('currency-formatter')
@@ -189,6 +200,8 @@ export default {
     addClient,
     riderBenefits,
     renewal,
+    companyExpenses,
+    channelExpenses,
     pagination
   },
   directives: { permission },
@@ -388,12 +401,13 @@ export default {
 <style type="text/scss"  lang="scss" scope>
   #policy {
     .el-table__expanded-cell {
-      padding: 20px;
+      padding: 0 10px 10px 20px;
     }
     .policy-form-item{
       margin-right: 0;
       margin-bottom: 0;
-      width: 14%;
+      width: 20%;
+      margin-top: 10px;
       label {
         color: #99a9bf;
       }

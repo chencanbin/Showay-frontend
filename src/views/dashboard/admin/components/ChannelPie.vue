@@ -68,7 +68,7 @@ export default {
           if (Number(val) === 0) {
             return
           }
-          return item.point.key + ': ' + (accounting.unformat(val) / total).toFixed(2) + '%'
+          return item.point.key + ': ' + (accounting.unformat(val) / total).toFixed(2) * 100 + '%'
         }
       }).tooltip('key*value', function(key, value) {
         return {

@@ -21,11 +21,11 @@
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.calculatedTotalInHkd) }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('commission.payment.predictedTotalInHkd')" min-width="120">
-            <template slot-scope="scope">
-              <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.predictedTotalInHkd) }}</span>
-            </template>
-          </el-table-column>
+          <!--<el-table-column :label="$t('commission.payment.predictedTotalInHkd')" min-width="120">-->
+          <!--<template slot-scope="scope">-->
+          <!--<span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.predictedTotalInHkd) }}</span>-->
+          <!--</template>-->
+          <!--</el-table-column>-->
           <el-table-column :label="$t('commission.payment.amountInHkd')" min-width="120">
             <template slot-scope="scope">
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.amountInHkd) }}</span>

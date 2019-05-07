@@ -5,7 +5,9 @@
     :placeholder="placeholder"
     @input="onChange"
     @focus="selectAll"
-    @blur="onBlur"/>
+    @blur="onBlur">
+    <slot name="prepend"/>
+  </el-input>
 </template>
 
 <script>
@@ -68,7 +70,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

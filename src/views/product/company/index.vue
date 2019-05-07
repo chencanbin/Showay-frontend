@@ -17,8 +17,22 @@
         v-loading="companyLoading"
         :data="companyList.list"
         :height="height"
+        :expand-row-keys="expandKeys"
         row-key="id"
-        stripe>
+        stripe
+        @expand-change="expandChange">
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-form id="policy-table-expand" label-position="left" inline >
+              <el-form-item :label="$t('product.company.table_header.address')" class="company-form-item" style="width: 100%">
+                <span>{{ scope.row.address }}</span>
+              </el-form-item>
+              <el-form-item v-for="(item, index) in scope.row.websites" :key="index" :label="$t('product.company.table_header.website') + (index + 1)" class="company-form-item">
+                <a :href="item" class="link">{{ item }}</a>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('product.company.table_header.name')" prop="name" min-width="150px" show-overflow-tooltip>
           <template slot-scope="scope">
             {{ scope.row.acronym }}  - {{ scope.row.name }}
@@ -30,11 +44,8 @@
             <el-tag v-else type="success">{{ $t('product.company.levelTab.level1') }}</el-tag>
           </template>
         </el-table-column>
-        <!--<el-table-column prop="contact" label="联系人" show-overflow-tooltip/>-->
-        <el-table-column prop="phone" label="联系电话" show-overflow-tooltip/>
-        <el-table-column prop="email" label="电子邮箱" show-overflow-tooltip/>
-        <el-table-column prop="address" label="联系地址" show-overflow-tooltip/>
-        <el-table-column prop="website" label="系统地址" show-overflow-tooltip/>
+        <el-table-column :label="$t('product.company.table_header.phone')" prop="phone" show-overflow-tooltip/>
+        <el-table-column :label="$t('product.company.table_header.email')" prop="email" show-overflow-tooltip/>
         <el-table-column
           :formatter="dateFormat"
           :label="$t('product.company.table_header.contractEffectiveDate')"
@@ -51,11 +62,13 @@
                   <edit :id="scope.row.id"/>
                 </el-dropdown-item>
                 <el-dropdown-item>
+                  <contact :company="scope.row"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
                   <el-button
                     :loading="deleteLoading"
                     size="small"
                     type="text"
-                    icon="el-icon-delete"
                     @click="handleDelete(scope.row)">{{ $t('common.delete') }}</el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -76,6 +89,7 @@ import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
 import add from './add'
 import edit from './edit'
+import contact from './contact'
 import permission from '@/directive/permission/index.js' // 权限判断指令
 import checkPermission from '@/utils/permission' // 权限判断函数
 
@@ -86,13 +100,15 @@ export default {
   components: {
     pagination,
     add,
-    edit
+    edit,
+    contact
   },
   directives: { permission },
   data() {
     return {
-      height: document.body.clientHeight - 190,
+      height: document.body.clientHeight - 180,
       wildcard: '',
+      expandKeys: [],
       listQuery: {
         page: 1,
         limit: 50
@@ -162,10 +178,33 @@ export default {
     },
     updateLimit(val) {
       this.listQuery.limit = val
+    },
+    expandChange(row, expandedRows) {
+      if (this.expandKeys.indexOf(row.id) >= 0) {
+        // 收起当前行
+        this.expandKeys.shift()
+        return
+      }
+      this.expandKeys.shift()
+      this.expandKeys.push(row.id)
+      if (expandedRows.length > 1) {
+        // 只展开当前选项
+        expandedRows.shift()
+      }
     }
   }
 }
 </script>
-<style>
-
+<style lang="scss" rel="stylesheet/scss" type="text/scss">
+  .company-form-item{
+    margin-right: 0;
+    margin-bottom: 10px;
+    width: 45%;
+    label {
+      color: #99a9bf;
+    }
+  }
+  .link:hover {
+    color: #00701A;
+  }
 </style>

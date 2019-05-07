@@ -13,6 +13,9 @@
         <el-form-item :label="$t('client.info.name')" prop="name">
           <el-input v-model="client.name" :placeholder="$t('client.info.set.name')"/>
         </el-form-item>
+        <el-form-item :label="$t('client.info.enName')" prop="enName">
+          <el-input v-model="client.englishName" :placeholder="$t('client.info.set.enName')"/>
+        </el-form-item>
         <el-form-item :label="$t('client.info.idNumber')" prop="idNumber">
           <el-input v-model="client.idNumber" :placeholder="$t('client.info.set.idNumber')"/>
         </el-form-item>
@@ -61,6 +64,14 @@ import elDragDialog from '@/directive/el-dragDialog'
 import Cookies from 'js-cookie'
 export default {
   directives: { elDragDialog },
+  props: {
+    listQuery: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   data() {
     return {
       language: 'en',
@@ -76,6 +87,7 @@ export default {
       loading: false,
       client: {
         name: '',
+        englishName: '',
         idNumber: '',
         sex: 0,
         locale: '',
@@ -102,13 +114,18 @@ export default {
       this.$refs['client'].validate((valid) => {
         if (valid) {
           this.loading = true
+          this.client.localizedNames = []
+          this.client.localizedNames.push({ name: this.client.englishName, locale: 'en' })
+          this.client.localizedNames.push({ name: this.client.name, locale: 'zh_CN' })
           this.$api.client.createClient(this.client).then(_ => {
             this.$message({
               message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })
-            this.$store.dispatch('client/FetchClientList', {})
+            const offset = (this.listQuery.page - 1) * this.listQuery.limit
+            const max = this.listQuery.limit
+            this.$store.dispatch('client/FetchClientList', { params: { offset, max }})
             this.handleClose()
             this.loading = false
           }).catch(_ => {

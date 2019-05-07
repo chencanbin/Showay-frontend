@@ -12,6 +12,9 @@
         <el-form-item :label="$t('client.info.name')" prop="name">
           <el-input v-model="client.name" :placeholder="$t('client.info.set.name')"/>
         </el-form-item>
+        <el-form-item :label="$t('client.info.enName')" prop="enName">
+          <el-input v-model="client.englishName" :placeholder="$t('client.info.set.enName')"/>
+        </el-form-item>
         <el-form-item :label="$t('client.info.idNumber')" prop="idNumber">
           <el-input v-model="client.idNumber" :placeholder="$t('client.info.set.idNumber')"/>
         </el-form-item>
@@ -55,7 +58,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapState } from 'vuex'
 import { country } from '@/utils/country'
 import elDragDialog from '@/directive/el-dragDialog'
 import Cookies from 'js-cookie'
@@ -73,8 +75,10 @@ export default {
         options: country
       }],
       dialogVisible: false,
+      loading: false,
       client: {
         name: '',
+        englishName: '',
         idNumber: '',
         sex: 0,
         locale: '',
@@ -82,15 +86,11 @@ export default {
         phone: '',
         email: ''
       },
-      loading: false,
       rule: {
         name: [{ required: true, message: this.$t('client.info.set.name'), trigger: 'blur' }],
         idNumber: [{ required: true, message: this.$t('client.info.set.idNumber'), trigger: 'blur' }]
       }
     }
-  },
-  computed: {
-    ...mapState({ companyList: state => state.company.companyList.list })
   },
   methods: {
     initForm() {
@@ -105,13 +105,15 @@ export default {
       this.$refs['client'].validate((valid) => {
         if (valid) {
           this.loading = true
+          this.client.localizedNames = []
+          this.client.localizedNames.push({ name: this.client.englishName, locale: 'en' })
+          this.client.localizedNames.push({ name: this.client.name, locale: 'zh_CN' })
           this.$api.client.createClient(this.client).then(_ => {
             this.$message({
               message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })
-            this.$store.dispatch('client/FetchClientList', {})
             this.handleClose()
             this.loading = false
           }).catch(_ => {

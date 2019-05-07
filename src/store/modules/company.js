@@ -1,12 +1,23 @@
-import { fetchCompanyList } from '@/http/modules/company'
+import { fetchCompanyList, fetchCompanyContact } from '@/http/modules/company'
 
 const company = {
   namespaced: true,
   state: {
     companyList: [],
-    companyLoading: false
+    contactList: [],
+    companyLoading: false,
+    contactLoading: false
   },
   mutations: {
+    SHOW_CONTACT_LOADING: (state) => {
+      state.contactLoading = true
+    },
+    HIDE_CONTACT_LOADING: (state) => {
+      state.contactLoading = false
+    },
+    SET_CONTACT_LIST: (state, contactList) => {
+      state.contactList = contactList
+    },
     SET_COMPANY_LIST: (state, companyList) => {
       state.companyList = companyList
     },
@@ -25,6 +36,15 @@ const company = {
         commit('SET_COMPANY_LIST', res.data)
       }).catch(_ => {
         commit('HIDE_COMPANY_LOADING')
+      })
+    },
+    FetchCompanyContact({ commit }, params) {
+      commit('SHOW_CONTACT_LOADING')
+      return fetchCompanyContact(params).then(res => {
+        commit('HIDE_CONTACT_LOADING')
+        commit('SET_CONTACT_LIST', res.data)
+      }).catch(_ => {
+        commit('HIDE_CONTACT_LOADING')
       })
     }
   }

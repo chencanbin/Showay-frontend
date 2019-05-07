@@ -14,7 +14,7 @@
         :model="insurancePolicy"
         inline
         class="insurance-policy-form"
-        label-width="80px">
+        label-width="120px">
         <el-form-item :label="$t('client.insurance_policy.number')" prop="number">
           <el-input ref="number" v-model="insurancePolicy.number" :placeholder="$t('client.insurance_policy.set.number')" autofocus/>
         </el-form-item>
@@ -154,6 +154,9 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="DDA">
+          <el-checkbox v-model="insurancePolicy.dda"/>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
@@ -176,18 +179,26 @@ export default {
   components: {
     currencyInput
   },
+  props: {
+    listQuery: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   data() {
     return {
       language: 'en',
       policyStatus,
       dialogVisible: false,
-
       agents: [],
       products: [],
       queryProduct: {
         name: '',
         company: ''
       },
+      dda: false,
       currencyArray,
       premiumPlan,
       insurancePolicy: {
@@ -246,10 +257,10 @@ export default {
     initForm() {
       this.language = Cookies.get('language') || 'zh-CN'
       this.dialogVisible = true
-      this.getClient()
+      // this.getClient()
+      // this.getCompanies()
       this.getChannel()
       this.getAgents()
-      this.getCompanies()
       this.$nextTick(function() {
         this.$refs.number.focus()
       })
@@ -338,7 +349,9 @@ export default {
               type: 'success',
               duration: 5 * 1000
             })
-            this.$store.dispatch('client/FetchInsurancePolicyList', { params: { sort: 'submitDate,sn', order: 'asc,asc' }})
+            const offset = (this.listQuery.page - 1) * this.listQuery.limit
+            const max = this.listQuery.limit
+            this.$store.dispatch('client/FetchInsurancePolicyList', { params: { sort: 'submitDate,sn', order: 'asc,asc', max, offset }})
             this.$refs['insurancePolicy'].resetFields()
             this.$refs['premium'].currencyValue = 0
             this.$refs['amountInsured'].currencyValue = 0

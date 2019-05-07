@@ -73,6 +73,12 @@ export default {
     currencyInput
   },
   props: {
+    submitDate: {
+      type: Number,
+      default() {
+        return 0
+      }
+    },
     riderBenefit: {
       type: Object,
       default() {
@@ -130,6 +136,9 @@ export default {
     },
     getProducts() {
       this.products = []
+      if (this.submitDate) {
+        this.queryProduct.timestamp = this.submitDate
+      }
       this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
       })

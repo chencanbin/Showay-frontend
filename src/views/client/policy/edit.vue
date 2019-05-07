@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{ this.$t('common.edit') }}</el-button>
+    <el-button type="text" size="small" @click="initForm">{{ this.$t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :visible="dialogVisible"
@@ -14,7 +14,7 @@
         :model="insurancePolicy"
         inline
         class="insurance-policy-form"
-        label-width="80px">
+        label-width="120px">
         <el-form-item :label="$t('client.insurance_policy.number')" prop="number">
           <el-input v-model="insurancePolicy.number" :placeholder="$t('client.insurance_policy.set.number')"/>
         </el-form-item>
@@ -38,16 +38,16 @@
         <el-form-item :label="$t('client.insurance_policy.applicant_name')" prop="applicant.name">
           <el-select
             v-model="insurancePolicy.applicant.id"
-            :loading="clientLoading"
-            :remote-method="searchClient"
+            :loading="applicantLoading"
+            :remote-method="searchApplicants"
             :placeholder="$t('client.insurance_policy.set.applicant_name')"
             filterable
             remote
             style="width: 100%"
-            @focus="onClientFocus"
+            @focus="onApplicantsFocus"
           >
             <el-option
-              v-for="item in client.list"
+              v-for="item in applicants"
               :key="item.id"
               :label="item.name"
               :value="item.id">
@@ -58,15 +58,15 @@
         <el-form-item :label="$t('client.insurance_policy.beneficiary_name')" prop="beneficiary.name">
           <el-select
             v-model="insurancePolicy.beneficiary.id"
-            :loading="clientLoading"
-            :remote-method="searchClient"
+            :loading="beneficiaryLoading"
+            :remote-method="searchBeneficiaries"
             :placeholder="$t('client.insurance_policy.set.beneficiary_name')"
             filterable
             remote
             style="width: 100%"
-            @focus="onClientFocus">
+            @focus="onBeneficiariesFocus">
             <el-option
-              v-for="item in client.list"
+              v-for="item in beneficiaries"
               :key="item.id"
               :label="item.name"
               :value="item.id">
@@ -107,8 +107,7 @@
             filterable
             remote
             style="width: 100%"
-            @focus="onChannelFocus"
-          >
+            @focus="onChannelFocus">
             <el-option
               v-for="item in channels"
               :key="item.id"
@@ -171,6 +170,9 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="DDA">
+          <el-checkbox v-model="insurancePolicy.dda"/>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
@@ -200,6 +202,12 @@ export default {
       default() {
         return {}
       }
+    },
+    listQuery: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   data() {
@@ -209,7 +217,10 @@ export default {
       dialogVisible: false,
       agents: [],
       products: [],
+      companies: [],
       channels: [],
+      applicants: [],
+      beneficiaries: [],
       currencyArray,
       premiumPlan,
       insurancePolicy: {
@@ -217,11 +228,14 @@ export default {
         sn: null,
         submitDate: null,
         policyStatus: null,
+        dda: false,
         applicant: {
-          id: null
+          id: null,
+          name: ''
         },
         beneficiary: {
-          id: null
+          id: null,
+          name: ''
         },
         company: {
           id: null
@@ -247,15 +261,18 @@ export default {
         max: 50
       },
       submitLoading: false,
-      productLoading: false
+      productLoading: false,
+      companyLoading: false,
+      applicantLoading: false,
+      beneficiaryLoading: false
     }
   },
   computed: {
     ...mapState({
-      clientLoading: state => state.client.clientLoading,
-      companyLoading: state => state.company.companyLoading,
-      client: state => state.client.clientList,
-      companies: state => state.company.companyList.list
+      // clientLoading: state => state.client.clientLoading,
+      // client: state => state.client.clientList,
+      // companyLoading: state => state.company.companyLoading,
+      // companies: state => state.company.companyList.list
     }),
     currency() {
       if (this.insurancePolicy.currency === 0) {
@@ -272,30 +289,63 @@ export default {
   methods: {
     initForm() {
       this.language = Cookies.get('language') || 'zh-CN'
-      // this.getChannel()
-      // this.getAgents()
-
       this.insurancePolicy = _.cloneDeep(this.data)
       this.products = [this.insurancePolicy.product]
-      this.$store.commit('company/SET_COMPANY_LIST', { list: [this.insurancePolicy.company] })
+      this.companies = [this.insurancePolicy.company]
       this.agents = [this.insurancePolicy.agent]
       this.channels = [this.insurancePolicy.channel]
+      this.applicants = [this.insurancePolicy.applicant]
+      this.beneficiaries = [this.insurancePolicy.beneficiary]
       this.insurancePolicy.currency = this.getCurrencyKey(this.data.currency)
-      this.getClient()
-      this.getCompanies()
       this.dialogVisible = true
     },
     getCompanies(params) {
-      this.$store.dispatch('company/FetchCompanyList', params)
+      this.companyLoading = true
+      this.$api.company.fetchCompanyList(params).then(res => {
+        this.companies = res.data.list
+        this.companyLoading = false
+      }).catch(_ => {
+        this.companyLoading = false
+      })
     },
-    getClient(params) {
-      this.$store.dispatch('client/FetchClientList', { params })
+    // getClient(params) {
+    //   this.$store.dispatch('client/FetchClientList', { params })
+    // },
+    // onClientFocus() {
+    //   this.getClient({ name: '' })
+    // },
+    // searchClient(query) {
+    //   this.getClient({ name: query })
+    // },
+    getApplicants(params) {
+      this.applicantLoading = true
+      this.$api.client.fetchClientList(params).then(res => {
+        this.applicants = res.data.list
+        this.applicantLoading = false
+      }).catch(_ => {
+        this.applicantLoading = false
+      })
     },
-    onClientFocus() {
-      this.getClient({ name: '' })
+    onApplicantsFocus() {
+      this.getApplicants({ name: '' })
     },
-    searchClient(query) {
-      this.getClient({ name: query })
+    searchApplicants(query) {
+      this.getApplicants({ name: query })
+    },
+    getBeneficiaries(params) {
+      this.beneficiaryLoading = true
+      this.$api.client.fetchClientList(params).then(res => {
+        this.beneficiaries = res.data.list
+        this.beneficiaryLoading = false
+      }).catch(_ => {
+        this.beneficiaryLoading = false
+      })
+    },
+    onBeneficiariesFocus() {
+      this.getBeneficiaries({ name: '' })
+    },
+    searchBeneficiaries(query) {
+      this.getBeneficiaries({ name: query })
     },
     getAgents(params) {
       this.$api.user.fetchUserList({ role: 3, ...params }).then(res => {
@@ -367,6 +417,7 @@ export default {
         if (valid) {
           this.submitLoading = true
           const data = _.cloneDeep(this.insurancePolicy)
+          console.log(data)
           data.applicant = this.insurancePolicy.applicant.id
           data.beneficiary = this.insurancePolicy.beneficiary.id
           data.channel = this.insurancePolicy.channel.id
@@ -379,7 +430,9 @@ export default {
               type: 'success',
               duration: 5 * 1000
             })
-            this.$store.dispatch('client/FetchInsurancePolicyList', { params: { sort: 'submitDate,sn', order: 'asc,asc' }})
+            const offset = (this.listQuery.page - 1) * this.listQuery.limit
+            const max = this.listQuery.limit
+            this.$store.dispatch('client/FetchInsurancePolicyList', { params: { sort: 'submitDate,sn', order: 'asc,asc', max, offset }})
             this.submitLoading = false
             this.handleClose()
           }).catch(_ => {

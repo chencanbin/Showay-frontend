@@ -78,32 +78,32 @@ export const asyncRouterMap = [
         path: '',
         component: () => import('@/views/dashboard/index'),
         name: 'home',
-        meta: { title: 'home', icon: 'dashboard', noCache: true }
+        meta: { title: 'home', icon: 'dashboard', noCache: true, id: 100001 }
       }
     ]
   },
   {
     path: '/product',
     component: Layout,
-    meta: { title: 'product', icon: 'product', roles: [1, 2] },
+    meta: { title: 'product', icon: 'product' },
     children: [
       {
         path: 'company',
         component: () => import('@/views/product/company'),
         name: 'company',
-        meta: { title: 'company', icon: 'company', noCache: true, roles: [1, 2] }
+        meta: { title: 'company', icon: 'company', noCache: true, id: 100006 }
       },
       {
         path: 'productCommission',
         component: () => import('@/views/product/commission/index'),
         name: 'productCommission',
-        meta: { title: 'productCommission', icon: 'commission', noCache: true, roles: [1] }
+        meta: { title: 'productCommission', icon: 'commission', noCache: true, id: 100006 }
       },
       {
         path: 'channelCommission',
         component: () => import('@/views/product/channel/index'),
         name: 'channelCommission',
-        meta: { title: 'channelCommission', icon: 'client', noCache: true, roles: [1, 2] }
+        meta: { title: 'channelCommission', icon: 'client', noCache: true, id: 100063 }
       }
     ]
   },
@@ -117,13 +117,13 @@ export const asyncRouterMap = [
         path: '/insurancePolicy',
         component: () => import('@/views/client/policy'),
         name: 'insurancePolicy',
-        meta: { title: 'insurancePolicy', icon: 'policy', noCache: true }
+        meta: { title: 'insurancePolicy', icon: 'policy', noCache: true, id: 100045 }
       },
       {
         path: '/clientInfo',
         component: () => import('@/views/client/info'),
         name: 'clientInfo',
-        meta: { title: 'clientInfo', icon: 'info', noCache: true, roles: [1, 3] }
+        meta: { title: 'clientInfo', icon: 'info', noCache: true, id: 100040 }
       }
     ]
   },
@@ -131,13 +131,13 @@ export const asyncRouterMap = [
     path: '/commission',
     component: Layout,
     redirect: 'noredirect',
-    meta: { title: 'commission', icon: 'commission', noCache: true, roles: [1, 2, 4] },
+    meta: { title: 'commission', icon: 'commission', noCache: true },
     children: [
       {
         path: 'commissionCredit',
         component: () => import('@/views/commission/commissionCredit/index'),
         name: 'commissionCredit',
-        meta: { title: 'commissionCredit', icon: 'credit', noCache: true, roles: [1, 3] }
+        meta: { title: 'commissionCredit', icon: 'credit', noCache: true, id: 100055 }
       },
       // {
       //   path: 'channelCommissionPayment',
@@ -149,13 +149,13 @@ export const asyncRouterMap = [
         path: 'paymentAudit',
         component: () => import('@/views/commission/paymentAudit/index'),
         name: 'paymentAudit',
-        meta: { title: 'paymentAudit', icon: 'payment', noCache: true, roles: [1, 2] }
+        meta: { title: 'paymentAudit', icon: 'payment', noCache: true, id: 100055 }
       },
       {
         path: 'cleared',
         component: () => import('@/views/commission/cleared/index'),
         name: 'cleared',
-        meta: { title: 'cleared', icon: 'cleared', noCache: true, roles: [1, 2] }
+        meta: { title: 'cleared', icon: 'cleared', noCache: true }
       }
     ]
   },
@@ -163,13 +163,12 @@ export const asyncRouterMap = [
     path: '/audit',
     component: Layout,
     redirect: 'audit',
-    meta: { roles: [1] },
     children: [
       {
         path: '',
         name: 'audit',
         component: () => import('@/views/audit/index'),
-        meta: { title: 'audit', icon: 'audit', noCache: true }
+        meta: { title: 'audit', icon: 'audit', noCache: true, id: 100045 }
       }
     ]
   },
@@ -209,13 +208,13 @@ export const asyncRouterMap = [
         path: 'internalDocument',
         component: () => import('@/views/document/internalDocument'),
         name: 'internalDocument',
-        meta: { title: 'internalDocument', icon: 'int_document', noCache: true, roles: [1] }
+        meta: { title: 'internalDocument', icon: 'int_document', noCache: true, id: 100098 }
       },
       {
         path: 'companyDocument',
         component: () => import('@/views/document/companyDocument'),
         name: 'companyDocument',
-        meta: { title: 'companyDocument', icon: 'company_document', noCache: true }
+        meta: { title: 'companyDocument', icon: 'company_document', noCache: true, id: 100098 }
       }
     ]
   },
@@ -236,19 +235,19 @@ export const asyncRouterMap = [
     path: '/system',
     component: Layout,
     redirect: 'user',
-    meta: { title: 'system', icon: 'system', noCache: true, roles: [1] },
+    meta: { title: 'system', icon: 'system', noCache: true },
     children: [
       {
         path: 'user',
         component: () => import('@/views/system/user/index'),
         name: 'user',
-        meta: { title: 'user', icon: 'user', noCache: true }
+        meta: { title: 'user', icon: 'user', noCache: true, id: 100082 }
       },
       {
         path: 'role',
         component: () => import('@/views/system/role'),
         name: 'role',
-        meta: { title: 'role', icon: 'role', noCache: true }
+        meta: { title: 'role', icon: 'role', noCache: true, id: 100088 }
       }
     ]
   },

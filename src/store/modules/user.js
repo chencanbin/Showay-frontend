@@ -12,6 +12,7 @@ const user = {
     avatar: '',
     introduction: '',
     roles: [],
+    actions: [],
     users: [],
     id: '',
     userLoading: false,
@@ -49,6 +50,9 @@ const user = {
     SET_ROLES: (state, roles) => {
       state.roles = roles
     },
+    SET_ACTIONS: (state, actions) => {
+      state.actions = actions
+    },
     SET_USERS: (state, users) => {
       state.users = users
     },
@@ -84,6 +88,7 @@ const user = {
           const data = response.data
           if (data.roles && data.roles.length > 0) {
             commit('SET_ROLES', data.roles)
+            commit('SET_ACTIONS', data.actions)
           } else {
             reject('getInfo: roles must be a non-null array !')
           }

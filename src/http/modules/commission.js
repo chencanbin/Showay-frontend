@@ -179,3 +179,34 @@ export function editCommissionPolicy(data) {
     data
   })
 }
+
+export function fetchExpenses(params) {
+  return request({
+    url: `/expenses`,
+    method: 'get',
+    params
+  })
+}
+
+export function addExpenses(data) {
+  return request({
+    url: `/expenses`,
+    method: 'post',
+    data
+  })
+}
+
+export function editExpenses(id, data) {
+  return request({
+    url: `/expenses/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteExpenses(id) {
+  return request({
+    url: `/expenses/${id}`,
+    method: 'delete'
+  })
+}

@@ -7,23 +7,23 @@
       :before-close="handleClose"
       :title="$t('commission.credit.set.audit_title')"
       width="400px">
-      <el-form ref="audit" label-width="150px">
-        <el-form-item :label="$t('client.insurance_policy.number')" prop="name">
+      <el-form ref="audit" label-position="left" label-width="150px">
+        <el-form-item :label="$t('client.insurance_policy.number')">
           {{ commissionCredit.insurancePolicy.number }}
         </el-form-item>
-        <el-form-item :label="$t('commission.credit.year')" prop="name">
+        <el-form-item :label="$t('commission.credit.year')">
           {{ $t('commission.credit.years',[commissionCredit.year]) }}
         </el-form-item>
-        <el-form-item :label="$t('common.calculatedAmount')" prop="name">
+        <el-form-item :label="$t('common.calculatedAmount')">
           {{ getSymbol(commissionCredit.currency) + ' ' + formatterCurrency(commissionCredit.calculatedAmount) }}
         </el-form-item>
-        <el-form-item v-if="commissionCredit.currency !== 'HKD'" :label="$t('commission.credit.calculatedAmountInHkd')" prop="name">
+        <el-form-item v-if="commissionCredit.currency !== 'HKD'" :label="$t('commission.credit.calculatedAmountInHkd')">
           {{ 'HK$ ' + formatterCurrency(commissionCredit.calculatedAmountInHkd) }}
         </el-form-item>
-        <el-form-item v-if="commissionCredit.currency !== 'HKD'" :label="$t('common.exchangeRate')" prop="name">
+        <el-form-item v-if="commissionCredit.currency !== 'HKD'" :label="$t('common.exchangeRate')">
           {{ commissionCredit.exchangeRateToHkd }}
         </el-form-item>
-        <el-form-item :label="$t('common.amount')" prop="name">
+        <el-form-item :label="$t('common.amount')">
           {{ 'HK$ ' + formatterCurrency(commissionCredit.amount) }}
         </el-form-item>
         <el-form-item :label="$t('common.remarks')" prop="remarks">
@@ -141,6 +141,9 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
   #audit {
+    .el-dialog__body {
+      padding: 20px 60px;
+    }
     .el-form-item {
       margin-bottom: 10px;
     }
