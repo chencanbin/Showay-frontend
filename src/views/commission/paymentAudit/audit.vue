@@ -3,6 +3,7 @@
     <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">审核</el-button>
     <el-dialog
       v-el-drag-dialog
+      :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
       center

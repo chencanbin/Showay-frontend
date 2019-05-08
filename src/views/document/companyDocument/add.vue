@@ -4,6 +4,7 @@
     <el-button size="small" type="primary" @click="initForm">+ {{ $t('document.add_button') }}</el-button>
     <el-dialog
       v-el-drag-dialog
+      :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('document.add_title')"

@@ -3,6 +3,7 @@
     <el-button type="primary" @click="initForm" >{{ $t('client.info.set.add_title') }}</el-button>
     <el-dialog
       v-el-drag-dialog
+      :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('client.info.set.add_title')"

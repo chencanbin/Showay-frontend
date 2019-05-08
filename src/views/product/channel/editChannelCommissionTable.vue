@@ -46,6 +46,7 @@
       </div>
       <!-- 佣金生效时间弹框 -->
       <el-dialog
+        :close-on-click-modal="false"
         :visible.sync="timeDialogVisible"
         :title="$t('product.channel.set.save_dialog_title')"
         width="400px"

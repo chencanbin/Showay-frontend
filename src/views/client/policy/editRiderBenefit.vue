@@ -6,6 +6,7 @@
     <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{ this.$t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
+      :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('client.insurance_policy.set.edit_riderBenefits_title')"

@@ -3,6 +3,7 @@
     <el-button :loading="loading" type="text" size="small" @click="initForm">{{ this.$t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
+      :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('product.company.set.edit_title')"

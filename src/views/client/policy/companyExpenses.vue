@@ -5,6 +5,7 @@
     </el-button>
     <el-dialog
       v-el-drag-dialog
+      :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('client.insurance_policy.set.company_expense')"

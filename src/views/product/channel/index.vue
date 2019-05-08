@@ -101,6 +101,7 @@
       <!--<add/>-->
     </basic-container>
     <el-dialog
+      :close-on-click-modal="false"
       :visible.sync="timeDialogVisible"
       :title="$t('product.channel.reference_time_title')"
       width="400px">

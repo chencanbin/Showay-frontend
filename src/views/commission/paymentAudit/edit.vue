@@ -4,6 +4,7 @@
     <el-dialog
       v-el-drag-dialog
       id="editPayment"
+      :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
       title="编辑发放记录"

@@ -4,6 +4,7 @@
     <el-button class="el-table-add-row" plain type="primary" size="small" @click="initForm">+ {{ $t('common.add') }}</el-button>
     <el-dialog
       v-el-drag-dialog
+      :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('product.company.set.add_contact_title')"

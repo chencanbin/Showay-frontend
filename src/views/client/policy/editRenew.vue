@@ -4,6 +4,7 @@
     <el-dialog
       v-el-drag-dialog
       id="editRenew"
+      :close-on-click-modal="false"
       :before-close="handleClose"
       :visible="dialogVisible"
       :title= "$t('client.insurance_policy.renewal')"

@@ -4,6 +4,7 @@
     <el-dialog
       v-el-drag-dialog
       id="policy-detail-dialog"
+      :close-on-click-modal="false"
       :before-close="handleClose"
       :visible="dialogVisible"
       title="保险详情"

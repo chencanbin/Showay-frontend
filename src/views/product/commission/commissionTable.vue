@@ -51,6 +51,7 @@
         </el-tab-pane>
       </el-tabs>
       <el-dialog
+        :close-on-click-modal="false"
         :visible.sync="timeDialogVisible"
         :title="$t('product.commission.commission_table.effectDateTitle')"
         width="400px"
@@ -74,6 +75,7 @@
 
       <el-dialog
         id="setOverrideDialog"
+        :close-on-click-modal="false"
         :title="overrideTitle"
         :visible.sync="setOverrideDialogVisible"
         width="90%"
