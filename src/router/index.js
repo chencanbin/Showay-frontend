@@ -97,13 +97,13 @@ export const asyncRouterMap = [
         path: 'productCommission',
         component: () => import('@/views/product/commission/index'),
         name: 'productCommission',
-        meta: { title: 'productCommission', icon: 'commission', noCache: true, id: 100006 }
+        meta: { title: 'productCommission', icon: 'commission', noCache: true, id: 100016 }
       },
       {
         path: 'channelCommission',
         component: () => import('@/views/product/channel/index'),
         name: 'channelCommission',
-        meta: { title: 'channelCommission', icon: 'client', noCache: true, id: 100063 }
+        meta: { title: 'channelCommission', icon: 'client', noCache: true, id: 100082 }
       }
     ]
   },
@@ -168,7 +168,7 @@ export const asyncRouterMap = [
         path: '',
         name: 'audit',
         component: () => import('@/views/audit/index'),
-        meta: { title: 'audit', icon: 'audit', noCache: true, id: 100045 }
+        meta: { title: 'audit', icon: 'audit', noCache: true, id: 100049 }
       }
     ]
   },
@@ -208,13 +208,13 @@ export const asyncRouterMap = [
         path: 'internalDocument',
         component: () => import('@/views/document/internalDocument'),
         name: 'internalDocument',
-        meta: { title: 'internalDocument', icon: 'int_document', noCache: true, id: 100098 }
+        meta: { title: 'internalDocument', icon: 'int_document', noCache: true, id: 100078 }
       },
       {
         path: 'companyDocument',
         component: () => import('@/views/document/companyDocument'),
         name: 'companyDocument',
-        meta: { title: 'companyDocument', icon: 'company_document', noCache: true, id: 100098 }
+        meta: { title: 'companyDocument', icon: 'company_document', noCache: true, id: 100074 }
       }
     ]
   },

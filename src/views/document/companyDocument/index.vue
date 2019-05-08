@@ -29,7 +29,7 @@
               <a class="folderLink" @click="handleFolderClick(item)">{{ item.data.name }}</a>
             </el-breadcrumb-item>
           </el-breadcrumb>
-          <add :folder-id="folderId" @afterAddFolder="afterAddFolder"/>
+          <add v-if="hasPermission(100092)" :folder-id="folderId" @afterAddFolder="afterAddFolder"/>
         </el-row>
         <el-table
           v-loading="fileLoading"
@@ -47,9 +47,9 @@
               <span v-else>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column v-if="checkPermission([1])" width="150">
+          <el-table-column width="150">
             <template slot-scope="scope">
-              <show-in-home-page-switch v-if="scope.row.resourceKey" :file="scope.row"/>
+              <show-in-home-page-switch v-if="hasPermission(100076) && scope.row.resourceKey" :file="scope.row"/>
             </template>
           </el-table-column>
           <el-table-column width="150">
@@ -70,7 +70,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
                     <el-button
-                      v-if="scope.row.resourceKey"
+                      v-if="hasPermission(100074) && scope.row.resourceKey"
                       type="text"
                       size="small"
                       icon="el-icon-download"
@@ -78,10 +78,11 @@
                     </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <edit :data="scope.row" :folder-id="folderId"/>
+                    <edit v-if="hasPermission(100076)" :data="scope.row" :folder-id="folderId"/>
                   </el-dropdown-item>
                   <el-dropdown-item>
                     <el-button
+                      v-if="hasPermission(100075)"
                       type="text"
                       size="small"
                       icon="el-icon-delete"
@@ -93,8 +94,7 @@
             </template>
           </el-table-column>
         </el-table>
-
-        <file-upload @afterComplete="afterComplete"/>
+        <file-upload v-if="hasPermission(100073)" @afterComplete="afterComplete"/>
       </el-col>
       <file-list ref="fileList"/>
       <!--鼠标右键点击出现页面-->
@@ -123,12 +123,9 @@ import { parseTime } from '@/utils'
 import fileList from './fileList'
 import axios from 'axios'
 import showInHomePageSwitch from './showInHomePageSwitch'
-import permission from '@/directive/permission/index.js' // 权限判断指令
-import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   name: 'CompanyDocument',
-  directives: { permission },
   components: {
     fileUpload,
     add,
@@ -138,7 +135,7 @@ export default {
   },
   data() {
     return {
-      tableHeight: document.body.clientHeight - 310,
+      tableHeight: this.hasPermission(100073) ? document.body.clientHeight - 310 : document.body.clientHeight - 140,
       treeWrapper: {
         height: (document.body.clientHeight - 70) + 'px'
       },
@@ -169,7 +166,6 @@ export default {
   },
 
   methods: {
-    checkPermission,
     nodeExpand(data, node) {
       if (!node) {
         return

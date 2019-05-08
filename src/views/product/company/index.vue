@@ -51,7 +51,7 @@
           :label="$t('product.company.table_header.contractEffectiveDate')"
           prop="contractEffectiveDate"
           min-width="100px"/>
-        <el-table-column v-if="checkPermission([1])" :label="$t('common.action')" width="80px">
+        <el-table-column :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button type="primary" plain size="mini">
@@ -59,13 +59,14 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit :id="scope.row.id"/>
+                  <edit v-if="hasPermission(100008)" :id="scope.row.id"/>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <contact :company="scope.row"/>
+                  <contact v-if="hasPermission(100123)" :company="scope.row"/>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-button
+                    v-if="hasPermission(100009)"
                     :loading="deleteLoading"
                     size="small"
                     type="text"
@@ -78,7 +79,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <add v-permission="[1]"/>
+      <add v-if="hasPermission(100005)"/>
     </basic-container>
   </div>
 </template>

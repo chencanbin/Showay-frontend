@@ -11,7 +11,7 @@
         row-key="id"
         stripe
         @expand-change="expandChange">
-        <el-table-column type="expand">
+        <el-table-column v-if="hasPermission(100108)" type="expand">
           <template slot-scope="scope">
             <div v-loading="channelHierarchyLoading" class="clearfix">
               <el-timeline id="channelCommissionTableList">
@@ -72,11 +72,11 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit :user="scope.row"/>
+                  <edit v-if="hasPermission(100084)" :user="scope.row"/>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-button
-                    v-if="!scope.row.isBuiltin"
+                    v-if="hasPermission(100085) && !scope.row.isBuiltin"
                     type="text"
                     size="small"
                     icon="el-icon-delete"
@@ -88,7 +88,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <add/>
+      <add v-if="hasPermission(100081)"/>
     </basic-container>
   </div>
 </template>
@@ -114,7 +114,7 @@ export default {
   data() {
     return {
       expandKeys: [],
-      height: document.body.clientHeight - 190,
+      height: this.hasPermission(100081) ? document.body.clientHeight - 180 : document.body.clientHeight - 120,
       listQuery: {
         page: 1,
         limit: 50

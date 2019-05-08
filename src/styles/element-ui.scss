@@ -171,6 +171,9 @@
      height: 0;
    }
  }
+ .el-dropdown-menu--medium .el-dropdown-menu__item.el-dropdown-menu__item--divided {
+   margin: 0;
+ }
 
 // .el-button--small::after {
 //   content: "";
@@ -181,8 +184,11 @@
 //　　bottom: -10px;
 // }
 
- .el-dropdown-menu--medium .el-dropdown-menu__item {
+ .el-dropdown-menu--medium{
    padding: 0;
+   .el-dropdown-menu__item {
+     padding: 0;
+   }
  }
 // button::after{
 // 　　content: "";

@@ -1,6 +1,6 @@
 <template>
   <div id="channel" class="table-container">
-    <basic-container v-permission="[1]">
+    <basic-container>
       <el-form :inline="true" class="search-input" @submit.native.prevent>
         <el-form-item label="" prop="wildcard">
           <el-input
@@ -38,7 +38,7 @@
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item>
                         <el-button
-                          v-if="item.status !== 0"
+                          v-if="hasPermission(100035) && item.status !== 0"
                           type="text"
                           size="small"
                           icon="el-icon-view"
@@ -47,10 +47,10 @@
                         </el-button>
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <editChannelCommissionTable :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks" :channel-name="scope.row.name" :channel-id="scope.row.id"/>
+                        <editChannelCommissionTable v-if="hasPermission(100032)" :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks" :channel-name="scope.row.name" :channel-id="scope.row.id"/>
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <el-button type="text" size="small" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">{{ $t('common.delete') }}</el-button>
+                        <el-button v-if="hasPermission(100033)" type="text" size="small" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">{{ $t('common.delete') }}</el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -68,7 +68,7 @@
                   </el-card>
                 </el-timeline-item>
               </el-timeline>
-              <addChannelCommissionTable :effective-date="scope.row.effectiveDate" :id="scope.row.id"/>
+              <addChannelCommissionTable v-if="hasPermission(100029)" :effective-date="scope.row.effectiveDate" :id="scope.row.id"/>
             </div>
           </template>
         </el-table-column>
@@ -77,20 +77,13 @@
         <el-table-column label="上级" prop="superior.name"/>
         <el-table-column :label="$t('common.action')" width="100px">
           <template slot-scope="scope">
-            <!--<el-button type="text" size="mini" style="margin-right: 10px" @click="toggleChannelPolicy(scope.row)">-->
-            <!--<svg-icon icon-class="commissionPolicy"/>-->
-            <!--渠道策略-->
-            <!--</el-button>-->
             <el-dropdown style="margin-left: 10px">
               <el-button type="primary" plain size="mini">
                 <i class="el-icon-more"/>
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <!--<el-dropdown-item>-->
-                <!--<edit v-if="!scope.row.isBuiltin" :user="scope.row"/>-->
-                <!--</el-dropdown-item>-->
                 <el-dropdown-item>
-                  <commission-policy :id="scope.row.id"/>
+                  <commission-policy v-if="hasPermission(100025)" :id="scope.row.id"/>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -105,47 +98,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <add/>
+      <!--<add/>-->
     </basic-container>
-    <!--<basic-container v-permission="[2]" style="height: 100%;">-->
-    <!--<div v-loading="channelCommissionLoading" class="clearfix" style="padding:30px 15px 10px 15px">-->
-    <!--<el-timeline id="channelCommissionTableList">-->
-    <!--<div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399;">-->
-    <!--{{ $t('product.channel.no_channel_policy') }}-->
-    <!--</div>-->
-    <!--<el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">-->
-    <!--<el-dropdown class="action-dropdown">-->
-    <!--<el-button type="primary" plain size="mini">-->
-    <!--<i class="el-icon-more"/>-->
-    <!--</el-button>-->
-    <!--<el-dropdown-menu slot="dropdown">-->
-    <!--<el-dropdown-item>-->
-    <!--<el-button-->
-    <!--v-if="item.status !== 0"-->
-    <!--type="text"-->
-    <!--size="mini"-->
-    <!--icon="el-icon-view"-->
-    <!--@click="handleTimestampDialog(item.id, item.effectiveDate)">-->
-    <!--{{ $t('common.view') }}-->
-    <!--</el-button>-->
-    <!--</el-dropdown-item>-->
-    <!--</el-dropdown-menu>-->
-    <!--</el-dropdown>-->
-    <!--<el-card v-if="item.remarks">-->
-    <!--&lt;!&ndash;<p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>&ndash;&gt;-->
-    <!--<div class="bottom clearfix">-->
-    <!--&lt;!&ndash;<el-button&ndash;&gt;-->
-    <!--&lt;!&ndash;type="text"&ndash;&gt;-->
-    <!--&lt;!&ndash;size="mini"&ndash;&gt;-->
-    <!--&lt;!&ndash;icon="el-icon-download"&ndash;&gt;-->
-    <!--&lt;!&ndash;@click="exportPDF(item.id)">导出</el-button>&ndash;&gt;-->
-    <!--<p style="display: inline-block; margin: 0">{{ $t('common.remarks') }} : {{ item.remarks }}</p>-->
-    <!--</div>-->
-    <!--</el-card>-->
-    <!--</el-timeline-item>-->
-    <!--</el-timeline>-->
-    <!--</div>-->
-    <!--</basic-container>-->
     <el-dialog
       :visible.sync="timeDialogVisible"
       :title="$t('product.channel.reference_time_title')"
@@ -173,8 +127,6 @@ import commissionPolicy from './commissionPolicy'
 import pagination from '@/components/Pagination'
 import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
-import permission from '@/directive/permission/index.js' // 权限判断指令
-import checkPermission from '@/utils/permission' // 权限判断函数
 
 const _ = require('lodash')
 export default {
@@ -188,10 +140,9 @@ export default {
     channelCommissionView,
     commissionPolicy
   },
-  directives: { permission },
   data() {
     return {
-      height: document.body.clientHeight - 190,
+      height: document.body.clientHeight - 130,
       timeDialogVisible: false,
       channelName: '',
       channelPolicyObj: {
@@ -216,19 +167,9 @@ export default {
     })
   },
   created() {
-    if (this.checkPermission([1])) {
-      this.getUsers()
-    }
-    if (this.checkPermission([2])) {
-      this.getChannelCommissionTableList()
-    }
+    this.getUsers()
   },
   methods: {
-    checkPermission,
-    // checkPanelPermission() {
-    //   const hasAdminRole = checkPermission(['1'])
-    //   const hasChannel = checkPermission(['2'])
-    // },
     parseTime,
     search: _.debounce(function() {
       this.listQuery = { page: 1, limit: 50 }

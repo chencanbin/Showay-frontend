@@ -29,7 +29,7 @@
               <a class="folderLink" @click="handleFolderClick(item)">{{ item.data.name }}</a>
             </el-breadcrumb-item>
           </el-breadcrumb>
-          <add :folder-id="folderId" @afterAddFolder="afterAddFolder"/>
+          <add v-if="hasPermission(100092)" :folder-id="folderId" @afterAddFolder="afterAddFolder"/>
         </el-row>
         <el-table
           v-loading="fileLoading"
@@ -65,7 +65,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
                     <el-button
-                      v-if="scope.row.resourceKey"
+                      v-if="hasPermission(100078) && scope.row.resourceKey"
                       type="text"
                       size="small"
                       icon="el-icon-download"
@@ -73,10 +73,11 @@
                     </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <edit :data="scope.row" :folder-id="folderId"/>
+                    <edit v-if="hasPermission(100080)" :data="scope.row" :folder-id="folderId"/>
                   </el-dropdown-item>
                   <el-dropdown-item>
                     <el-button
+                      v-if="hasPermission(100079)"
                       type="text"
                       size="small"
                       icon="el-icon-delete"
@@ -88,22 +89,9 @@
             </template>
           </el-table-column>
         </el-table>
-
-        <file-upload @afterComplete="afterComplete"/>
+        <file-upload v-if="hasPermission(100077)" @afterComplete="afterComplete"/>
       </el-col>
       <file-list ref="fileList"/>
-      <!--鼠标右键点击出现页面-->
-      <!--<div v-show="menuVisible">-->
-      <!--<el-menu-->
-      <!--id = "rightClickMenu"-->
-      <!--class="el-menu-vertical"-->
-      <!--@select="handleRightSelect"-->
-      <!--active-text-color="#fff">-->
-      <!--<el-menu-item index="3" class="menuItem">-->
-      <!--<span slot="title">删除</span>-->
-      <!--</el-menu-item>-->
-      <!--</el-menu>-->
-      <!--</div>-->
     </basic-container>
   </div>
 </template>
@@ -128,7 +116,7 @@ export default {
   },
   data() {
     return {
-      tableHeight: document.body.clientHeight - 310,
+      tableHeight: this.hasPermission(100077) ? document.body.clientHeight - 310 : document.body.clientHeight - 140,
       treeWrapper: {
         height: (document.body.clientHeight - 70) + 'px'
       },

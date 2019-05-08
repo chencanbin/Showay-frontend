@@ -27,7 +27,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="term" label="年期" width="60" align="center"/>
-        <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="80" align="center">
+        <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="90" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.conditions[index] ? scope.row.conditions[index].ratio + '%' : '-' }}</span>
           </template>
@@ -75,6 +75,8 @@ import addPolicy from './addPolicy'
 import Sortable from 'sortablejs'
 import { parseTime } from '@/utils'
 import prefixSelect from './component/prefixSelect'
+import { numberAcronym } from '@/utils/constant'
+import Cookies from 'js-cookie'
 const _ = require('lodash')
 export default {
   components: {
@@ -167,7 +169,11 @@ export default {
         if (item > 15) {
           this.columnYear.push(this.$t('common.after_15_year'))
         } else {
-          this.columnYear.push(this.$t('common.year', [item]))
+          if (Cookies.get('language') === 'en') {
+            this.columnYear.push(this.$t('common.year', [numberAcronym[item - 1]]))
+          } else {
+            this.columnYear.push(this.$t('common.year', [item]))
+          }
         }
       })
     },

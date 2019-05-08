@@ -68,7 +68,6 @@
 <script type="text/ecmascript-6">
 import { mapState } from 'vuex'
 import { getSymbol } from '@/utils'
-import checkPermission from '@/utils/permission' // 权限判断函数
 import CountTo from 'vue-count-to'
 
 import permission from '@/directive/permission/index.js' // 权限判断指令
@@ -121,7 +120,6 @@ export default {
     }
   },
   methods: {
-    checkPermission,
     initForm() {
       this.getMergedPayment()
       this.dialogVisible = true

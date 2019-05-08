@@ -15,7 +15,7 @@
           <el-date-picker v-model="year" :placeholder="$t('client.insurance_policy.date_filter')" type="year" clearable style="width: 180px"/>
         </el-form-item>
       </el-form>
-      <add-client v-permission="[1, 3]" style="display:inline-block; margin-top: 9px"/>
+      <add-client v-if="hasPermission(100039)" style="display:inline-block; margin-top: 9px"/>
       <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
         v-loading="insurancePolicyLoading"
@@ -53,16 +53,6 @@
                   <span>{{ scope.row.dda ? 'Yes' : 'No' }}</span>
                 </el-form-item>
               </el-form>
-              <!--<div v-if="scope.row.riderBenefits && scope.row.riderBenefits.length > 0">-->
-              <!--<div style="margin-top: 10px; font-size: 14px; font-weight: bold; color: #99a9bf;">副险列表</div>-->
-              <!--<div style="margin-top: 10px">-->
-              <!--<el-table :data="scope.row.riderBenefits" style="width: 100%" stripe>-->
-              <!--<el-table-column prop="product.name" label="产品"/>-->
-              <!--<el-table-column prop="amountInsured" label="保费"/>-->
-              <!--<el-table-column prop="premium" label="保额"/>-->
-              <!--</el-table>-->
-              <!--</div>-->
-              <!--</div>-->
             </div>
           </template>
         </el-table-column>
@@ -121,35 +111,30 @@
           prop="product.name"
           min-width="200"
           show-overflow-tooltip/>
-        <!--<el-table-column-->
-        <!--prop="channel.name"-->
-        <!--min-width="150"-->
-        <!--show-overflow-tooltip-->
-        <!--label="渠道"/>-->
-        <el-table-column v-if="checkPermission([1, 3])" :label="$t('common.action')">
+        <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button type="primary" plain size="mini">
                 <i class="el-icon-more"/>
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
+                <el-dropdown-item v-if="hasPermission(100047)">
                   <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :list-query="listQuery" :data="scope.row"/>
                 </el-dropdown-item>
-                <el-dropdown-item>
+                <el-dropdown-item v-if="hasPermission(100047)">
                   <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency" :submit-date="scope.row.submitDate"/>
                 </el-dropdown-item>
-                <el-dropdown-item divided>
+                <el-dropdown-item v-if="hasPermission(100052)" divided>
                   <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
                 </el-dropdown-item>
-                <el-dropdown-item v-permission="[1]">
+                <el-dropdown-item v-if="hasPermission(100050)">
                   <el-button
                     type="text"
                     size="small"
                     @click="handleReset(scope.row.id)">{{ $t('common.reset') }}
                   </el-button>
                 </el-dropdown-item>
-                <el-dropdown-item divided>
+                <el-dropdown-item v-if="hasPermission(100048)" divided>
                   <el-button
                     type="text"
                     size="small"
@@ -157,25 +142,23 @@
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item divided>
-                  <company-expenses :policy="scope.row"/>
+                  <company-expenses v-if="hasPermission(100113)" :policy="scope.row"/>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <channel-expenses :policy="scope.row"/>
+                  <channel-expenses v-if="hasPermission(100118)" :policy="scope.row"/>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <add v-permission="[1, 3]" :list-query="listQuery"/>
+      <add v-if="hasPermission(100044)" :list-query="listQuery"/>
     </basic-container>
   </div>
 </template>
 
 <script>
 import { parseTime, getYearFirst, getYearLast } from '@/utils'
-import checkPermission from '@/utils/permission' // 权限判断函数
-import permission from '@/directive/permission/index.js' // 权限判断指令
 import { policyStatus, premiumPlan } from '@/utils/constant'
 
 import Cookies from 'js-cookie'
@@ -204,10 +187,9 @@ export default {
     channelExpenses,
     pagination
   },
-  directives: { permission },
   data() {
     return {
-      height: document.body.clientHeight - 190,
+      height: this.hasPermission(100044) ? document.body.clientHeight - 190 : document.body.clientHeight - 130,
       wildcard: '',
       year: '',
       listQuery: {
@@ -239,12 +221,8 @@ export default {
   },
   created() {
     this.getInsurancePolicyList()
-    if (!this.checkPermission([1, 3])) {
-      this.height = document.body.clientHeight - 130
-    }
   },
   methods: {
-    checkPermission,
     search: _.debounce(function() {
       this.listQuery = { page: 1, limit: 50 }
       this.getInsurancePolicyList()

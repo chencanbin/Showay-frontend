@@ -22,3 +22,10 @@ export default function checkPermission(value) {
     return false
   }
 }
+
+export function hasPermission(id) {
+  const actions = store.getters && store.getters.actions
+  return actions.some(action => {
+    return action.id === id
+  })
+}

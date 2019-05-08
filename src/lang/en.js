@@ -37,7 +37,7 @@ export default {
     saveButton: 'Save',
     remarks: 'Remarks',
     remarks_placeholder: 'Remarks',
-    year: '# year',
+    year: '{0} year',
     after_i_year: '{0} onward',
     after_15_year: '15th onward',
     calculatedAmount: 'Calulated',

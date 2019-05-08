@@ -27,7 +27,7 @@
         border
         @selection-change="handleSelectionChange">
         <el-table-column
-          v-if="checkPermission([1]) && status === '-1'"
+          v-if="status === '-1'"
           align="center"
           type="selection"
           width="55" />
@@ -77,7 +77,7 @@
             <div style="float: right">{{ formatPercent(scope.row.commissionRate) }}</div>
           </template>
         </el-table-column>
-        <el-table-column v-show="checkPermission([1]) && status === '-1'" :label="$t('common.action')">
+        <el-table-column v-show="status === '-1'" :label="$t('common.action')">
           <template slot-scope="scope">
             <edit :payment="scope.row" :key="scope.row.id"/>
           </template>
@@ -95,7 +95,6 @@
 import { mapState } from 'vuex'
 import edit from './edit'
 import { getSymbol } from '@/utils'
-import checkPermission from '@/utils/permission' // 权限判断函数
 import CountTo from 'vue-count-to'
 
 import permission from '@/directive/permission/index.js' // 权限判断指令
@@ -156,7 +155,6 @@ export default {
     }
   },
   methods: {
-    checkPermission,
     initForm() {
       this.getMergedPayment()
       this.dialogVisible = true

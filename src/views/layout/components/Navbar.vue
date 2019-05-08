@@ -29,9 +29,9 @@
         <!--<theme-picker class="theme-switch right-menu-item"/>-->
         <!--</el-tooltip>-->
       </template>
-      <el-badge v-permission="[1, 2, 4]" :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" style="right: 12px">
+      <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" style="right: 12px">
         <el-popover width="150" trigger="click">
-          <div v-permission="[1, 4]" class="notification-list-item">
+          <div class="notification-list-item">
             <a @click="handleCreditClick">
               <svg-icon icon-class="earning" class-name="icon-earning" />
               {{ credit.desc }}
@@ -49,38 +49,29 @@
               </div>
             </a>
           </div>
-          <svg-icon slot="reference" icon-class="notification" class="notification" style="margin-left: 10px"/>
+          <svg-icon slot="reference" icon-class="notification" class="notification" style="margin-left: 15px;"/>
         </el-popover>
       </el-badge>
       <el-tooltip
-        v-permission="[1, 3]"
+        v-if="hasPermission(100105)"
         :enterable="false"
         :content="$t('navbar.calendar')"
         effect="dark"
         placement="bottom">
         <renewal-calendar class="calendar right-menu-item" style="margin-right: 15px"/>
       </el-tooltip>
-
-      <!--<el-tooltip-->
-      <!--effect="dark"-->
-      <!--content="用户头像"-->
-      <!--placement="bottom">-->
-      <!--<img-->
-      <!--class="top-bar__img"-->
-      <!--src="../../../assets/images/admin.png">-->
-      <!--</el-tooltip>-->
       <el-dropdown class="avatar-container right-menu-item">
         <span class="el-dropdown-link">
           {{ name }}
           <i class="el-icon-arrow-down el-icon--right"/>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item style="padding: 5px 10px">
+          <el-dropdown-item style="padding: 10px">
             <span style="display:block;" @click="handleOpenUpdateUserDialog">
               <svg-icon icon-class="password" style="margin-right: 5px"/>{{ $t('navbar.password') }}
             </span>
           </el-dropdown-item>
-          <el-dropdown-item divided style="padding: 5px 10px" @click.native="logout">
+          <el-dropdown-item style="padding: 10px" @click.native="logout">
             <svg-icon icon-class="logout" style="margin-right: 5px"/>{{ $t('navbar.logOut') }}
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -125,8 +116,6 @@ import RenewalCalendar from '@/views/client/policy/renewalCalendar'
 import sha256 from 'sha256'
 import { getUserId } from '@/utils/auth'
 import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
-import permission from '@/directive/permission/index.js' // 权限判断指令
-import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   components: {
@@ -139,7 +128,6 @@ export default {
     ThemePicker,
     RenewalCalendar
   },
-  directives: { permission },
   data() {
     const validatePass = (rule, value, callback) => {
       if (value === '') {
@@ -174,15 +162,14 @@ export default {
     ])
   },
   created() {
-    if (checkPermission([1, 4])) {
+    if (this.hasPermission(100055)) {
       this.getCreditList()
     }
-    if (checkPermission([1, 2, 4])) {
+    if (this.hasPermission(100067)) {
       this.getPayment()
     }
   },
   methods: {
-    checkPermission,
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },

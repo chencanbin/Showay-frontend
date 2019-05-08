@@ -39,7 +39,7 @@
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item>
                         <el-button
-                          v-if="commissionTable.status !== 0"
+                          v-if="hasPermission(100017) && commissionTable.status !== 0"
                           size="small"
                           type="text"
                           icon="el-icon-view"
@@ -49,11 +49,11 @@
                         </el-button>
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <commission-table :id="commissionTable.id" :company-id="scope.row.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name"/>
+                        <commission-table v-if="hasPermission(100018)" :id="commissionTable.id" :company-id="scope.row.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name"/>
                       </el-dropdown-item>
                       <el-dropdown-item>
                         <el-button
-                          v-if="commissionTable.status !== 0"
+                          v-if="hasPermission(100020) && commissionTable.status !== 0"
                           :ref="`export_${commissionTable.id}`"
                           size="small"
                           type="text"
@@ -62,6 +62,7 @@
                       </el-dropdown-item>
                       <el-dropdown-item>
                         <el-button
+                          v-if="hasPermission(100019)"
                           size="small"
                           type="text"
                           icon="el-icon-delete"
@@ -100,63 +101,8 @@
           :label="$t('product.company.table_header.contractEffectiveDate')"
           prop="contractEffectiveDate"
           min-width="100px"/>
-          <!--<el-table-column label="操作">-->
-          <!--<template slot-scope="scope">-->
-          <!--<el-button type="text" size="mini" @click="toggleCommissionTableList(scope.row)">-->
-          <!--<svg-icon icon-class="commissionList"/>-->
-          <!--佣金列表-->
-          <!--</el-button>-->
-          <!--</template>-->
-          <!--</el-table-column>-->
-          <!--<el-table-column-->
-          <!--:formatter="dateFormat"-->
-          <!--width="200"-->
-          <!--prop="effectiveDate"-->
-          <!--label="生效时间"/>-->
-          <!--<el-table-column-->
-          <!--:formatter="dateFormat"-->
-          <!--width="200"-->
-          <!--prop="expirationDate"-->
-          <!--label="失效时间"/>-->
-          <!--<el-table-column-->
-          <!--align="center"-->
-          <!--width="140"-->
-          <!--prop="status"-->
-          <!--label="状态">-->
-          <!--<template slot-scope="scope">-->
-          <!--<el-tag v-if="scope.row.status === 0" type="info">未发布</el-tag>-->
-          <!--<el-tag v-if="scope.row.status === 1" type="success">已发布</el-tag>-->
-          <!--<el-tag v-if="scope.row.status === 2" type="warning">有改动</el-tag>-->
-          <!--</template>-->
-          <!--</el-table-column>-->
-          <!--<el-table-column label="操作" width="300">-->
-          <!--<template slot-scope="scope">-->
-          <!--<el-button-->
-          <!--v-if="scope.row.status !== 0"-->
-          <!--size="mini"-->
-          <!--type="text"-->
-          <!--icon="el-icon-view"-->
-          <!--style="margin-right: 5px"-->
-          <!--@click="handleView(scope.row.id)">-->
-          <!--查看-->
-          <!--</el-button>-->
-          <!--<commission-table :id="scope.row.id" :title="scope.row.company.name"/>-->
-          <!--<el-button-->
-          <!--v-if="scope.row.status !== 0"-->
-          <!--size="mini"-->
-          <!--type="text"-->
-          <!--icon="el-icon-download"-->
-          <!--@click="exportExcel(scope.row)">导出Excel</el-button>-->
-          <!--<el-button-->
-          <!--size="mini"-->
-          <!--type="text"-->
-          <!--icon="el-icon-delete"-->
-          <!--@click="handleDelete(scope.$index, scope.row)">删除-->
-          <!--</el-button>-->
-          <!--</template>-->
-          <!--</el-table-column>-->
       </el-table>
-      <add @afterAddCommissionTable="handleAfterCreateCommissionTable"/>
+      <add v-if="hasPermission(100015)" @afterAddCommissionTable="handleAfterCreateCommissionTable"/>
     </basic-container>
     <commission-view ref="commissionView"/>
   </div>

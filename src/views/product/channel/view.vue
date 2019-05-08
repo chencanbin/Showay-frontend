@@ -21,6 +21,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
+            v-if="hasPermission(100034)"
             :loading="exportLoading"
             type="primary"
             size="small"
@@ -48,6 +49,8 @@
 import { parseTime } from '@/utils'
 import pagination from '@/components/Pagination'
 import axios from 'axios'
+import { numberAcronym } from '@/utils/constant'
+import Cookies from 'js-cookie'
 
 const _ = require('lodash')
 export default {
@@ -87,24 +90,6 @@ export default {
       this.channelName = channelName
       this.timestamp = channelPolicyObj.timestamp
       this.title = `${this.$t('product.channel.view.title')} - ${channelName} ( ${parseTime(channelPolicyObj.timestamp, '{y}-{m}-{d}')} )`
-      // this.$api.channel.previewChannelCommission(id).then(res => {
-      //   this.data = res.data.list
-      //   this.total = res.data.total
-      //   this.id = id
-      //   const conditionLengthArray = []
-      //   this.columnYear = []
-      //   _.forEach(res.data.list, item => {
-      //     conditionLengthArray.push(item.conditions.length)
-      //   })
-      //   _.forEach(_.range(1, _.max(conditionLengthArray) + 1), item => {
-      //     if (item > 15) {
-      //       this.columnYear.push('15年之后')
-      //     } else {
-      //       this.columnYear.push('第' + item + '年')
-      //     }
-      //   })
-      //   this.dialogVisible = true
-      // })
       this.getViewData(this.id)
     },
     getViewData(id, params) {
@@ -123,7 +108,11 @@ export default {
           if (item > 15) {
             this.columnYear.push(this.$t('common.after_15_year'))
           } else {
-            this.columnYear.push(this.$t('common.year', [item]))
+            if (Cookies.get('language') === 'en') {
+              this.columnYear.push(this.$t('common.year', [numberAcronym[item - 1]]))
+            } else {
+              this.columnYear.push(this.$t('common.year', [item]))
+            }
           }
         })
         this.dialogVisible = true
