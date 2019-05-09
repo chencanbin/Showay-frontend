@@ -208,11 +208,20 @@ export default {
     }
   }
   .lock-icon {
+    width: 28px;
+    height: 50px;
+    border: solid #AAAAAA 1px;
+    border-right: 0;
     display: inline-block;
     position: absolute;
-    top: 322px;
+    top: 306px;
     left: 30px;
     font-size: 18px;
     z-index: 1000;
+    svg {
+      position: absolute;
+      top: 15px;
+      left: -9px;
+    }
   }
 </style>

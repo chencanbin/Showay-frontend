@@ -13,7 +13,7 @@
       :title="$t('client.insurance_policy.set.add_riderBenefits_title')"
       width="600px"
       append-to-body>
-      <el-form ref="riderBenefit" :model="riderBenefit" :rules="riderBenefitRule" label-width="80px" class="riderBenefit">
+      <el-form ref="riderBenefit" :model="riderBenefit" :rules="riderBenefitRule" label-width="120px" class="riderBenefit">
         <el-form-item :label="$t('client.insurance_policy.product')" prop="product" style="width: 100%;">
           <el-select
             v-model="riderBenefit.product"
@@ -122,6 +122,8 @@ export default {
       this.products = []
       this.productLoading = true
       this.queryProduct.timestamp = this.submitDate
+      this.queryProduct.sort = 'localizedNames'
+      this.queryProduct.order = 'asc'
       this.$api.product.fetchProductList(this.queryProduct).then(res => {
         this.products = res.data.list
         this.productLoading = false

@@ -385,6 +385,8 @@ export default {
       this.productLoading = true
       this.products = []
       this.queryProduct.company = this.insurancePolicy.company.id
+      this.queryProduct.sort = 'localizedNames'
+      this.queryProduct.order = 'asc'
       if (this.insurancePolicy.submitDate) {
         this.queryProduct.timestamp = new Date(this.insurancePolicy.submitDate).valueOf()
       }

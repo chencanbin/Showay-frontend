@@ -133,6 +133,8 @@ export default {
     },
     searchProduct(query) {
       this.queryProduct.name = query
+      this.queryProduct.sort = 'localizedNames'
+      this.queryProduct.order = 'asc'
       this.getProducts()
     },
     getProducts() {
