@@ -138,7 +138,7 @@
                   <el-button
                     type="text"
                     size="small"
-                    @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
+                    @click="verifyPassword(scope.row.id)">{{ $t('common.delete') }}
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item divided>
@@ -154,6 +154,20 @@
       </el-table>
       <add v-if="hasPermission(100044)" :list-query="listQuery"/>
     </basic-container>
+    <el-dialog
+      v-el-drag-dialog
+      :close-on-click-modal="false"
+      :visible="dialogVisible"
+      :before-close="handleClose"
+      :title="$t('common.password_verify')"
+      center
+      width="400px">
+      <el-input v-model="password" type="password"/>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="submitLoading" type="primary" @click="handleDelete()">{{ $t('common.submitButton') }}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -165,13 +179,15 @@ import Cookies from 'js-cookie'
 import { mapState } from 'vuex'
 import add from './add'
 import edit from './edit'
-import detail from './detail'
 import addClient from './addClient'
 import riderBenefits from './riderBenefits'
 import renewal from './renewal'
 import companyExpenses from './companyExpenses'
 import channelExpenses from './channelExpenses'
 import pagination from '@/components/Pagination'
+import sha256 from 'sha256'
+import elDragDialog from '@/directive/el-dragDialog'
+
 const _ = require('lodash')
 const currencyFormatter = require('currency-formatter')
 export default {
@@ -179,7 +195,6 @@ export default {
   components: {
     add,
     edit,
-    detail,
     addClient,
     riderBenefits,
     renewal,
@@ -187,9 +202,14 @@ export default {
     channelExpenses,
     pagination
   },
+  directives: { elDragDialog },
   data() {
     return {
       height: this.hasPermission(100044) ? document.body.clientHeight - 190 : document.body.clientHeight - 130,
+      id: 0,
+      dialogVisible: false,
+      password: '',
+      submitLoading: false,
       wildcard: '',
       year: '',
       listQuery: {
@@ -249,31 +269,51 @@ export default {
       return currencyFormatter.format(value, { code: row.currency })
     },
     // 处理删除保单事件
-    handleDelete(index, row) {
-      this.$confirm(this.$t('client.insurance_policy.tooltip.delete'), this.$t('common.prompt'), {
-        confirmButtonText: this.$t('common.confirmButton'),
-        cancelButtonText: this.$t('common.cancelButton'),
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api.client.deleteInsurancePolicy(row.id).then(res => {
-              this.$message({
-                message: this.$t('common.success'),
-                type: 'success',
-                duration: 5 * 1000
-              })
-              this.getInsurancePolicyList()
-              instance.confirmButtonLoading = false
-              done()
-            }).catch(_ => {
-              instance.confirmButtonLoading = false
-            })
-          } else {
-            done()
-          }
-        }
+    handleDelete() {
+      this.submitLoading = true
+      this.$api.client.deleteInsurancePolicy(this.id, sha256(this.password)).then(res => {
+        this.$message({
+          message: this.$t('common.success'),
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.getInsurancePolicyList()
+        this.submitLoading = false
+        this.dialogVisible = false
+      }).catch(_ => {
+        this.submitLoading = false
       })
+      // this.$confirm(this.$t('client.insurance_policy.tooltip.delete'), this.$t('common.prompt'), {
+      //   confirmButtonText: this.$t('common.confirmButton'),
+      //   cancelButtonText: this.$t('common.cancelButton'),
+      //   type: 'warning',
+      //   beforeClose: (action, instance, done) => {
+      //     if (action === 'confirm') {
+      //       instance.confirmButtonLoading = true
+      //       this.$api.client.deleteInsurancePolicy(this.id, sha256(this.password)).then(res => {
+      //         this.$message({
+      //           message: this.$t('common.success'),
+      //           type: 'success',
+      //           duration: 5 * 1000
+      //         })
+      //         this.getInsurancePolicyList()
+      //         instance.confirmButtonLoading = false
+      //         done()
+      //       }).catch(_ => {
+      //         instance.confirmButtonLoading = false
+      //       })
+      //     } else {
+      //       done()
+      //     }
+      //   }
+      // })
+    },
+    verifyPassword(id) {
+      this.id = id
+      this.dialogVisible = true
+    },
+    handleClose() {
+      this.dialogVisible = false
     },
     handleReset(id) {
       this.$confirm(this.$t('client.insurance_policy.tooltip.reset'), this.$t('common.prompt'), {

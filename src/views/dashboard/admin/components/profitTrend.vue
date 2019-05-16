@@ -25,7 +25,6 @@
 import G2 from '@antv/g2'
 import accounting from 'accounting'
 import { getYearFirst, getYearLast } from '@/utils'
-import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   name: '',
@@ -57,12 +56,9 @@ export default {
     }
   },
   created() {
-    if (this.checkPermission([1])) {
-      this.getProfit(4, 7)
-    }
+    this.getProfit(4, 7)
   },
   methods: {
-    checkPermission,
     profitYear() {
       this.activeName = 2
       this.getProfit(4, 5)

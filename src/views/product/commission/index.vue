@@ -66,7 +66,7 @@
                           size="small"
                           type="text"
                           icon="el-icon-delete"
-                          @click="handleDelete(commissionTable, scope.row.id)">{{ $t('common.delete') }}
+                          @click="verifyPassword(scope.row.id, commissionTable.id)">{{ $t('common.delete') }}
                         </el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
@@ -104,6 +104,21 @@
       </el-table>
       <add v-if="hasPermission(100015)" @afterAddCommissionTable="handleAfterCreateCommissionTable"/>
     </basic-container>
+    <el-dialog
+      v-el-drag-dialog
+      :close-on-click-modal="false"
+      :visible="dialogVisible"
+      :before-close="handleClose"
+      :title="$t('common.password_verify')"
+      center
+      width="400px">
+      <el-input v-model="password" type="password"/>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="submitLoading" type="primary" @click="handleDelete">{{ $t('common.submitButton') }}</el-button>
+      </div>
+    </el-dialog>
+
     <commission-view ref="commissionView"/>
   </div>
 </template>
@@ -116,6 +131,9 @@ import commissionTable from './commissionTable'
 import add from './add'
 import commissionView from './view'
 import axios from 'axios'
+import sha256 from 'sha256'
+import elDragDialog from '@/directive/el-dragDialog'
+
 const _ = require('lodash')
 export default {
   components: {
@@ -124,8 +142,14 @@ export default {
     commissionTable,
     pagination
   },
+  directives: { elDragDialog },
   data: function() {
     return {
+      dialogVisible: false,
+      companyId: 0,
+      commissionTableId: 0,
+      password: '',
+      submitLoading: false,
       wildcard: '',
       expandKeys: [],
       showExpandRow: false,
@@ -133,9 +157,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 50
-      },
-      companyId: 0,
-      commissionTableId: 0
+      }
     }
   },
   computed: {
@@ -183,31 +205,50 @@ export default {
     remoteSearch(query) {
       this.$store.dispatch('company/FetchCompanyList', { name: query })
     },
-    handleDelete(row, companyId) {
-      this.$confirm(this.$t('product.commission.tooltip.delete'), this.$t('common.prompt'), {
-        confirmButtonText: this.$t('common.confirmButton'),
-        cancelButtonText: this.$t('common.cancelButton'),
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api.commission.deleteCommission(row.id).then(res => {
-              this.$message({
-                message: this.$t('common.success'),
-                type: 'success',
-                duration: 5 * 1000
-              })
-              instance.confirmButtonLoading = false
-              done()
-              this.getCommissionTableList(companyId)
-            }).catch(_ => {
-              instance.confirmButtonLoading = false
-            })
-          } else {
-            done()
-          }
-        }
+    verifyPassword(companyId, commissionTableId) {
+      this.companyId = companyId
+      this.commissionTableId = commissionTableId
+      this.dialogVisible = true
+    },
+    handleDelete() {
+      this.submitLoading = true
+      this.$api.commission.deleteCommission(this.commissionTableId, sha256(this.password)).then(res => {
+        this.$message({
+          message: this.$t('common.success'),
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.getCommissionTableList(this.companyId)
+        this.dialogVisible = false
+        this.submitLoading = false
+      }).catch(_ => {
+        this.dialogVisible = false
+        this.submitLoading = false
       })
+      // this.$confirm(this.$t('product.commission.tooltip.delete'), this.$t('common.prompt'), {
+      //   confirmButtonText: this.$t('common.confirmButton'),
+      //   cancelButtonText: this.$t('common.cancelButton'),
+      //   type: 'warning',
+      //   beforeClose: (action, instance, done) => {
+      //     if (action === 'confirm') {
+      //       instance.confirmButtonLoading = true
+      //       this.$api.commission.deleteCommission(row.id).then(res => {
+      //         this.$message({
+      //           message: this.$t('common.success'),
+      //           type: 'success',
+      //           duration: 5 * 1000
+      //         })
+      //         instance.confirmButtonLoading = false
+      //         done()
+      //         this.getCommissionTableList(companyId)
+      //       }).catch(_ => {
+      //         instance.confirmButtonLoading = false
+      //       })
+      //     } else {
+      //       done()
+      //     }
+      //   }
+      // })
     },
     // showCommissionTable(id) {
     //   this.$store.commit('commission/SHOW_COMMISSION_TABLE_DIALOG_VISIBLE', id)
@@ -292,6 +333,9 @@ export default {
     //     window.location.href = process.env.BASE_API + `/commissionTable/${row.id}/export`
     //   }
     // },
+    handleClose() {
+      this.dialogVisible = false
+    },
     handleView(id) {
       this.$refs.commissionView.openDialog(id)
     },

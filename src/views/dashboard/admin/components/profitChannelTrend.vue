@@ -1,12 +1,33 @@
 <template>
   <el-card v-loading="loading" style="background:#fff;padding:16px 16px 0;margin-bottom:32px;" class="profit">
     <div slot="header" class="clearfix">
-      <span>{{ $t('home.channelProfitTrend', [name]) }}</span>
+      <span>{{ $t('home.channelProfitTrend', ['']) }}</span>
+      <el-select
+        v-model="channel"
+        :placeholder="$t('client.insurance_policy.set.channel_name')"
+        filterable
+        remote
+        clearable
+        style="margin-left: 20px">
+        <el-option
+          v-for="item in channels.list"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"/>
+      </el-select>
       <el-button-group style="margin-left: 20px">
         <el-button :type="buttonProfitMonth" size="small" @click="profitMonth()">{{ $t('home.month') }}</el-button>
         <el-button :type="buttonProfitQuarter" size="small" @click="profitQuarter()">{{ $t('home.quarter') }}</el-button>
         <el-button :type="buttonProfitYear" size="small" @click="profitYear()">{{ $t('home.year') }}</el-button>
       </el-button-group>
+      <el-date-picker
+        :editable="false"
+        :clearable="false"
+        :unlink-panels="true"
+        v-model="year"
+        type="daterange"
+        value-format="timestamp"
+        style="margin-left: 20px; width: 240px"/>
     </div>
     <div id="profitChannelTrend"/>
   </el-card>
@@ -14,16 +35,18 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import G2 from '@antv/g2'
 import accounting from 'accounting'
-import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
-import checkPermission from '@/utils/permission' // 权限判断函数
+import { getYearFirst, getYearLast } from '@/utils'
 
 export default {
   name: '',
   data() {
     return {
+      activeName: 0,
+      channel: '',
+      year: [getYearFirst(new Date()), getYearLast(new Date())],
       buttonProfitMonth: 'primary',
       buttonProfitQuarter: '',
       buttonProfitYear: '',
@@ -33,36 +56,64 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'name'
-    ])
+    ...mapState({
+      channels: state => state.user.users
+    })
   },
   // 监听API接口传过来的数据  2018-08-21更新
   watch: {
+    year: function(val) {
+      if (this.activeName === 0) {
+        this.profitMonth()
+      } else if (this.activeName === 1) {
+        this.profitQuarter()
+      } else {
+        this.profitYear()
+      }
+    },
+    channel: function(val) {
+      if (this.activeName === 0) {
+        this.profitMonth()
+      } else if (this.activeName === 1) {
+        this.profitQuarter()
+      } else {
+        this.profitYear()
+      }
+    },
     profit: function(val, oldVal) { // 监听charData，当放生变化时，触发这个回调函数绘制图表
       this.drawChart(val)
     }
   },
   created() {
-    if (this.checkPermission([2])) {
-      this.getProfit(8, 7)
-    }
+    this.getChannel()
+    this.getProfit(8, 7)
   },
   methods: {
-    checkPermission,
+    getChannel(params) {
+      const role = { role: 2 }
+      if (params) {
+        params.role = role
+      } else {
+        params = role
+      }
+      this.$store.dispatch('FetchUserList', params)
+    },
     profitYear() {
+      this.activeName = 2
       this.getProfit(8, 5)
       this.buttonProfitMonth = ''
       this.buttonProfitQuarter = ''
       this.buttonProfitYear = 'primary'
     },
     profitQuarter() {
+      this.activeName = 1
       this.getProfit(8, 6)
       this.buttonProfitMonth = ''
       this.buttonProfitQuarter = 'primary'
       this.buttonProfitYear = ''
     },
     profitMonth() {
+      this.activeName = 0
       this.getProfit(8, 7)
       this.buttonProfitMonth = 'primary'
       this.buttonProfitQuarter = ''
@@ -70,7 +121,7 @@ export default {
     },
     getProfit(item, groupBy) {
       this.loading = true
-      this.$api.statistics.fetchTrend({ item, groupBy, from: getCurrentYearFirst(), to: getCurrentYearLast() }).then(res => {
+      this.$api.statistics.fetchTrend({ item, groupBy, from: this.year[0], to: this.year[1], user: this.channel }).then(res => {
         this.profit = res.data
         this.loading = false
       }).catch(_ => {
@@ -87,7 +138,7 @@ export default {
       })
       this.chart.source(this.profit)
       this.chart.scale('value', {
-        alias: '销售额',
+        alias: this.$t('home.sale'),
         min: 0,
         formatter: function(val) {
           return accounting.formatMoney(val, '', 2)

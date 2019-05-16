@@ -6,25 +6,17 @@
       :before-close="handleClose"
       :fullscreen="true"
       :title= "generateTitle()">
-      <!--<el-row v-permission="[1]" style="margin-bottom: 10px">-->
-      <!--<el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">{{ $t('commission.payment.submit_audit') }}</el-button>-->
-      <!--<span style="margin-left: 20px;">已选中实发金额:-->
-      <!--<count-to-->
-      <!--:start-val="0"-->
-      <!--:end-val="selectSum"-->
-      <!--:duration="2000"-->
-      <!--decimals="2"-->
-      <!--prefix="HK$ "-->
-      <!--style="font-weight: bold;"/>-->
-      <!--</span>-->
-      <!--</el-row>-->
       <el-table
         v-loading="mergedPaymentLoading"
         :max-height="height"
         :data="mergedPayment.payments"
         stripe
         border>
-        <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip/>
+        <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id"/>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('client.insurance_policy.beneficiary_name')" prop="insurancePolicy.beneficiary" width="120"/>
         <el-table-column :label="$t('commission.credit.year')" width="100">
           <template slot-scope="scope">
@@ -69,17 +61,16 @@
 import { mapState } from 'vuex'
 import { getSymbol } from '@/utils'
 import CountTo from 'vue-count-to'
-
-import permission from '@/directive/permission/index.js' // 权限判断指令
+import policyDetail from '../../client/policy/policyDetail'
 
 const _ = require('lodash')
 const currencyFormatter = require('currency-formatter')
 export default {
   name: 'MergedPayment',
   components: {
-    CountTo
+    CountTo,
+    policyDetail
   },
-  directives: { permission },
   props: {
     channel: {
       type: Object,

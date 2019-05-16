@@ -43,6 +43,7 @@ export default {
     calculatedAmount: 'Calulated',
     amount: 'Credited',
     profit: 'profit',
+    expenses: 'expenses',
     exchangeRate: 'Exchange Rate',
     commission_rate: 'Commission Rate',
     approve: 'Approve',
@@ -50,6 +51,7 @@ export default {
     tooltip: {
       close: 'Are you sure you want to close the window?'
     },
+    password_verify: 'Password Verify',
     company_placeholder: 'Select or enter partner(s)'
   },
   navbar: {
@@ -80,10 +82,13 @@ export default {
   },
   home: {
     creditSum: 'Credited',
+    paymentSum: 'Paid',
     pendingCreditSum: 'Pending Credit',
     pendingPaymentSum: 'Pending Payroll',
-    policyCount: 'Policy Count',
+    policyCount: 'Total number of policies',
+    normalPolicyCount: 'Number of in force policies',
     news: 'Latest',
+    balance: 'Balance',
     fileName: 'Filename',
     companyProfit: 'Profit',
     channelProfitTrend: '{0} Profit',
@@ -376,6 +381,7 @@ export default {
       set: {
         add_riderBenefits_title: 'Add Rider',
         edit_riderBenefits_title: 'Modify Rider',
+        insurance_policy_detail: 'Insurance Policy Detail',
         add_title: 'Add Insurance Policy',
         edit_title: 'Modify Insurance Policy',
         channel_expense: 'Channel Expense',

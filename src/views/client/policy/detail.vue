@@ -73,7 +73,6 @@ export default {
   },
   methods: {
     initForm() {
-      console.log('....................')
       this.dialogVisible = true
     },
     numberFormat(row, value) {

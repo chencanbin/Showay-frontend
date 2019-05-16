@@ -43,6 +43,7 @@ export default {
     calculatedAmount: '应收',
     amount: '实收',
     profit: '收益',
+    expenses: '支出',
     exchangeRate: '汇率',
     commission_rate: '佣金率',
     approve: '批准',
@@ -50,6 +51,7 @@ export default {
     tooltip: {
       close: '是否需要关闭此窗口?'
     },
+    password_verify: '密码认证',
     company_placeholder: '请选择供应商'
   },
   navbar: {
@@ -80,17 +82,20 @@ export default {
   },
   home: {
     creditSum: '已到账',
+    paymentSum: '已發放',
     pendingCreditSum: '预计待收',
     pendingPaymentSum: '预计待发',
-    policyCount: '总成单数',
+    policyCount: '总签单数',
+    normalPolicyCount: '总成单数',
     news: '最新动态',
+    balance: '收支分布',
     fileName: '文件名称',
     companyProfit: '公司收益趋势',
-    channelProfitTrend: '{0} 收益趋势',
+    channelProfitTrend: '{0} 业绩趋势',
     month: '按月统计',
     quarter: '按季统计',
     year: '按年统计',
-    sale: '销售额',
+    sale: '数额',
     comparison: '公司业绩同比',
     count: '出单量',
     channelPerformanceTop: '渠道业绩Top5',
@@ -377,6 +382,7 @@ export default {
       set: {
         add_riderBenefits_title: '添加副险',
         edit_riderBenefits_title: '编辑副险',
+        insurance_policy_detail: '保单详情',
         add_title: '添加保单',
         edit_title: '编辑保单',
         channel_expense: '渠道支出',

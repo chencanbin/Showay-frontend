@@ -18,6 +18,15 @@
           :label="item.name"
           :value="item.id"/>
       </el-select>
+      <el-date-picker
+        :editable="false"
+        :clearable="false"
+        v-model="year"
+        prefix-icon="false"
+        type="year"
+        value-format="timestamp"
+        placeholder="选择年期"
+        style="width: 150px;"/>
       <el-button-group style="margin-left: 20px">
         <el-button :type="buttonClearCreditMonth" size="small" @click="clearCreditMonth()">{{ $t('home.month') }}</el-button>
         <el-button :type="buttonClearCreditQuarter" size="small" @click="clearCreditQuarter()">{{ $t('home.quarter') }}</el-button>
@@ -32,12 +41,12 @@
 import { mapState } from 'vuex'
 import G2 from '@antv/g2'
 import accounting from 'accounting'
-import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
-import checkPermission from '@/utils/permission' // 权限判断函数
+import { getYearFirst, getYearLast } from '@/utils'
 
 export default {
   data() {
     return {
+      year: new Date(),
       buttonClearCreditMonth: 'primary',
       buttonClearCreditQuarter: '',
       buttonClearCreditYear: '',
@@ -64,6 +73,10 @@ export default {
     },
     company: function(val) {
       this.company = val
+      this.getTrend(0, 1)
+    },
+    year: function(val) {
+      console.log(this.year)
       this.getTrend(0, 1)
     }
   },
@@ -139,15 +152,12 @@ export default {
         return polygon // 将自定义Shape返回
       }
     })
-    if (this.checkPermission([1])) {
-      this.getTrend(0, 1)
-    }
+    this.getTrend(0, 1)
   },
   mounted() {
     this.drawChart()
   },
   methods: {
-    checkPermission,
     onCompanyFocus() {
       this.getCompanies()
     },
@@ -180,8 +190,8 @@ export default {
     },
     getTrend(delta, lastYear) {
       this.loading = true
-      let clearedCreditParams = { item: 0, groupBy: this.groupBy, delta, from: getCurrentYearFirst(), to: getCurrentYearLast() }
-      let insurancePolicyCount = { item: 5, groupBy: this.groupBy, delta, from: getCurrentYearFirst(), to: getCurrentYearLast() }
+      let clearedCreditParams = { item: 0, groupBy: this.groupBy, delta, from: getYearFirst(this.year), to: getYearLast(this.year) }
+      let insurancePolicyCount = { item: 5, groupBy: this.groupBy, delta, from: getYearFirst(this.year), to: getYearLast(this.year) }
       if (lastYear) {
         clearedCreditParams = Object.assign({ lastYear }, clearedCreditParams)
         insurancePolicyCount = Object.assign({ lastYear }, insurancePolicyCount)
@@ -189,8 +199,8 @@ export default {
         // insurancePolicyCount = { item: 5, groupBy, delta, lastYear, from: getCurrentYearFirst(), to: getCurrentYearLast(), target }
       }
       if (this.company) {
-        clearedCreditParams = Object.assign({ target: this.company }, clearedCreditParams)
-        insurancePolicyCount = Object.assign({ target: this.company }, insurancePolicyCount)
+        clearedCreditParams = Object.assign({ company: this.company }, clearedCreditParams)
+        insurancePolicyCount = Object.assign({ company: this.company }, insurancePolicyCount)
       }
       this.$api.statistics.fetchTrend({ ...clearedCreditParams }).then(res => {
         this.clearedCredit = res.data

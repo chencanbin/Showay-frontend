@@ -1,26 +1,37 @@
 <template>
   <div class="dashboard-editor-container">
-    <panel-group :overall="overall" @panelClick="panelClick"/>
+    <panel-group/>
     <el-row :gutter="8">
-      <el-col :xs="24" :sm="24" :lg="16">
-        <profit-channel-trend v-permission="[2]"/>
+      <el-row :gutter="8" type="flex" justify="left" >
+        <!-- 公告列表 -->
+        <el-col v-if="showHomePage(13)" :xs="24" :sm="24" :lg="8">
+          <fileList/>
+        </el-col>
+        <el-col v-if="showHomePage(14)" :xs="24" :sm="24" :lg="16">
+          <income-distribution/>
+        </el-col>
+      </el-row>
+      <!-- 渠道业绩趋势 -->
+      <el-col v-if="showHomePage(9)" :xs="24" :sm="24" :lg="24">
+        <profit-channel-trend/>
       </el-col>
-      <el-col v-permission="[1, 2]" :xs="24" :sm="24" :lg="8">
-        <fileList/>
+      <!-- 公司收益趋势 -->
+      <el-col v-if="showHomePage(8)" :xs="24" :sm="24" :lg="24">
+        <profit-trend/>
       </el-col>
-      <el-col v-permission="[1]" :xs="24" :sm="24" :lg="checkPermission([2]) ? 24 : 16">
-        <profit-trend v-permission="[1]"/>
-      </el-col>
-      <el-col v-permission="[1]" :xs="24" :sm="24" :lg="24">
+      <!-- 公司业绩同比 -->
+      <el-col v-if="showHomePage(10)" :xs="24" :sm="24" :lg="24">
         <cleared-credit/>
       </el-col>
     </el-row>
-    <el-row :gutter="8">
-      <el-col :xs="24" :sm="24" :lg="12">
-        <channel-profit v-permission="[1]"/>
+    <el-row :gutter="8" type="flex" justify="center" >
+      <!-- 渠道业绩Top5 -->
+      <el-col v-if="showHomePage(11)">
+        <channel-profit/>
       </el-col>
-      <el-col :xs="24" :sm="24" :lg="12">
-        <channel-pie v-permission="[1]"/>
+      <!-- 渠道业绩分布 -->
+      <el-col v-if="showHomePage(12)">
+        <channel-pie/>
       </el-col>
     </el-row>
   </div>
@@ -35,8 +46,8 @@ import profitChannelTrend from './components/profitChannelTrend'
 import channelProfit from './components/ChannelProfit'
 import ChannelPie from './components/ChannelPie'
 import fileList from './components/fileList'
-import permission from '@/directive/permission/index.js' // 权限判断指令
-import checkPermission from '@/utils/permission' // 权限判断函数
+import incomeDistribution from './components/IncomeDistribution'
+import { showHomePage } from '@/utils/permission'
 
 export default {
   name: 'DashboardAdmin',
@@ -48,9 +59,9 @@ export default {
     profitChannelTrend,
     channelProfit,
     ChannelPie,
-    fileList
+    fileList,
+    incomeDistribution
   },
-  directives: { permission },
   data() {
     return {
       overall: {
@@ -63,16 +74,16 @@ export default {
     }
   },
   created() {
-    this.$api.statistics.fetchOverall().then(res => {
-      this.overall.creditSum = parseFloat(res.data.creditSum)
-      this.overall.pendingCreditSum = parseFloat(res.data.pendingCreditSum)
-      this.overall.paymentSum = parseFloat(res.data.paymentSum)
-      this.overall.policyCount = parseFloat(res.data.policyCount)
-      this.overall.pendingPaymentSum = parseFloat(res.data.pendingPaymentSum)
-    })
+    // this.$api.statistics.fetchOverall().then(res => {
+    //   this.overall.creditSum = parseFloat(res.data.creditSum)
+    //   this.overall.pendingCreditSum = parseFloat(res.data.pendingCreditSum)
+    //   this.overall.paymentSum = parseFloat(res.data.paymentSum)
+    //   this.overall.policyCount = parseFloat(res.data.policyCount)
+    //   this.overall.pendingPaymentSum = parseFloat(res.data.pendingPaymentSum)
+    // })
   },
   methods: {
-    checkPermission,
+    showHomePage,
     panelClick(type) {
       if (type === 'creditSum') {
         this.$router.push({ path: '/commission/commissionCredit', query: { type: '1' }})

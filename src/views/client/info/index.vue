@@ -69,7 +69,7 @@
                   <el-button
                     type="text"
                     size="small"
-                    @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
+                    @click="verifyPassword(scope.row.id)">{{ $t('common.delete') }}
                   </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -78,6 +78,20 @@
         </el-table-column>
       </el-table>
       <add :list-query="listQuery"/>
+      <el-dialog
+        v-el-drag-dialog
+        :close-on-click-modal="false"
+        :visible="dialogVisible"
+        :before-close="handleClose"
+        :title="$t('common.password_verify')"
+        center
+        width="400px">
+        <el-input v-model="password" type="password"/>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+          <el-button :loading="submitLoading" type="primary" @click="handleDelete()">{{ $t('common.submitButton') }}</el-button>
+        </div>
+      </el-dialog>
     </basic-container>
   </div>
 </template>
@@ -88,6 +102,9 @@ import { mapState } from 'vuex'
 import add from './add'
 import edit from './edit'
 import pagination from '@/components/Pagination'
+import sha256 from 'sha256'
+import elDragDialog from '@/directive/el-dragDialog'
+
 const _ = require('lodash')
 export default {
   components: {
@@ -95,9 +112,14 @@ export default {
     edit,
     pagination
   },
+  directives: { elDragDialog },
   data: function() {
     return {
       height: document.body.clientHeight - 190,
+      id: 0,
+      dialogVisible: false,
+      password: '',
+      submitLoading: false,
       listQuery: {
         page: 1,
         limit: 50
@@ -128,34 +150,53 @@ export default {
       const date = row[column.property]
       return parseTime(date, '{y}-{m}-{d}')
     },
-    handleDelete(index, row) {
-      this.$confirm(this.$t('client.info.tooltip.delete'), this.$t('common.prompt'), {
-        confirmButtonText: this.$t('common.confirmButton'),
-        cancelButtonText: this.$t('common.cancelButton'),
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api.client.deleteClient(row.id).then(res => {
-              this.$message({
-                message: this.$t('common.success'),
-                type: 'success',
-                duration: 5 * 1000
-              })
-              this.getClient()
-              instance.confirmButtonLoading = false
-              done()
-            }).catch(_ => {
-              instance.confirmButtonLoading = false
-            })
-          } else {
-            done()
-          }
-        }
-      }).then(() => {
+    handleDelete() {
+      this.submitLoading = true
+      this.$api.client.deleteClient(this.id, sha256(this.password)).then(res => {
+        this.$message({
+          message: this.$t('common.success'),
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.getClient()
+        this.submitLoading = false
+        this.dialogVisible = false
+      }).catch(_ => {
+        this.submitLoading = false
       })
+      // this.$confirm(this.$t('client.info.tooltip.delete'), this.$t('common.prompt'), {
+      //   confirmButtonText: this.$t('common.confirmButton'),
+      //   cancelButtonText: this.$t('common.cancelButton'),
+      //   type: 'warning',
+      //   beforeClose: (action, instance, done) => {
+      //     if (action === 'confirm') {
+      //       instance.confirmButtonLoading = true
+      //       this.$api.client.deleteClient(row.id).then(res => {
+      //         this.$message({
+      //           message: this.$t('common.success'),
+      //           type: 'success',
+      //           duration: 5 * 1000
+      //         })
+      //         this.getClient()
+      //         instance.confirmButtonLoading = false
+      //         done()
+      //       }).catch(_ => {
+      //         instance.confirmButtonLoading = false
+      //       })
+      //     } else {
+      //       done()
+      //     }
+      //   }
+      // }).then(() => {
+      // })
     },
-
+    verifyPassword(id) {
+      this.id = id
+      this.dialogVisible = true
+    },
+    handleClose() {
+      this.dialogVisible = false
+    },
     pagination(pageObj) {
       const offset = (pageObj.page - 1) * pageObj.limit
       const max = pageObj.limit

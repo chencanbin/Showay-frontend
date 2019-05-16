@@ -63,8 +63,11 @@ export function addCommission(data) {
   })
 }
 
-export function deleteCommission(id) {
+export function deleteCommission(id, password) {
   return request({
+    headers: {
+      'Authorization': password
+    },
     url: `/commissionTable/${id}`,
     method: 'delete'
   })

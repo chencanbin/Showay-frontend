@@ -584,8 +584,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.wildcard = ''
-        this.$store.dispatch('commission/FetchCommissionTableList', { id: this.companyId })
-        this.dialogVisible = false
+        this.$api.commission.commissionTableDraft(this.id, { releaseLock: true }).then(res => {
+          this.$store.dispatch('commission/FetchCommissionTableList', { id: this.companyId })
+          this.dialogVisible = false
+        })
       })
     },
     handleCloseSetOverrideDialog() {

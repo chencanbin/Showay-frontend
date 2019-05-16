@@ -184,7 +184,9 @@ export default {
         cancelButtonText: this.$t('common.cancelButton'),
         type: 'warning'
       }).then(() => {
-        this.dialogVisible = false
+        this.$api.channel.editChannelCommissionPolicy(this.id, { releaseLock: true }).then(res => {
+          this.dialogVisible = false
+        })
       })
     },
     handleSubmit() {

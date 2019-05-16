@@ -61,3 +61,11 @@ export function fetchChannelHierarchy(params) {
     params
   })
 }
+
+export function resetPassword(data) {
+  return request({
+    url: `/user/resetPassword`,
+    method: 'post',
+    data
+  })
+}

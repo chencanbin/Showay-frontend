@@ -1,7 +1,7 @@
 <template>
   <div id="paymentAudit" class="table-container">
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
-      <el-tab-pane v-for="status in commissionPaymentStatus" :name="status.id" :label="statusFormatter(status.id)" :key="status.id" lazy>
+      <el-tab-pane v-for="item in status" :name="item.id" :label="statusFormatter(item.id)" :key="item.id" lazy>
         <el-form :inline="true" class="search-input" @submit.native.prevent>
           <el-form-item label="" prop="wildcard">
             <el-input
@@ -49,11 +49,11 @@
               <!--<statusBadge v-if="activeName === '3'" :text="statusFormatter(activeName)"/>-->
             </template>
           </el-table-column>
-          <el-table-column v-if="activeName !== '3'" :label="$t('common.action')" width="150" align="center">
+          <el-table-column v-if="hasPermission(100072) && activeName !== '3'" :label="$t('common.action')" width="150" align="center">
             <template slot-scope="scope">
               <detail v-if="activeName === '-1'" :channel="scope.row.channel" :id="scope.row.id || 0" :status="activeName"/>
               <detail v-if="activeName === '0'" :channel="scope.row.channel" :id="scope.row.id || 0" :status="activeName"/>
-              <clear v-if="activeName === '2'" :id="scope.row.id || 0"/>
+              <clear v-if="hasPermission(100072) && activeName === '2'" :id="scope.row.id || 0"/>
             </template>
           </el-table-column>
         </el-table>
@@ -67,6 +67,7 @@ import pagination from '@/components/Pagination'
 import statusBadge from '@/components/StatusBadge'
 import { mapState } from 'vuex'
 import { commissionPaymentStatus } from '@/utils/constant'
+import { hasPaymentStatuses } from '@/utils/permission'
 import Cookies from 'js-cookie'
 import detail from './detail'
 import clear from './clear'
@@ -87,7 +88,7 @@ export default {
     return {
       activeName: '-1',
       wildcard: '',
-      commissionPaymentStatus,
+      status: [],
       language: Cookies.get('language') || 'zh-CN',
       height: document.body.clientHeight - 200,
       chequeCopy: [],
@@ -104,9 +105,19 @@ export default {
     })
   },
   created() {
-    this.getAuditPayment({ status: -1 })
+    this.filterPaymentStatus()
+    this.activeName = this.status[0].id
+    this.getAuditPayment({ status: this.status[0].id })
   },
   methods: {
+    hasPaymentStatuses,
+    filterPaymentStatus() {
+      _.forEach(commissionPaymentStatus, item => {
+        if (this.hasPaymentStatuses(item.role)) {
+          this.status.push(item)
+        }
+      })
+    },
     search: _.debounce(function() {
       this.getAuditPayment({ status: this.activeName, wildcard: this.wildcard })
     }, 500),

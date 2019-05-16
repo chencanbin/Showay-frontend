@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{ this.$t('common.edit') }}</el-button>
+    <el-button type="text" size="small" @click="initForm">{{ this.$t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :close-on-click-modal="false"

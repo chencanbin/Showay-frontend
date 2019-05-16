@@ -149,13 +149,13 @@ export const asyncRouterMap = [
         path: 'paymentAudit',
         component: () => import('@/views/commission/paymentAudit/index'),
         name: 'paymentAudit',
-        meta: { title: 'paymentAudit', icon: 'payment', noCache: true, id: 100055 }
+        meta: { title: 'paymentAudit', icon: 'payment', noCache: true, id: 100067 }
       },
       {
         path: 'cleared',
         component: () => import('@/views/commission/cleared/index'),
         name: 'cleared',
-        meta: { title: 'cleared', icon: 'cleared', noCache: true }
+        meta: { title: 'cleared', icon: 'cleared', noCache: true, id: 130003 }
       }
     ]
   },

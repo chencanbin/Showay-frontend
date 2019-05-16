@@ -7,7 +7,7 @@
       v-loading="loading"
       :data="fileList"
       :show-header="false"
-      height="303">
+      height="307">
       <el-table-column
         prop="name"
         label="文件名称"

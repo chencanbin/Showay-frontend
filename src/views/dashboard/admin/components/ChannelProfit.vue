@@ -2,6 +2,14 @@
   <el-card v-loading="loading" class="channelProfit" style="padding:16px 16px 0;margin-bottom:32px;">
     <div slot="header" class="clearfix">
       <span>{{ $t('home.channelPerformanceTop') }}</span>
+      <el-date-picker
+        :editable="false"
+        :clearable="false"
+        :unlink-panels="true"
+        v-model="year"
+        type="daterange"
+        value-format="timestamp"
+        style="margin-left: 20px; width: 240px"/>
     </div>
     <div id="channelProfit"/>
   </el-card>
@@ -10,35 +18,35 @@
 <script>
 import G2 from '@antv/g2'
 import accounting from 'accounting'
-import checkPermission from '@/utils/permission' // 权限判断函数
+import { getYearFirst, getYearLast } from '@/utils'
 
 export default {
   name: '',
   data() {
     return {
       afyp: [],
+      year: [getYearFirst(new Date()), getYearLast(new Date())],
       loading: false
     }
   },
   watch: {
     afyp: function(val, oldVal) { // 监听charData，当放生变化时，触发这个回调函数绘制图表
-      console.log('new: %s, old: %s', val, oldVal)
       this.drawChart(val)
+    },
+    year: function(val) {
+      this.getAFYP(8, 3, 5)
     }
   },
   created() {
-    if (this.checkPermission([1])) {
-      this.getAFYP(8, 3, 5)
-    }
+    this.getAFYP(8, 3, 5)
   },
   mounted() {
     this.drawChart()
   },
   methods: {
-    checkPermission,
     getAFYP(item, groupBy, max) {
       this.loading = true
-      this.$api.statistics.fetchTop({ item, groupBy, max }).then(res => {
+      this.$api.statistics.fetchTop({ item, groupBy, max, from: this.year[0], to: this.year[1] }).then(res => {
         this.afyp = res.data
         this.loading = false
       })

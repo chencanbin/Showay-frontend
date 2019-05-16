@@ -13,7 +13,7 @@
         <el-form-item :label="$t('client.info.name')" prop="name">
           <el-input v-model="client.name" :placeholder="$t('client.info.set.name')"/>
         </el-form-item>
-        <el-form-item :label="$t('client.info.enName')" prop="enName">
+        <el-form-item :label="$t('client.info.enName')" prop="englishName">
           <el-input v-model="client.englishName" :placeholder="$t('client.info.set.enName')"/>
         </el-form-item>
         <el-form-item :label="$t('client.info.idNumber')" prop="idNumber">

@@ -28,7 +28,7 @@
                         <edit-channel-hierarchy :hierarchy="item"/>
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <el-button type="text" size="small" icon="el-icon-delete" @click="handleDeleteChannelHierarchy(item.id)">{{ $t('common.delete') }}</el-button>
+                        <el-button type="text" size="small" @click="handleDeleteChannelHierarchy(item.id)">{{ $t('common.delete') }}</el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -59,11 +59,10 @@
             </el-tag>
           </template>
         </el-table-column>
-        <!--<el-table-column-->
-        <!--:formatter="dateFormat"-->
-        <!--:label="$t('user.table_header.create_time')"-->
-        <!--prop="creationDay"-->
-        <!--min-width="100px"/>-->
+        <el-table-column
+          :label="$t('client.info.email')"
+          prop="email"
+          min-width="100px"/>
         <el-table-column :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown v-if="!scope.row.isBuiltin">
@@ -79,7 +78,14 @@
                     v-if="hasPermission(100085) && !scope.row.isBuiltin"
                     type="text"
                     size="small"
-                    icon="el-icon-delete"
+                    @click="verifyPassword(scope.$index, scope.row)">重置密码
+                  </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button
+                    v-if="hasPermission(100085) && !scope.row.isBuiltin"
+                    type="text"
+                    size="small"
                     @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
                   </el-button>
                 </el-dropdown-item>
@@ -90,6 +96,20 @@
       </el-table>
       <add v-if="hasPermission(100081)"/>
     </basic-container>
+    <el-dialog
+      v-el-drag-dialog
+      :close-on-click-modal="false"
+      :visible="dialogVisible"
+      :before-close="handleClose"
+      :title="$t('common.password_verify')"
+      center
+      width="400px">
+      <el-input v-model="password" type="password"/>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="resetLoading" type="primary" @click="handleResetPassword">{{ $t('common.submitButton') }}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -99,8 +119,10 @@ import edit from './edit'
 import addChannelHierarchy from './addChannelHierarchy'
 import editChannelHierarchy from './editChannelHierarchy'
 import pagination from '@/components/Pagination'
+import sha256 from 'sha256'
 import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
+import elDragDialog from '@/directive/el-dragDialog'
 
 export default {
   name: 'User',
@@ -111,9 +133,15 @@ export default {
     editChannelHierarchy,
     pagination
   },
+  directives: { elDragDialog },
   data() {
     return {
       expandKeys: [],
+      name: '',
+      password: '',
+      id: '',
+      resetLoading: false,
+      dialogVisible: false,
       height: this.hasPermission(100081) ? document.body.clientHeight - 180 : document.body.clientHeight - 120,
       listQuery: {
         page: 1,
@@ -234,12 +262,42 @@ export default {
     },
     updateLimit(val) {
       this.listQuery.limit = val
+    },
+    verifyPassword(index, row) {
+      this.name = row.login
+      this.id = row.id
+      this.dialogVisible = true
+    },
+    handleResetPassword() {
+      this.resetLoading = true
+      this.$api.user.resetPassword({ 'user': this.id, 'password': sha256(this.password) }).then(res => {
+        this.$message({
+          message: this.$t('common.success'),
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.resetLoading = false
+        this.dialogVisible = false
+      }).catch(_ => {
+        this.resetLoading = false
+      })
+    },
+    handleClose() {
+      this.dialogVisible = false
     }
   }
 }
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
   #user {
+    .el-dialog__body {
+      text-align: center;
+      padding: 20px;
+      .reset_info {
+        margin-bottom: 20px;
+        font-size: 16px;
+      }
+    }
     p {
       font-size: 14px;
       line-height: 1.5em;

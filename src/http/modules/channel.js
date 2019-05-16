@@ -24,8 +24,11 @@ export function editChannelCommissionPolicy(id, data) {
   })
 }
 
-export function deleteChannelCommissionPolicy(id) {
+export function deleteChannelCommissionPolicy(id, password) {
   return request({
+    headers: {
+      'Authorization': password
+    },
     url: `/channelCommissionTable/${id}`,
     method: 'delete'
   })

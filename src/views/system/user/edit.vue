@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{ this.$t('common.edit') }}</el-button>
+    <el-button type="text" size="small" @click="initForm">{{ this.$t('common.edit') }}</el-button>
     <el-dialog
       v-el-drag-dialog
       :close-on-click-modal="false"
@@ -12,6 +12,9 @@
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="80px">
         <el-form-item :label="$t('user.name')" prop="name">
           <el-input v-model="account.name"/>
+        </el-form-item>
+        <el-form-item :label="$t('client.info.email')" prop="email">
+          <el-input v-model="account.email"/>
         </el-form-item>
         <el-form-item :label="$t('user.acronym')" prop="acronym">
           <el-input v-model="account.acronym"/>
@@ -58,6 +61,7 @@ export default {
       account: {
         id: '',
         name: '',
+        email: '',
         login: '',
         acronym: '',
         superior: '',
@@ -79,6 +83,7 @@ export default {
         this.account.roles.push(item.id)
       })
       this.account.id = this.user.id
+      this.account.email = this.user.email
       this.account.name = this.user.name
       this.account.acronym = this.user.acronym
       // 调用roles接口拿到所有权限

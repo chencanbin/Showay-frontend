@@ -13,6 +13,9 @@ const user = {
     introduction: '',
     roles: [],
     actions: [],
+    statItems: [],
+    homePageSetting: [],
+    paymentStatuses: [],
     users: [],
     id: '',
     userLoading: false,
@@ -53,8 +56,17 @@ const user = {
     SET_ACTIONS: (state, actions) => {
       state.actions = actions
     },
+    SET_STAT_ITEMS: (state, statItems) => {
+      state.statItems = statItems
+    },
+    SET_PAYMENT_STATUSES: (state, paymentStatuses) => {
+      state.paymentStatuses = paymentStatuses
+    },
     SET_USERS: (state, users) => {
       state.users = users
+    },
+    SET_HOME_PAGE_SETTING: (state, homePageSetting) => {
+      state.homePageSetting = homePageSetting
     },
     SET_ID: (state, id) => {
       state.id = id
@@ -89,6 +101,13 @@ const user = {
           if (data.roles && data.roles.length > 0) {
             commit('SET_ROLES', data.roles)
             commit('SET_ACTIONS', data.actions)
+            commit('SET_STAT_ITEMS', data.statItems)
+            commit('SET_PAYMENT_STATUSES', data.paymentStatuses)
+            if (data.settings && data.settings.homePage) {
+              commit('SET_HOME_PAGE_SETTING', JSON.parse(data.settings.homePage))
+            } else {
+              commit('SET_HOME_PAGE_SETTING', undefined)
+            }
           } else {
             reject('getInfo: roles must be a non-null array !')
           }

@@ -7,9 +7,9 @@
       :title= "generateTitle()"
       :fullscreen="true"
       center>
-      <el-row v-permission="[1]" style="margin-bottom: 10px">
+      <el-row style="margin-bottom: 10px">
         <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">{{ $t('commission.payment.submit_audit') }}</el-button>
-        <span v-show="status === '-1'" style="margin-left: 20px;">已选中实发金额:
+        <span v-show="status === '-1'" style="margin-left: 20px;">已选中实发金额 :
           <count-to
             :start-val="0"
             :end-val="selectSum"
@@ -31,7 +31,11 @@
           align="center"
           type="selection"
           width="55" />
-        <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip/>
+        <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id"/>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('client.insurance_policy.beneficiary_name')" prop="insurancePolicy.beneficiary" width="80"/>
         <el-table-column :label="$t('commission.credit.year')" width="80">
           <template slot-scope="scope">
@@ -83,7 +87,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-permission="[1, 3]" v-show="status === '0'" slot="footer" class="dialog-footer">
+      <div v-show="status === '0'" slot="footer" class="dialog-footer">
         <el-button :loading="rejectLoading" @click="handleReject">{{ $t('common.reject') }}</el-button>
         <el-button :loading="approveLoading" type="primary" @click="handleApprove">{{ $t('common.approve') }}</el-button>
       </div>
@@ -96,8 +100,7 @@ import { mapState } from 'vuex'
 import edit from './edit'
 import { getSymbol } from '@/utils'
 import CountTo from 'vue-count-to'
-
-import permission from '@/directive/permission/index.js' // 权限判断指令
+import policyDetail from '../../client/policy/policyDetail'
 
 const _ = require('lodash')
 const currencyFormatter = require('currency-formatter')
@@ -105,9 +108,9 @@ export default {
   name: 'MergedPayment',
   components: {
     edit,
-    CountTo
+    CountTo,
+    policyDetail
   },
-  directives: { permission },
   props: {
     channel: {
       type: Object,

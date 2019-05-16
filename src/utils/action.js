@@ -380,3 +380,24 @@ export const actions = [{
   'id': 100126,
   'name': 'DeleteContact'
 }]
+
+export const statItems = [
+  { 'id': 110000, 'name': 'ClearedCredit' },
+  { 'id': 110001, 'name': 'PendingCredit' },
+  { 'id': 110002, 'name': 'ClearedPayment' },
+  { 'id': 110003, 'name': 'PendingPayment' },
+  { 'id': 110004, 'name': 'Profit' },
+  { 'id': 110005, 'name': 'InsurancePolicyCount' },
+  { 'id': 110006, 'name': 'NormalInsurancePolicyCount' },
+  { 'id': 110007, 'name': 'AbnormalInsurancePolicyCount' },
+  { 'id': 110008, 'name': 'AFYP' },
+  { 'id': 110009, 'name': 'GrossProfit' },
+  { 'id': 110010, 'name': 'BrokerExpenses' },
+  { 'id': 110011, 'name': 'ChannelExpenses' },
+  { 'id': 110012, 'name': 'TotalExpenses' }]
+
+export const paymentStatuses = [
+  { 'id': 130000, 'name': 'Generated' },
+  { 'id': 130001, 'name': 'Rejected' },
+  { 'id': 130002, 'name': 'Approved' },
+  { 'id': 130003, 'name': 'Clear' }]

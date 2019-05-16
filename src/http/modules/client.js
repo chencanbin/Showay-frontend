@@ -29,8 +29,11 @@ export function updateClient(id, data) {
     data
   })
 }
-export function deleteClient(id) {
+export function deleteClient(id, password) {
   return request({
+    headers: {
+      'Authorization': password
+    },
     url: `/client/${id}`,
     method: 'delete'
   })
@@ -41,6 +44,12 @@ export function fetchInsurancePolicyList(params) {
     url: `/insurancePolicy`,
     method: 'get',
     params
+  })
+}
+export function getInsurancePolicyById(id) {
+  return request({
+    url: `/insurancePolicy/${id}`,
+    method: 'get'
   })
 }
 
@@ -60,8 +69,11 @@ export function editInsurancePolicy(id, data) {
   })
 }
 
-export function deleteInsurancePolicy(id) {
+export function deleteInsurancePolicy(id, password) {
   return request({
+    headers: {
+      'Authorization': password
+    },
     url: `/insurancePolicy/${id}`,
     method: 'delete'
   })

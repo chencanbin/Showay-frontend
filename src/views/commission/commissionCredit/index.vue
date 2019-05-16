@@ -86,7 +86,11 @@
           border
           @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="40" align="center"/>
-          <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip/>
+          <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id"/>
+            </template>
+          </el-table-column>
           <el-table-column :label="$t('client.insurance_policy.premium')" min-width="140">
             <template slot-scope="scope">
               <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.premium) }}</span>
@@ -171,6 +175,7 @@ import { parseTime, getSymbol } from '@/utils'
 import { creditStatus } from '@/utils/constant'
 import edit from './edit'
 import audit from './audit'
+import policyDetail from '../../client/policy/policyDetail'
 import Cookies from 'js-cookie'
 import CountTo from 'vue-count-to'
 import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
@@ -182,6 +187,7 @@ export default {
     pagination,
     edit,
     audit,
+    policyDetail,
     CountTo
   },
   data() {

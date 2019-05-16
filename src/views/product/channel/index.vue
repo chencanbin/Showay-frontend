@@ -50,7 +50,7 @@
                         <editChannelCommissionTable v-if="hasPermission(100032)" :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks" :channel-name="scope.row.name" :channel-id="scope.row.id"/>
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <el-button v-if="hasPermission(100033)" type="text" size="small" icon="el-icon-delete" @click="handleDeleteChannelCommissionTable(item)">{{ $t('common.delete') }}</el-button>
+                        <el-button v-if="hasPermission(100033)" type="text" size="small" icon="el-icon-delete" @click="verifyPassword(item)">{{ $t('common.delete') }}</el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -114,6 +114,21 @@
         <el-button type="primary" @click="handleView">{{ $t('common.confirmButton') }}</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      v-el-drag-dialog
+      :close-on-click-modal="false"
+      :visible="dialogVisible"
+      :before-close="handleClose"
+      :title="$t('common.password_verify')"
+      center
+      width="400px">
+      <el-input v-model="password" type="password"/>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="submitLoading" type="primary" @click="handleDeleteChannelCommissionTable()">{{ $t('common.submitButton') }}</el-button>
+      </div>
+    </el-dialog>
+
     <channelCommissionView ref="channelCommissionView"/>
   </div>
 </template>
@@ -126,8 +141,10 @@ import addChannelCommissionTable from './addChannelCommissionTable'
 import editChannelCommissionTable from './editChannelCommissionTable'
 import commissionPolicy from './commissionPolicy'
 import pagination from '@/components/Pagination'
+import sha256 from 'sha256'
 import { mapState } from 'vuex'
 import { parseTime } from '@/utils'
+import elDragDialog from '@/directive/el-dragDialog'
 
 const _ = require('lodash')
 export default {
@@ -141,9 +158,13 @@ export default {
     channelCommissionView,
     commissionPolicy
   },
+  directives: { elDragDialog },
   data() {
     return {
       height: document.body.clientHeight - 130,
+      dialogVisible: false,
+      password: '',
+      submitLoading: false,
       timeDialogVisible: false,
       channelName: '',
       channelPolicyObj: {
@@ -192,31 +213,51 @@ export default {
         })
       })
     },
-    handleDeleteChannelCommissionTable(scope) {
-      this.$confirm(this.$t('product.channel.tooltip.delete_channel_commission_table'), this.$t('common.prompt'), {
-        confirmButtonText: this.$t('common.confirmButton'),
-        cancelButtonText: this.$t('common.cancelButton'),
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api.channel.deleteChannelCommissionPolicy(scope.id).then(res => {
-              this.$message({
-                message: this.$t('common.success'),
-                type: 'success',
-                duration: 5 * 1000
-              })
-              this.getChannelCommissionTableList({ channel: scope.channel.id })
-              instance.confirmButtonLoading = false
-              done()
-            }).catch(_ => {
-              instance.confirmButtonLoading = false
-            })
-          } else {
-            done()
-          }
-        }
+    verifyPassword(obj) {
+      this.channelPolicyObj = obj
+      this.dialogVisible = true
+    },
+    handleDeleteChannelCommissionTable() {
+      this.submitLoading = true
+      this.$api.channel.deleteChannelCommissionPolicy(this.channelPolicyObj.id, sha256(this.password)).then(res => {
+        this.$message({
+          message: this.$t('common.success'),
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.getChannelCommissionTableList({ channel: this.channelPolicyObj.channel.id })
+        this.submitLoading = false
+        this.dialogVisible = false
+      }).catch(_ => {
+        this.submitLoading = false
       })
+      // this.$confirm(this.$t('product.channel.tooltip.delete_channel_commission_table'), this.$t('common.prompt'), {
+      //   confirmButtonText: this.$t('common.confirmButton'),
+      //   cancelButtonText: this.$t('common.cancelButton'),
+      //   type: 'warning',
+      //   beforeClose: (action, instance, done) => {
+      //     if (action === 'confirm') {
+      //       instance.confirmButtonLoading = true
+      //       this.$api.channel.deleteChannelCommissionPolicy(scope.id).then(res => {
+      //         this.$message({
+      //           message: this.$t('common.success'),
+      //           type: 'success',
+      //           duration: 5 * 1000
+      //         })
+      //         this.getChannelCommissionTableList({ channel: scope.channel.id })
+      //         instance.confirmButtonLoading = false
+      //         done()
+      //       }).catch(_ => {
+      //         instance.confirmButtonLoading = false
+      //       })
+      //     } else {
+      //       done()
+      //     }
+      //   }
+      // })
+    },
+    handleClose() {
+      this.dialogVisible = false
     },
     dateFormat(row, column) {
       const date = row[column.property]

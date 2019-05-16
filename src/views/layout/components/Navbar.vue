@@ -13,7 +13,14 @@
           placement="bottom">
           <screenfull class="screenfull right-menu-item"/>
         </el-tooltip>
-
+        <el-tooltip
+          content="首页配置"
+          effect="dark"
+          placement="bottom">
+          <div class="setting_class right-menu-item">
+            <svg-icon icon-class="setting" @click="showHomePageSetting = true"/>
+          </div>
+        </el-tooltip>
         <el-tooltip
           :content="$t('navbar.size')"
           effect="dark"
@@ -31,7 +38,7 @@
       </template>
       <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" style="right: 12px">
         <el-popover width="150" trigger="click">
-          <div class="notification-list-item">
+          <div v-if="hasPermission(100055)" class="notification-list-item">
             <a @click="handleCreditClick">
               <svg-icon icon-class="earning" class-name="icon-earning" />
               {{ credit.desc }}
@@ -40,7 +47,7 @@
               </div>
             </a>
           </div>
-          <div class="notification-list-item">
+          <div v-if="hasPaymentStatuses(130000)" class="notification-list-item">
             <a @click="handlePaymentClick">
               <svg-icon icon-class="paymentSum" class-name="icon-payment" />
               {{ payment.desc }}
@@ -89,7 +96,7 @@
           <el-input v-model="form.oldPassword" :placeholder="$t('navbar.password_tip.oldPassword')" type="password"/>
         </el-form-item>
         <el-form-item :label="$t('navbar.newPassword')" prop="password">
-          <el-input v-model.trim="form.password" :placeholder="$t('navbar.password_tip.newPassword')" type="password"/>
+          <el-input v-model.trim="form.password" :placeholder="$t('navbar.password_tip.password')" type="password"/>
         </el-form-item>
         <el-form-item :label="$t('navbar.confirmPassword')" prop="password_confirm">
           <el-input v-model.trim="form.password_confirm" :placeholder="$t('navbar.password_tip.password_confirm')" type="password"/>
@@ -98,6 +105,19 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCloseUpdateUserDialog">{{ $t('common.cancelButton') }}</el-button>
         <el-button :loading="loading" type="primary" @click="handleUpdatePassword">{{ $t('common.submitButton') }}</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      :visible="showHomePageSetting"
+      title="首页配置"
+      width="400px"
+      @close="showHomePageSetting = false">
+      <el-checkbox-group v-model="homePageSetting">
+        <el-checkbox v-for="item in allHomePageSetting" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox>
+      </el-checkbox-group>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showHomePageSetting = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :loading="homePageConfigLoading" type="primary" @click="handleUpdateHomePageSetting">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -115,7 +135,9 @@ import ThemePicker from '@/components/ThemePicker'
 import RenewalCalendar from '@/views/client/policy/renewalCalendar'
 import sha256 from 'sha256'
 import { getUserId } from '@/utils/auth'
+import { hasPaymentStatuses } from '@/utils/permission'
 import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
+import { getAllHomePageConfig } from '@/utils/permission'
 
 export default {
   components: {
@@ -141,6 +163,10 @@ export default {
     return {
       loading: false,
       showEditPasswordDialog: false,
+      showHomePageSetting: false,
+      homePageConfigLoading: false,
+      homePageSetting: [],
+      allHomePageSetting: this.getAllHomePageConfig(),
       form: {
         oldPassword: '',
         password: ''
@@ -162,14 +188,26 @@ export default {
     ])
   },
   created() {
+    if (!this.$store.getters.homePageSetting) {
+      const result = this.getAllHomePageConfig()
+      result.forEach(item => {
+        this.homePageSetting.push(item.id)
+      })
+    } else {
+      this.$store.getters.homePageSetting.forEach(item => {
+        this.homePageSetting.push(item)
+      })
+    }
     if (this.hasPermission(100055)) {
       this.getCreditList()
     }
-    if (this.hasPermission(100067)) {
+    if (this.hasPaymentStatuses(130000)) {
       this.getPayment()
     }
   },
   methods: {
+    hasPaymentStatuses,
+    getAllHomePageConfig,
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
@@ -203,6 +241,22 @@ export default {
             this.handleCloseUpdateUserDialog()
           })
         }
+      })
+    },
+    handleUpdateHomePageSetting() {
+      this.homePageConfigLoading = true
+      this.$api.config.updateHomePageSetting({ homePage: this.homePageSetting }).then(res => {
+        this.$message({
+          message: '操作成功',
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.showHomePageSetting = false
+        this.homePageConfigLoading = false
+        // this.$store.dispatch('GetUserInfo')
+        location.reload()
+      }).catch(_ => {
+        this.homePageConfigLoading = false
       })
     },
     getCreditList() {
@@ -260,6 +314,11 @@ export default {
     .screenfull {
       height: 20px;
     }
+    .setting_class {
+      font-size: 20px;
+      cursor: pointer;
+      vertical-align: 13px;
+    }
     .international{
       top: -15px;
     }
@@ -294,6 +353,12 @@ export default {
     border-right: solid 1px #ccc;
     height: 50px;
     line-height: 50px;
+  }
+  .el-dialog__header {
+    line-height: 10px;
+    .el-checkbox {
+      line-height: 30px;
+    }
   }
 }
 .el-popover {
@@ -333,4 +398,5 @@ export default {
   margin-right: 5px;
   color: #E6A23C;
 }
+
 </style>

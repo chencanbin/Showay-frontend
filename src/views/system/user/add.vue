@@ -13,6 +13,9 @@
         <el-form-item :label="$t('user.name')" prop="name">
           <el-input v-model="account.name" :placeholder="$t('user.set.name')"/>
         </el-form-item>
+        <el-form-item :label="$t('client.info.email')" prop="email">
+          <el-input v-model="account.email"/>
+        </el-form-item>
         <el-form-item :label="$t('user.acronym')" prop="acronym">
           <el-input v-model="account.acronym" :placeholder="$t('user.set.acronym')"/>
         </el-form-item>
@@ -55,6 +58,7 @@ export default {
       account: {
         name: '',
         login: '',
+        email: '',
         acronym: '',
         roles: []
       },
