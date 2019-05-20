@@ -4,9 +4,15 @@
       <svg-icon class-name="size-icon" icon-class="size" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item :disabled="size==='medium'" command="medium">Medium</el-dropdown-item>
-      <el-dropdown-item :disabled="size==='small'" command="small">Small</el-dropdown-item>
-      <el-dropdown-item :disabled="size==='mini'" command="mini">Mini</el-dropdown-item>
+      <el-dropdown-item :disabled="size==='medium'" command="medium">
+        <span class="size_text">{{ this.$t('common.medium') }}</span>
+      </el-dropdown-item>
+      <el-dropdown-item :disabled="size==='small'" command="small">
+        <span class="size_text">{{ this.$t('common.small') }}</span>
+      </el-dropdown-item>
+      <el-dropdown-item :disabled="size==='mini'" command="mini">
+        <span class="size_text">{{ this.$t('common.mini') }}</span>
+      </el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
 </template>
@@ -46,6 +52,9 @@ export default {
 </script>
 
 <style scoped>
+.size_text {
+  padding: 20px;
+}
 .size-icon {
   font-size: 20px;
   cursor: pointer;

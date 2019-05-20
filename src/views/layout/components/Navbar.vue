@@ -14,14 +14,6 @@
           <screenfull class="screenfull right-menu-item"/>
         </el-tooltip>
         <el-tooltip
-          content="首页配置"
-          effect="dark"
-          placement="bottom">
-          <div class="setting_class right-menu-item">
-            <svg-icon icon-class="setting" @click="showHomePageSetting = true"/>
-          </div>
-        </el-tooltip>
-        <el-tooltip
           :content="$t('navbar.size')"
           effect="dark"
           placement="bottom">
@@ -36,6 +28,14 @@
         <!--<theme-picker class="theme-switch right-menu-item"/>-->
         <!--</el-tooltip>-->
       </template>
+      <el-tooltip
+        content="首页配置"
+        effect="dark"
+        placement="bottom">
+        <div class="setting_class right-menu-item">
+          <svg-icon icon-class="setting" @click="showHomePageSetting = true"/>
+        </div>
+      </el-tooltip>
       <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" style="right: 12px">
         <el-popover width="150" trigger="click">
           <div v-if="hasPermission(100055)" class="notification-list-item">
@@ -110,10 +110,11 @@
     <el-dialog
       :visible="showHomePageSetting"
       title="首页配置"
+      top="50px"
       width="400px"
       @close="showHomePageSetting = false">
       <el-checkbox-group v-model="homePageSetting">
-        <el-checkbox v-for="item in allHomePageSetting" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox>
+        <el-checkbox v-for="item in allHomePageSetting" :key="item.id" :label="item.id" style="width: 140px; margin-left: 5px">{{ $t(item.name) }}</el-checkbox>
       </el-checkbox-group>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showHomePageSetting = false">{{ $t('common.cancelButton') }}</el-button>

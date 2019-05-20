@@ -1,10 +1,13 @@
 import axios from 'axios'
 import config from './config'
 import router from '@/router'
+import lang from './lang'
+import Cookies from 'js-cookie'
 import { Message, MessageBox, Notification } from 'element-ui'
 // 使用vuex做全局loading时使用
 import store from '@/store'
 const _ = require('lodash')
+const language = Cookies.get('languange') || 'zh-CN'
 let errorMessage
 let errorNotification
 export default function $axios(options) {
@@ -71,8 +74,8 @@ export default function $axios(options) {
           // 4003 :令牌超时;
           if (data.status === 4003 || data.status === 50012 || data.status === 50014) {
             // 请自行在引入 MessageBox
-            MessageBox.confirm('你已被登出，请重新登录', '确定登出', {
-              confirmButtonText: '确定',
+            MessageBox.confirm(lang.timeout[language], lang.logout[language], {
+              confirmButtonText: lang.confirm[language],
               showCancelButton: false,
               closeOnClickModal: false,
               closeOnPressEscape: false,
@@ -102,37 +105,37 @@ export default function $axios(options) {
         if (err && err.response) {
           switch (err.response.status) {
             case 400:
-              err.message = '请求错误'
+              err.message = lang[400][language]
               break
             case 401:
-              err.message = '未授权，请登录'
+              err.message = lang[401][language]
               break
             case 403:
-              err.message = '拒绝访问'
+              err.message = lang[403][language]
               break
             case 404:
-              err.message = `请求地址出错: ${err.response.config.url}`
+              err.message = `${lang[404][language]}: ${err.response.config.url}`
               break
             case 408:
-              err.message = `请求超时: ${err.response.config.url}`
+              err.message = `${lang[408][language]}: ${err.response.config.url}`
               break
             case 500:
-              err.message = `服务器内部错误: ${err.response.config.url}`
+              err.message = `${lang[500][language]}: ${err.response.config.url}`
               break
             case 501:
-              err.message = '服务未实现'
+              err.message = lang[501][language]
               break
             case 502:
-              err.message = `网关错误: ${err.response.config.url} `
+              err.message = `${lang[502][language]}: ${err.response.config.url} `
               break
             case 503:
-              err.message = '服务不可用'
+              err.message = lang[503][language]
               break
             case 504:
-              err.message = '网关超时'
+              err.message = lang[504][language]
               break
             case 505:
-              err.message = 'HTTP版本不受支持'
+              err.message = lang[505][language]
               break
             default:
           }
@@ -141,7 +144,7 @@ export default function $axios(options) {
           errorNotification.close()
         }
         errorNotification = Notification.error({
-          title: '错误',
+          title: lang.error[language],
           message: err.message,
           duration: 0
         })

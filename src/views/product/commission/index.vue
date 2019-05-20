@@ -75,7 +75,7 @@
                     <p style="display: inline-block">{{ $t('product.commission.commission_table_list.status') }} :
                       <el-tag v-if="commissionTable.status === 0" type="info" size="mini">{{ $t('product.commission.commission_table_list.status_info') }}</el-tag>
                       <el-tag v-if="commissionTable.status === 1" type="success" size="mini">{{ $t('product.commission.commission_table_list.status_success') }}</el-tag>
-                      <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">{{ $t('product.commission.commission_table_list.product_count') }}</el-tag>
+                      <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">{{ $t('product.commission.commission_table_list.status_warning') }}</el-tag>
                     </p>
                     <p style="display: inline-block; margin-left: 20px">{{ $t('product.commission.commission_table_list.product_count') }} : {{ commissionTable.policyCount }}</p>
                     <p v-if="commissionTable.remarks" style="display: inline-block; margin: 0 0 0 20px">{{ $t('common.remarks') }} : {{ commissionTable.remarks }}</p>

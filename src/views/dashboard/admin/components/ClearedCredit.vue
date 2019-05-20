@@ -1,37 +1,37 @@
 <template>
   <el-card v-loading="loading" style="padding:16px 16px 0;margin-bottom:32px;" class="clearedCredit">
     <div slot="header" class="clearfix">
-      <span>{{ $t('home.comparison') }}</span>
-      <el-select
-        :remote-method="searchCompany"
-        :loading="companyLoading"
-        v-model="company"
-        :placeholder="$t('common.company_placeholder')"
-        filterable
-        remote
-        clearable
-        style="margin-left: 20px"
-        @focus="onCompanyFocus">
-        <el-option
-          v-for="item in companies"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"/>
-      </el-select>
-      <el-date-picker
-        :editable="false"
-        :clearable="false"
-        v-model="year"
-        prefix-icon="false"
-        type="year"
-        value-format="timestamp"
-        placeholder="选择年期"
-        style="width: 150px;"/>
-      <el-button-group style="margin-left: 20px">
-        <el-button :type="buttonClearCreditMonth" size="small" @click="clearCreditMonth()">{{ $t('home.month') }}</el-button>
-        <el-button :type="buttonClearCreditQuarter" size="small" @click="clearCreditQuarter()">{{ $t('home.quarter') }}</el-button>
-        <el-button :type="buttonClearCreditYear" size="small" @click="clearCreditYear()">{{ $t('home.year') }}</el-button>
-      </el-button-group>
+      <span style="float: left; font-weight: bold; line-height: 36px">{{ $t('home.comparison') }}</span>
+      <div style="display: inline-block; float: right">
+        <el-select
+          :remote-method="searchCompany"
+          :loading="companyLoading"
+          v-model="company"
+          :placeholder="$t('common.company_placeholder')"
+          filterable
+          remote
+          clearable
+          style="margin-left: 20px"
+          @focus="onCompanyFocus">
+          <el-option
+            v-for="item in companies"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"/>
+        </el-select>
+        <el-date-picker
+          :editable="false"
+          :clearable="false"
+          v-model="year"
+          type="year"
+          value-format="timestamp"
+          style="width: 120px;"/>
+        <el-button-group style="margin-left: 20px">
+          <el-button :type="buttonClearCreditMonth" size="small" @click="clearCreditMonth()">{{ $t('home.month') }}</el-button>
+          <el-button :type="buttonClearCreditQuarter" size="small" @click="clearCreditQuarter()">{{ $t('home.quarter') }}</el-button>
+          <el-button :type="buttonClearCreditYear" size="small" @click="clearCreditYear()">{{ $t('home.year') }}</el-button>
+        </el-button-group>
+      </div>
     </div>
     <div id="clearedCredit"/>
   </el-card>
@@ -76,7 +76,6 @@ export default {
       this.getTrend(0, 1)
     },
     year: function(val) {
-      console.log(this.year)
       this.getTrend(0, 1)
     }
   },

@@ -64,6 +64,14 @@ export default {
       dialogVisible: false,
       loading: false,
       company: {
+        en: '',
+        zhCN: '',
+        acronym: '',
+        phone: '',
+        email: '',
+        address: '',
+        contractEffectiveDate: '',
+        secondary: false,
         names: {},
         websites: [{ name: '' }]
       },

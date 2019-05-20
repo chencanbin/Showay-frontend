@@ -52,7 +52,11 @@ export default {
       close: '是否需要關閉此窗口?'
     },
     password_verify: '密碼認證',
-    company_placeholder: '請選擇供應商'
+    company_placeholder: '請選擇供應商',
+    medium: '中號',
+    small: '小號',
+    mini: '極小',
+    no_data: '暫無資料'
   },
   navbar: {
     logOut: '退出登錄',
@@ -83,18 +87,19 @@ export default {
   home: {
     creditSum: '已到賬',
     paymentSum: '已發放',
-    pendingCreditSum: '預計待收',
-    pendingPaymentSum: '預計待發',
+    pendingCreditSum: '預計到賬',
+    pendingPaymentSum: '預計發放',
     policyCount: '總簽單數',
-    normalPolicyCount: '總成單數',
+    normalPolicyCount: '成單數',
     news: '最新動態',
-    balance: '分支分佈',
+    balance: '收支分佈',
     fileName: '文件名稱',
     companyProfit: '公司收益趨勢',
-    channelProfitTrend: '{0} 業績趨勢',
-    month: '按月統計',
-    quarter: '按季統計',
-    year: '按年統計',
+    channelProfitTrend: '{0} 渠道業績趨勢',
+    channelProfit: '渠道業績趨勢',
+    month: '月度',
+    quarter: '季度',
+    year: '年度',
     sale: '数额',
     comparison: '公司業績同比',
     count: '出單量',
@@ -105,7 +110,7 @@ export default {
     company: {
       search_company_placeholder: '搜索(公司縮寫|公司名)',
       levelTab: {
-        level1: '壹級',
+        level1: '一級',
         level2: '二級'
       },
       table_header: {

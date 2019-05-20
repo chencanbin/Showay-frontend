@@ -1,30 +1,34 @@
 <template>
-  <el-card v-loading="loading" style="padding:16px 16px 0;margin-bottom:32px;">
+  <el-card v-loading="loading" style="position: relative; padding:10px 16px 0;margin-bottom:32px;">
     <div slot="header" class="clearfix">
-      <span>{{ $t('home.balance') }}</span>
-      <el-select
-        v-model="channel"
-        :placeholder="$t('client.insurance_policy.set.channel_name')"
-        filterable
-        remote
-        clearable
-        style="margin-left: 10px">
-        <el-option
-          v-for="item in channels.list"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"/>
-      </el-select>
-      <el-date-picker
-        :editable="false"
-        :clearable="false"
-        :unlink-panels="true"
-        v-model="year"
-        type="daterange"
-        value-format="timestamp"
-        style="margin-left: 20px; width: 240px"/>
+      <span style="float: left; font-weight: bold; line-height: 36px">{{ $t('home.balance') }}</span>
+      <div style="display: inline-block; float: right">
+        <el-select
+          v-model="channel"
+          :placeholder="$t('client.insurance_policy.set.channel_name')"
+          filterable
+          remote
+          clearable
+          style="margin-left: 10px">
+          <el-option
+            v-for="item in channels.list"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"/>
+        </el-select>
+        <el-date-picker
+          :editable="false"
+          :clearable="false"
+          :unlink-panels="true"
+          v-model="year"
+          type="year"
+          value-format="timestamp"
+          style="margin-left: 20px; width: 120px"/>
+      </div>
     </div>
-    <div id="IncomeDistribution"/>
+    <div id="IncomeDistribution">
+      <div v-show="income.length === 0" style="position: absolute; top: 50%; right: 50%; color: #cccccc">{{ $t('common.no_data') }}</div>
+    </div>
   </el-card>
 </template>
 
@@ -41,7 +45,7 @@ export default {
       income: [],
       loading: false,
       channel: '',
-      year: [getYearFirst(new Date()), getYearLast(new Date())]
+      year: new Date()
     }
   },
   computed: {
@@ -77,7 +81,7 @@ export default {
   methods: {
     fetchPayment() {
       this.loading = true
-      this.$api.statistics.fetchTrend({ item: 2, groupBy: 0, user: this.channel, from: this.year[0], to: this.year[1] }).then(res => {
+      this.$api.statistics.fetchTrend({ item: 2, groupBy: 0, user: this.channel, from: getYearFirst(this.year), to: getYearLast(this.year) }).then(res => {
         const payment = parseFloat(res.data[0].value)
         if (payment !== 0) {
           this.income.push({ key: this.$t('home.paymentSum'), value: payment })
@@ -88,7 +92,7 @@ export default {
       })
     },
     fetchBrokerExpenses() {
-      this.$api.statistics.fetchTrend({ item: 12, groupBy: 0, user: this.channel, from: this.year[0], to: this.year[1] }).then(res => {
+      this.$api.statistics.fetchTrend({ item: 12, groupBy: 0, user: this.channel, from: getYearFirst(this.year), to: getYearLast(this.year) }).then(res => {
         const brokerExpenses = parseFloat(res.data[0].value)
         if (brokerExpenses !== 0) {
           this.income.push({ key: this.$t('common.expenses'), value: brokerExpenses })
@@ -96,7 +100,7 @@ export default {
       })
     },
     fetchProfit() {
-      this.$api.statistics.fetchTrend({ item: 13, groupBy: 0, user: this.channel, from: this.year[0], to: this.year[1] }).then(res => {
+      this.$api.statistics.fetchTrend({ item: 13, groupBy: 0, user: this.channel, from: getYearFirst(this.year), to: getYearLast(this.year) }).then(res => {
         const profit = parseFloat(res.data[0].value)
         if (profit !== 0) {
           this.income.push({ key: this.$t('common.profit'), value: profit })

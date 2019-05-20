@@ -260,18 +260,17 @@ export const expensesType = [
 export const numberAcronym = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th', '13th', '14th', '15th']
 
 export const homePageConfig = [
-  { id: 1, 'name': '已到账', permissions: [110000] }, // 已收
-  { id: 2, 'name': '预计应收', permissions: [110001] }, // 待收
-  { id: 3, 'name': '已发放', permissions: [110002] }, // 已发放
-  { id: 4, 'name': '预计应发', permissions: [110003] }, // 待发放
-  { id: 5, 'name': '总签单数', permissions: [110005] }, // 签单数
-  { id: 6, 'name': '总成单数', permissions: [110006] }, // 成单数
-  { id: 7, 'name': '最新动态', permissions: [110005] }, // 签单数
-  { id: 8, 'name': '公司收益趋势', permissions: [110004] }, // 公司业绩收益
-  { id: 9, 'name': '渠道业绩趋势', permissions: [110008] }, // 渠道业绩趋势
-  { id: 10, 'name': '公司收益同比', permissions: [110000, 110005] }, // 公司业绩同比
-  { id: 11, 'name': '渠道业绩Top5', permissions: [110008], roles: [1] }, // 渠道Top5
-  { id: 12, 'name': '渠道业绩分布', permissions: [110008], roles: [1] }, // 渠道业绩分布
-  { id: 13, 'name': '最新动态' }, // 最新动态
-  { id: 14, 'name': '收支分布', permissions: [110000, 110002, 110004, 110010] } // 收支分布
+  { id: 1, 'name': 'home.creditSum', permissions: [110000] }, // 已收
+  { id: 2, 'name': 'home.pendingCreditSum', permissions: [110001] }, // 待收
+  { id: 3, 'name': 'home.paymentSum', permissions: [110002] }, // 已发放
+  { id: 4, 'name': 'home.pendingPaymentSum', permissions: [110003] }, // 待发放
+  // { id: 5, 'name': 'home.policyCount', permissions: [110005] }, // 签单数
+  { id: 6, 'name': 'home.normalPolicyCount', permissions: [110006] }, // 成单数
+  { id: 8, 'name': 'home.companyProfit', permissions: [110004] }, // 公司业绩收益
+  { id: 9, 'name': 'home.channelProfit', permissions: [110008] }, // 渠道业绩趋势
+  { id: 10, 'name': 'home.comparison', permissions: [110000, 110005] }, // 公司业绩同比
+  { id: 11, 'name': 'home.channelPerformanceTop', permissions: [110008], roles: [1] }, // 渠道Top5
+  { id: 12, 'name': 'home.channelPerformanceScale', permissions: [110008], roles: [1] }, // 渠道业绩分布
+  { id: 13, 'name': 'home.news' }, // 最新动态
+  { id: 14, 'name': 'home.balance', permissions: [110000, 110002, 110004, 110010] } // 收支分布
 ]

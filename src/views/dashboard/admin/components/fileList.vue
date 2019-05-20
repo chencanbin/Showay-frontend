@@ -1,7 +1,7 @@
 <template>
   <el-card style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
     <div slot="header" class="clearfix">
-      <span style="height: 32px;display: inline-block">{{ $t('home.news') }}</span>
+      <span style="height: 32px;display: inline-block; font-weight: bold">{{ $t('home.news') }}</span>
     </div>
     <el-table
       v-loading="loading"

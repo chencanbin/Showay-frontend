@@ -30,6 +30,32 @@
               <el-form-item v-for="(item, index) in scope.row.websites" :key="index" :label="$t('product.company.table_header.website') + (index + 1)" class="company-form-item">
                 <a :href="item" class="link">{{ item }}</a>
               </el-form-item>
+              <br>
+              <el-form-item v-for="(item, index) in scope.row.contacts" :key="index" :label="$t('product.company.set.contacts') + (index + 1)" class="company-form-item" style="width: 30%">
+                <el-popover
+                  placement="top-start"
+                  trigger="hover">
+                  <el-card style="padding:10px">
+                    <el-form label-width="80px">
+                      <el-form-item :label="$t('product.company.set.contacts_title')" class="detail-item">
+                        {{ item.title }}
+                      </el-form-item>
+                      <el-form-item :label="$t('product.company.set.contacts_phone')" class="detail-item">
+                        {{ item.phone }}
+                      </el-form-item>
+                      <el-form-item :label="$t('product.company.set.contacts_email')" class="detail-item">
+                        {{ item.email }}
+                      </el-form-item>
+                      <el-form-item :label="$t('product.company.set.address')" class="detail-item">
+                        {{ item.address }}
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                  <span slot="reference">
+                    {{ item.name }}
+                  </span>
+                </el-popover>
+              </el-form-item>
             </el-form>
           </template>
         </el-table-column>

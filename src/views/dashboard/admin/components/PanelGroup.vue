@@ -12,9 +12,9 @@
     <el-col v-if="showHomePage(4)" class="card-panel-col">
       <panel-item :title="$t('home.pendingPaymentSum')" :item="3" :group-by="0" :from="from" :to="to"/>
     </el-col>
-    <el-col v-if="showHomePage(5)" class="card-panel-col">
-      <panel-item :title="$t('home.policyCount')" :item="5" :group-by="0" :from="from" :to="to"/>
-    </el-col>
+    <!--<el-col v-if="showHomePage(5)" class="card-panel-col">-->
+    <!--<panel-item :title="$t('home.policyCount')" :item="5" :group-by="0" :from="from" :to="to"/>-->
+    <!--</el-col>-->
     <el-col v-if="showHomePage(6)" class="card-panel-col">
       <panel-item :title="$t('home.normalPolicyCount')" :item="6" :group-by="0" :from="from" :to="to"/>
     </el-col>

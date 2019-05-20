@@ -1,33 +1,35 @@
 <template>
-  <el-card v-loading="loading" style="background:#fff;padding:16px 16px 0;margin-bottom:32px;" class="profit">
+  <el-card v-loading="loading" style="background:#fff;padding:10px 16px 0;margin-bottom:32px;" class="profit">
     <div slot="header" class="clearfix">
-      <span>{{ $t('home.channelProfitTrend', ['']) }}</span>
-      <el-select
-        v-model="channel"
-        :placeholder="$t('client.insurance_policy.set.channel_name')"
-        filterable
-        remote
-        clearable
-        style="margin-left: 20px">
-        <el-option
-          v-for="item in channels.list"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"/>
-      </el-select>
-      <el-button-group style="margin-left: 20px">
-        <el-button :type="buttonProfitMonth" size="small" @click="profitMonth()">{{ $t('home.month') }}</el-button>
-        <el-button :type="buttonProfitQuarter" size="small" @click="profitQuarter()">{{ $t('home.quarter') }}</el-button>
-        <el-button :type="buttonProfitYear" size="small" @click="profitYear()">{{ $t('home.year') }}</el-button>
-      </el-button-group>
-      <el-date-picker
-        :editable="false"
-        :clearable="false"
-        :unlink-panels="true"
-        v-model="year"
-        type="daterange"
-        value-format="timestamp"
-        style="margin-left: 20px; width: 240px"/>
+      <span style="float: left; font-weight: bold; line-height: 36px">{{ $t('home.channelProfitTrend', ['']) }}</span>
+      <div style="display: inline-block; float: right">
+        <el-button-group style="margin-left: 20px">
+          <el-button :type="buttonProfitMonth" size="small" @click="profitMonth()">{{ $t('home.month') }}</el-button>
+          <el-button :type="buttonProfitQuarter" size="small" @click="profitQuarter()">{{ $t('home.quarter') }}</el-button>
+          <el-button :type="buttonProfitYear" size="small" @click="profitYear()">{{ $t('home.year') }}</el-button>
+        </el-button-group>
+        <el-select
+          v-model="channel"
+          :placeholder="$t('client.insurance_policy.set.channel_name')"
+          filterable
+          remote
+          clearable
+          style="margin-left: 20px">
+          <el-option
+            v-for="item in channels.list"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"/>
+        </el-select>
+        <el-date-picker
+          :editable="false"
+          :clearable="false"
+          :unlink-panels="true"
+          v-model="year"
+          type="year"
+          value-format="timestamp"
+          style="margin-left: 20px; width: 120px"/>
+      </div>
     </div>
     <div id="profitChannelTrend"/>
   </el-card>
@@ -46,7 +48,7 @@ export default {
     return {
       activeName: 0,
       channel: '',
-      year: [getYearFirst(new Date()), getYearLast(new Date())],
+      year: new Date(),
       buttonProfitMonth: 'primary',
       buttonProfitQuarter: '',
       buttonProfitYear: '',
@@ -121,7 +123,7 @@ export default {
     },
     getProfit(item, groupBy) {
       this.loading = true
-      this.$api.statistics.fetchTrend({ item, groupBy, from: this.year[0], to: this.year[1], user: this.channel }).then(res => {
+      this.$api.statistics.fetchTrend({ item, groupBy, from: getYearFirst(this.year), to: getYearLast(this.year), user: this.channel }).then(res => {
         this.profit = res.data
         this.loading = false
       }).catch(_ => {

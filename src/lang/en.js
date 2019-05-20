@@ -52,7 +52,11 @@ export default {
       close: 'Are you sure you want to close the window?'
     },
     password_verify: 'Password Verify',
-    company_placeholder: 'Select or enter partner(s)'
+    company_placeholder: 'Select or enter partner(s)',
+    medium: 'Medium',
+    small: 'Small',
+    mini: 'Mini',
+    no_data: 'No Data'
   },
   navbar: {
     logOut: 'Logout',
@@ -91,7 +95,8 @@ export default {
     balance: 'Balance',
     fileName: 'Filename',
     companyProfit: 'Profit',
-    channelProfitTrend: '{0} Profit',
+    channelProfitTrend: '{0} Channel Profit',
+    channelProfit: 'Channel Profit',
     month: 'Monthly',
     quarter: 'Quarterly',
     year: 'Annually',

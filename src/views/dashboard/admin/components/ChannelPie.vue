@@ -1,17 +1,21 @@
 <template>
-  <el-card v-loading="loading" style="padding:16px 16px 0;margin-bottom:32px;">
+  <el-card v-loading="loading" style="position: relative; padding: 16px 16px 0;margin-bottom: 32px;">
     <div slot="header" class="clearfix">
-      <span>{{ $t('home.channelPerformanceScale') }}</span>
-      <el-date-picker
-        :editable="false"
-        :clearable="false"
-        :unlink-panels="true"
-        v-model="year"
-        type="daterange"
-        value-format="timestamp"
-        style="margin-left: 20px; width: 240px"/>
+      <span style="float: left; font-weight: bold; line-height: 36px">{{ $t('home.channelPerformanceScale') }}</span>
+      <div style="display: inline-block; float: right">
+        <el-date-picker
+          :editable="false"
+          :clearable="false"
+          :unlink-panels="true"
+          v-model="year"
+          type="year"
+          value-format="timestamp"
+          style="margin-left: 20px; width: 120px"/>
+      </div>
     </div>
-    <div id="channelPie"/>
+    <div id="channelPie">
+      <div v-show="afyp.length === 0" style="position: absolute; top: 50%; right: 50%; color: #cccccc">{{ $t('common.no_data') }}</div>
+    </div>
   </el-card>
 </template>
 
@@ -25,7 +29,7 @@ export default {
   data() {
     return {
       afyp: [],
-      year: [getYearFirst(new Date()), getYearLast(new Date())],
+      year: new Date(),
       total: 0,
       loading: false
     }
@@ -47,7 +51,8 @@ export default {
   methods: {
     getAFYP(item, groupBy, max) {
       this.loading = true
-      this.$api.statistics.fetchTop({ item, groupBy, max, other: '', from: this.year[0], to: this.year[1] }).then(res => {
+      this.total = 0
+      this.$api.statistics.fetchTop({ item, groupBy, max, other: '', from: getYearFirst(this.year), to: getYearLast(this.year) }).then(res => {
         this.afyp = res.data
         this.afyp.forEach(item => {
           this.total += item.value

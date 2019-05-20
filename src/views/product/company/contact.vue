@@ -1,7 +1,7 @@
 <template>
   <span id="paymentDetail">
     <el-button type="text" size="small" @click="initForm">
-      {{ $t('product.company.set.contacts') }}
+      {{ $t('product.company.set.edit_contact_title') }}
     </el-button>
     <el-dialog
       :visible="dialogVisible"
