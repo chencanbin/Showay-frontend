@@ -5,6 +5,7 @@
       :http-request="uploadFile"
       :show-file-list="false"
       action=""
+      drag
       name="iconFile"
       list-type="picture-card"
       class="banner-uploader">
@@ -19,14 +20,6 @@
 import axios from 'axios'
 export default {
   name: 'ImageUpload',
-  props: {
-    chequeCopy: {
-      type: String,
-      default() {
-        return ''
-      }
-    }
-  },
   data() {
     return {
       imgSrc: '',
@@ -35,6 +28,9 @@ export default {
     }
   },
   methods: {
+    clearImage() {
+      this.imgSrc = ''
+    },
     // 文件上传
     async uploadFile(params) {
       this.disableUpload = true
@@ -69,7 +65,7 @@ export default {
         if (res.status === 200) {
           this.$api.document.getCompanyDownloadLink(_file.uid).then(res => {
             this.imgSrc = res.data.url
-            this.$emit('afterComplete', _file.uid)
+            this.$emit('afterComplete', _file.uid, this.imgSrc)
           })
           this.$message({
             type: 'success',
@@ -92,11 +88,15 @@ export default {
     width: 100%;
     height: 100%;
   }
-
+  .el-upload-dragger {
+    width: 100%;
+  }
+  .el-upload--picture-card i {
+    line-height: 6.1;
+  }
   .banner-uploader .el-upload {
     width: 100%;
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
+    border: 0;
     cursor: pointer;
     position: relative;
     overflow: hidden;

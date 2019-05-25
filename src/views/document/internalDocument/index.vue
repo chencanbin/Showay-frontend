@@ -73,7 +73,7 @@
                     </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <edit v-if="hasPermission(100080)" :data="scope.row" :folder-id="folderId"/>
+                    <edit v-if="hasPermission(100080)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit"/>
                   </el-dropdown-item>
                   <el-dropdown-item>
                     <el-button
@@ -124,6 +124,8 @@ export default {
       levelList: [],
       expandArray: [2],
       folderTree: [],
+      node: '',
+      resolve: '',
       folderId: '',
       randomKey: 0,
       currencyNode: '',
@@ -171,6 +173,8 @@ export default {
       }
     },
     loadFolder(node, resolve) {
+      this.node = node
+      this.resolve = resolve
       if (node.level === 0) {
         this.folderTree = [{ name: this.$t('document.internal_file'), id: 2, items: this.folder.items }]
       } else {
@@ -301,6 +305,9 @@ export default {
       }).then(_ => {
         this.getFolder(this.folderId)
       })
+    },
+    afterEdit() {
+      this.loadFolder(this.node, this.resolve)
     },
     afterAddFolder(folder) {
       this.getFolder(this.folderId)

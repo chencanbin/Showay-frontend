@@ -49,7 +49,12 @@ export default {
     getAFYP(item, groupBy, max) {
       this.loading = true
       this.$api.statistics.fetchTop({ item, groupBy, max, from: getYearFirst(this.year), to: getYearLast(this.year) }).then(res => {
-        this.afyp = res.data
+        this.afyp = []
+        res.data.forEach(item => {
+          if (item.value > 0) {
+            this.afyp.push(item)
+          }
+        })
         this.loading = false
       })
     },
@@ -58,8 +63,8 @@ export default {
       this.chart = new G2.Chart({
         container: 'channelProfit',
         forceFit: true,
-        height: 300,
-        padding: [20, 20, 50, 90]
+        height: 350,
+        padding: [30, 20, 60, 90]
       })
       this.chart.source(this.afyp)
       this.chart.scale('value', {

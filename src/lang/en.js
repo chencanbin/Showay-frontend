@@ -51,7 +51,8 @@ export default {
     tooltip: {
       close: 'Are you sure you want to close the window?'
     },
-    password_verify: 'Password Verify',
+    password_verify: '身份认证',
+    password_verify_text: '此操作需要驗證身份才能繼續進行',
     company_placeholder: 'Select or enter partner(s)',
     medium: 'Medium',
     small: 'Small',
@@ -82,7 +83,8 @@ export default {
     title: '',
     logIn: 'Login',
     username: 'ID',
-    password: 'Password'
+    password: 'Password',
+    password_placeholder: 'Type your password'
   },
   home: {
     creditSum: 'Credited',
@@ -176,7 +178,7 @@ export default {
         basic_tab: 'Basic Rates',
         override_tab: 'Overrides',
         overall_tab: 'Overall Rates',
-        effectDateTitle: 'Effective Date',
+        effectDateTitle: 'Set effective date',
         effectDate: 'Effective Date',
         override_setting: 'Override',
         publish_button: 'Publish',
@@ -231,6 +233,7 @@ export default {
         remarks: 'Remarks'
       },
       policy_button: 'Channel Policies',
+      commission_policy_button: 'Commission Policies',
       tooltip: {
         delete: 'Are you sure you want to delete the channel?',
         delete_channel_commission_table: 'Are you sure you want to delete the channel commission table?'
@@ -467,8 +470,12 @@ export default {
       submit_audit: 'Submit',
       cleared_title: 'Clear',
       payment_detail: 'Payment Detail',
+      check_detail: 'Check Detail',
       tooltip: {
-        audit: 'About to submit the payroll, continue?'
+        audit: 'About to submit the payroll, continue?',
+        approve: 'After approval, no further amount modifications will be allowed on these records, continue?',
+        reject: 'While rejected, you can find these records in pending payroll and submit again for approval, continue?',
+        clear: 'Please double check the input, once it is confirmed, no further modifications will be allowed.'
       },
       set: {
         chequeNumber: 'Empty cheque number'

@@ -88,6 +88,15 @@ const commission = {
     FetchCommissionCredit({ commit }, params) {
       commit('SHOW_COMMISSION_CREDIT_LOADING')
       return fetchCommissionCredit(params).then(res => {
+        if (res.data.list.length === 0 && params && params.offset && params.offset > 0) {
+          params.offset = params.offset - params.max
+          fetchCommissionCredit(params).then(res => {
+            commit('SET_COMMISSION_CREDIT', res.data)
+            commit('HIDE_COMMISSION_CREDIT_LOADING')
+          }).catch(_ => {
+            commit('HIDE_COMMISSION_CREDIT_LOADING')
+          })
+        }
         commit('SET_COMMISSION_CREDIT', res.data)
         commit('HIDE_COMMISSION_CREDIT_LOADING')
       }).catch(_ => {

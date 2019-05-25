@@ -51,7 +51,8 @@ export default {
     tooltip: {
       close: '是否需要关闭此窗口?'
     },
-    password_verify: '密码认证',
+    password_verify: '身份认证',
+    password_verify_text: '此操作需要验证身份才能继续进行',
     company_placeholder: '请选择供应商',
     medium: '中号',
     small: '小号',
@@ -82,7 +83,8 @@ export default {
     title: '系统登录',
     logIn: '登录',
     username: '账号',
-    password: '密码'
+    password: '密码',
+    password_placeholder: '请输入您的密码'
   },
   home: {
     creditSum: '已到账',
@@ -176,7 +178,7 @@ export default {
         basic_tab: '基础佣金表',
         override_tab: 'Override佣金表',
         overall_tab: '总佣金表',
-        effectDateTitle: '佣金生效时间',
+        effectDateTitle: '设置佣金表生效时间',
         effectDate: '生效时间',
         override_setting: '设置Override',
         publish_button: '发布',
@@ -231,6 +233,7 @@ export default {
         remarks: '备注'
       },
       policy_button: '渠道策略',
+      commission_policy_button: '佣金策略',
       tooltip: {
         delete: '此操作将永久删除该渠道账号, 是否继续?',
         delete_channel_commission_table: '此操作将永久删除该渠道佣金表, 是否继续?'
@@ -468,8 +471,12 @@ export default {
       submit_audit: '提交审核',
       cleared_title: '结清佣金',
       payment_detail: '支付详情',
+      check_detail: '支票详情',
       tooltip: {
-        audit: '此操作会将选中的渠道佣金记录提交审核, 是否继续?'
+        audit: '此操作会将选中的渠道佣金记录提交审核, 是否继续?',
+        approve: '审核通过之后, 将无法再修改发放金额, 是否继续?',
+        reject: '拒绝审核之后, 这些记录将回到待发放列表, 需要重新提交审核, 是否继续?',
+        clear: '请确认上述信息是否正确, 一旦确认, 将无法再继续编辑支票内容, 是否继续?'
       },
       set: {
         chequeNumber: '请输入支票号码'

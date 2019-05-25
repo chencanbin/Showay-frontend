@@ -29,7 +29,7 @@
           {{ credit.ffyap ? formatterNumber(commissionCredit.commissionRate) + '%' : formatterNumber(commissionCredit.commissionRateWithoutFfyap) + '%' }}
         </el-form-item>
         <el-form-item :label="$t('common.calculatedAmount')" prop="name">
-          {{ getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmount) }}
+          {{ credit.ffyap ? getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmount) : getSymbol(commissionCredit.currency) + formatterCurrency(commissionCredit.calculatedAmountWithoutFfyap) }}
         </el-form-item>
         <el-form-item v-if="credit.currency !== 'HKD'" :label="$t('common.exchangeRate')" prop="exchangeRateToHkd" >
           <el-input v-model="credit.exchangeRateToHkd" :placeholder="$t('commission.credit.set.exchangeRate')" @input="onExchangeRateInput"/>
@@ -41,7 +41,7 @@
           <el-input v-model="credit.remarks" :placeholder="$t('common.remarks_placeholder')"/>
         </el-form-item>
         <el-form-item v-if="isBoolean(credit.ffyap)" label="FFYAP" prop="ffyap">
-          <el-checkbox v-model="credit.ffyap"/>
+          <el-checkbox v-model="credit.ffyap" @change="ffyapChange"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -100,6 +100,12 @@ export default {
       default() {
         return {}
       }
+    },
+    listQuery: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   data() {
@@ -148,10 +154,12 @@ export default {
               type: 'success',
               duration: 5 * 1000
             })
+            const offset = (this.listQuery.page - 1) * this.listQuery.limit
+            const max = this.listQuery.limit
             if (this.dateRange) {
-              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard, sort: this.sort, order: this.order })
+              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard, sort: this.sort, order: this.order, offset, max })
             } else {
-              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard, sort: this.sort, order: this.order })
+              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard, sort: this.sort, order: this.order, offset, max })
             }
             this.handleClose()
             this.loading = false
@@ -178,13 +186,31 @@ export default {
         if (parseInt(this.credit.calculatedAmount) === 0) {
           return
         }
-        this.credit.exchangeRateToHkd = (val / this.credit.calculatedAmount).toFixed(2)
+        if (this.credit.ffyap) {
+          this.credit.exchangeRateToHkd = (val / this.credit.calculatedAmount).toFixed(2)
+        } else {
+          this.credit.exchangeRateToHkd = (val / this.credit.calculatedAmountWithoutFfyap).toFixed(2)
+        }
+      }
+    },
+    ffyapChange() {
+      if (this.credit.ffyap) {
+        this.credit.amount = this.credit.calculatedAmountInHkd
+        this.$refs.amount.onChange(this.credit.amount)
+      } else {
+        this.credit.amount = this.credit.calculatedAmountInHkdWithoutFfyap
+        this.$refs.amount.onChange(this.credit.amount)
       }
     },
     onExchangeRateInput(val) {
       if (this.locked) {
-        this.credit.amount = (val * this.credit.calculatedAmount).toFixed(2)
-        this.$refs.amount.onChange(this.credit.amount)
+        if (this.credit.ffyap) {
+          this.credit.amount = (val * this.credit.calculatedAmount).toFixed(2)
+          this.$refs.amount.onChange(this.credit.amount)
+        } else {
+          this.credit.amount = (val * this.credit.calculatedAmountWithoutFfyap).toFixed(2)
+          this.$refs.amount.onChange(this.credit.amount)
+        }
       }
     }
   }

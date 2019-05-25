@@ -1,7 +1,7 @@
 <template>
   <span style="margin-right: 5px">
-    <el-button icon="el-icon-setting" type="text" size="small" @click="initForm" >
-      佣金策略
+    <el-button type="text" size="small" @click="initForm" >
+      {{ $t('product.channel.commission_policy_button') }}
     </el-button>
     <el-dialog
       id="channelCommissionTableDialog"

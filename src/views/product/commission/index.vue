@@ -1,5 +1,5 @@
 <template>
-  <div class="table-container">
+  <div id="commissionTable" class="table-container">
     <basic-container>
       <commission-table ref="commissionTable" :id="commissionTableId" :company-id="companyId" :created="true" :show-button="false"/>
       <el-form :inline="true" class="search-input" @submit.native.prevent>
@@ -29,7 +29,7 @@
             <div v-loading="commissionTableListLoading" class="clearfix">
               <el-timeline v-loading="commissionTableListLoading" id="commissionTableList">
                 <div v-if="commissionTableList.list && commissionTableList.list.length === 0" style="text-align: center; color: #909399;">
-                  {{ $t('product.commission.no_commission_table') }}
+                  {{ $t('product.commission.commission_table_list.no_commission_table') }}
                 </div>
                 <el-timeline-item v-for="(commissionTable, index) in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="index" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
                   <el-dropdown class="action-dropdown">
@@ -42,14 +42,12 @@
                           v-if="hasPermission(100017) && commissionTable.status !== 0"
                           size="small"
                           type="text"
-                          icon="el-icon-view"
-                          style="margin-right: 5px"
-                          @click="handleView(commissionTable.id)">
+                          @click="handleView(commissionTable.id, getFormattedDate(commissionTable.effectiveDate))">
                           {{ $t('common.view') }}
                         </el-button>
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <commission-table v-if="hasPermission(100018)" :id="commissionTable.id" :company-id="scope.row.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name"/>
+                        <commission-table v-if="hasPermission(100018)" :id="commissionTable.id" :company-id="scope.row.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name" :effective-date="getFormattedDate(commissionTable.effectiveDate)"/>
                       </el-dropdown-item>
                       <el-dropdown-item>
                         <el-button
@@ -57,7 +55,6 @@
                           :ref="`export_${commissionTable.id}`"
                           size="small"
                           type="text"
-                          icon="el-icon-download"
                           @click="exportExcel(commissionTable)">{{ $t('common.export') }}</el-button>
                       </el-dropdown-item>
                       <el-dropdown-item>
@@ -65,7 +62,6 @@
                           v-if="hasPermission(100019)"
                           size="small"
                           type="text"
-                          icon="el-icon-delete"
                           @click="verifyPassword(scope.row.id, commissionTable.id)">{{ $t('common.delete') }}
                         </el-button>
                       </el-dropdown-item>
@@ -109,10 +105,10 @@
       :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
-      :title="$t('common.password_verify')"
-      center
+      :title="$t('common.password_verify') + ' - ' + name"
       width="400px">
-      <el-input v-model="password" type="password"/>
+      <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password"/>
+      <div class="tips_text">* {{ $t('common.password_verify_text') }}</div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
         <el-button :loading="submitLoading" type="primary" @click="handleDelete">{{ $t('common.submitButton') }}</el-button>
@@ -126,13 +122,14 @@
 <script>
 import pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import commissionTable from './commissionTable'
 import add from './add'
 import commissionView from './view'
 import axios from 'axios'
 import sha256 from 'sha256'
 import elDragDialog from '@/directive/el-dragDialog'
+import Cookies from 'js-cookie'
 
 const _ = require('lodash')
 export default {
@@ -154,6 +151,7 @@ export default {
       expandKeys: [],
       showExpandRow: false,
       height: document.body.clientHeight - 190,
+      cancelTokenFn: null, // 取消请求方法
       listQuery: {
         page: 1,
         limit: 50
@@ -161,6 +159,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'name'
+    ]),
     ...mapState(
       {
         commissionTableListLoading: state => state.commission.commissionTableListLoading,
@@ -254,19 +255,30 @@ export default {
     //   this.$store.commit('commission/SHOW_COMMISSION_TABLE_DIALOG_VISIBLE', id)
     // },
     exportExcel(row) {
+      const _this = this
       const effectiveDate = parseTime(row.effectiveDate, '{y}-{m}-{d}')
       const fileName = `${row.company.name} EffectiveDate ${effectiveDate}.xlsx`
       const url = process.env.BASE_API + `/commissionTable/${row.id}/export`
+      const language = Cookies.get('language')
+      const CancelToken = axios.CancelToken
       if (row.status === 2) {
         this.$confirm(this.$t('product.commission.tooltip.export'), this.$t('common.prompt'), {
           confirmButtonText: this.$t('common.confirmButton'),
           cancelButtonText: this.$t('common.cancelButton'),
           type: 'warning',
           beforeClose: (action, instance, done) => {
+            console.log(action)
             if (action === 'confirm') {
               instance.confirmButtonLoading = true
               axios.get(url, {
-                responseType: 'blob'
+                responseType: 'blob',
+                headers: {
+                  'content-language': language || 'zh-CN',
+                  'Accept-Language': language || 'zh-CN'
+                },
+                cancelToken: new CancelToken(function executor(c) {
+                  _this.cancelTokenFn = c
+                })
               }).then(res => {
                 const blob = new Blob([res.data])
                 const downloadElement = document.createElement('a')
@@ -282,7 +294,11 @@ export default {
               }).catch(_ => {
                 instance.confirmButtonLoading = false
               })
-            } else {
+            }
+            if (action === 'cancel') {
+              instance.confirmButtonLoading = false
+              this.cancelTokenFn && this.cancelTokenFn()
+              this.cancelTokenFn = null
               done()
             }
           }
@@ -296,7 +312,14 @@ export default {
             if (action === 'confirm') {
               instance.confirmButtonLoading = true
               axios.get(url, {
-                responseType: 'blob'
+                responseType: 'blob',
+                headers: {
+                  'content-language': language || 'zh-CN',
+                  'Accept-Language': language || 'zh-CN'
+                },
+                cancelToken: new CancelToken(function executor(c) {
+                  _this.cancelTokenFn = c
+                })
               }).then(res => {
                 const blob = new Blob([res.data])
                 const downloadElement = document.createElement('a')
@@ -310,10 +333,13 @@ export default {
                 instance.confirmButtonLoading = false
                 done()
               }).catch(_ => {
-                console.log(_)
                 instance.confirmButtonLoading = false
               })
-            } else {
+            }
+            if (action === 'cancel') {
+              instance.confirmButtonLoading = false
+              this.cancelTokenFn && this.cancelTokenFn()
+              this.cancelTokenFn = null
               done()
             }
           }
@@ -334,10 +360,11 @@ export default {
     //   }
     // },
     handleClose() {
+      this.password = ''
       this.dialogVisible = false
     },
-    handleView(id) {
-      this.$refs.commissionView.openDialog(id)
+    handleView(id, effectiveDate) {
+      this.$refs.commissionView.openDialog(id, effectiveDate)
     },
     dbRowClick(row) {
       this.$refs.commissionView.openDialog(row.id)
@@ -388,7 +415,19 @@ export default {
   .el-table__body-wrapper {
     overflow-y: auto!important;
   }
+  #commissionTable {
+    .el-dialog--center .el-dialog__body {
+      padding: 15px 20px;
+    }
+    .tips_text {
+      color: #5c5958;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  }
   #commissionTableList {
+
     .el-table__expanded-cell {
       padding: 20px;
     }

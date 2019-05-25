@@ -33,7 +33,7 @@
         effect="dark"
         placement="bottom">
         <div class="setting_class right-menu-item">
-          <svg-icon icon-class="setting" @click="showHomePageSetting = true"/>
+          <svg-icon icon-class="customization" @click="showHomePageSetting = true"/>
         </div>
       </el-tooltip>
       <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" style="right: 12px">
@@ -264,11 +264,13 @@ export default {
       const params = { status: 0, geDueDate: getCurrentYearFirst(), leDueDate: getCurrentYearLast() }
       this.$api.commission.fetchCommissionCredit(params).then(res => {
         this.credit.total = res.data.total
+      }).catch(_ => {
       })
     },
     getPayment() {
       this.$api.commission.fetchAuditPayment({ status: -1 }).then(res => {
         this.payment.total = res.data.total
+      }).catch(_ => {
       })
     },
     handleCreditClick() {

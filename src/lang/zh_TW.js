@@ -51,7 +51,8 @@ export default {
     tooltip: {
       close: '是否需要關閉此窗口?'
     },
-    password_verify: '密碼認證',
+    password_verify: '身份认证',
+    password_verify_text: '此操作需要驗證身份才能繼續進行',
     company_placeholder: '請選擇供應商',
     medium: '中號',
     small: '小號',
@@ -82,7 +83,8 @@ export default {
     title: '系統登錄',
     logIn: '登錄',
     username: '賬號',
-    password: '密碼'
+    password: '密碼',
+    password_placeholder: '請輸入你的密碼'
   },
   home: {
     creditSum: '已到賬',
@@ -176,7 +178,7 @@ export default {
         basic_tab: '基礎傭金表',
         override_tab: 'Override傭金表',
         overall_tab: '總傭金表',
-        effectDateTitle: '傭金生效時間',
+        effectDateTitle: '設置佣金錶生效時間',
         effectDate: '生效時間',
         override_setting: '設置Override',
         publish_button: '發布',
@@ -231,6 +233,7 @@ export default {
         remarks: '備註'
       },
       policy_button: '渠道策略',
+      commission_policy_button: '佣金策略',
       tooltip: {
         delete: '此操作將永久刪除該渠道賬號, 是否繼續?',
         delete_channel_commission_table: '此操作將永久刪除該渠道傭金表, 是否繼續?'
@@ -468,8 +471,12 @@ export default {
       submit_audit: '提交審核',
       cleared_title: '結清傭金',
       payment_detail: '支付詳情',
+      check_detail: '支票詳情',
       tooltip: {
-        audit: '此操作會將選中的渠道傭金記錄提交審核, 是否繼續?'
+        audit: '此操作會將選中的渠道傭金記錄提交審核, 是否繼續?',
+        approve: '審核通過之後, 將無法再修改發放金額, 是否繼續?',
+        reject: '拒絕審核之後, 這些記錄將回到待發放列表, 需要重新提交審核, 是否繼續?',
+        clear: '请确认上述信息是否正确, 一旦确认, 将无法再继续编辑支票内容, 是否继续?'
       },
       set: {
         chequeNumber: '請輸入支票號碼'

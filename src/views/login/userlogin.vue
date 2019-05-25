@@ -127,9 +127,10 @@ export default {
       })
     },
     showPassword() {
-      this.passwordType === ''
+      this.passwordType === 'text'
         ? (this.passwordType = 'password')
-        : (this.passwordType = '')
+        : (this.passwordType = 'text')
+      console.log(this.passwordType)
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {

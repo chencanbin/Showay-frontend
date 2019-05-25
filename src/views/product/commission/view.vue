@@ -60,6 +60,7 @@
 
 <script type="text/ecmascript-6">
 import pagination from '@/components/Pagination'
+
 const _ = require('lodash')
 export default {
   name: 'CommissionView',
@@ -93,7 +94,7 @@ export default {
       this.listQuery = { page: 1, limit: 50 }
       this.getCommissionTableList({ wildcard: this.wildcard })
     }, 500),
-    openDialog(id) {
+    openDialog(id, effectiveDate) {
       this.dialogVisible = true
       this.viewLoading = true
       this.data = []
@@ -101,7 +102,7 @@ export default {
         this.data = res.data.list
         this.total = res.data.total
         this.id = id
-        this.title = this.$t('product.commission.view.title', [res.data.company.name])
+        this.title = this.$t('product.commission.view.title', [res.data.company.name + ' ( ' + effectiveDate + ' ) '])
         const conditionLengthArray = []
         this.columnYear = []
         _.forEach(res.data.list, item => {

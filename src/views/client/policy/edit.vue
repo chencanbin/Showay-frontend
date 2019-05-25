@@ -420,7 +420,6 @@ export default {
         if (valid) {
           this.submitLoading = true
           const data = _.cloneDeep(this.insurancePolicy)
-          console.log(data)
           data.applicant = this.insurancePolicy.applicant.id
           data.beneficiary = this.insurancePolicy.beneficiary.id
           data.channel = this.insurancePolicy.channel.id

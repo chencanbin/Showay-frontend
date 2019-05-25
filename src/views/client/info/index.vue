@@ -1,5 +1,5 @@
 <template>
-  <div class="table-container">
+  <div id="clientInfo" class="table-container">
     <basic-container>
       <el-form :inline="true" class="search-input" @submit.native.prevent>
         <el-form-item label="" prop="wildcard">
@@ -83,10 +83,10 @@
         :close-on-click-modal="false"
         :visible="dialogVisible"
         :before-close="handleClose"
-        :title="$t('common.password_verify')"
-        center
+        :title="$t('common.password_verify') + ' - ' + name"
         width="400px">
-        <el-input v-model="password" type="password"/>
+        <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password"/>
+        <div class="tips_text">* {{ $t('common.password_verify_text') }}</div>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
           <el-button :loading="submitLoading" type="primary" @click="handleDelete()">{{ $t('common.submitButton') }}</el-button>
@@ -98,7 +98,7 @@
 
 <script>
 import { parseTime } from '@/utils'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import add from './add'
 import edit from './edit'
 import pagination from '@/components/Pagination'
@@ -128,6 +128,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'name'
+    ]),
     ...mapState(
       {
         clientLoading: state => state.client.clientLoading,
@@ -195,6 +198,7 @@ export default {
       this.dialogVisible = true
     },
     handleClose() {
+      this.password = ''
       this.dialogVisible = false
     },
     pagination(pageObj) {
@@ -212,3 +216,16 @@ export default {
   }
 }
 </script>
+<style lang="scss" rel="stylesheet/scss" type="text/scss">
+  #clientInfo {
+    .el-dialog--center .el-dialog__body {
+      padding: 15px 20px;
+    }
+    .tips_text {
+      color: #5c5958;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  }
+</style>

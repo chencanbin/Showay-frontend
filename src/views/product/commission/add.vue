@@ -32,6 +32,7 @@
           <el-select
             ref="commissionTableList"
             v-model="commission.template"
+            :disabled="disableTemplate"
             :placeholder="$t('product.commission.add.template_placeholder')"
             clearable
             style="width: 100%;">
@@ -83,6 +84,13 @@ export default {
     }
   },
   computed: {
+    disableTemplate() {
+      if (this.commission.companyId) {
+        return false
+      } else {
+        return true
+      }
+    },
     ...mapState({
       companyList: state => state.company.companyList.list
     })

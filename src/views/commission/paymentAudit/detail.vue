@@ -205,33 +205,57 @@ export default {
       return _.toNumber(value).toFixed(2) + '%'
     },
     handleReject() {
-      this.rejectLoading = true
-      this.$api.commission.mergedPaymentReject(this.id).then(_ => {
-        this.$message({
-          message: this.$t('common.success'),
-          type: 'success',
-          duration: 5 * 1000
-        })
-        this.$store.dispatch('commission/FetchAuditPayment', { status: 0 })
-        this.dialogVisible = false
-        this.rejectLoading = false
-      }).catch(_ => {
-        this.rejectLoading = false
+      this.$confirm(this.$t('commission.payment.tooltip.reject'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.commission.mergedPaymentReject(this.id).then(_ => {
+              this.$message({
+                message: this.$t('common.success'),
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.$store.dispatch('commission/FetchAuditPayment', { status: 0 })
+              this.dialogVisible = false
+              instance.confirmButtonLoading = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       })
     },
     handleApprove() {
-      this.approveLoading = true
-      this.$api.commission.mergedPaymentApprove(this.id).then(_ => {
-        this.$message({
-          message: this.$t('common.success'),
-          type: 'success',
-          duration: 5 * 1000
-        })
-        this.$store.dispatch('commission/FetchAuditPayment', { status: 0 })
-        this.dialogVisible = false
-        this.approveLoading = false
-      }).catch(_ => {
-        this.approveLoading = false
+      this.$confirm(this.$t('commission.payment.tooltip.approve'), this.$t('common.prompt'), {
+        confirmButtonText: this.$t('common.confirmButton'),
+        cancelButtonText: this.$t('common.cancelButton'),
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api.commission.mergedPaymentApprove(this.id).then(_ => {
+              this.$message({
+                message: this.$t('common.success'),
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.$store.dispatch('commission/FetchAuditPayment', { status: 0 })
+              instance.confirmButtonLoading = false
+              this.dialogVisible = false
+              done()
+            }).catch(_ => {
+              instance.confirmButtonLoading = false
+            })
+          } else {
+            done()
+          }
+        }
       })
     },
     handleSubmit() {

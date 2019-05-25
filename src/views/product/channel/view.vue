@@ -140,9 +140,14 @@ export default {
       const url = process.env.BASE_API + `/channelCommissionTable/${this.id}/export`
       const fileName = `${this.channelName} ( ${parseTime(this.timestamp, '{y}-{m}-{d}')} ).pdf`
       this.exportLoading = true
+      const language = Cookies.get('language')
       axios.get(url, {
         responseType: 'blob',
-        params: this.params
+        params: this.params,
+        headers: {
+          'content-language': language || 'zh-CN',
+          'Accept-Language': language || 'zh-CN'
+        }
       }).then(res => {
         const blob = new Blob([res.data])
         const downloadElement = document.createElement('a')
@@ -155,7 +160,6 @@ export default {
         window.URL.revokeObjectURL(href) // 释放blob对象
         this.exportLoading = false
       }).catch(_ => {
-        console.log(_)
         this.exportLoading = false
       })
     },

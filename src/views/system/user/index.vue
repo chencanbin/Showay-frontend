@@ -101,10 +101,10 @@
       :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
-      :title="$t('common.password_verify')"
-      center
+      :title="$t('common.password_verify') + ' - ' + name"
       width="400px">
-      <el-input v-model="password" type="password"/>
+      <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password"/>
+      <div class="tips_text">* {{ $t('common.password_verify_text') }}</div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
         <el-button :loading="resetLoading" type="primary" @click="handleResetPassword">{{ $t('common.submitButton') }}</el-button>
@@ -120,7 +120,7 @@ import addChannelHierarchy from './addChannelHierarchy'
 import editChannelHierarchy from './editChannelHierarchy'
 import pagination from '@/components/Pagination'
 import sha256 from 'sha256'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { parseTime } from '@/utils'
 import elDragDialog from '@/directive/el-dragDialog'
 
@@ -137,7 +137,6 @@ export default {
   data() {
     return {
       expandKeys: [],
-      name: '',
       password: '',
       id: '',
       resetLoading: false,
@@ -150,6 +149,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'name'
+    ]),
     ...mapState({
       userLoading: state => state.user.userLoading,
       channelHierarchy: state => state.user.channelHierarchy,
@@ -283,6 +285,7 @@ export default {
       })
     },
     handleClose() {
+      this.password = ''
       this.dialogVisible = false
     }
   }
@@ -290,13 +293,14 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
   #user {
-    .el-dialog__body {
-      text-align: center;
-      padding: 20px;
-      .reset_info {
-        margin-bottom: 20px;
-        font-size: 16px;
-      }
+    .tips_text {
+      color: #5c5958;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .el-dialog--center .el-dialog__body {
+      padding: 15px 20px;
     }
     p {
       font-size: 14px;

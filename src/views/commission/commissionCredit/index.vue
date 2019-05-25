@@ -144,7 +144,8 @@
                 :active-name="activeName"
                 :key="scope.row.id"
                 :sort="sort"
-                :order="order"/>
+                :order="order"
+                :list-query="listQuery"/>
               <audit
                 v-if="scope.row.status === 1"
                 :commission-credit="scope.row"
@@ -152,7 +153,8 @@
                 :wildcard="wildcard"
                 :date-range="dateRange"
                 :sort="sort"
-                :order="order"/>
+                :order="order"
+                :list-query="listQuery"/>
             </template>
           </el-table-column>
         </el-table>
@@ -313,6 +315,8 @@ export default {
     },
     handleTabClick() {
       this.queryCondition.status = this.activeName
+      this.$set(this.queryCondition, 'max', 50)
+      this.$set(this.queryCondition, 'offset', 1)
       this.getCommissionCreditList()
     },
     pagination(pageObj) {

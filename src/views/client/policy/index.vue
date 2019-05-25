@@ -159,10 +159,10 @@
       :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
-      :title="$t('common.password_verify')"
-      center
+      :title="$t('common.password_verify') + ' - ' + name"
       width="400px">
-      <el-input v-model="password" type="password"/>
+      <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password"/>
+      <div class="tips_text">* {{ $t('common.password_verify_text') }}</div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
         <el-button :loading="submitLoading" type="primary" @click="handleDelete()">{{ $t('common.submitButton') }}</el-button>
@@ -176,7 +176,7 @@ import { parseTime, getYearFirst, getYearLast } from '@/utils'
 import { policyStatus, premiumPlan } from '@/utils/constant'
 
 import Cookies from 'js-cookie'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import add from './add'
 import edit from './edit'
 import addClient from './addClient'
@@ -221,6 +221,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'name'
+    ]),
     ...mapState(
       {
         insurancePolicy: state => state.client.insurancePolicyList,
@@ -313,6 +316,7 @@ export default {
       this.dialogVisible = true
     },
     handleClose() {
+      this.password = ''
       this.dialogVisible = false
     },
     handleReset(id) {
@@ -329,7 +333,9 @@ export default {
                 type: 'success',
                 duration: 5 * 1000
               })
-              this.getInsurancePolicyList()
+              const offset = (this.listQuery.page - 1) * this.listQuery.limit
+              const max = this.listQuery.limit
+              this.getInsurancePolicyList({ offset, max })
               instance.confirmButtonLoading = false
               done()
             }).catch(_ => {
@@ -418,6 +424,9 @@ export default {
 
 <style type="text/scss"  lang="scss" scope>
   #policy {
+    .el-dialog--center .el-dialog__body {
+      padding: 15px 20px;
+    }
     .el-table__expanded-cell {
       padding: 0 10px 10px 20px;
     }
@@ -429,6 +438,12 @@ export default {
       label {
         color: #99a9bf;
       }
+    }
+    .tips_text {
+      color: #5c5958;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 10px;
     }
   }
 

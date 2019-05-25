@@ -97,13 +97,13 @@ export const asyncRouterMap = [
         path: 'productCommission',
         component: () => import('@/views/product/commission/index'),
         name: 'productCommission',
-        meta: { title: 'productCommission', icon: 'commission', noCache: true, id: 100016 }
+        meta: { title: 'productCommission', icon: 'productCommission', noCache: true, id: 100016 }
       },
       {
         path: 'channelCommission',
         component: () => import('@/views/product/channel/index'),
         name: 'channelCommission',
-        meta: { title: 'channelCommission', icon: 'client', noCache: true, id: 100082 }
+        meta: { title: 'channelCommission', icon: 'channelCommission', noCache: true, id: 100082 }
       }
     ]
   },

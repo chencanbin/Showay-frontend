@@ -82,6 +82,12 @@ export default {
       default() {
         return {}
       }
+    },
+    listQuery: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   data() {
@@ -103,10 +109,12 @@ export default {
           type: 'success',
           duration: 5 * 1000
         })
+        const offset = (this.listQuery.page - 1) * this.listQuery.limit
+        const max = this.listQuery.limit
         if (this.dateRange) {
-          this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard, sort: this.sort, order: this.order })
+          this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard, sort: this.sort, order: this.order, offset, max })
         } else {
-          this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard, sort: this.sort, order: this.order })
+          this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard, sort: this.sort, order: this.order, offset, max })
         }
         this.dialogVisible = false
         this.rejectLoading = false
@@ -126,7 +134,13 @@ export default {
           type: 'success',
           duration: 5 * 1000
         })
-        this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName })
+        const offset = (this.listQuery.page - 1) * this.listQuery.limit
+        const max = this.listQuery.limit
+        if (this.dateRange) {
+          this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard, sort: this.sort, order: this.order, offset, max })
+        } else {
+          this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard, sort: this.sort, order: this.order, offset, max })
+        }
         this.dialogVisible = false
         this.clearLoading = false
       }).catch(_ => {

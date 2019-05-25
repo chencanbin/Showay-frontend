@@ -5,7 +5,6 @@
       :loading="loading"
       size="small"
       type="text"
-      icon="el-icon-edit"
       @click="initForm">{{ $t('common.edit') }}</el-button>
     <el-dialog
       id="commissionTableDialog"
@@ -16,11 +15,12 @@
       append-to-body>
       <!--<el-button icon="el-icon-plus" type="text" @click="addNewRow">添加新行</el-button>-->
       <el-row slot="title" class="title" style="position: relative">
-        <el-col :xs="24" :sm="24" :lg="8" style="height: 40px;line-height: 40px;">
+        <el-col :xs="24" :sm="24" :lg="12" style="height: 40px;line-height: 40px;">
           <span style="font-size: 16px">{{ $t('product.commission.commission_table.title', [title]) }}</span>
+          <span v-show="effectiveDate" style="font-size: 16px; margin-left: 5px">({{ effectiveDate }})</span>
           <span style="color: #999; font-family: YouYuan; margin-left: 10px">{{ editStatus }}</span>
         </el-col>
-        <el-col :xs="24" :sm="24" :lg="{span: 8, offset: 7}">
+        <el-col :xs="24" :sm="24" :lg="{span: 8, offset: 4}">
           <el-input
             ref="search"
             v-model="wildcard"
@@ -127,6 +127,10 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    effectiveDate: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -141,7 +145,6 @@ export default {
       editStatus: '', // 修改cell时,页面的状态显示
       errorCoordinate: [],
       selectedRows: [], // 选中行数的数组
-      effectiveDate: '', // 有效时间
       remarks: '',
       fullscreen: true,
       dialogVisible: false,
@@ -212,7 +215,6 @@ export default {
         fixedColumnsLeft: 1,
         rowHeights: 45,
         columnHeaderHeight: 45,
-        autoRowSize: true,
         contextMenu: {
           items: {
             'override': { // Own custom option
@@ -282,7 +284,8 @@ export default {
 
             this.$api.commission.commissionTableDraft(this.id, { data, type }).then(res => {
               const date = new Date()
-              this.editStatus = this.$t('product.commission.commission_table.edit_status.latest_save', [':' + date.getMinutes() + ':' + date.getSeconds()])
+              this.editStatus = this.$t('product.commission.commission_table.edit_status.latest_save', [date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()])
+              console.log(this.editStatus)
             }).catch(_ => {
               this.basicHotInstance.undo()
               this.overallHotInstance.undo()
@@ -371,6 +374,9 @@ export default {
 
       }
     }
+  },
+  created() {
+
   },
   methods: {
     initColumn() {
@@ -491,6 +497,11 @@ export default {
       return td
     },
     initForm() {
+      const that = this
+      window.onbeforeunload = function(e) {
+        that.$api.commission.commissionTableDraft(that.id, { releaseLock: true })
+        return '关闭提示'
+      }
       this.dialogVisible = true
       this.initColumn()
       this.initOverAll()
@@ -531,6 +542,7 @@ export default {
         this.loading = false
       }).catch(_ => {
         this.loading = false
+        this.dialogVisible = false
       })
     },
     loadOverrideData() {
@@ -587,6 +599,7 @@ export default {
         this.$api.commission.commissionTableDraft(this.id, { releaseLock: true }).then(res => {
           this.$store.dispatch('commission/FetchCommissionTableList', { id: this.companyId })
           this.dialogVisible = false
+          window.onbeforeunload = null
         })
       })
     },

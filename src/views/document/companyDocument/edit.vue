@@ -83,6 +83,7 @@ export default {
               this.$store.dispatch('document/FetchFolderById', { id: this.folderId })
               this.handleClose()
               this.loading = false
+              this.$emit('afterEdit')
             }).catch(_ => {
               this.loading = false
             })
@@ -96,6 +97,7 @@ export default {
               this.$store.dispatch('document/FetchFolderById', { id: this.folderId })
               this.handleClose()
               this.loading = false
+              this.$emit('afterEdit')
             }).catch(_ => {
               this.loading = false
             })

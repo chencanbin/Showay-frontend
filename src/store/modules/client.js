@@ -66,10 +66,11 @@ const client = {
     },
     FetchInsurancePolicyList({ commit }, { params }) {
       commit('SHOW_INSURANCE_POLICY_LOADING')
-      return fetchInsurancePolicyList(params).then(res => {
+      fetchInsurancePolicyList(params).then(res => {
         commit('SET_INSURANCE_POLICY_LIST', res.data)
         commit('HIDE_INSURANCE_POLICY_LOADING')
       }).catch(_ => {
+        console.log(_)
         commit('HIDE_INSURANCE_POLICY_LOADING')
       })
     },

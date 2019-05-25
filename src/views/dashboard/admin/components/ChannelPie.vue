@@ -53,7 +53,12 @@ export default {
       this.loading = true
       this.total = 0
       this.$api.statistics.fetchTop({ item, groupBy, max, other: '', from: getYearFirst(this.year), to: getYearLast(this.year) }).then(res => {
-        this.afyp = res.data
+        this.afyp = []
+        res.data.forEach(item => {
+          if (item.value > 0) {
+            this.afyp.push(item)
+          }
+        })
         this.afyp.forEach(item => {
           this.total += item.value
         })
@@ -69,8 +74,8 @@ export default {
       this.chart = new G2.Chart({
         container: 'channelPie',
         forceFit: true,
-        height: 300,
-        padding: [30, 40, 40, 40]
+        height: 350,
+        padding: [50, 40, 50, 40]
       })
       this.chart.source(this.afyp)
       this.chart.coord('theta')
@@ -88,7 +93,7 @@ export default {
           if (parseFloat((accounting.unformat(val) / total).toFixed(2)) === 0) {
             return
           }
-          return item.point.key + ': ' + (accounting.unformat(val) / total).toFixed(2) * 100 + '%'
+          return item.point.key + ': ' + ((accounting.unformat(val) / total) * 100).toFixed(2) + '%'
         }
       }).tooltip('key*value', function(key, value) {
         return {

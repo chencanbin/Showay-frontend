@@ -151,7 +151,7 @@
               :key="item.id"
               :label="item.name"
               :value="item.id">
-              <span style="float: left;margin-right: 15px;">{{ item.name }}</span><span style="float: left; font-weight: bold">{{ item.acryonym }}</span>
+              <span style="float: left;margin-right: 15px;">{{ item.name }}</span><span style="float: left; font-weight: bold">{{ item.acronym }}</span>
             </el-option>
           </el-select>
         </el-form-item>

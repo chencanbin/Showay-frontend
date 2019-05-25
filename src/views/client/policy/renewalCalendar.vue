@@ -83,7 +83,6 @@
 import { mapGetters } from 'vuex'
 import FullCalendar from '@/components/FullCalendar'
 import { parseTime } from '@/utils'
-import checkPermission from '@/utils/permission' // 权限判断函数
 import moment from 'moment'
 
 const currencyFormatter = require('currency-formatter')
@@ -107,12 +106,9 @@ export default {
     ...mapGetters(['loading'])
   },
   created() {
-    if (this.checkPermission([1])) {
-      this.getCalendarRenewal()
-    }
+    this.getCalendarRenewal()
   },
   methods: {
-    checkPermission,
     changeMonth(start, end, current) {
       this.from = start.format('x')
       this.to = end.format('x')
@@ -123,6 +119,7 @@ export default {
     getCalendarRenewal(params) {
       this.$api.client.calendarRenewal(params).then(res => {
         this.events = res.data
+      }).catch(_ => {
       })
     },
     judgeEventStatus(event) {

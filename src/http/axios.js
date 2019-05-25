@@ -10,6 +10,21 @@ const _ = require('lodash')
 const language = Cookies.get('languange') || 'zh-CN'
 let errorMessage
 let errorNotification
+const pending = []
+const CancelToken = axios.CancelToken
+const cancelPending = (config) => {
+  pending.forEach((item, index) => {
+    if (config) {
+      if (item.u === config.url) {
+        item.f() // 取消请求
+        pending.splice(index, 1) // 移除当前请求记录
+      }
+    } else {
+      item.f() //  取消请求
+      pending.splice(index, 1) //  移除当前请求记录
+    }
+  })
+}
 export default function $axios(options) {
   return new Promise((resolve, reject) => {
     // 初始化参数配置
@@ -38,6 +53,10 @@ export default function $axios(options) {
           config.params = {}
           config.url = url
         }
+        cancelPending(config)
+        config.cancelToken = new CancelToken((c) => {
+          pending.push({ 'u': config.url, 'f': c })
+        })
         return config
       },
       error => {
@@ -102,6 +121,10 @@ export default function $axios(options) {
         }
       },
       err => {
+        console.log(err)
+        if (axios.isCancel(err)) {
+          return reject(err.response)
+        }
         if (err && err.response) {
           switch (err.response.status) {
             case 400:

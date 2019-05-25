@@ -41,7 +41,6 @@
                           v-if="hasPermission(100035) && item.status !== 0"
                           type="text"
                           size="small"
-                          icon="el-icon-view"
                           @click="handleTimestampDialog(item.id, item.effectiveDate, scope.row.name)">
                           {{ $t('common.view') }}
                         </el-button>
@@ -50,7 +49,7 @@
                         <editChannelCommissionTable v-if="hasPermission(100032)" :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks" :channel-name="scope.row.name" :channel-id="scope.row.id"/>
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <el-button v-if="hasPermission(100033)" type="text" size="small" icon="el-icon-delete" @click="verifyPassword(item)">{{ $t('common.delete') }}</el-button>
+                        <el-button v-if="hasPermission(100033)" type="text" size="small" @click="verifyPassword(item)">{{ $t('common.delete') }}</el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -119,10 +118,10 @@
       :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
-      :title="$t('common.password_verify')"
-      center
+      :title="$t('common.password_verify') + ' - ' + name"
       width="400px">
-      <el-input v-model="password" type="password"/>
+      <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password"/>
+      <div class="tips_text">* {{ $t('common.password_verify_text') }}</div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
         <el-button :loading="submitLoading" type="primary" @click="handleDeleteChannelCommissionTable()">{{ $t('common.submitButton') }}</el-button>
@@ -142,7 +141,7 @@ import editChannelCommissionTable from './editChannelCommissionTable'
 import commissionPolicy from './commissionPolicy'
 import pagination from '@/components/Pagination'
 import sha256 from 'sha256'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { parseTime } from '@/utils'
 import elDragDialog from '@/directive/el-dragDialog'
 
@@ -181,6 +180,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'name'
+    ]),
     ...mapState({
       userLoading: state => state.user.userLoading,
       channelCommissionLoading: state => state.client.channelCommissionLoading,
@@ -257,6 +259,7 @@ export default {
       // })
     },
     handleClose() {
+      this.password = ''
       this.dialogVisible = false
     },
     dateFormat(row, column) {
@@ -332,8 +335,18 @@ export default {
     .el-table__expanded-cell {
       padding: 20px 20px 5px 20px;
     }
+    .el-dialog--center .el-dialog__body {
+      padding: 15px 20px;
+    }
+    .tips_text {
+      color: #5c5958;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
   }
  #channelCommissionTableList {
+
    .el-form-item {
      margin-bottom: 12px;
      .el-form-item__label {

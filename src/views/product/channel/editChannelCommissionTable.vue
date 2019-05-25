@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button icon="el-icon-setting" type="text" size="small" @click="initForm" >
+    <el-button type="text" size="small" @click="initForm" >
       {{ $t('common.edit') }}
     </el-button>
     <el-dialog
@@ -138,6 +138,11 @@ export default {
 
   methods: {
     initForm() {
+      const that = this
+      window.onbeforeunload = function(e) {
+        that.$api.channel.editChannelCommissionPolicy(that.id, { releaseLock: true })
+        return '关闭提示'
+      }
       this.title = `${this.$t('product.channel.set.edit_title')} - ${this.channelName} ( ${parseTime(this.effectiveDate, '{y}-{m}-{d}')} )`
       this.loading = true
       this.dialogVisible = true
@@ -186,6 +191,7 @@ export default {
       }).then(() => {
         this.$api.channel.editChannelCommissionPolicy(this.id, { releaseLock: true }).then(res => {
           this.dialogVisible = false
+          window.onbeforeunload = null
         })
       })
     },
