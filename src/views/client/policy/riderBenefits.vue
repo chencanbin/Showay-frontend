@@ -63,6 +63,7 @@ import { getSymbol } from '@/utils'
 import edit from './editRiderBenefit'
 import { riderBenefitStatus } from '@/utils/constant'
 import Cookies from 'js-cookie'
+import { getYearFirst, getYearLast } from '@/utils'
 
 const _ = require('lodash')
 const currencyFormatter = require('currency-formatter')
@@ -103,6 +104,18 @@ export default {
       default() {
         return 0
       }
+    },
+    listQuery: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    year: {
+      type: String,
+      default() {
+        return ''
+      }
     }
   },
   data() {
@@ -128,7 +141,14 @@ export default {
     },
     handleClose() {
       this.dialogVisible = false
-      const params = { sort: 'submitDate,sn', order: 'asc,asc' }
+      const offset = (this.listQuery.page - 1) * this.listQuery.limit
+      const max = this.listQuery.limit
+      let params = { sort: 'sn,submitDate', order: 'asc,asc', max, offset }
+      if (this.year) {
+        const geSubmitDate = getYearFirst(this.year)
+        const leSubmitDate = getYearLast(this.year)
+        params = Object.assign({ geSubmitDate, leSubmitDate, ...params })
+      }
       this.$store.dispatch('client/FetchInsurancePolicyList', { params })
     },
     // 处理删除保单事件
@@ -145,7 +165,11 @@ export default {
       this.saveLoading = true
       const data = []
       this.riderBenefits.forEach(item => {
-        data.push({ product: item.product.id, premium: item.premium, amountInsured: item.amountInsured, status: item.status })
+        const result = { product: item.product.id, premium: item.premium, status: item.status }
+        if (item.amountInsured) {
+          result.amountInsured = item.amountInsured
+        }
+        data.push(result)
       })
       this.$api.client.editInsurancePolicy(this.id, { riderBenefits: data }).then(_ => {
         this.$message({
@@ -153,8 +177,8 @@ export default {
           type: 'success',
           duration: 5 * 1000
         })
-        const params = { sort: 'submitDate,sn', order: 'asc,asc' }
-        this.$store.dispatch('client/FetchInsurancePolicyList', { params })
+        // const params = { sort: 'sn,submitDate', order: 'asc,asc' }
+        // this.$store.dispatch('client/FetchInsurancePolicyList', { params })
         this.handleClose()
         this.saveLoading = false
       }).catch(_ => {

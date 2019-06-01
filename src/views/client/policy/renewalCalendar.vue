@@ -35,6 +35,9 @@
                 <el-form-item :label="$t('client.insurance_policy.renewed')" class="detail-item">
                   <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)"/>
                 </el-form-item>
+                <div style="text-align: center">
+                  <el-button @click="handleSendEmail(p.event)">{{ $t('client.insurance_policy.renewal_notification') }}</el-button>
+                </div>
               </el-form>
             </el-card>
             <el-tooltip slot="reference" :content="p.event.title" :open-delay="1000" effect="dark" placement="top-start">
@@ -66,6 +69,9 @@
                 <el-form-item :label="$t('client.insurance_policy.renewed')" class="detail-item">
                   <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)"/>
                 </el-form-item>
+                <div style="text-align: center">
+                  <el-button @click="handleSendEmail(p.event)">{{ $t('client.insurance_policy.renewal_notification') }}</el-button>
+                </div>
               </el-form>
             </el-card>
             <!--<p slot="reference" :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>-->
@@ -76,6 +82,7 @@
         </template>
       </full-calendar>
     </el-dialog>
+    <send-email ref="sendEmail"/>
   </span>
 </template>
 
@@ -83,6 +90,7 @@
 import { mapGetters } from 'vuex'
 import FullCalendar from '@/components/FullCalendar'
 import { parseTime } from '@/utils'
+import sendEmail from '@/components/SendEmail'
 import moment from 'moment'
 
 const currencyFormatter = require('currency-formatter')
@@ -90,7 +98,8 @@ const currencyFormatter = require('currency-formatter')
 export default {
   name: 'Renewal',
   components: {
-    FullCalendar
+    FullCalendar,
+    sendEmail
   },
   data() {
     return {
@@ -149,14 +158,20 @@ export default {
       this.dialogVisible = true
     },
     handleClose() {
-      // this.$api.client.calendarRenewal({ from: this.from, to: this.to }).then(res => {
-      //   this.events = res.data
-      // })
       this.$refs.fullCalendar.emitChangeMonth(moment().startOf('month'))
       this.dialogVisible = false
     },
     getFormattedDate(value) {
       return parseTime(value, '{y}-{m}-{d}')
+    },
+    handleSendEmail(event) {
+      const policy = {}
+      policy.dueDate = event.start
+      policy.applicant = event.detail.applicant
+      policy.premium = event.detail.premium
+      policy.number = event.detail.number
+      policy.currency = event.detail.currency
+      this.$refs.sendEmail.openEmailDialog(policy)
     }
   }
 }

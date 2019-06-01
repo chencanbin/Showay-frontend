@@ -14,6 +14,15 @@ const pending = []
 const CancelToken = axios.CancelToken
 const cancelPending = (config) => {
   pending.forEach((item, index) => {
+    if (item.u.indexOf('folder') !== -1) {
+      return
+    }
+    if (item.u.indexOf('trend') !== -1) {
+      return
+    }
+    if (item.u.indexOf('renewal') !== -1) {
+      return
+    }
     if (config) {
       if (item.u === config.url) {
         item.f() // 取消请求

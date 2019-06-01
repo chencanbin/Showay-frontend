@@ -119,22 +119,29 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-if="hasPermission(100047)">
-                  <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :list-query="listQuery" :data="scope.row"/>
+                  <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row" :list-query="listQuery" :year="year"/>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="hasPermission(100047)">
-                  <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency" :submit-date="scope.row.submitDate"/>
+                  <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency" :submit-date="scope.row.submitDate" :list-query="listQuery" :year="year"/>
                 </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100052)" divided>
+                <el-dropdown-item v-if="hasPermission(100052)">
                   <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
                 </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100050)">
+                <el-dropdown-item v-if="hasPermission(100128)">
+                  <el-button
+                    type="text"
+                    size="small"
+                    @click="handleSendEmail(scope.row)">{{ $t('client.insurance_policy.email_notification') }}
+                  </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item v-if="hasPermission(100050)" divided>
                   <el-button
                     type="text"
                     size="small"
                     @click="handleReset(scope.row.id)">{{ $t('common.reset') }}
                   </el-button>
                 </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100048)" divided>
+                <el-dropdown-item v-if="hasPermission(100048)">
                   <el-button
                     type="text"
                     size="small"
@@ -152,7 +159,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <add v-if="hasPermission(100044)" :list-query="listQuery"/>
+      <add v-if="hasPermission(100044)" :list-query="listQuery" :year="year"/>
     </basic-container>
     <el-dialog
       v-el-drag-dialog
@@ -168,13 +175,14 @@
         <el-button :loading="submitLoading" type="primary" @click="handleDelete()">{{ $t('common.submitButton') }}</el-button>
       </div>
     </el-dialog>
+    <send-email ref="sendEmail"/>
   </div>
 </template>
 
 <script>
 import { parseTime, getYearFirst, getYearLast } from '@/utils'
 import { policyStatus, premiumPlan } from '@/utils/constant'
-
+import sendEmail from '@/components/SendEmail'
 import Cookies from 'js-cookie'
 import { mapState, mapGetters } from 'vuex'
 import add from './add'
@@ -200,6 +208,7 @@ export default {
     renewal,
     companyExpenses,
     channelExpenses,
+    sendEmail,
     pagination
   },
   directives: { elDragDialog },
@@ -252,7 +261,7 @@ export default {
     }, 500),
     // 获取保单列表
     getInsurancePolicyList(params) {
-      params = Object.assign({ sort: 'submitDate,sn', order: 'asc,asc', wildcard: this.wildcard, ...params })
+      params = Object.assign({ sort: 'sn,submitDate', order: 'asc,asc', wildcard: this.wildcard, ...params })
       if (this.year) {
         const geSubmitDate = getYearFirst(this.year)
         const leSubmitDate = getYearLast(this.year)
@@ -282,7 +291,7 @@ export default {
         })
         this.getInsurancePolicyList()
         this.submitLoading = false
-        this.dialogVisible = false
+        this.handleClose()
       }).catch(_ => {
         this.submitLoading = false
       })
@@ -417,6 +426,9 @@ export default {
         // 只展开当前选项
         expandedRows.shift()
       }
+    },
+    handleSendEmail(row) {
+      this.$refs.sendEmail.openEmailDialog(row)
     }
   }
 }

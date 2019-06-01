@@ -12,27 +12,26 @@
       center
       append-to-body>
       <el-table v-loading="loading" id="channelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
-        <!--<el-table-column
-          label="优先级"
+        <el-table-column
+          :label="$t('product.channel.set.priority')"
           type="index"
-          width="80">
-        </el-table-column>-->
-        <el-table-column label="公司 / 产品" prop="name" min-width="300">
+          width="80"/>
+        <el-table-column :label="$t('product.channel.set.name')" prop="name" min-width="300">
           <template slot-scope="scope">
             <el-tag v-for="product in scope.row.products" :key="product.id" style="margin-right: 10px; margin-bottom: 5px">{{ product.name }}</el-tag>
             <el-tag v-for="company in scope.row.companies" :key="company.id" style="margin-right: 10px; margin-bottom: 5px; color:#409EFF; background-color: rgba(64, 158, 255, 0.1); border: 1px solid rgba(64, 158, 255, 0.2)">{{ company.name }}</el-tag>
-            <el-tag v-if="!scope.row.products && !scope.row.companies" type="success">ALL</el-tag>
-            <el-tag v-if="scope.row.products && scope.row.companies && scope.row.products.length === 0 && scope.row.companies.length === 0" type="success">ALL</el-tag>
+            <el-tag v-if="!scope.row.products && !scope.row.companies" type="success">{{ $t('product.channel.set.add_policy.all') }}</el-tag>
+            <el-tag v-if="scope.row.products && scope.row.companies && scope.row.products.length === 0 && scope.row.companies.length === 0" type="success">{{ $t('product.channel.set.add_policy.all') }}</el-tag>
             <!--<el-tag v-if="scope.row.products.length === 0 && scope.row.companies.length === 0" type="success">ALL</el-tag>-->
           </template>
         </el-table-column>
-        <el-table-column prop="term" label="年期" width="60" align="center"/>
+        <el-table-column :label="$t('product.channel.set.term')" prop="term" width="60" align="center"/>
         <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="90" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.conditions[index] ? scope.row.conditions[index].ratio + '%' : '-' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="remarks" label="备注" align="center" min-width="150"/>
+        <el-table-column :label="$t('common.remarks')" prop="remarks" align="center" min-width="150"/>
         <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
             <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.$index)">{{ $t('common.delete') }}</el-button>
@@ -155,14 +154,15 @@ export default {
         this.loading = false
       }).catch(_ => {
         this.loading = false
+        this.dialogVisible = false
       })
     },
-
     // 格式化策略数据, 原始策略数据的conditions 只提供缩减版的数组，需要将数据进行展开
     formatterData(policies) {
       const conditionLengthArray = []
       this.columnYear = []
-      _.forEach(policies, item => {
+      _.forEach(policies, (item, index) => {
+        item.priority = index + 1
         const conditionsOriginalSize = item.conditions.length
         const lastCondition = item.conditions[conditionsOriginalSize - 1]
         for (let i = 0; i < item.term - conditionsOriginalSize; i++) {
@@ -253,11 +253,19 @@ export default {
       const tbody = document.querySelector('#channelCommissionTable .el-table__body-wrapper tbody')
       const _this = this
       Sortable.create(tbody, {
+        // onEnd(params) {
+        //   console.log(params)
+        //   // const oldRow = _this.policies[oldIndex]
+        //   // const newRow = _this.policies[newIndex]
+        //   // console.log(oldRow)
+        //   // console.log(newRow)
+        //   // _this.policies[newIndex] = oldRow
+        //   // _this.policies[oldIndex] = newRow
+        //   // _this.originalPolicies = _.cloneDeep(_this.policies)
+        // }
         onEnd({ newIndex, oldIndex }) {
-          const oldRow = _this.policies[oldIndex]
-          const newRow = _this.policies[newIndex]
-          _this.policies[newIndex] = oldRow
-          _this.policies[oldIndex] = newRow
+          const targetRow = _this.policies.splice(oldIndex, 1)[0]
+          _this.policies.splice(newIndex, 0, targetRow)
           _this.originalPolicies = _.cloneDeep(_this.policies)
         }
       })

@@ -13,8 +13,8 @@
         <el-form-item :label="$t('user.name')" prop="name">
           <el-input v-model="account.name" :placeholder="$t('user.set.name')"/>
         </el-form-item>
-        <el-form-item :label="$t('client.info.email')" prop="email">
-          <el-input v-model="account.email"/>
+        <el-form-item :label="$t('user.email')" prop="email">
+          <el-input v-model="account.email" :placeholder="$t('user.set.email')"/>
         </el-form-item>
         <el-form-item :label="$t('user.acronym')" prop="acronym">
           <el-input v-model="account.acronym" :placeholder="$t('user.set.acronym')"/>
@@ -65,7 +65,8 @@ export default {
       ruleAccount: {
         name: [{ required: true, message: this.$t('user.set.name'), trigger: 'blur' }],
         login: [{ required: true, message: this.$t('user.set.account'), trigger: 'blur' }],
-        roles: [{ required: true, message: this.$t('user.set.role'), trigger: 'blur' }]
+        roles: [{ required: true, message: this.$t('user.set.role'), trigger: 'blur' }],
+        email: [{ required: true, message: this.$t('user.set.email'), trigger: 'blur' }]
       }
     }
   },

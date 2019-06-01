@@ -169,6 +169,7 @@
 
 <script type="text/ecmascript-6">
 import { mapState } from 'vuex'
+import { getYearFirst, getYearLast } from '@/utils'
 import { policyStatus } from '@/utils/constant'
 import elDragDialog from '@/directive/el-dragDialog'
 import { currencyArray, premiumPlan } from '@/utils/constant'
@@ -185,6 +186,12 @@ export default {
       type: Object,
       default() {
         return {}
+      }
+    },
+    year: {
+      type: String,
+      default() {
+        return ''
       }
     }
   },
@@ -354,7 +361,13 @@ export default {
             })
             const offset = (this.listQuery.page - 1) * this.listQuery.limit
             const max = this.listQuery.limit
-            this.$store.dispatch('client/FetchInsurancePolicyList', { params: { sort: 'submitDate,sn', order: 'asc,asc', max, offset }})
+            let params = { sort: 'sn,submitDate', order: 'asc,asc', max, offset }
+            if (this.year) {
+              const geSubmitDate = getYearFirst(this.year)
+              const leSubmitDate = getYearLast(this.year)
+              params = Object.assign({ geSubmitDate, leSubmitDate, ...params })
+            }
+            this.$store.dispatch('client/FetchInsurancePolicyList', { params })
             this.$refs['insurancePolicy'].resetFields()
             this.$refs['premium'].currencyValue = 0
             this.$refs['amountInsured'].currencyValue = 0

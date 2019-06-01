@@ -12,6 +12,7 @@ import * as channel from './modules/channel'
 import * as document from './modules/document'
 import * as statistics from './modules/statistics'
 import * as config from './modules/config'
+import * as template from './modules/template'
 // 默认全部导出
 export default {
   login,
@@ -24,5 +25,6 @@ export default {
   channel,
   document,
   statistics,
-  config
+  config,
+  template
 }

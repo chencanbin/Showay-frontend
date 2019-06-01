@@ -6,14 +6,14 @@
       :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
-      title="编辑渠道"
+      :title="$t('user.set.edit_title')"
       width="500px"
       append-to-body>
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="80px">
         <el-form-item :label="$t('user.name')" prop="name">
           <el-input v-model="account.name"/>
         </el-form-item>
-        <el-form-item :label="$t('client.info.email')" prop="email">
+        <el-form-item :label="$t('user.email')" prop="email">
           <el-input v-model="account.email"/>
         </el-form-item>
         <el-form-item :label="$t('user.acronym')" prop="acronym">
@@ -71,7 +71,8 @@ export default {
       ruleAccount: {
         name: [{ required: true, message: this.$t('user.set.name'), trigger: 'blur' }],
         login: [{ required: true, message: this.$t('user.set.account'), trigger: 'blur' }],
-        roles: [{ required: true, message: this.$t('user.set.role'), trigger: 'blur' }]
+        roles: [{ required: true, message: this.$t('user.set.role'), trigger: 'blur' }],
+        email: [{ required: true, message: this.$t('user.set.role'), trigger: 'blur' }]
       }
     }
   },

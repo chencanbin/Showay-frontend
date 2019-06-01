@@ -131,7 +131,7 @@ export default {
       }).then(() => {
         this.$api.user.deleteUser(row.id).then(res => {
           this.$message({
-            message: '操作成功',
+            message: this.$t('common.success'),
             type: 'success',
             duration: 5 * 1000
           })

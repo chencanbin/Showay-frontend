@@ -102,7 +102,7 @@ export default {
     }, 500),
     // 获取保单列表
     getInsurancePolicyList(params) {
-      params = Object.assign({ sort: 'submitDate,sn', order: 'asc,asc', wildcard: this.wildcard, ...params })
+      params = Object.assign({ sort: 'sn,submitDate', order: 'asc,asc', wildcard: this.wildcard, ...params })
       this.$store.dispatch('client/FetchInsurancePolicyList', { params })
     },
 

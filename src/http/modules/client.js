@@ -131,3 +131,11 @@ export function editCalendarRenewal(id) {
     method: 'put'
   })
 }
+
+export function sendRenewalEmail(data) {
+  return request({
+    url: `/calendar/renewal/email`,
+    method: 'post',
+    data
+  })
+}

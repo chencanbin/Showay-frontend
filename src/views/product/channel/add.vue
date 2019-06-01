@@ -10,30 +10,15 @@
       :title="$t('user.set.add_channel_title')"
       width="500px">
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="100px">
-        <el-form-item :label="$t('user.set.name')" prop="name">
-          <el-input v-model="account.name"/>
-        </el-form-item>
-        <el-form-item :label="$t('user.set.account')" prop="login">
-          <el-input v-model="account.login"/>
-        </el-form-item>
-        <el-form-item :label="$t('user.set.superior')" prop="superior">
-          <el-select
-            v-model="account.superior"
-            :placeholder="$t('user.set.superior_placeholder')"
-            clearable
-            style="width: 100%">
+        <el-form-item :label="$t('client.insurance_policy.channel')" prop="channel">
+          <el-select v-model="account.channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable style="width: 100%" @change="onChannelChange">
             <el-option
-              v-for="item in users"
+              v-for="item in channels.list"
               :key="item.id"
               :label="item.name"
               :value="item.id"/>
           </el-select>
         </el-form-item>
-      <!--<el-form-item v-if="account.superior" label="上级佣金率" prop="superiorCommissionRate">-->
-        <!--<el-input v-if="account.superior" v-model.number="account.superiorCommissionRate">-->
-        <!--<template slot="append">%</template>-->
-        <!--</el-input>-->
-      <!--</el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
@@ -45,6 +30,7 @@
 
 <script type="text/ecmascript-6">
 import elDragDialog from '@/directive/el-dragDialog'
+import { mapState } from 'vuex'
 
 export default {
   directives: { elDragDialog },
@@ -54,49 +40,52 @@ export default {
       users: [],
       dialogVisible: false,
       account: {
-        name: '',
-        login: '',
-        roles: [2],
-        superior: null
-        // superiorCommissionRate: null
+        channel: ''
       },
       ruleAccount: {
-        name: [{ required: true, message: '姓名必须填', trigger: 'blur' }],
-        login: [{ required: true, message: '账号必须填', trigger: 'blur' }]
-        // superiorCommissionRate: [
-        //   { required: true, message: '上级佣金率必须选', trigger: 'blur' },
-        //   { type: 'number', message: '上级佣金率必须为数字', trigger: 'blur' }
-        // ]
+        channel: [{ required: true, validator: this.validateChannel, trigger: 'blur, change' }]
       }
     }
   },
+  computed: {
+    ...mapState({
+      channels: state => state.user.users
+    })
+  },
   methods: {
     initForm() {
-      this.$api.user.fetchUserList({ role: 2 }).then(res => {
-        this.users = res.data.list
-        this.dialogVisible = true
-      })
+      this.getChannel()
+      this.dialogVisible = true
+    },
+    validateChannel(rule, value, callback) {
+      if (!value) {
+        callback(new Error(this.$t('client.insurance_policy.set.channel_name')))
+      } else {
+        callback()
+      }
+    },
+    getChannel(params) {
+      const role = { role: 2 }
+      if (params) {
+        params.role = role
+      } else {
+        params = role
+      }
+      this.$store.dispatch('FetchUserList', params)
     },
     handleClose() {
       this.$refs['account'].resetFields()
       this.dialogVisible = false
     },
+    onChannelChange() {
+      this.$refs['account'].validate()
+    },
     handleSubmit() {
       this.$refs['account'].validate((valid) => {
         if (valid) {
-          this.loading = true
-          this.$api.user.addUser(this.account).then(_ => {
-            this.$message({
-              message: this.$t('common.success'),
-              type: 'success',
-              duration: 5 * 1000
-            })
-            this.$store.dispatch('FetchUserList', { role: 2 })
-            this.handleClose()
-            this.loading = false
-          }).catch(_ => {
-            this.loading = false
-          })
+          this.$emit('afterSelectChannel', this.account.channel)
+          this.account.channel = ''
+          this.dialogVisible = false
         } else {
           return false
         }

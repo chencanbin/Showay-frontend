@@ -33,10 +33,23 @@
                 :unlink-panels="true"
                 :start-placeholder="$t('commission.credit.start')"
                 :end-placeholder="$t('commission.credit.end')"
+                :picker-options="pickerOptions"
                 value-format="timestamp"
                 type="daterange"
                 range-separator="-"
                 @change="onDateRangeChange"/>
+            </el-form-item>
+            <el-form-item label="期序">
+              <el-select
+                v-model="term"
+                clearable
+                style="width: 90px">
+                <el-option
+                  v-for="item in generateDefaultTerm()"
+                  :key="item"
+                  :label="item"
+                  :value="item"/>
+              </el-select>
             </el-form-item>
             <el-form-item :label="$t('commission.credit.switch_sort')">
               <el-switch v-model="mode" @change="onSwitchChange"/>
@@ -145,6 +158,7 @@
                 :key="scope.row.id"
                 :sort="sort"
                 :order="order"
+                :term="term"
                 :list-query="listQuery"/>
               <audit
                 v-if="scope.row.status === 1"
@@ -180,9 +194,10 @@ import audit from './audit'
 import policyDetail from '../../client/policy/policyDetail'
 import Cookies from 'js-cookie'
 import CountTo from 'vue-count-to'
-import { getCurrentYearFirst, getCurrentYearLast } from '@/utils'
+import { getCurrentYearFirst, getCurrentYearLast, getYearFirst, getYearLast } from '@/utils'
 const currencyFormatter = require('currency-formatter')
 const _ = require('lodash')
+const now = new Date()
 export default {
   name: 'CommissionCredit',
   components: {
@@ -194,10 +209,94 @@ export default {
   },
   data() {
     return {
+      pickerOptions: {
+        shortcuts: [{
+          text: now.getFullYear() - 10,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 10)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 9,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 9)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 8,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 8)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 7,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 7)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 6,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 6)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 5,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 5)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 4,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 4)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 3,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 3)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 2,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 2)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 1,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 1)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
       mode: false,
       sort: 'year,submitDate',
       order: 'asc,desc',
       dateRange: [getCurrentYearFirst(), getCurrentYearLast()],
+      term: '',
       totalText: '',
       sumText: '',
       selectTotalText: '',
@@ -234,6 +333,9 @@ export default {
           this.selectRow.push(this.commissionCredit.list.indexOf(item))
         })
       }
+    },
+    term(val) {
+      this.getCommissionCreditList({ wildcard: this.wildcard })
     }
   },
   created() {
@@ -254,6 +356,9 @@ export default {
       if (this.dateRange) {
         data = _.assign(data, { geDueDate: this.dateRange[0], leDueDate: this.dateRange[1] })
       }
+      if (this.term) {
+        data = _.assign(data, { term: this.term })
+      }
       data = _.assign(data, params)
       this.$api.commission.getCommissionCreditSum(data).then(res => {
         this.sum = Number(res.data.sum)
@@ -266,6 +371,11 @@ export default {
         delete this.queryCondition.geDueDate
         delete this.queryCondition.leDueDate
       }
+      if (this.term) {
+        this.queryCondition = _.assign(this.queryCondition, { term: this.term })
+      } else {
+        delete this.queryCondition.term
+      }
       this.queryCondition = _.assign(this.queryCondition, params)
       this.$store.dispatch('commission/FetchCommissionCredit', this.queryCondition)
       if (this.activeName === '0') {
@@ -273,22 +383,25 @@ export default {
         this.sumText = this.$t('commission.credit.calculated_amount_total')
         this.selectTotalText = this.$t('commission.credit.calculated_selected_count')
         this.selectSumText = this.$t('commission.credit.calculated_selected_sum')
-        this.getCommissionCreditSum({ calculated: '' })
+        this.getCommissionCreditSum({ calculated: '', ...params })
       } else if (this.activeName === '1') {
         this.totalText = this.$t('commission.credit.amount_count')
         this.sumText = this.$t('commission.credit.amount_total')
         this.selectTotalText = this.$t('commission.credit.amount_selected_count')
         this.selectSumText = this.$t('commission.credit.amount_selected_sum')
-        this.getCommissionCreditSum({ amount: '' })
+        this.getCommissionCreditSum({ amount: '', ...params })
       } else if (this.activeName === '3') {
         this.totalText = this.$t('commission.credit.cleared_count')
         this.sumText = this.$t('commission.credit.cleared_total')
         this.selectTotalText = this.$t('commission.credit.cleared_selected_count')
         this.selectSumText = this.$t('commission.credit.cleared_selected_sum')
-        this.getCommissionCreditSum({ amount: '' })
+        this.getCommissionCreditSum({ amount: '', ...params })
       }
     },
     getSymbol,
+    generateDefaultTerm() {
+      return _.range(1, 16)
+    },
     formatterCurrency(value) {
       return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
     },
@@ -316,7 +429,7 @@ export default {
     handleTabClick() {
       this.queryCondition.status = this.activeName
       this.$set(this.queryCondition, 'max', 50)
-      this.$set(this.queryCondition, 'offset', 1)
+      this.$set(this.queryCondition, 'offset', 0)
       this.getCommissionCreditList()
     },
     pagination(pageObj) {
@@ -401,7 +514,13 @@ export default {
     display: inline-block;
     float: right;
   }
-
+  .el-picker-panel__sidebar {
+    width: 80px;
+    .el-picker-panel__shortcut {
+      text-align: center;
+      padding: 2px 0;
+    }
+  }
   #credit {
     .search-input {
       margin-left: 0;

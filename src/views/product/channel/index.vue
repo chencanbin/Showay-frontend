@@ -67,14 +67,13 @@
                   </el-card>
                 </el-timeline-item>
               </el-timeline>
-              <addChannelCommissionTable v-if="hasPermission(100029)" :effective-date="scope.row.effectiveDate" :id="scope.row.id"/>
             </div>
           </template>
         </el-table-column>
         <el-table-column :label="$t('user.name')" prop="name" show-overflow-tooltip/>
         <el-table-column :label="$t('user.account')" prop="login"/>
         <el-table-column label="上级" prop="superior.name"/>
-        <el-table-column :label="$t('common.action')" width="100px">
+        <el-table-column v-if="false" :label="$t('common.action')" width="100px">
           <template slot-scope="scope">
             <el-dropdown style="margin-left: 10px">
               <el-button type="primary" plain size="mini">
@@ -97,7 +96,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <!--<add/>-->
+      <add @afterSelectChannel="afterSelectChannel"/>
+      <addChannelCommissionTable v-if="hasPermission(100029)" ref="addChannelCommissionTable"/>
     </basic-container>
     <el-dialog
       :close-on-click-modal="false"
@@ -160,12 +160,13 @@ export default {
   directives: { elDragDialog },
   data() {
     return {
-      height: document.body.clientHeight - 130,
+      height: document.body.clientHeight - 180,
       dialogVisible: false,
       password: '',
       submitLoading: false,
       timeDialogVisible: false,
       channelName: '',
+      channelId: '',
       channelPolicyObj: {
         id: '',
         timestamp: ''
@@ -216,7 +217,8 @@ export default {
       })
     },
     verifyPassword(obj) {
-      this.channelPolicyObj = obj
+      this.channelId = obj.channel.id
+      this.channelPolicyObj.id = obj.id
       this.dialogVisible = true
     },
     handleDeleteChannelCommissionTable() {
@@ -227,9 +229,9 @@ export default {
           type: 'success',
           duration: 5 * 1000
         })
-        this.getChannelCommissionTableList({ channel: this.channelPolicyObj.channel.id })
+        this.getChannelCommissionTableList({ channel: this.channelId })
         this.submitLoading = false
-        this.dialogVisible = false
+        this.handleClose()
       }).catch(_ => {
         this.submitLoading = false
       })
@@ -261,6 +263,9 @@ export default {
     handleClose() {
       this.password = ''
       this.dialogVisible = false
+    },
+    afterSelectChannel(id) {
+      this.$refs.addChannelCommissionTable.initForm(id)
     },
     dateFormat(row, column) {
       const date = row[column.property]

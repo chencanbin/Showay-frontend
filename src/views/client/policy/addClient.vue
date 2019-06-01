@@ -10,6 +10,14 @@
       top="50px"
       width="450px">
       <el-form ref="client" :model="client" :rules="rule" label-width="120px">
+        <el-form-item :label="$t('client.info.type')" prop="type">
+          <el-select
+            v-model="client.isOrganization"
+            style="width: 100%">
+            <el-option key="0" :label="$t('client.info.individual')" :value="false"/>
+            <el-option key="1" :label="$t('client.info.organization')" :value="true"/>
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('client.info.name')" prop="name">
           <el-input v-model="client.name" :placeholder="$t('client.info.set.name')"/>
         </el-form-item>
@@ -17,15 +25,15 @@
           <el-input v-model="client.englishName" :placeholder="$t('client.info.set.enName')"/>
         </el-form-item>
         <el-form-item :label="$t('client.info.idNumber')" prop="idNumber">
-          <el-input v-model="client.idNumber" :placeholder="$t('client.info.set.idNumber')"/>
+          <el-input v-model="client.idNumber" :placeholder="client.isOrganization ? $t('client.info.set.organization_id') : $t('client.info.set.idNumber')"/>
         </el-form-item>
-        <el-form-item :label="$t('client.info.sex')" prop="sex">
+        <el-form-item v-show="!client.isOrganization" :label="$t('client.info.sex')" prop="sex">
           <el-radio-group v-model="client.sex">
             <el-radio :label="0">{{ $t('client.info.male') }}</el-radio>
             <el-radio :label="1">{{ $t('client.info.female') }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item :label="$t('client.info.locale')" prop="locale">
+        <el-form-item v-show="!client.isOrganization" :label="$t('client.info.locale')" prop="locale">
           <el-select v-model="client.locale" :placeholder="$t('client.info.set.locale')" filterable style="width: 100%">
             <el-option-group v-for="group in country" :key="group.label" :label="group.label">
               <el-option
@@ -36,10 +44,10 @@
             </el-option-group>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('client.info.birthday')" prop="birthday">
+        <el-form-item :label="client.isOrganization ? $t('client.info.established_time') : $t('client.info.birthday')" prop="birthday">
           <el-date-picker
             v-model="client.birthday"
-            :placeholder="$t('client.info.set.birthday')"
+            :placeholder="client.isOrganization ? $t('client.info.set.established_time') : $t('client.info.set.birthday')"
             style="width: 100%"
             type="date"/>
         </el-form-item>
@@ -78,6 +86,7 @@ export default {
       dialogVisible: false,
       loading: false,
       client: {
+        isOrganization: false,
         name: '',
         englishName: '',
         idNumber: '',

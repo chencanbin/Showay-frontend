@@ -234,7 +234,7 @@ export default {
           this.$api.user.editUser(id, data).then(res => {
             this.loading = false
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })

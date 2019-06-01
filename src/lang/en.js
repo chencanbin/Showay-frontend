@@ -18,7 +18,8 @@ export default {
     companyDocument: 'Partner',
     system: 'System',
     user: 'User',
-    role: 'Role'
+    role: 'Role',
+    template: 'Template'
   },
   common: {
     action: '',
@@ -52,6 +53,7 @@ export default {
       close: 'Are you sure you want to close the window?'
     },
     password_verify: '身份认证',
+    reset_password: 'Reset Password',
     password_verify_text: '此操作需要驗證身份才能繼續進行',
     company_placeholder: 'Select or enter partner(s)',
     medium: 'Medium',
@@ -289,6 +291,7 @@ export default {
     effectiveDate: 'EffectiveDate',
     create_time: 'Creation Date',
     superior: 'Superior',
+    email: 'Email',
     tooltip: {
       delete: 'Are you sure you want to delete the account？',
       delete_superior: 'Are you sure you want to delete the channel superior？'
@@ -306,6 +309,7 @@ export default {
       role: 'Select role(s)',
       effectiveDate: 'Select effectiveDate',
       superior: 'Select a superior',
+      email: 'Email',
       none_superior: 'None Superior',
       verify_message: {
         name: 'Empty name',
@@ -317,15 +321,30 @@ export default {
     name: 'Name',
     create_time: 'Creation Date'
   },
+  template: {
+    title: 'Title',
+    subject: 'Subject',
+    tooltip: {
+      delete: 'Are you sure you want to delete the template？'
+    },
+    set: {
+      add_template: 'Add Template',
+      edit_template: 'Edit Template'
+    }
+  },
   client: {
     info: {
       search: 'Search',
+      type: 'Type',
+      individual: 'Individual',
+      organization: 'Organization',
       name: 'Name',
       enName: 'EN Name',
       idNumber: 'ID Number',
       locale: 'Country/Region',
       sex: 'Gender',
       birthday: 'DOB',
+      established_time: 'Established Time',
       phone: 'Phone Number',
       email: 'Email',
       male: 'Male',
@@ -340,9 +359,11 @@ export default {
         edit_title: 'Modify Client Info',
         name: 'Name',
         enName: 'English name',
+        organization_id: 'BR no. / CI no.',
         idNumber: 'ID number',
         locale: 'Country/Region',
         birthday: 'Date of birth',
+        established_time: 'Date of established',
         phone: 'Phone number',
         email: 'Email address'
       }
@@ -380,6 +401,8 @@ export default {
       no_renewal_record: 'No data',
       term: 'Term',
       renewal_calendar: 'Renewal Calendar',
+      renewal_notification: 'Renewal Notification',
+      email_notification: 'Email Notification',
       tooltip: {
         delete: 'Are you sure you want to delete the insurance policy?',
         delete_riderBenefit: 'Are you sure you want to delete the rider?',
@@ -470,6 +493,7 @@ export default {
       submit_audit: 'Submit',
       cleared_title: 'Clear',
       payment_detail: 'Payment Detail',
+      payment_date: 'Issue Date',
       check_detail: 'Check Detail',
       tooltip: {
         audit: 'About to submit the payroll, continue?',
@@ -478,7 +502,8 @@ export default {
         clear: 'Please double check the input, once it is confirmed, no further modifications will be allowed.'
       },
       set: {
-        chequeNumber: 'Empty cheque number'
+        chequeNumber: 'cheque number',
+        payment_date: 'Issue Date'
       }
     }
   },
@@ -503,6 +528,22 @@ export default {
     upload_error: 'File size MUST be below 20 MB',
     set: {
       file_name: 'Empty filename'
+    }
+  },
+  sendEmail: {
+    title: 'Send Email',
+    button: 'Send',
+    to: 'TO',
+    subject: 'Subject',
+    content: 'Content',
+    attachment: 'Attachment',
+    select_attachment: 'Select File',
+    select_template_title: 'Select Template',
+    template: 'Template',
+    placeholder: 'placeholder',
+    send_success: 'Message is sent', // Message is sent
+    set: {
+      template: 'Select Template'
     }
   }
 }

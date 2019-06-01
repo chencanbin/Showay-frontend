@@ -16,10 +16,10 @@
         <el-form-item :label="$t('commission.payment.chequeCopy')" prop="chequeCopy">
           <image-upload ref="uploadImage" @afterComplete="setChequeCopy"/>
         </el-form-item>
-        <el-form-item :label="$t('user.effectiveDate')" prop="chequeIssueDate">
+        <el-form-item :label="$t('commission.payment.payment_date')" prop="chequeIssueDate">
           <el-date-picker
             v-model="clear.chequeIssueDate"
-            :placeholder="$t('user.set.effectiveDate')"
+            :placeholder="$t('commission.payment.set.payment_date')"
             type="date"
             value-format="timestamp"
             style="width: 100%"/>
@@ -48,7 +48,7 @@
         <el-form-item :label="$t('commission.payment.chequeCopy')">
           <span style="float: right; width: 75%;"><img v-if="imgSrc" :src="imgSrc" class="banner"></span>
         </el-form-item>
-        <el-form-item :label="$t('user.effectiveDate')">
+        <el-form-item :label="$t('commission.payment.payment_date')">
           <span style="float: right">{{ parseTime(clear.chequeIssueDate, '{y}-{m}-{d}') }}</span>
         </el-form-item>
         <el-form-item :label="$t('common.remarks')">

@@ -31,6 +31,7 @@
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.amountInHkd) }}</span>
             </template>
           </el-table-column>
+          <el-table-column :formatter="dateFormatter" label="提交时间" prop="creationDate" min-width="120"/>
           <el-table-column v-if="activeName === '3'" :label="$t('commission.payment.chequeNumber')" prop="chequeNumber"/>
           <el-table-column v-if="activeName === '3'" :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" align="center">
             <template slot-scope="scope">
@@ -66,6 +67,7 @@
 import pagination from '@/components/Pagination'
 import statusBadge from '@/components/StatusBadge'
 import { mapState } from 'vuex'
+import { parseTime } from '@/utils'
 import { commissionPaymentStatus } from '@/utils/constant'
 import { hasPaymentStatuses } from '@/utils/permission'
 import Cookies from 'js-cookie'
@@ -133,6 +135,9 @@ export default {
     },
     formatterCurrency(value) {
       return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
+    },
+    dateFormatter(row) {
+      return parseTime(row.creationDate, '{y}-{m}-{d}')
     },
     percentFormatter(row, column) {
       const number = row[column.property]

@@ -31,13 +31,21 @@
         <el-table-column
           :label="$t('client.info.locale')"
           prop="locale"
-          width="135"/>
+          width="135">
+          <template slot-scope="scope">
+            <span v-if="!scope.row.isOrganization">
+              {{ scope.row.locale }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column
           :label="$t('client.info.sex')"
           prop="sex"
           width="80">
           <template slot-scope="scope">
-            {{ scope.row.sex === 0 ? $t('client.info.male') : $t('client.info.female') }}
+            <span v-if="!scope.row.isOrganization">
+              {{ scope.row.sex === 0 ? $t('client.info.male') : $t('client.info.female') }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -48,14 +56,20 @@
         <el-table-column
           :label="$t('client.info.phone')"
           prop="phone"
-          min-width="120"
+          min-width="125"
           show-overflow-tooltip/>
         <el-table-column
           :label="$t('client.info.email')"
           prop="email"
           show-overflow-tooltip
           min-width="120"/>
-        <el-table-column :label="$t('common.action')" width="180" align="center">
+        <el-table-column :label="$t('client.info.type')" min-width="100px">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.isOrganization" type="warning">{{ $t('client.info.organization') }}</el-tag>
+            <el-tag v-else type="success">{{ $t('client.info.individual') }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('common.action')" width="120" align="center">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button type="primary" plain size="mini">
@@ -163,7 +177,7 @@ export default {
         })
         this.getClient()
         this.submitLoading = false
-        this.dialogVisible = false
+        this.handleClose()
       }).catch(_ => {
         this.submitLoading = false
       })

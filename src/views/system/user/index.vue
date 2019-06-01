@@ -78,7 +78,7 @@
                     v-if="hasPermission(100085) && !scope.row.isBuiltin"
                     type="text"
                     size="small"
-                    @click="verifyPassword(scope.$index, scope.row)">重置密码
+                    @click="verifyPassword(scope.$index, scope.row)">{{ $t('common.reset_password') }}
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
@@ -279,7 +279,7 @@ export default {
           duration: 5 * 1000
         })
         this.resetLoading = false
-        this.dialogVisible = false
+        this.handleClose()
       }).catch(_ => {
         this.resetLoading = false
       })

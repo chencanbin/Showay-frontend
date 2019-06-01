@@ -83,6 +83,12 @@ export default {
         return ''
       }
     },
+    term: {
+      type: Number,
+      default() {
+        return 0
+      }
+    },
     dateRange: {
       type: Array,
       default() {
@@ -157,7 +163,7 @@ export default {
             const offset = (this.listQuery.page - 1) * this.listQuery.limit
             const max = this.listQuery.limit
             if (this.dateRange) {
-              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard, sort: this.sort, order: this.order, offset, max })
+              this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, geDueDate: this.dateRange[0], leDueDate: this.dateRange[1], wildcard: this.wildcard, sort: this.sort, order: this.order, term: this.term, offset, max })
             } else {
               this.$store.dispatch('commission/FetchCommissionCredit', { status: this.activeName, wildcard: this.wildcard, sort: this.sort, order: this.order, offset, max })
             }

@@ -1,209 +1,132 @@
 <template>
-  <div :class="{fullscreen:fullscreen}" class="tinymce-container editor-container">
-    <textarea :id="tinymceId" class="tinymce-textarea"/>
-    <div class="editor-custom-btn-container">
-      <editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK"/>
-    </div>
+  <div class="tinymce-editor">
+    <editor
+      v-model="myValue"
+      :init="init"
+      :disabled="disabled"
+      @onClick="onClick"/>
   </div>
 </template>
 
 <script>
-import editorImage from './components/editorImage'
-import plugins from './plugins'
-import toolbar from './toolbar'
+import tinymce from 'tinymce/tinymce'
+import Editor from '@tinymce/tinymce-vue'
+import Cookies from 'js-cookie'
+import 'tinymce/themes/modern/theme'
+import 'tinymce/plugins/image'
+import 'tinymce/plugins/media'
+import 'tinymce/plugins/table'
+import 'tinymce/plugins/lists'
+import 'tinymce/plugins/contextmenu'
+import 'tinymce/plugins/wordcount'
+import 'tinymce/plugins/colorpicker'
+import 'tinymce/plugins/textcolor'
+import 'tinymce/plugins/preview'
 
+const custormListItems = ['name', 'policyHolder', 'password', 'signature', 'number', 'premium', 'dueDate']
+const cookieLanguage = Cookies.get('language') || ''
+let placeholder = 'placeholder'
+let language_url = ''
+let language = ''
+if (cookieLanguage === 'zh-CN') {
+  placeholder = '占位符'
+  language = 'zh_CN'
+  language_url = '/static/tinymce/langs/zh_CN.js'
+}
+if (cookieLanguage === 'zh-TW') {
+  placeholder = '佔位符'
+  language = 'zh_TW'
+  language_url = '/static/tinymce/langs/zh-TW.js'
+}
 export default {
-  name: 'Tinymce',
-  components: { editorImage },
+
+  components: {
+    Editor
+  },
   props: {
-    id: {
-      type: String,
-      default: function() {
-        return 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '')
-      }
-    },
+    // 传入一个value，使组件支持v-model绑定
     value: {
       type: String,
       default: ''
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    plugins: {
+      type: [String, Array],
+      default: 'lists image media table textcolor wordcount contextmenu preview'
+    },
     toolbar: {
-      type: Array,
-      required: false,
-      default() {
-        return []
-      }
-    },
-    menubar: {
-      type: String,
-      default: 'file edit insert view format table'
-    },
-    height: {
-      type: Number,
-      required: false,
-      default: 360
+      type: [String, Array],
+      default: 'preview undo redo |  fontsizeselect fontselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor lists image table | placeholder'
     }
   },
   data() {
     return {
-      hasChange: false,
-      hasInit: false,
-      tinymceId: this.id,
-      fullscreen: false,
-      languageTypeList: {
-        'en': 'en',
-        'zh': 'zh_CN'
-      }
-    }
-  },
-  computed: {
-    language() {
-      return this.languageTypeList[this.$store.getters.language]
+      // 初始化配置
+      init: {
+        language_url: language_url,
+        language: language,
+        skin_url: '/static/tinymce/skins/lightgray',
+        height: 300,
+        plugins: this.plugins,
+        toolbar: this.toolbar,
+        branding: false,
+        menubar: false,
+        // 此处为图片上传处理函数，这个直接用了base64的图片形式上传图片，
+        // 如需ajax上传可参考https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_handler
+        images_upload_handler: (blobInfo, success, failure) => {
+          const img = 'data:' + blobInfo.blob().type + ';base64,' + blobInfo.base64()
+          success(img)
+        },
+        setup(editor) {
+          const menuItems = []
+          tinymce.each(custormListItems, function(myListItemName) {
+            menuItems.push({
+              text: myListItemName,
+              onclick: function() {
+                editor.insertContent('&nbsp;${' + myListItemName + '}&nbsp;')
+              }
+            })
+          })
+          editor.addButton('placeholder', {
+            type: 'menubutton',
+            tooltip: placeholder,
+            text: placeholder,
+            icon: false,
+            menu: menuItems,
+            context: 'insert'
+          })
+        }
+      },
+      myValue: this.value
     }
   },
   watch: {
-    value(val) {
-      if (!this.hasChange && this.hasInit) {
-        this.$nextTick(() =>
-          window.tinymce.get(this.tinymceId).setContent(val || ''))
-      }
+    value(newValue) {
+      this.myValue = newValue
     },
-    language() {
-      this.destroyTinymce()
-      this.$nextTick(() => this.initTinymce())
+    myValue(newValue) {
+      this.$emit('input', newValue)
     }
   },
   mounted() {
-    this.initTinymce()
-  },
-  activated() {
-    this.initTinymce()
-  },
-  deactivated() {
-    this.destroyTinymce()
-  },
-  destroyed() {
-    this.destroyTinymce()
+    tinymce.init({})
   },
   methods: {
-    initTinymce() {
-      const _this = this
-      window.tinymce.init({
-        language: this.language,
-        selector: `#${this.tinymceId}`,
-        height: this.height,
-        body_class: 'panel-body ',
-        object_resizing: false,
-        toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
-        menubar: this.menubar,
-        plugins: plugins,
-        end_container_on_empty_block: true,
-        powerpaste_word_import: 'clean',
-        code_dialog_height: 450,
-        code_dialog_width: 1000,
-        advlist_bullet_styles: 'square',
-        advlist_number_styles: 'default',
-        imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
-        default_link_target: '_blank',
-        link_title: false,
-        nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
-        init_instance_callback: editor => {
-          if (_this.value) {
-            editor.setContent(_this.value)
-          }
-          _this.hasInit = true
-          editor.on('NodeChange Change KeyUp SetContent', () => {
-            this.hasChange = true
-            this.$emit('input', editor.getContent())
-          })
-        },
-        setup(editor) {
-          editor.on('FullscreenStateChanged', (e) => {
-            _this.fullscreen = e.state
-          })
-        }
-        // 整合七牛上传
-        // images_dataimg_filter(img) {
-        //   setTimeout(() => {
-        //     const $image = $(img);
-        //     $image.removeAttr('width');
-        //     $image.removeAttr('height');
-        //     if ($image[0].height && $image[0].width) {
-        //       $image.attr('data-wscntype', 'image');
-        //       $image.attr('data-wscnh', $image[0].height);
-        //       $image.attr('data-wscnw', $image[0].width);
-        //       $image.addClass('wscnph');
-        //     }
-        //   }, 0);
-        //   return img
-        // },
-        // images_upload_handler(blobInfo, success, failure, progress) {
-        //   progress(0);
-        //   const token = _this.$store.getters.token;
-        //   getToken(token).then(response => {
-        //     const url = response.data.qiniu_url;
-        //     const formData = new FormData();
-        //     formData.append('token', response.data.qiniu_token);
-        //     formData.append('key', response.data.qiniu_key);
-        //     formData.append('file', blobInfo.blob(), url);
-        //     upload(formData).then(() => {
-        //       success(url);
-        //       progress(100);
-        //     })
-        //   }).catch(err => {
-        //     failure('出现未知问题，刷新页面，或者联系程序员')
-        //     console.log(err);
-        //   });
-        // },
-      })
+    // 添加相关的事件，可用的事件参照文档=> https://github.com/tinymce/tinymce-vue => All available events
+    // 需要什么事件可以自己增加
+    onClick(e) {
+      this.$emit('onClick', e, tinymce)
     },
-    destroyTinymce() {
-      const tinymce = window.tinymce.get(this.tinymceId)
-      if (this.fullscreen) {
-        tinymce.execCommand('mceFullScreen')
-      }
-
-      if (tinymce) {
-        tinymce.destroy()
-      }
-    },
-    setContent(value) {
-      window.tinymce.get(this.tinymceId).setContent(value)
-    },
-    getContent() {
-      window.tinymce.get(this.tinymceId).getContent()
-    },
-    imageSuccessCBK(arr) {
-      const _this = this
-      arr.forEach(v => {
-        window.tinymce.get(_this.tinymceId).insertContent(`<img class="wscnph" src="${v.url}" >`)
-      })
+    // 可以添加一些自己的自定义事件，如清空内容
+    clear() {
+      this.myValue = ''
     }
   }
 }
-</script>
 
+</script>
 <style scoped>
-.tinymce-container {
-  position: relative;
-}
-.tinymce-container>>>.mce-fullscreen {
-  z-index: 10000;
-}
-.tinymce-textarea {
-  visibility: hidden;
-  z-index: -1;
-}
-.editor-custom-btn-container {
-  position: absolute;
-  right: 4px;
-  top: 4px;
-  /*z-index: 2005;*/
-}
-.fullscreen .editor-custom-btn-container {
-  z-index: 10000;
-  position: fixed;
-}
-.editor-upload-btn {
-  display: inline-block;
-}
 </style>

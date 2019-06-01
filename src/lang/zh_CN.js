@@ -18,7 +18,8 @@ export default {
     companyDocument: '公司文档',
     system: '系统',
     user: '用户',
-    role: '角色'
+    role: '角色',
+    template: '模板'
   },
   common: {
     action: '操作',
@@ -52,6 +53,7 @@ export default {
       close: '是否需要关闭此窗口?'
     },
     password_verify: '身份认证',
+    reset_password: '重置密码',
     password_verify_text: '此操作需要验证身份才能继续进行',
     company_placeholder: '请选择供应商',
     medium: '中号',
@@ -248,6 +250,7 @@ export default {
         add_title: '添加渠道佣金策略表',
         edit_title: '编辑渠道佣金策略表',
         edit_commission_policy_title: '编辑佣金策略',
+        priority: '优先级',
         name: '供应商 / 产品',
         term: '年期',
         save_dialog_title: '渠道佣金生效时间 / 备注',
@@ -289,6 +292,7 @@ export default {
     effectiveDate: '有效时间',
     create_time: '创建时间',
     superior: '上级',
+    email: '电子邮箱',
     tooltip: {
       delete: '此操作将永久删除该账号, 是否继续?',
       delete_superior: '此操作将永久删除该渠道上级, 是否继续?'
@@ -306,6 +310,7 @@ export default {
       role: '请选择账户角色',
       effectiveDate: '请输入有效时间',
       superior: '请选择账户上级',
+      email: '请输入电子邮箱',
       none_superior: '无上级',
       verify_message: {
         name: '姓名必须填',
@@ -317,16 +322,30 @@ export default {
     name: '角色名',
     create_time: '创建时间'
   },
-
+  template: {
+    title: '模板名',
+    subject: '主题',
+    tooltip: {
+      delete: '此操作将永久删除该模板, 是否继续?'
+    },
+    set: {
+      add_template: '添加模板',
+      edit_template: '编辑模板'
+    }
+  },
   client: {
     info: {
       search: '搜索(客户姓名 | 证件号)',
-      name: '客户姓名',
+      type: '类型',
+      individual: '个人',
+      organization: '机构',
+      name: '客户名',
       enName: '英文名',
       idNumber: '证件号',
       locale: '国家/地区',
       sex: '性别',
       birthday: '出生日期',
+      established_time: '成立时间',
       phone: '电话号码',
       email: '电子邮箱',
       male: '男',
@@ -341,9 +360,11 @@ export default {
         edit_title: '编辑客户资料',
         name: '请输入客户姓名',
         enName: '请输入英文名',
+        organization_id: '輸入商业登记号 或 公司注册证明书号',
         idNumber: '请输入证件号',
         locale: '请选择国家/地区',
         birthday: '请选择出生日期',
+        established_time: '请选择成立日期',
         phone: '请输入电话号码',
         email: '请输入电子邮箱'
       }
@@ -381,6 +402,8 @@ export default {
       no_renewal_record: '无续保记录',
       term: '年期',
       renewal_calendar: '续保日历',
+      renewal_notification: '续保提醒',
+      email_notification: '邮件通知',
       tooltip: {
         delete: '此操作将永久删除该保单, 是否继续?',
         delete_riderBenefit: '此操作将删除该副险, 是否继续?',
@@ -471,6 +494,7 @@ export default {
       submit_audit: '提交审核',
       cleared_title: '结清佣金',
       payment_detail: '支付详情',
+      payment_date: '发放时间',
       check_detail: '支票详情',
       tooltip: {
         audit: '此操作会将选中的渠道佣金记录提交审核, 是否继续?',
@@ -479,7 +503,8 @@ export default {
         clear: '请确认上述信息是否正确, 一旦确认, 将无法再继续编辑支票内容, 是否继续?'
       },
       set: {
-        chequeNumber: '请输入支票号码'
+        chequeNumber: '请输入支票号码',
+        payment_date: '请选择发放时间'
       }
     }
   },
@@ -504,6 +529,22 @@ export default {
     upload_error: '请上传20M以下的文件',
     set: {
       file_name: '请输入文件名'
+    }
+  },
+  sendEmail: {
+    title: '发送邮件',
+    button: '发送',
+    to: '收件人',
+    subject: '主题',
+    content: '内容',
+    attachment: '附件',
+    select_attachment: '选择文件',
+    select_template_title: '选择模板',
+    template: '邮箱模板',
+    placeholder: '占位符',
+    send_success: '邮件已发送', // Message is sent
+    set: {
+      template: '请选择邮件模板'
     }
   }
 }

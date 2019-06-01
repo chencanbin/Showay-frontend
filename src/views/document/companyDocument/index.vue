@@ -44,6 +44,7 @@
               <svg-icon v-if="!scope.row.extention" icon-class="folder" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>
               <svg-icon v-else :icon-class="getFileType(scope.row.extention)" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>
               <a v-if="!scope.row.resourceKey" class="folderLink" @click="handleTableFolderClick(scope.row.id)">{{ scope.row.name }}</a>
+              <a v-else-if="scope.row.resourceKey && scope.row.extention === 'application/pdf'" class="folderLink" @click="viewPdf(scope.row)">{{ scope.row.name }}</a>
               <span v-else>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
@@ -233,6 +234,16 @@ export default {
     handleFolderClick(node) {
       this.nodeExpand([], node)
     },
+    viewPdf(row) {
+      this.$api.document.getCompanyDownloadLink(row.resourceKey).then(res => {
+        axios.get(res.data.url, {
+          responseType: 'blob'
+        }).then(res => {
+          const href = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+          window.open(href)
+        })
+      })
+    },
     handleTableFolderClick(id) {
       this.expandArray.push(id)
       this.nodeExpand([], this.$refs.tree.getNode(id))
@@ -340,7 +351,7 @@ export default {
       return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
     },
     handleDownload(index, row) {
-      this.$api.document.getPrivateDownloadLink(row.resourceKey).then(res => {
+      this.$api.document.getCompanyDownloadLink(row.resourceKey).then(res => {
         this.download(res.data.url, row.name)
       })
     },

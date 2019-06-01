@@ -15,7 +15,7 @@
         @input="search">
         <i slot="prefix" class="el-input__icon el-icon-search"/>
       </el-input>
-      <el-button :loading="loading" size="small" plain icon="el-icon-download" type="primary" @click="exportExcel()">导出</el-button>
+      <el-button size="small" plain icon="el-icon-download" type="primary" @click="exportExcel()">{{ $t('common.export') }}</el-button>
     </div>
     <el-tabs v-model="activeName" type="border-card">
       <el-tab-pane :label="$t('product.commission.view.basic_tab')" name="basic">
@@ -29,7 +29,7 @@
               <span>{{ scope.row.conditions[index] ? numberFormatter(scope.row.conditions[index].basicCommissionRate) : '-' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="ffyap" width="80">
+          <el-table-column label="FFYAP" width="80">
             <template slot-scope="scope">
               <span>{{ getFFYAP(scope.row.extraConditions) }}</span>
             </template>
@@ -60,6 +60,8 @@
 
 <script type="text/ecmascript-6">
 import pagination from '@/components/Pagination'
+import axios from 'axios'
+import Cookies from 'js-cookie'
 
 const _ = require('lodash')
 export default {
@@ -71,6 +73,9 @@ export default {
     return {
       viewLoading: false,
       ffyap: true,
+      effectiveDate: '',
+      status: '',
+      companyName: '',
       activeName: 'basic',
       wildcard: '',
       tableHeight: document.body.clientHeight - 180,
@@ -94,15 +99,19 @@ export default {
       this.listQuery = { page: 1, limit: 50 }
       this.getCommissionTableList({ wildcard: this.wildcard })
     }, 500),
-    openDialog(id, effectiveDate) {
+    openDialog(id, effectiveDate, status) {
       this.dialogVisible = true
       this.viewLoading = true
+      this.effectiveDate = effectiveDate
+      console.log(this.effectiveDate)
+      this.status = status
       this.data = []
       this.$api.commission.fetchCommissionTable(id, { ffyap: this.ffyap }).then(res => {
         this.data = res.data.list
         this.total = res.data.total
         this.id = id
         this.title = this.$t('product.commission.view.title', [res.data.company.name + ' ( ' + effectiveDate + ' ) '])
+        this.companyName = res.data.company.name
         const conditionLengthArray = []
         this.columnYear = []
         _.forEach(res.data.list, item => {
@@ -163,7 +172,95 @@ export default {
       return result
     },
     exportExcel() {
-      window.location.href = process.env.BASE_API + `/commissionTable/${this.id}/export`
+      const _this = this
+      const fileName = `${this.companyName} EffectiveDate ${this.effectiveDate}.xlsx`
+      const url = process.env.BASE_API + `/commissionTable/${this.id}/export`
+      const language = Cookies.get('language')
+      const CancelToken = axios.CancelToken
+      if (this.status === 2) {
+        this.$confirm(this.$t('product.commission.tooltip.export'), this.$t('common.prompt'), {
+          confirmButtonText: this.$t('common.confirmButton'),
+          cancelButtonText: this.$t('common.cancelButton'),
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+              instance.confirmButtonLoading = true
+              axios.get(url, {
+                responseType: 'blob',
+                headers: {
+                  'content-language': language || 'zh-CN',
+                  'Accept-Language': language || 'zh-CN'
+                },
+                cancelToken: new CancelToken(function executor(c) {
+                  _this.cancelTokenFn = c
+                })
+              }).then(res => {
+                const blob = new Blob([res.data])
+                const downloadElement = document.createElement('a')
+                const href = window.URL.createObjectURL(blob) //  创建下载的链接
+                downloadElement.href = href
+                downloadElement.download = fileName //  下载后文件名
+                document.body.appendChild(downloadElement)
+                downloadElement.click() //  点击下载
+                document.body.removeChild(downloadElement) // 下载完成移除元素
+                window.URL.revokeObjectURL(href) // 释放blob对象
+                instance.confirmButtonLoading = false
+                done()
+              }).catch(_ => {
+                instance.confirmButtonLoading = false
+              })
+            }
+            if (action === 'cancel') {
+              instance.confirmButtonLoading = false
+              this.cancelTokenFn && this.cancelTokenFn()
+              this.cancelTokenFn = null
+              done()
+            }
+          }
+        })
+      } else {
+        this.$confirm(this.$t('product.commission.tooltip.download'), this.$t('common.prompt'), {
+          confirmButtonText: this.$t('common.confirmButton'),
+          cancelButtonText: this.$t('common.cancelButton'),
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+              instance.confirmButtonLoading = true
+              axios.get(url, {
+                responseType: 'blob',
+                headers: {
+                  'content-language': language || 'zh-CN',
+                  'Accept-Language': language || 'zh-CN'
+                },
+                cancelToken: new CancelToken(function executor(c) {
+                  _this.cancelTokenFn = c
+                })
+              }).then(res => {
+                const blob = new Blob([res.data])
+                const downloadElement = document.createElement('a')
+                const href = window.URL.createObjectURL(blob) //  创建下载的链接
+                downloadElement.href = href
+                downloadElement.download = fileName //  下载后文件名
+                document.body.appendChild(downloadElement)
+                downloadElement.click() //  点击下载
+                document.body.removeChild(downloadElement) // 下载完成移除元素
+                window.URL.revokeObjectURL(href) // 释放blob对象
+                instance.confirmButtonLoading = false
+                done()
+              }).catch(_ => {
+                instance.confirmButtonLoading = false
+              })
+            }
+            if (action === 'cancel') {
+              instance.confirmButtonLoading = false
+              this.cancelTokenFn && this.cancelTokenFn()
+              this.cancelTokenFn = null
+              done()
+            }
+          }
+        })
+      }
+      // window.location.href = process.env.BASE_API + `/commissionTable/${this.id}/export`
     },
     pagination(pageObj) {
       this.offset = (pageObj.page - 1) * pageObj.limit

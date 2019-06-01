@@ -248,6 +248,12 @@ export const asyncRouterMap = [
         component: () => import('@/views/system/role'),
         name: 'role',
         meta: { title: 'role', icon: 'role', noCache: true, id: 100088 }
+      },
+      {
+        path: 'template',
+        component: () => import('@/views/system/template'),
+        name: 'template',
+        meta: { title: 'template', icon: 'template', noCache: true, id: 100088 }
       }
     ]
   },

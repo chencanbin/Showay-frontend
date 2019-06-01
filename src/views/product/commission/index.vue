@@ -42,7 +42,7 @@
                           v-if="hasPermission(100017) && commissionTable.status !== 0"
                           size="small"
                           type="text"
-                          @click="handleView(commissionTable.id, getFormattedDate(commissionTable.effectiveDate))">
+                          @click="handleView(commissionTable.id, getFormattedDate(commissionTable.effectiveDate), commissionTable.status)">
                           {{ $t('common.view') }}
                         </el-button>
                       </el-dropdown-item>
@@ -220,7 +220,7 @@ export default {
           duration: 5 * 1000
         })
         this.getCommissionTableList(this.companyId)
-        this.dialogVisible = false
+        this.handleDelete()
         this.submitLoading = false
       }).catch(_ => {
         this.dialogVisible = false
@@ -267,7 +267,6 @@ export default {
           cancelButtonText: this.$t('common.cancelButton'),
           type: 'warning',
           beforeClose: (action, instance, done) => {
-            console.log(action)
             if (action === 'confirm') {
               instance.confirmButtonLoading = true
               axios.get(url, {
@@ -363,8 +362,8 @@ export default {
       this.password = ''
       this.dialogVisible = false
     },
-    handleView(id, effectiveDate) {
-      this.$refs.commissionView.openDialog(id, effectiveDate)
+    handleView(id, effectiveDate, status) {
+      this.$refs.commissionView.openDialog(id, effectiveDate, status)
     },
     dbRowClick(row) {
       this.$refs.commissionView.openDialog(row.id)

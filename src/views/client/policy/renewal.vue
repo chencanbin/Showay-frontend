@@ -1,7 +1,6 @@
 <template>
   <span>
     <el-button type="text" size="small" @click="initForm">
-      <svg-icon icon-class="renewal" style="margin-right: 5px"/>
       {{ $t('client.insurance_policy.renewal') }}
     </el-button>
     <el-dialog

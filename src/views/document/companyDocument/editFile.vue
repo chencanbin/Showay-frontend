@@ -74,7 +74,7 @@ export default {
         if (valid) {
           this.$api.document.editFile(this.file.id, this.file).then(_ => {
             this.$message({
-              message: '操作成功',
+              message: this.$t('common.success'),
               type: 'success',
               duration: 5 * 1000
             })

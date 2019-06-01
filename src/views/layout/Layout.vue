@@ -81,6 +81,7 @@ export default {
       this.ctTime = new Date().getTime()
       this.closeTime = this.closeTime - 1000
       if (this.closeTime <= 0) {
+        window.onbeforeunload = null
         store.dispatch('FedLogOut').then(() => {
           location.reload() // 为了重新实例化vue-router对象 避免bug
         })

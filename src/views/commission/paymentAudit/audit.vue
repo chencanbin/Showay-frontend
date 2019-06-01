@@ -71,7 +71,7 @@ export default {
     handleReject() {
       this.$api.commission.CommissionCreditReject(this.commissionCredit.id).then(_ => {
         this.$message({
-          message: '操作成功',
+          message: this.$t('common.success'),
           type: 'success',
           duration: 5 * 1000
         })
@@ -86,7 +86,7 @@ export default {
     handleClear() {
       this.$api.commission.CommissionCreditClear(this.commissionCredit.id).then(_ => {
         this.$message({
-          message: '操作成功',
+          message: this.$t('common.success'),
           type: 'success',
           duration: 5 * 1000
         })
