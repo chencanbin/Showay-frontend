@@ -109,13 +109,17 @@
               <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.premium) }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('client.insurance_policy.applicant_name')" prop="insurancePolicy.applicant.name" show-overflow-tooltip/>
+          <el-table-column :label="$t('client.insurance_policy.applicant_name')" prop="insurancePolicy.applicant.name" min-width="120" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <client-detail :id="scope.row.insurancePolicy.applicant.id" :name="scope.row.insurancePolicy.applicant.name"/>
+            </template>
+          </el-table-column>
           <el-table-column :label="$t('commission.credit.year')" prop="year" align="center"/>
           <el-table-column
             :formatter="formatterSubmitDate"
             :label="$t('client.insurance_policy.submitDate')"
             prop="insurancePolicy.submitDate"
-            min-width="100"
+            min-width="120"
             show-overflow-tooltip/>
           <el-table-column
             :formatter="formatterIssueDate"
@@ -192,6 +196,7 @@ import { creditStatus } from '@/utils/constant'
 import edit from './edit'
 import audit from './audit'
 import policyDetail from '../../client/policy/policyDetail'
+import clientDetail from '../../client/info/clientDetail'
 import Cookies from 'js-cookie'
 import CountTo from 'vue-count-to'
 import { getCurrentYearFirst, getCurrentYearLast, getYearFirst, getYearLast } from '@/utils'
@@ -205,7 +210,8 @@ export default {
     edit,
     audit,
     policyDetail,
-    CountTo
+    CountTo,
+    clientDetail
   },
   data() {
     return {

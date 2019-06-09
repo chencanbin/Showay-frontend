@@ -150,7 +150,7 @@ export default {
       wildcard: '',
       expandKeys: [],
       showExpandRow: false,
-      height: document.body.clientHeight - 190,
+      height: document.body.clientHeight - 180,
       cancelTokenFn: null, // 取消请求方法
       listQuery: {
         page: 1,

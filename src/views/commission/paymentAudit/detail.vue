@@ -36,7 +36,7 @@
             <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id"/>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('client.insurance_policy.beneficiary_name')" prop="insurancePolicy.beneficiary" width="80"/>
+        <el-table-column :label="$t('client.insurance_policy.insured_name')" prop="insurancePolicy.beneficiary" width="80"/>
         <el-table-column :label="$t('commission.credit.year')" width="80">
           <template slot-scope="scope">
             <span>{{ $t('commission.credit.years',[scope.row.year]) }}</span>

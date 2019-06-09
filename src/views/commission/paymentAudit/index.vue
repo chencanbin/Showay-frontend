@@ -16,7 +16,7 @@
         <pagination :total="auditPayment.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
         <el-table v-loading="auditPaymentLoading" :height="height" :data="auditPayment.list" stripe border>
           <el-table-column :label="$t('commission.payment.channel')" prop="channel.name" min-width="150"/>
-          <el-table-column :label="$t('commission.payment.calculatedTotalInHkd')" min-width="120">
+          <el-table-column :label="$t('commission.payment.calculatedTotalInHkd')" min-width="175">
             <template slot-scope="scope">
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.calculatedTotalInHkd) }}</span>
             </template>
@@ -31,7 +31,7 @@
               <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.amountInHkd) }}</span>
             </template>
           </el-table-column>
-          <el-table-column :formatter="dateFormatter" label="提交时间" prop="creationDate" min-width="120"/>
+          <el-table-column :formatter="dateFormatter" :label="$t('client.insurance_policy.submitDate')" prop="creationDate" min-width="120"/>
           <el-table-column v-if="activeName === '3'" :label="$t('commission.payment.chequeNumber')" prop="chequeNumber"/>
           <el-table-column v-if="activeName === '3'" :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" align="center">
             <template slot-scope="scope">

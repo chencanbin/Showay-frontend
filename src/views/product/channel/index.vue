@@ -25,7 +25,7 @@
         @expand-change="expandChange">
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <div v-loading="channelCommissionLoading" class="clearfix">
+            <div v-loading="channelCommissionLoading" class="clearfix" style="min-height: 50px;">
               <el-timeline id="channelCommissionTableList">
                 <div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399;">
                   {{ $t('product.channel.no_channel_policy') }}

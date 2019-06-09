@@ -206,5 +206,23 @@
    display: table-cell!important;
  }
 
+ .brand {
+   &.el-select-dropdown__item {
+     background: #9aaabf;
+   }
+   color: #409EFF;
+ }
+ .warning {
+   color: #E6A23C;
+ }
+ .success {
+   color: #67C23A
+ }
+ .info {
+   color: #909399
+ }
+ .danger {
+   color: #F56C6C;
+ }
 
 

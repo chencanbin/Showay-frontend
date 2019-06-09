@@ -30,9 +30,9 @@
           </template>
         </el-table-column>
         <el-table-column :label="$t('commission.payment.chequeNumber')" prop="chequeNumber" min-width="150"/>
-        <el-table-column :label="$t('common.remarks')" prop="remarks" min-width="150"/>
-        <el-table-column :label="$t('commission.payment.chequeIssueDate')" :formatter="dateFormat" prop="chequeIssueDate"/>
-        <el-table-column :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" align="center">
+        <el-table-column :label="$t('common.remarks')" prop="remarks" min-width="150" show-overflow-tooltip/>
+        <el-table-column :label="$t('commission.payment.chequeIssueDate')" :formatter="dateFormat" prop="chequeIssueDate" min-width="120"/>
+        <el-table-column :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" min-width="120" align="center">
           <template slot-scope="scope">
             <el-button type="text" @click="viewScanFile(scope.row.chequeCopy)">{{ $t('common.view') }}</el-button>
           </template>

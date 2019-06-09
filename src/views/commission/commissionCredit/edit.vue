@@ -84,7 +84,7 @@ export default {
       }
     },
     term: {
-      type: Number,
+      type: [Number, String],
       default() {
         return 0
       }

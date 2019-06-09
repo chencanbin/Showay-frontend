@@ -129,7 +129,7 @@ export default {
   directives: { elDragDialog },
   data: function() {
     return {
-      height: document.body.clientHeight - 190,
+      height: document.body.clientHeight - 180,
       id: 0,
       dialogVisible: false,
       password: '',

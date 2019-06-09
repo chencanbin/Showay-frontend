@@ -23,7 +23,7 @@
         <el-form-item :label="$t('client.insurance_policy.applicant_name')">
           <span>{{ data.applicant.name }}</span>
         </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.beneficiary_name')">
+        <el-form-item :label="$t('client.insurance_policy.insured_name')">
           <span>{{ data.beneficiary.name }}</span>
         </el-form-item>
         <el-form-item :label="$t('client.insurance_policy.company_name')">

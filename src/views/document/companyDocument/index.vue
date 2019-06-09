@@ -334,6 +334,7 @@ export default {
         'resourceKey': _file.uid
       }).then(_ => {
         this.getFolder(this.folderId)
+        this.loadFolder(this.node, this.resolve)
       })
     },
     afterEdit() {

@@ -188,13 +188,22 @@ export default {
         language = 'zh_TW'
       }
       this.$api.template.getTemplateById(this.templateId).then(res => {
+        let signature = ''
+        if (res.data.signature) {
+          res.data.signature.forEach(item => {
+            if (item.locale === language) {
+              signature = item.name
+            }
+          })
+        }
         if (res.data.body) {
           res.data.body.forEach(item => {
             if (item.locale === language) {
-              let body = item.name.replace(/\${policyHolder}/g, this.policy.applicant.name)
+              let body = item.name.replace(/\${name}/g, this.policy.applicant.name)
               body = body.replace(/\${premium}/g, currencyFormatter.format(this.policy.premium, { code: this.policy.currency }))
               body = body.replace(/\${number}/g, this.policy.number || '')
               body = body.replace(/\${dueDate}/g, parseTime(this.policy.dueDate, '{y}-{m}-{d}'))
+              body = body.replace(/\${signature}/g, signature)
               this.body = body
             }
           })

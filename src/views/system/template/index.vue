@@ -8,6 +8,11 @@
         :height="height"
         stripe
       >
+        <el-table-column width="50px" align="center">
+          <template slot-scope="scope">
+            <svg-icon v-if="scope.row.isBuiltin" icon-class="lock" style="font-size: 18px"/>
+          </template>
+        </el-table-column>
         <el-table-column
           :label="$t('template.title')"
           prop="title"/>

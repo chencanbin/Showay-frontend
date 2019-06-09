@@ -34,7 +34,7 @@
           show-overflow-tooltip
           min-width="150"/>
         <el-table-column
-          :label="$t('client.insurance_policy.beneficiary_name')"
+          :label="$t('client.insurance_policy.insured_name')"
           prop="beneficiary.name"
           show-overflow-tooltip
           min-width="150"/>

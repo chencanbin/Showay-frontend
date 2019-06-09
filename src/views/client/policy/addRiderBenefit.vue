@@ -97,7 +97,7 @@ export default {
         max: 50
       },
       riderBenefitRule: {
-        premium: [{ required: true, message: this.$t('client.insurance_policy.set.premium'), trigger: 'blur' }],
+        // premium: [{ required: true, message: this.$t('client.insurance_policy.set.premium'), trigger: 'blur' }],
         product: [{ required: true, message: this.$t('client.insurance_policy.set.product_name'), trigger: 'blur' }]
       },
       productLoading: false

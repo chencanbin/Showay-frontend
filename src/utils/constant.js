@@ -7,15 +7,27 @@ export const policyStatus = [
   },
   {
     id: 1,
-    'zh-TW': '申請中',
-    'zh-CN': '申请中',
+    'zh-TW': '核保中',
+    'zh-CN': '核保中',
     'en': 'Pending'
+  },
+  {
+    id: 5,
+    'zh-TW': '反邀约',
+    'zh-CN': '反邀约',
+    'en': 'Counteroffer'
   },
   {
     id: 2,
     'zh-TW': '已生效',
     'zh-CN': '已生效',
     'en': 'Inforce'
+  },
+  {
+    id: 6,
+    'zh-TW': '已拒絕',
+    'zh-CN': '已拒绝',
+    'en': 'Rejected'
   },
   {
     id: 3,
@@ -28,18 +40,6 @@ export const policyStatus = [
     'zh-TW': '保留',
     'zh-CN': '保留',
     'en': 'Reserved'
-  },
-  {
-    id: 5,
-    'zh-TW': '還價',
-    'zh-CN': '还价',
-    'en': 'Counteroffer'
-  },
-  {
-    id: 6,
-    'zh-TW': '已拒絕',
-    'zh-CN': '已拒绝',
-    'en': 'Rejected'
   },
   {
     id: 7,

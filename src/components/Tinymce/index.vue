@@ -23,20 +23,23 @@ import 'tinymce/plugins/colorpicker'
 import 'tinymce/plugins/textcolor'
 import 'tinymce/plugins/preview'
 
-const custormListItems = ['name', 'policyHolder', 'password', 'signature', 'number', 'premium', 'dueDate']
-const cookieLanguage = Cookies.get('language') || ''
+const custormListItems = ['login', 'password', 'name', 'signature', 'number', 'premium', 'dueDate']
+const cookieLanguage = Cookies.get('language') || 'zh-CN'
 let placeholder = 'placeholder'
 let language_url = ''
 let language = ''
+let langObject = require('./Lang/en')
 if (cookieLanguage === 'zh-CN') {
   placeholder = '占位符'
   language = 'zh_CN'
   language_url = '/static/tinymce/langs/zh_CN.js'
+  langObject = require('./Lang/zh_CN')
 }
 if (cookieLanguage === 'zh-TW') {
   placeholder = '佔位符'
   language = 'zh_TW'
   language_url = '/static/tinymce/langs/zh-TW.js'
+  langObject = require('./Lang/zh_TW')
 }
 export default {
 
@@ -84,7 +87,7 @@ export default {
           const menuItems = []
           tinymce.each(custormListItems, function(myListItemName) {
             menuItems.push({
-              text: myListItemName,
+              text: langObject.lang[myListItemName],
               onclick: function() {
                 editor.insertContent('&nbsp;${' + myListItemName + '}&nbsp;')
               }
