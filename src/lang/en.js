@@ -27,6 +27,7 @@ export default {
     delete: 'Delete',
     edit: 'Modify',
     view: 'View',
+    download: 'Download',
     export: 'Export',
     reset: 'Reset',
     success: 'Done!',
@@ -292,6 +293,7 @@ export default {
     create_time: 'Creation Date',
     superior: 'Superior',
     email: 'Email',
+    locked: 'Suspended',
     tooltip: {
       delete: 'Are you sure you want to delete the account？',
       delete_superior: 'Are you sure you want to delete the channel superior？'

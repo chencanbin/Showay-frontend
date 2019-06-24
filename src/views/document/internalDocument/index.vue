@@ -70,7 +70,7 @@
                       type="text"
                       size="small"
                       icon="el-icon-download"
-                      @click="handleDownload(scope.$index, scope.row)">下载
+                      @click="handleDownload(scope.$index, scope.row)">{{ $t('common.download') }}
                     </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>

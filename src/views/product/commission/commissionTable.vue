@@ -266,6 +266,10 @@ export default {
               instance = this.overallHotInstance
             }
             changes.forEach(([row, column, oldValue, newValue]) => {
+              if (oldValue === newValue) {
+                this.editStatus = ''
+                return
+              }
               let value = ''
               if (newValue) {
                 value = _.toString(newValue)
@@ -280,12 +284,13 @@ export default {
                 data.push({ row, column, value })
               }
             })
+            if (data.length === 0) {
+              return
+            }
             this.editStatus = this.$t('product.commission.commission_table.edit_status.saving')
-
             this.$api.commission.commissionTableDraft(this.id, { data, type }).then(res => {
               const date = new Date()
               this.editStatus = this.$t('product.commission.commission_table.edit_status.latest_save', [date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()])
-              console.log(this.editStatus)
             }).catch(_ => {
               this.basicHotInstance.undo()
               this.overallHotInstance.undo()

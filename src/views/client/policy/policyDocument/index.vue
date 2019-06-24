@@ -78,15 +78,15 @@
                         type="text"
                         size="small"
                         icon="el-icon-download"
-                        @click="handleDownload(scope.$index, scope.row)">下载
+                        @click="handleDownload(scope.$index, scope.row)">{{ $t('common.download') }}
                       </el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <edit v-if="hasPermission(100080)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit"/>
+                      <edit v-if="hasPermission(100084)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit"/>
                     </el-dropdown-item>
                     <el-dropdown-item>
                       <el-button
-                        v-if="hasPermission(100079)"
+                        v-if="hasPermission(100083)"
                         type="text"
                         size="small"
                         icon="el-icon-delete"
@@ -98,7 +98,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <file-upload v-if="hasPermission(100077)" @afterComplete="afterComplete"/>
+          <file-upload v-if="hasPermission(100081)" @afterComplete="afterComplete"/>
         </el-col>
         <file-list ref="fileList"/>
       </basic-container>
@@ -135,7 +135,7 @@ export default {
   data() {
     return {
       root: 0,
-      tableHeight: this.hasPermission(100077) ? document.body.clientHeight - 315 : document.body.clientHeight - 140,
+      tableHeight: this.hasPermission(100081) ? document.body.clientHeight - 315 : document.body.clientHeight - 140,
       treeWrapper: {
         height: (document.body.clientHeight - 80) + 'px'
       },

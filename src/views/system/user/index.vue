@@ -63,6 +63,13 @@
           :label="$t('client.info.email')"
           prop="email"
           min-width="100px"/>
+        <el-table-column
+          :label="$t('user.locked')"
+          min-width="100px">
+          <template slot-scope="scope">
+            <el-switch v-if="!scope.row.isBuiltin" v-model="scope.row.isLocked" :active-text="$t('user.locked')" @change="onLockAccount(scope.row)"/>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown v-if="!scope.row.isBuiltin">
@@ -287,6 +294,18 @@ export default {
     handleClose() {
       this.password = ''
       this.dialogVisible = false
+    },
+    onLockAccount(account) {
+      this.lockedLoading = account.id
+      this.$api.user.editUser(account.id, { isLocked: account.isLocked }).then(res => {
+        this.$message({
+          message: this.$t('common.success'),
+          type: 'success',
+          duration: 5 * 1000
+        })
+      }).catch(_ => {
+        account.isLocked = !account.isLocked
+      })
     }
   }
 }

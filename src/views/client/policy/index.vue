@@ -156,7 +156,7 @@
                 <el-dropdown-item v-if="hasPermission(100052)">
                   <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
                 </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100077)">
+                <el-dropdown-item v-if="hasPermission(100082)">
                   <policy-document :id="scope.row.number"/>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="hasPermission(100128)">
