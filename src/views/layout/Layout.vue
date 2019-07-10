@@ -10,8 +10,8 @@
     <el-dialog
       id="timeout"
       :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
+      :visible="timeoutDialog"
+      :before-close="handleTimeoutDialogClose"
       title="提示"
       width="400px">
       <span>由于长时间未操作系统，系统将在{{ parseTime(closeTime, '{i}:{s}') }}后登出</span>
@@ -22,8 +22,7 @@
 <script>
 import { Navbar, Sidebar, AppMain, TagsView } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
-import store from '@/store'
-import { parseTime } from '@/utils'
+import TimeoutMixin from './mixin/TimeoutHandler'
 export default {
   name: 'Layout',
   components: {
@@ -32,17 +31,7 @@ export default {
     AppMain,
     TagsView
   },
-  mixins: [ResizeMixin],
-  data() {
-    return {
-      lTime: new Date().getTime(), // 最后一次点击的时间
-      ctTime: new Date().getTime(), // 当前时间
-      tWarning: 5 * 60 * 1000, // 超过时间5min
-      tOut: 10 * 60 * 1000, // 超时时间10min
-      closeTime: 10 * 60 * 1000,
-      dialogVisible: false
-    }
-  },
+  mixins: [ResizeMixin, TimeoutMixin],
   computed: {
     sidebar() {
       return this.$store.state.app.sidebar
@@ -57,37 +46,17 @@ export default {
         withoutAnimation: this.sidebar.withoutAnimation,
         mobile: this.device === 'mobile'
       }
+    },
+    timeoutDialog() {
+      return this.$store.state.app.timeoutDialog
     }
   },
   created() {
     window.setInterval(this.tTime, 1000)
   },
   methods: {
-    parseTime,
     handleClickOutside() {
       this.$store.dispatch('closeSideBar', { withoutAnimation: false })
-    },
-    onPageClicked() {
-      this.dialogVisible = false
-      this.lTime = new Date().getTime()
-      this.closeTime = this.tOut
-    },
-    handleClose() {
-      this.dialogVisible = false
-      this.lTime = new Date().getTime()
-      this.closeTime = this.tOut
-    },
-    tTime() {
-      this.ctTime = new Date().getTime()
-      this.closeTime = this.closeTime - 1000
-      if (this.closeTime <= 0) {
-        window.onbeforeunload = null
-        store.dispatch('FedLogOut').then(() => {
-          location.reload() // 为了重新实例化vue-router对象 避免bug
-        })
-      } else if (this.ctTime - this.lTime > this.tWarning && !this.dialogVisible) {
-        this.dialogVisible = true
-      }
     }
   }
 }

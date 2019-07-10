@@ -7,7 +7,7 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('product.company.set.edit_title')"
-      width="500px"
+      width="600px"
       append-to-body>
       <el-form ref="company" :model="company" :rules="rule" label-width="120px">
         <el-form-item :label="$t('product.company.set.name_en')" prop="en">
@@ -31,6 +31,7 @@
         <el-button type="primary" circle icon="el-icon-plus" size="mini" style="position: absolute; top: 408px; left: 12px;" @click="addWebsites"/>
         <el-form-item v-for="(item, index) in company.websites" :key="index" :label="'系统地址' + (index + 1)">
           <el-input v-model="item.name" :class="company.websites.length > 1 ? 'halfWidth' : 'fullWidth'"/>
+          <el-input v-model="item.remark" style="width: 115px" placeholder="备注"/>
           <el-button v-if="company.websites.length > 1" icon="el-icon-remove-outline" size="small" style="min-width: 50px; font-size: 20px; padding: 6px; vertical-align: bottom;" @click="removeWebsite(index)"/>
         </el-form-item>
         <el-form-item :label="$t('product.company.set.contractEffectiveDate')" prop="contractEffectiveDate">
@@ -89,7 +90,7 @@ export default {
   },
   methods: {
     addWebsites() {
-      this.company.websites.push({ name: '' })
+      this.company.websites.push({ name: '', remark: '' })
     },
     removeWebsite(index) {
       this.company.websites.splice(index, 1)
@@ -108,7 +109,12 @@ export default {
           this.company.websites = [{ name: '' }]
         } else {
           res.data.websites.forEach(item => {
-            this.company.websites.push({ name: item })
+            const website = item.split('-')
+            if (website.length === 1) {
+              this.company.websites.push({ name: item })
+            } else {
+              this.company.websites.push({ name: website[0], remark: website[1] })
+            }
           })
         }
         // this.company.websites = res.data.websites
@@ -128,7 +134,7 @@ export default {
           const data = _.cloneDeep(this.company)
           const websites = []
           this.company.websites.forEach(item => {
-            websites.push(item.name)
+            websites.push(item.name + '-' + item.remark)
           })
           data.websites = websites
           this.$api.company.editCompany(this.id, data).then(_ => {
@@ -154,9 +160,9 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .fullWidth {
-    width: 100%;
+    width: 72%;
   }
   .halfWidth {
-    width: 83%;
+    width: 60%;
   }
 </style>

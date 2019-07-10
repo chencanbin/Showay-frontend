@@ -28,7 +28,8 @@
                 <span>{{ scope.row.address }}</span>
               </el-form-item>
               <el-form-item v-for="(item, index) in scope.row.websites" :key="index" :label="$t('product.company.table_header.website') + (index + 1)" class="company-form-item">
-                <a :href="item" class="link">{{ item }}</a>
+                <div v-if="item.split('-').length > 1" ><a :href="item" class="link">{{ item.split('-')[0] }}</a> ( {{ item.split('-')[1] }} )</div>
+                <div v-else ><a :href="item" class="link">{{ item }}</a></div>
               </el-form-item>
               <br>
               <el-form-item v-for="(item, index) in scope.row.contacts" :key="index" :label="$t('product.company.set.contacts') + (index + 1)" class="company-form-item" style="width: 30%">

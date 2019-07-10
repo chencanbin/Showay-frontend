@@ -184,6 +184,9 @@ export default {
         effectDateTitle: '設置佣金錶生效時間',
         effectDate: '生效時間',
         override_setting: '設置Override',
+        row_above: '向上插入一行',
+        row_below: '向下插入一行',
+        remove_row: '移除整行',
         publish_button: '發布',
         edit_status: {
           modifying: '正在修改.....',
@@ -245,7 +248,9 @@ export default {
         search: '搜索 (供應商 | 產品)',
         title: '渠道傭金預覽',
         company: '供應商',
-        product: '產品名稱'
+        product: '產品名稱',
+        exclude_product: '排除產品',
+        exclude_company: '排除供應商'
       },
       set: {
         add_title: '添加渠道傭金策略表',

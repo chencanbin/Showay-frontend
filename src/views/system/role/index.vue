@@ -17,6 +17,20 @@
           :formatter="dateFormat"
           :label="$t('user.create_time')"
           prop="creationDay"/>
+        <el-table-column :label="$t('common.action')" width="80px">
+          <template slot-scope="scope">
+            <el-dropdown>
+              <el-button type="primary" plain size="mini">
+                <i class="el-icon-more"/>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <edit :role="scope.row"/>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </el-table-column>
       </el-table>
     </basic-container>
   </div>
@@ -24,9 +38,12 @@
 
 <script>
 import { parseTime } from '@/utils'
-
+import edit from './edit'
 export default {
   name: 'Role',
+  components: {
+    edit
+  },
   data() {
     return {
       height: window.screen.height - 200,

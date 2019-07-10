@@ -229,6 +229,7 @@ code {
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
   width:12px;
+  height: 12px;
 }
 
 /* 滚动槽 */
@@ -240,6 +241,7 @@ code {
 ::-webkit-scrollbar-thumb {
   border-radius:5px;
   background:rgba(1,1,1,0.1);
+  z-index: 10000;
 }
 
 .search-input {

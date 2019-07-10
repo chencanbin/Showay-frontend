@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span class="demo">
     <el-button
       v-if="showButton"
       :loading="loading"
@@ -9,7 +9,7 @@
     <el-dialog
       id="commissionTableDialog"
       :fullscreen="fullscreen"
-      :visible="dialogVisible"
+      :visible="commissionTableDialogVisible"
       :before-close="handleClose"
       class="dialog-body"
       append-to-body>
@@ -35,21 +35,22 @@
           </el-input>
         </el-col>
       </el-row>
-
-      <el-tabs v-model="activeName" type="border-card" tab-position="bottom" @tab-click="handleTabClick">
-        <el-tab-pane :label="$t('product.commission.commission_table.basic_tab')" name="basic">
-          <hot-table v-loading="loading" ref="basicTable" :settings="settings"/>
-        </el-tab-pane>
-        <el-tab-pane :label="$t('product.commission.commission_table.override_tab')" name="override">
-          <hot-table v-loading="loading" ref="overrideTable" :settings="settings"/>
-        </el-tab-pane>
-        <el-tab-pane :label="$t('product.commission.commission_table.overall_tab')" name="overall">
-          <span style="margin-bottom: 10px; display: inline-block">
-            <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange"/>
-          </span>
-          <hot-table v-loading="loading" ref="overallTable" :settings="overAllSettings"/>
-        </el-tab-pane>
-      </el-tabs>
+      <div @click="onPageClicked()" @mousemove="onPageClicked()" @keyup="onPageClicked()">
+        <el-tabs v-model="activeName" type="border-card" tab-position="bottom" @tab-click="handleTabClick">
+          <el-tab-pane :label="$t('product.commission.commission_table.basic_tab')" name="basic">
+            <hot-table v-loading="loading" ref="basicTable" :settings="settings"/>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('product.commission.commission_table.override_tab')" name="override">
+            <hot-table v-loading="loading" ref="overrideTable" :settings="settings"/>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('product.commission.commission_table.overall_tab')" name="overall">
+            <span style="margin-bottom: 10px; display: inline-block">
+              <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange"/>
+            </span>
+            <hot-table v-loading="loading" ref="overallTable" :settings="overAllSettings"/>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
       <el-dialog
         :close-on-click-modal="false"
         :visible.sync="timeDialogVisible"
@@ -85,24 +86,26 @@
           <el-button :loading="buttonLoading" type="primary" @click="handleCloseSetOverrideDialog">{{ $t('common.submitButton') }}</el-button>
         </div>
       </el-dialog>
-
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" @click="handleTimeDialogOpen">{{ $t('product.commission.commission_table.publish_button') }}</el-button>
       </div>
     </el-dialog>
+
   </span>
 </template>
 
 <script type="text/ecmascript-6">
 import { HotTable } from '@handsontable/vue'
 import '../../../../node_modules/handsontable-pro/dist/handsontable.full.min.css'
+import TimeoutMixin from '@/views/layout/mixin/TimeoutHandler'
 
 const _ = require('lodash')
 export default {
   components: {
     HotTable
   },
+  mixins: [TimeoutMixin],
   props: {
     id: {
       type: Number,
@@ -147,7 +150,7 @@ export default {
       selectedRows: [], // 选中行数的数组
       remarks: '',
       fullscreen: true,
-      dialogVisible: false,
+      commissionTableDialogVisible: false,
       timeDialogVisible: false,
       setOverrideDialogVisible: false,
       loading: false,
@@ -216,7 +219,41 @@ export default {
         rowHeights: 45,
         columnHeaderHeight: 45,
         contextMenu: {
+          callback: (key, selection, clickEvent) => {
+            let type = 0
+            if (this.activeName === 'override') {
+              type = 1
+            } else if (this.activeName === 'overall') {
+              type = 2
+            }
+            if (key === 'row_above') {
+              this.$api.commission.commissionTableDraft(this.id, { data: [{ row: selection[0].start.row - 1, value: 1 }], action: 'insertRow', type }).then(res => {})
+            } else if (key === 'row_below') {
+              this.$api.commission.commissionTableDraft(this.id, { data: [{ row: selection[0].start.row, value: 1 }], action: 'insertRow', type }).then(res => {})
+            } else if (key === 'remove_row') {
+              console.log(selection)
+              const data = []
+              selection.forEach(item => {
+                if (item.start.row === item.end.row) {
+                  data.push({ row: item.start.row, value: 1 })
+                } else {
+                  const value = (item.end.row - item.start.row) + 1
+                  data.push({ row: item.start.row, value })
+                }
+              })
+              this.$api.commission.commissionTableDraft(this.id, { data, type, action: 'deleteRow' }).then(res => {})
+            }
+          },
           items: {
+            'row_above': {
+              name: this.$t('product.commission.commission_table.row_above')
+            },
+            'row_below': {
+              name: this.$t('product.commission.commission_table.row_below')
+            },
+            'remove_row': {
+              name: this.$t('product.commission.commission_table.remove_row')
+            },
             'override': { // Own custom option
               name: this.$t('product.commission.commission_table.override_setting'),
               callback: (key, selection, clickEvent) => {
@@ -257,13 +294,10 @@ export default {
           if (changes) {
             const data = []
             let type = 0
-            let instance = this.basicHotInstance
             if (this.activeName === 'override') {
               type = 1
-              instance = this.overrideHotInstance
             } else if (this.activeName === 'overall') {
               type = 2
-              instance = this.overallHotInstance
             }
             changes.forEach(([row, column, oldValue, newValue]) => {
               if (oldValue === newValue) {
@@ -277,12 +311,7 @@ export default {
               if (value && value.substr(-1) === '%') {
                 value = value.substr(0, value.length - 1)
               }
-              const sourceData = _.compact(instance.getSourceDataAtRow(row))
-              if (sourceData.length === 0) {
-                data.push({ row, value })
-              } else {
-                data.push({ row, column, value })
-              }
+              data.push({ row, column, value })
             })
             if (data.length === 0) {
               return
@@ -507,7 +536,7 @@ export default {
         that.$api.commission.commissionTableDraft(that.id, { releaseLock: true })
         return '关闭提示'
       }
-      this.dialogVisible = true
+      this.commissionTableDialogVisible = true
       this.initColumn()
       this.initOverAll()
       this.activeName = 'basic'
@@ -547,7 +576,7 @@ export default {
         this.loading = false
       }).catch(_ => {
         this.loading = false
-        this.dialogVisible = false
+        this.commissionTableDialogVisible = false
       })
     },
     loadOverrideData() {
@@ -603,7 +632,7 @@ export default {
         this.wildcard = ''
         this.$api.commission.commissionTableDraft(this.id, { releaseLock: true }).then(res => {
           this.$store.dispatch('commission/FetchCommissionTableList', { id: this.companyId })
-          this.dialogVisible = false
+          this.commissionTableDialogVisible = false
           window.onbeforeunload = null
         })
       })
@@ -627,7 +656,7 @@ export default {
       this.$api.commission.publishCommissionTableDraft(this.id, this.effectiveDate, this.remarks).then(res => {
         this.buttonLoading = false
         this.timeDialogVisible = false
-        this.dialogVisible = false
+        this.commissionTableDialogVisible = false
         this.$store.dispatch('commission/FetchCommissionTableList', { id: this.companyId })
       }).catch(error => {
         this.buttonLoading = false

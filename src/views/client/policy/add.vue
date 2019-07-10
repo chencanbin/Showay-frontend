@@ -39,7 +39,7 @@
                 style="width: 100%"
                 type="date"/>
             </el-form-item>
-            <el-form-item :label="$t('client.insurance_policy.premiumDate ')" prop="issueDate">
+            <el-form-item :label="$t('client.insurance_policy.premiumDate ')" prop="premiumDate">
               <el-date-picker
                 v-model="insurancePolicy.premiumDate "
                 :placeholder="$t('client.insurance_policy.set.premiumDate ')"

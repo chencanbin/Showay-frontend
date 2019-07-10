@@ -184,6 +184,9 @@ export default {
         effectDateTitle: '设置佣金表生效时间',
         effectDate: '生效时间',
         override_setting: '设置Override',
+        row_above: '向上插入一行',
+        row_below: '向下插入一行',
+        remove_row: '移除整行',
         publish_button: '发布',
         edit_status: {
           modifying: '正在修改.....',
@@ -245,7 +248,9 @@ export default {
         search: '搜索 (供应商 | 产品)',
         title: '渠道佣金预览',
         company: '供应商',
-        product: '产品名称'
+        product: '产品名称',
+        exclude_product: '排除产品',
+        exclude_company: '排除供应商'
       },
       set: {
         add_title: '添加渠道佣金策略表',

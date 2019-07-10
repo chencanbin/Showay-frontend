@@ -32,11 +32,11 @@
                 <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
                   {{ p.event.detail.product.name }}
                 </el-form-item>
-                <el-form-item :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                <el-form-item v-if="hasPermission(100053)" :label="$t('client.insurance_policy.renewed')" class="detail-item">
                   <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)"/>
                 </el-form-item>
                 <div style="text-align: center">
-                  <el-button @click="handleSendEmail(p.event)">{{ $t('client.insurance_policy.renewal_notification') }}</el-button>
+                  <el-button v-if="hasRoles([1, 3])" @click="handleSendEmail(p.event)">{{ $t('client.insurance_policy.renewal_notification') }}</el-button>
                 </div>
               </el-form>
             </el-card>
@@ -66,11 +66,11 @@
                 <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
                   {{ p.event.detail.product.name }}
                 </el-form-item>
-                <el-form-item :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                <el-form-item v-if="hasPermission(100053)" :label="$t('client.insurance_policy.renewed')" class="detail-item">
                   <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)"/>
                 </el-form-item>
                 <div style="text-align: center">
-                  <el-button @click="handleSendEmail(p.event)">{{ $t('client.insurance_policy.renewal_notification') }}</el-button>
+                  <el-button v-if="hasRoles([1, 3])" @click="handleSendEmail(p.event)">{{ $t('client.insurance_policy.renewal_notification') }}</el-button>
                 </div>
               </el-form>
             </el-card>
@@ -92,7 +92,7 @@ import FullCalendar from '@/components/FullCalendar'
 import { parseTime } from '@/utils'
 import sendEmail from '@/components/SendEmail'
 import moment from 'moment'
-
+import { hasRoles } from '@/utils/permission'
 const currencyFormatter = require('currency-formatter')
 
 export default {
@@ -118,6 +118,7 @@ export default {
     this.getCalendarRenewal()
   },
   methods: {
+    hasRoles,
     changeMonth(start, end, current) {
       this.from = start.format('x')
       this.to = end.format('x')

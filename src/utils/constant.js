@@ -274,3 +274,192 @@ export const homePageConfig = [
   { id: 13, 'name': 'home.news' }, // 最新动态
   { id: 14, 'name': 'home.balance', permissions: [110000, 110002, 110004, 110010] } // 收支分布
 ]
+
+export const permission = [
+  { id: 1, label: '首页', action: [{ id: 100001, name: 'Dashboard' }] },
+  { label: '产品',
+    children: [
+      { 'id': 2,
+        label: '合作机构',
+        action: [{ id: 100006, name: 'ListInsuranceCompany' }],
+        children: [
+          { id: 16,
+            label: '添加',
+            action: [
+              { id: 100005, name: 'CreateInsuranceCompany' }]
+          },
+          { id: 17,
+            label: '修改',
+            action: [
+              { id: 100008, name: 'UpdateInsuranceCompany' }]
+          },
+          { id: 18,
+            label: '编辑联系人',
+            action: [
+              { id: 100122, name: 'CreateContact' },
+              { id: 100123, name: 'ListContact' },
+              { id: 100125, name: 'UpdateContact' },
+              { id: 100126, name: 'DeleteContact' }
+            ]
+          },
+          { id: 19,
+            label: '删除',
+            action: [
+              { id: 100009, name: 'DeleteInsuranceCompany' }]
+          }]
+      },
+      { 'id': 3,
+        label: '产品佣金',
+        action: [{ id: 100006, name: 'ListInsuranceCompany' }, { id: 100016, name: 'ListCommissionTable' }],
+        children: [
+          { 'id': 20, label: '添加', action: [{ id: 100015, name: 'CreateCommissionTable' }, { id: 100006, name: 'ListInsuranceCompany' }, { id: 100016, name: 'ListCommissionTable' }] },
+          { 'id': 21, label: '查看', action: [{ id: 100017, name: 'ShowCommissionTable' }] },
+          { 'id': 22, label: '修改', action: [{ id: 100018, name: 'UpdateCommissionTable' }, { id: 100021, name: 'ShowDraft' }, { id: 100022, name: 'UpdateCommissionTableDraft' }, { id: 100023, name: 'SaveDraft' }] },
+          { 'id': 23, label: '导出', action: [{ id: 100020, name: 'ExportCommissionTable' }] },
+          { 'id': 24, label: '删除', action: [{ id: 100019, name: 'DeleteCommissionTable' }] }
+        ]
+      },
+      { 'id': 4,
+        label: '渠道佣金',
+        action: [{ id: 100082, name: 'ListUser' }, { id: 100030, name: 'ListChannelCommissionTable' }],
+        children: [
+          { 'id': 25, label: '添加', action: [{ id: 100029, name: 'CreateChannelCommissionTable' }, { id: 100082, name: 'ListUser' }] },
+          { 'id': 26, label: '修改', action: [{ id: 100032, name: 'UpdateChannelCommissionTable' }] },
+          { 'id': 27, label: '删除', action: [{ id: 100033, name: 'DeleteChannelCommissionTable' }] }
+        ]
+      }
+    ]
+  },
+  { label: '客户',
+    children: [
+      { 'id': 5,
+        label: '保单',
+        action: [{ id: 100045, name: 'ListInsurancePolicy' }, { id: 100041, name: 'ShowClient' }],
+        children: [
+          { 'id': 28, label: '添加', action: [{ id: 100044, name: 'CreateInsurancePolicy' }, { id: 100082, name: 'ListUser' }, { id: 100006, name: 'ListInsuranceCompany' }, { id: 100011, name: 'ListProduct' }] },
+          { 'id': 29, label: '修改', action: [{ id: 100044, name: 'UpdateInsurancePolicy' }, { id: 100082, name: 'ListUser' }, { id: 100006, name: 'ListInsuranceCompany' }, { id: 100011, name: 'ListProduct' }] },
+          { 'id': 30, label: '副险', action: [{ id: 100044, name: 'UpdateInsurancePolicy' }] },
+          { 'id': 31, label: '续保', action: [{ id: 100051, name: 'RenewInsurancePolicy' }, { id: 100052, name: 'ListInsurancePolicyRenewal' }, { id: 100053, name: 'UpdateInsurancePolicyRenewal' }, { id: 100054, name: 'DeleteInsurancePolicyRenewal' }] },
+          { 'id': 32, label: '保单文件', action: [{ id: 100133, name: 'DownloadPolicyDocument' }] },
+          { 'id': 33, label: '修改保单文件', action: [{ id: 100135, name: 'RenamePolicyDocument' }] },
+          { 'id': 34, label: '上传保单文件', action: [{ id: 100132, name: 'UploadPolicyDocument' }] },
+          { 'id': 35, label: '删除保单文件', action: [{ id: 100134, name: 'DeletePolicyDocument' }] },
+          { 'id': 36, label: '邮件通知', action: [{ id: 100128, name: 'ListEmailTemplate' }] },
+          { 'id': 37, label: '重置', action: [{ id: 100050, name: 'ResetInsurancePolicy' }] },
+          { 'id': 38, label: '删除', action: [{ id: 100048, name: 'DeleteInsurancePolicy' }] },
+          { 'id': 39, label: '公司支出', action: [{ id: 100112, name: 'CreateExpense' }, { id: 100113, name: 'ListExpense' }, { id: 100114, name: 'ShowExpense' }, { id: 100115, name: 'UpdateExpense' }, { id: 100116, name: 'DeleteExpense' }] },
+          { 'id': 40, label: '渠道支出', action: [{ id: 100117, name: 'CreateChannelExpense' }, { id: 100118, name: 'ListChannelExpense' }, { id: 100119, name: 'ShowChannelExpense' }, { id: 100120, name: 'UpdateChannelExpense' }, { id: 100121, name: 'DeleteChannelExpense' }] },
+          { 'id': 41, label: '添加客户', action: [{ id: 100039, name: 'CreateClient' }] }
+        ] },
+      { 'id': 6,
+        label: '客户资料',
+        action: [{ id: 100040, name: 'ListClient' }],
+        children: [
+          { 'id': 42, label: '添加', action: [{ id: 100039, name: 'CreateClient' }] },
+          { 'id': 43, label: '修改', action: [{ id: 100042, name: 'UpdateClient' }, { id: 100041, name: 'ShowClient' }] },
+          { 'id': 44, label: '删除', action: [{ id: 100043, name: 'DeleteClient' }] }
+        ] }
+    ]
+  },
+  { label: '佣金',
+    children: [
+      { 'id': 7,
+        label: '到账记录',
+        action: [{ id: 100055, name: 'ListCommissionCredit' }, { id: 100060, name: 'GetFilteredCreditSum' }],
+        children: [
+          { 'id': 45, label: '修改', action: [{ id: 100056, name: 'ShowCommissionCredit' }, { id: 100057, name: 'UpdateCommissionCredit' }] },
+          { 'id': 46, label: '审核', action: [{ id: 100058, name: 'RejectCredit' }, { id: 100059, name: 'ClearCredit' }] }
+        ]
+      },
+      { 'id': 8,
+        label: '发放记录',
+        action: [{ id: 100067, name: 'ListMergedPayment' }],
+        children: [
+          { 'id': 47, label: '待发放', paymentStatus: [{ id: 130000, name: 'Generated' }] },
+          { 'id': 48, label: '待审核', paymentStatus: [{ id: 130001, name: 'Rejected' }] },
+          { 'id': 49, label: '待结清', paymentStatus: [{ id: 130002, name: 'Approved' }] },
+          { 'id': 50, label: '提交审核', action: [{ id: 100068, name: 'ShowMergedPayment' }, { id: 100069, name: 'CreateMergedPayment' }] },
+          { 'id': 51, label: '审核', action: [{ id: 100068, name: 'ShowMergedPayment' }, { id: 100070, name: 'RejectMergedPayment' }, { id: 100071, name: 'ApproveMergedPayment' }] },
+          { 'id': 50, label: '结清', action: [{ id: 100072, name: 'ClearMergedPayment' }] }
+        ]
+      },
+      { 'id': 9, label: '已结清记录', paymentStatus: [{ id: 130003, name: 'Clear' }] }
+    ]
+  },
+  { id: 10,
+    label: '保单审计',
+    action: [{ id: 100045, name: 'ListInsurancePolicy' }],
+    children: [
+      { 'id': 52, label: '详情', action: [{ id: 100049, name: 'TraceInsurancePolicy' }] }
+    ]
+  },
+  { label: '文档',
+    children: [
+      { 'id': 11,
+        label: '内部文档',
+        action: [{ id: 100078, name: 'DownloadPrivateDocument' }],
+        children: [
+          { 'id': 53, label: '上传', action: [{ id: 100077, name: 'UploadPrivateDocument' }] },
+          { 'id': 54, label: '下载', action: [{ id: 100078, name: 'DownloadPrivateDocument' }] },
+          { 'id': 55, label: '修改', action: [{ id: 100080, name: 'RenamePrivateDocument' }] },
+          { 'id': 56, label: '删除', action: [{ id: 100079, name: 'DeletePrivateDocument' }] }
+        ]
+      },
+      { 'id': 12,
+        label: '公司文档',
+        action: [{ id: 100074, name: 'DownloadInsuranceCompanyDocument' }],
+        children: [
+          { 'id': 57, label: '上传', action: [{ id: 100073, name: 'UploadInsuranceCompanyDocument' }] },
+          { 'id': 58, label: '下载', action: [{ id: 100074, name: 'DownloadInsuranceCompanyDocument' }] },
+          { 'id': 59, label: '修改', action: [{ id: 100076, name: 'RenameInsuranceCompanyDocument' }] },
+          { 'id': 60, label: '删除', action: [{ id: 100075, name: 'DeleteInsuranceCompanyDocument' }] }
+        ]
+      }
+    ]
+  },
+  { label: '系统',
+    children: [
+      { 'id': 13,
+        label: '用户',
+        action: [{ id: 100082, name: 'ListUser' }],
+        children: [
+          { 'id': 61, label: '添加', action: [{ id: 100081, name: 'CreateUser' }] },
+          { 'id': 62, label: '修改', action: [{ id: 100083, name: 'ShowUser' }, { id: 100084, name: 'UpdateUser' }] },
+          { 'id': 63, label: '重置密码', action: [{ id: 100003, name: 'ResetPassword' }] },
+          { 'id': 64, label: '删除', action: [{ id: 100085, name: 'DeleteUser' }] },
+          { 'id': 65, label: '渠道上级列表', action: [{ id: 100108, name: 'ListChannelHierarchy' }] },
+          { 'id': 66, label: '添加渠道上级', action: [{ id: 100107, name: 'CreateChannelHierarchy' }] },
+          { 'id': 67, label: '修改渠道上级', action: [{ id: 100109, name: 'ShowChannelHierarchy' }, { id: 100110, name: 'UpdateChannelHierarchy' }] },
+          { 'id': 68, label: '删除渠道上级', action: [{ id: 100111, name: 'DeleteChannelHierarchy' }] }
+        ]
+      },
+      { 'id': 14,
+        label: '角色',
+        action: [{ id: 100088, name: 'ListRole' }],
+        children: [
+          { 'id': 69, label: '添加', action: [{ id: 100087, name: 'CreateUser' }] },
+          { 'id': 70, label: '修改', action: [{ id: 100089, name: 'ShowRole' }, { id: 100090, name: 'UpdateRole' }] },
+          { 'id': 71, label: '删除', action: [{ id: 100091, name: 'DeleteRole' }] }
+        ]
+      },
+      { 'id': 15,
+        label: '模板',
+        action: [{ id: 100128, name: 'ListEmailTemplate' }],
+        children: [
+          { 'id': 72, label: '添加', action: [{ id: 100127, name: 'CreateEmailTemplate' }] },
+          { 'id': 73, label: '修改', action: [{ id: 100129, name: 'ShowEmailTemplate' }, { id: 100130, name: 'UpdateEmailTemplate' }] },
+          { 'id': 74, label: '删除', action: [{ id: 100131, name: 'DeleteEmailTemplate' }] }
+        ]
+      },
+      {
+        'id': 75,
+        label: '续保日历',
+        action: [{ id: 100105, name: 'ShowRenewalCalendar' }],
+        children: [
+          { 'id': 76, label: '修改续保状态', action: [{ id: 100106, name: 'UpdateRenewalCalendar' }] },
+          { 'id': 77, label: '发送续保提醒' }
+        ]
+      }
+    ]
+  }
+]

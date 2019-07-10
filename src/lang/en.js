@@ -184,6 +184,9 @@ export default {
         effectDateTitle: 'Set effective date',
         effectDate: 'Effective Date',
         override_setting: 'Override',
+        row_above: 'Insert row above',
+        row_below: 'Insert row below',
+        remove_row: 'Remove row',
         publish_button: 'Publish',
         edit_status: {
           modifying: 'Editing...',
@@ -245,7 +248,9 @@ export default {
         search: 'Search',
         title: 'Preview Channel Commission Table',
         company: 'Co.',
-        product: 'Plan'
+        product: 'Plan',
+        exclude_product: 'Exclude Co.',
+        exclude_company: 'Exclude Plan'
       },
       set: {
         add_title: 'Add Channel',

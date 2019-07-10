@@ -9,7 +9,7 @@
       :before-close="handleClose"
       :title="$t('product.company.set.add_title')"
       top="50px"
-      width="500px">
+      width="600px">
       <el-form ref="company" :model="company" :rules="rule" label-width="110px">
         <el-form-item :label="$t('product.company.set.name_en')" prop="en">
           <el-input ref="en" v-model="company.en" autofocus/>
@@ -31,7 +31,8 @@
         </el-form-item>
         <el-button type="primary" circle icon="el-icon-plus" size="mini" style="position: absolute; top: 408px; left: 12px;" @click="addWebsites"/>
         <el-form-item v-for="(item, index) in company.websites" :key="index" :label="'系统地址' + (index + 1)">
-          <el-input v-model="item.name" :class="company.websites.length > 1 ? 'halfWidth' : 'fullWidth'"/>
+          <el-input v-model="item.name" :class="company.websites.length > 1 ? 'halfWidth' : 'fullWidth'" placeholder="系统地址"/>
+          <el-input v-model="item.remark" style="width: 120px" placeholder="备注"/>
           <el-button v-if="company.websites.length > 1" icon="el-icon-remove-outline" size="small" style="min-width: 50px; font-size: 20px; padding: 6px; vertical-align: bottom;" @click="removeWebsite(index)"/>
         </el-form-item>
         <el-form-item :label="$t('product.company.set.contractEffectiveDate')" prop="contractEffectiveDate">
@@ -73,7 +74,7 @@ export default {
         contractEffectiveDate: '',
         secondary: false,
         names: {},
-        websites: [{ name: '' }]
+        websites: [{ name: '', remark: '' }]
       },
       rule: {
         en: [{ required: true, message: this.$t('product.company.set.verify_message.name_en'), trigger: 'blur' }],
@@ -84,7 +85,7 @@ export default {
   },
   methods: {
     addWebsites() {
-      this.company.websites.push({ name: '' })
+      this.company.websites.push({ name: '', remark: '' })
     },
     removeWebsite(index) {
       this.company.websites.splice(index, 1)
@@ -97,6 +98,7 @@ export default {
     },
     handleClose() {
       this.$refs['company'].resetFields()
+      this.company.websites = [{ name: '', remark: '' }]
       this.dialogVisible = false
     },
     handleSubmit() {
@@ -112,7 +114,7 @@ export default {
           data.phone = this.company.phone
           const websites = []
           this.company.websites.forEach(item => {
-            websites.push(item.name)
+            websites.push(item.name + '-' + item.remark)
           })
           data.websites = websites
           data.contractEffectiveDate = this.company.contractEffectiveDate
@@ -141,9 +143,9 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .fullWidth {
-    width: 100%;
+    width: 72%;
   }
   .halfWidth {
-    width: 83%;
+    width: 60%;
   }
 </style>

@@ -7,3 +7,11 @@ export function fetchRoleList(params) {
     params
   })
 }
+
+export function editRole(id, data) {
+  return request({
+    url: `/role/${id}`,
+    method: 'put',
+    data
+  })
+}

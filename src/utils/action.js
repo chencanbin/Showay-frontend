@@ -379,7 +379,16 @@ export const actions = [{
 }, {
   'id': 100126,
   'name': 'DeleteContact'
-}]
+},
+{ id: 100127, name: 'CreateEmailTemplate' },
+{ id: 100128, name: 'ListEmailTemplate' },
+{ id: 100129, name: 'ShowEmailTemplate' },
+{ id: 100130, name: 'UpdateEmailTemplate' },
+{ id: 100131, name: 'DeleteEmailTemplate' },
+{ id: 100132, name: 'UploadPolicyDocument' },
+{ id: 100133, name: 'DownloadPolicyDocument' },
+{ id: 100134, name: 'DeletePolicyDocument' },
+{ id: 100135, name: 'RenamePolicyDocument' }]
 
 export const statItems = [
   { 'id': 110000, 'name': 'ClearedCredit' },
