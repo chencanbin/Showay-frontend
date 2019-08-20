@@ -231,7 +231,6 @@ export default {
             } else if (key === 'row_below') {
               this.$api.commission.commissionTableDraft(this.id, { data: [{ row: selection[0].start.row, value: 1 }], action: 'insertRow', type }).then(res => {})
             } else if (key === 'remove_row') {
-              console.log(selection)
               const data = []
               selection.forEach(item => {
                 if (item.start.row === item.end.row) {
@@ -479,9 +478,10 @@ export default {
         })
         this.setOverrideSettings.colHeaders = overrideHeaders
         this.setOverrideSettings.columns = overrideColumns
-        // _.forEach(_.range(0, minLength - 4), i => {
-        //   this.setOverrideHotInstance.setDataAtCell(0, i, '', 'loadData')
-        // })
+        // 批量设置完override后，清空override 表数据
+        _.forEach(_.range(0, minLength - 4), i => {
+          this.setOverrideHotInstance.setDataAtCell(0, i, '', 'loadData')
+        })
       })
     },
     handleTabClick(tab, event) {
@@ -551,13 +551,13 @@ export default {
     },
     loadBasicData() {
       this.loading = true
-      const initData = []
-      for (let x = 0; x < 21; x++) {
-        for (let y = 0; y < 1000; y++) {
-          initData.push([y, x, ''])
-        }
-      }
-      this.basicHotInstance.setDataAtRowProp(initData, 'loadData')
+      // const initData = []
+      // for (let x = 0; x < 21; x++) {
+      //   for (let y = 0; y < 1000; y++) {
+      //     initData.push([y, x, ''])
+      //   }
+      // }
+      // this.basicHotInstance.setDataAtRowProp(initData, 'loadData')
       this.$api.commission.fetchCommissionList(this.id).then(res => {
         const result = []
         if (this.created && res.data.list.length === 0) {
@@ -581,13 +581,13 @@ export default {
     },
     loadOverrideData() {
       this.loading = true
-      const initData = []
-      for (let x = 0; x < 21; x++) {
-        for (let y = 0; y < 1000; y++) {
-          initData.push([y, x, ''])
-        }
-      }
-      this.overrideHotInstance.setDataAtRowProp(initData, 'loadData')
+      // const initData = []
+      // for (let x = 0; x < 21; x++) {
+      //   for (let y = 0; y < 1000; y++) {
+      //     initData.push([y, x, ''])
+      //   }
+      // }
+      // this.overrideHotInstance.setDataAtRowProp(initData, 'loadData')
       this.$api.commission.fetchCommissionList(this.id).then(res => {
         const result = []
         res.data.list.forEach(item => {
@@ -603,13 +603,13 @@ export default {
     },
     loadOverallData() {
       this.loading = true
-      const initData = []
-      for (let x = 0; x < 21; x++) {
-        for (let y = 0; y < 1000; y++) {
-          initData.push([y, x, ''])
-        }
-      }
-      this.overallHotInstance.setDataAtRowProp(initData, 'loadData')
+      // const initData = []
+      // for (let x = 0; x < 21; x++) {
+      //   for (let y = 0; y < 1000; y++) {
+      //     initData.push([y, x, ''])
+      //   }
+      // }
+      // this.overallHotInstance.setDataAtRowProp(initData, 'loadData')
       this.$api.commission.fetchCommissionList(this.id, { ffyap: this.ffyap }).then(res => {
         const result = []
         res.data.list.forEach(item => {

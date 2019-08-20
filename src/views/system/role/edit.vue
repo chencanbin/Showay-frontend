@@ -63,6 +63,7 @@ export default {
           duration: 5 * 1000
         })
         this.handleClose()
+        this.$emit('afterUpdateRole')
         this.loading = false
       }).catch(_ => {
         this.loading = false

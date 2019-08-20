@@ -25,7 +25,7 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit :role="scope.row"/>
+                  <edit :role="scope.row" @afterUpdateRole="afterUpdateRole"/>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -52,17 +52,23 @@ export default {
   },
   created() {
     this.loading = true
-    this.$api.role.fetchRoleList().then(res => {
-      this.roles = res.data.list
-      this.loading = false
-    }).catch(_ => {
-      this.loading = false
-    })
+    this.getRoleList()
   },
   methods: {
+    getRoleList() {
+      this.$api.role.fetchRoleList().then(res => {
+        this.roles = res.data.list
+        this.loading = false
+      }).catch(_ => {
+        this.loading = false
+      })
+    },
     dateFormat(row, column) {
       const date = row[column.property]
       return parseTime(date)
+    },
+    afterUpdateRole() {
+      this.getRoleList()
     }
   }
 }

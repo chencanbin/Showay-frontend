@@ -15,7 +15,7 @@ module.exports = {
         //target: 'https://129.204.184.90', //设置你调用的接口域名 别忘了加http
         //target: 'http://118.25.231.120:8888', //騰訊測試服務器
         //target: 'http://192.168.1.106:8080',
-          target: 'http://111.231.112.104:8888/',
+          target: 'http://111.231.112.104:8080/',
         //target: 'http://129.204.184.90:8443',
         secure: false,
         changeOrigin: true
