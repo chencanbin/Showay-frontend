@@ -36,7 +36,7 @@
         </el-col>
       </el-row>
       <div @click="onPageClicked()" @mousemove="onPageClicked()" @keyup="onPageClicked()">
-        <el-tabs v-model="activeName" type="border-card" tab-position="bottom" @tab-click="handleTabClick">
+        <el-tabs v-model="activeName" type="border-card" tab-position="bottom">
           <el-tab-pane :label="$t('product.commission.commission_table.basic_tab')" name="basic">
             <hot-table v-loading="loading" ref="basicTable" :settings="settings"/>
           </el-tab-pane>
@@ -199,6 +199,8 @@ export default {
         startCols: 21,
         startRows: 20,
         search: true,
+        comments: true,
+        commentedCellClassName: 'td_error',
         currentRowClassName: 'currentRow',
         currentColClassName: 'currentColumn',
         renderer: function(instance, TD, row, col, prop, value) {
@@ -227,9 +229,25 @@ export default {
               type = 2
             }
             if (key === 'row_above') {
-              this.$api.commission.commissionTableDraft(this.id, { data: [{ row: selection[0].start.row - 1, value: 1 }], action: 'insertRow', type }).then(res => {})
+              this.$api.commission.commissionTableDraft(this.id, { data: [{ row: selection[0].start.row - 1, value: 1 }], action: 'insertRow', type })
+                .then(res => {
+                  if (this.activeName === 'basic') {
+                    this.overrideHotInstance.alter('insert_row', selection[0].start.row)
+                  }
+                })
+                .catch(_ => {
+                  this.basicHotInstance.undo()
+                })
             } else if (key === 'row_below') {
-              this.$api.commission.commissionTableDraft(this.id, { data: [{ row: selection[0].start.row, value: 1 }], action: 'insertRow', type }).then(res => {})
+              this.$api.commission.commissionTableDraft(this.id, { data: [{ row: selection[0].start.row, value: 1 }], action: 'insertRow', type })
+                .then(res => {
+                  if (this.activeName === 'basic') {
+                    this.overrideHotInstance.alter('insert_row', selection[0].start.row + 1)
+                  }
+                })
+                .catch(_ => {
+                  this.basicHotInstance.undo()
+                })
             } else if (key === 'remove_row') {
               const data = []
               selection.forEach(item => {
@@ -240,7 +258,17 @@ export default {
                   data.push({ row: item.start.row, value })
                 }
               })
-              this.$api.commission.commissionTableDraft(this.id, { data, type, action: 'deleteRow' }).then(res => {})
+              this.$api.commission.commissionTableDraft(this.id, { data, type, action: 'deleteRow' })
+                .then(res => {
+                  data.forEach(item => {
+                    if (this.activeName === 'basic') {
+                      this.overrideHotInstance.alter('remove_row', item.row)
+                    }
+                  })
+                })
+                .catch(_ => {
+                  this.basicHotInstance.undo()
+                })
             }
           },
           items: {
@@ -269,13 +297,21 @@ export default {
                 })
                 this.selectedRows.forEach(row => {
                   const result = _.compact(this.basicHotInstance.getDataAtRow(row))
+
+                  // 判断最后一个column FFYAP有没有值， 如果有, 将结果的长度减1
+                  if (this.basicHotInstance.getDataAtCell(row, 20)) {
+                    rowLengthArray.push(result.length - 1)
+                  } else {
+                    rowLengthArray.push(result.length)
+                  }
                   serialNumberArray.push(this.basicHotInstance.getDataAtCell(row, 2))
-                  rowLengthArray.push(result.length)
-                  if (!this.basicHotInstance.getDataAtCell(row, 4)) {
+
+                  if (!this.basicHotInstance.getDataAtCell(row, 3)) {
                     flag = false
                   }
                 })
                 if (flag) {
+                  console.log(_.min(rowLengthArray))
                   this.overrideTitle = _.join(serialNumberArray, ', ')
                   this.showSetOverrideDialogVisible(_.min(rowLengthArray))
                 }
@@ -408,8 +444,19 @@ export default {
       }
     }
   },
-  created() {
-
+  watch: {
+    activeName(val) {
+      if (val === 'basic') {
+        this.loadBasicData()
+        // this.basicHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
+      } else if (val === 'override') {
+        this.loadOverrideData()
+        // this.overrideHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
+      } else if (val === 'overall') {
+        this.loadOverallData()
+        // this.overallHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
+      }
+    }
   },
   methods: {
     initColumn() {
@@ -430,11 +477,7 @@ export default {
       colWidths.push(85)
       colHeaders.push(this.$t('product.commission.commission_table.col_header.after_15_year'))
       columns.push({ renderer: this.toPercent })
-      if (this.activeName === 'basic') {
-        colWidths.push(85)
-        colHeaders.push('FFYAP')
-        columns.push({ renderer: this.toPercent })
-      }
+
       this.settings.colHeaders = colHeaders
       this.settings.colWidths = _.concat(this.settings.colWidths, colWidths)
       this.settings.columns = columns
@@ -467,6 +510,7 @@ export default {
         const overrideHeaders = []
         const overrideColumns = []
         this.setOverrideHotInstance = this.$refs.setOverrideHotInstance.hotInstance
+        console.log(_.range(1, minLength - 3, 1))
         _.forEach(_.range(1, minLength - 3, 1), i => {
           if (i > 15) {
             overrideHeaders.push(this.$t('product.commission.commission_table.col_header.after_15_year'))
@@ -478,10 +522,14 @@ export default {
         })
         this.setOverrideSettings.colHeaders = overrideHeaders
         this.setOverrideSettings.columns = overrideColumns
+        const result = []
         // 批量设置完override后，清空override 表数据
         _.forEach(_.range(0, minLength - 4), i => {
-          this.setOverrideHotInstance.setDataAtCell(0, i, '', 'loadData')
+          result.push([1, i, ''])
+          // this.setOverrideHotInstance.setDataAtCell(0, i, '', 'loadData')
         })
+
+        this.basicHotInstance.setDataAtRowProp(result, 'loadData')
       })
     },
     handleTabClick(tab, event) {
@@ -558,6 +606,14 @@ export default {
       //   }
       // }
       // this.basicHotInstance.setDataAtRowProp(initData, 'loadData')
+      this.settings.colWidths.push(85)
+      this.settings.colHeaders.push('FFYAP')
+      this.settings.columns.push({ renderer: this.toPercent })
+      this.basicHotInstance.updateSettings({
+        colWidths: this.settings.colWidths,
+        colHeaders: this.settings.colHeaders,
+        columns: this.settings.columns
+      })
       this.$api.commission.fetchCommissionList(this.id).then(res => {
         const result = []
         if (this.created && res.data.list.length === 0) {
@@ -581,13 +637,14 @@ export default {
     },
     loadOverrideData() {
       this.loading = true
-      // const initData = []
-      // for (let x = 0; x < 21; x++) {
-      //   for (let y = 0; y < 1000; y++) {
-      //     initData.push([y, x, ''])
-      //   }
-      // }
-      // this.overrideHotInstance.setDataAtRowProp(initData, 'loadData')
+      this.settings.colWidths.pop()
+      this.settings.colHeaders.pop()
+      this.settings.columns.pop()
+      this.basicHotInstance.updateSettings({
+        colWidths: this.settings.colWidths,
+        colHeaders: this.settings.colHeaders,
+        columns: this.settings.columns
+      })
       this.$api.commission.fetchCommissionList(this.id).then(res => {
         const result = []
         res.data.list.forEach(item => {
@@ -652,6 +709,10 @@ export default {
       this.effectiveDate = (new Date()).valueOf()
     },
     handlePublish() {
+      const commentsPlugin = this.basicHotInstance.getPlugin('comments')
+      this.errorCoordinate.forEach(item => {
+        commentsPlugin.removeCommentAtCell(item.row, item.column)
+      })
       this.buttonLoading = true
       this.$api.commission.publishCommissionTableDraft(this.id, this.effectiveDate, this.remarks).then(res => {
         this.buttonLoading = false
@@ -667,7 +728,7 @@ export default {
             this.basicHotInstance.scrollViewportTo(item.row, item.column)
             this.basicHotInstance.render()
             const td = this.basicHotInstance.getCell(item.row, item.column, true)
-            td.className = 'td_error'
+            commentsPlugin.setCommentAtCell(item.row, item.column, error.message)
             td.setAttribute('title', error.message)
           })
         }
@@ -748,6 +809,7 @@ export default {
       this.loadOverallData()
     }
   }
+
 }
 </script>
 
@@ -757,7 +819,9 @@ export default {
     color: #3a4735;
     font-size: 14px;
   }
-
+  .el-dialog__headerbtn {
+    top: 5px;
+  }
   .htContextMenu:not(.htGhostTable) {
     z-index: 2200;
   }
@@ -819,7 +883,7 @@ export default {
     padding-bottom: 10px;
   }
   .td_error {
-    border: 1px solid red !important;
+    border: 2px solid red !important;
   }
 
   #commissionTableDialog .el-tabs__active-bar {
@@ -836,7 +900,7 @@ export default {
       //filter: blur(20px);
       .title {
         box-shadow: 0 2px 4px hsla(0,0%,8%,.15);
-        padding: 40px 15px 5px 15px;
+        padding: 25px 15px 5px 15px;
       }
     }
   }

@@ -24,7 +24,7 @@
           <span>{{ data.applicant.name }}</span>
         </el-form-item>
         <el-form-item :label="$t('client.insurance_policy.insured_name')">
-          <span>{{ data.beneficiary.name }}</span>
+          <span>{{ data.insured.name }}</span>
         </el-form-item>
         <el-form-item :label="$t('client.insurance_policy.company_name')">
           <span>{{ data.company.name }}</span>
@@ -94,7 +94,7 @@ export default {
         agent: '',
         company: '',
         applicant: '',
-        beneficiary: '',
+        insured: '',
         product: ''
       },
       dialogVisible: false,

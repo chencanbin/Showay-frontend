@@ -52,7 +52,7 @@ export default {
     }
   },
   created() {
-    window.setInterval(this.tTime, 1000)
+    // window.setInterval(this.tTime, 1000) //关闭定时弹窗
   },
   methods: {
     handleClickOutside() {

@@ -22,7 +22,7 @@
         </el-tree>
       </el-col>
 
-      <el-col :span="19" style="border-left: 1px solid #cccccc; padding: 20px 10px 10px 10px;">
+      <el-col id="file-list-wrapper" :span="19" style="border-left: 1px solid #cccccc; padding: 20px 10px 10px 10px;" @drop.native="onUploadFile(event)">
         <el-row style="margin-bottom: 5px">
           <el-breadcrumb separator-class="el-icon-arrow-right" style="font-size:14px">
             <el-breadcrumb-item v-for="item in levelList" :key="item.id">
@@ -148,7 +148,10 @@ export default {
     this.getFolder(2)
     this.levelList = [{ id: 2, data: { name: this.$t('document.internal_file') }}]
   },
-
+  mounted() {
+    const fileListArea = document.getElementById('file-list-wrapper')
+    console.log(fileListArea)
+  },
   methods: {
     nodeExpand(data, node) {
       if (!node) {
@@ -351,6 +354,9 @@ export default {
         document.body.removeChild(downloadElement) // 下载完成移除元素
         window.URL.revokeObjectURL(href) // 释放blob对象
       })
+    },
+    onUploadFile(e) {
+      console.log(e)
     }
   }
 }

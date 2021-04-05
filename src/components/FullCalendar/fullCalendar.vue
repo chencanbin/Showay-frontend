@@ -144,7 +144,7 @@ export default {
     return {
       currentMonth: moment().startOf('month'),
       isLismit: true,
-      eventLimit: 3,
+      eventLimit: 6,
       showMore: false,
       morePos: {
         top: 0,
@@ -302,7 +302,7 @@ export default {
 
         .day-cell {
           flex: 1;
-          min-height: 150px;
+          min-height: 250px;
           padding: 4px;
           border-right: 1px solid #e0e0e0;
           border-bottom: 1px solid #e0e0e0;
@@ -336,7 +336,7 @@ export default {
           .events-day {
             cursor: pointer;
             flex: 1;
-            min-height: 150px;
+            min-height: 250px;
             overflow: hidden;
             text-overflow: ellipsis;
 

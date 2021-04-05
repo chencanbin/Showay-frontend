@@ -235,7 +235,7 @@ export default {
       this.nodeExpand([], node)
     },
     viewPdf(row) {
-      this.$api.document.getCompanyDownloadLink(row.resourceKey).then(res => {
+      this.$api.document.getPrivateDownloadLink(row.resourceKey).then(res => {
         axios.get(res.data.url, {
           responseType: 'blob'
         }).then(res => {
@@ -352,7 +352,7 @@ export default {
       return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
     },
     handleDownload(index, row) {
-      this.$api.document.getCompanyDownloadLink(row.resourceKey).then(res => {
+      this.$api.document.getPrivateDownloadLink(row.resourceKey).then(res => {
         this.download(res.data.url, row.name)
       })
     },

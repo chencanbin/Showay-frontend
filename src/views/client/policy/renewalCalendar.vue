@@ -129,6 +129,7 @@ export default {
     getCalendarRenewal(params) {
       this.$api.client.calendarRenewal(params).then(res => {
         this.events = res.data
+        console.log(this.events)
       }).catch(_ => {
       })
     },

@@ -12,11 +12,12 @@ module.exports = {
     proxyTable: {
       '/api': {
         //target: 'http://192.168.20.67:8080',
-        //target: 'https://129.204.184.90', //设置你调用的接口域名 别忘了加http
+        //target: 'https://129.204.184.90', //
         //target: 'http://118.25.231.120:8888', //騰訊測試服務器
         //target: 'http://192.168.1.106:8080',
-          target: 'http://111.231.112.104:8080/',
-        //target: 'http://129.204.184.90:8443',
+        //target: 'http://111.231.112.104:8080/', // production
+        //target: 'http://111.231.112.104:8888/',
+        target: 'http://111.231.112.104:8080',
         secure: false,
         changeOrigin: true
       }
@@ -26,7 +27,7 @@ module.exports = {
 
     // can be overwritten by process.env.HOST
     // if you want dev by ip, please set host: '0.0.0.0'
-    host: '0.0.0.0',
+    host: 'localhost',
     port: 9527, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,

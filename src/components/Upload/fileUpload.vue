@@ -38,12 +38,12 @@ export default {
       this.buttonText = '正在上传...'
       console.log(params)
       const _file = params.file
-      const isLt20M = _file.size / 1024 / 1024 < 20
+      const isLt100M = _file.size / 1024 / 1024 < 100
       // 通过 FormData 对象上传文件
       const formData = new FormData()
       formData.append('file', _file)
-      if (!isLt20M) {
-        this.$message.error('请上传20M以下的文件')
+      if (!isLt100M) {
+        this.$message.error('请上传100M以下的文件')
         return false
       }
       let url = ''

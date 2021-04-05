@@ -542,7 +542,7 @@ export default {
     edit_title: 'Rename',
     file_name: 'Filename',
     upload_tips: 'Drag and drop files here to click to upload',
-    upload_error: 'File size MUST be below 20 MB',
+    upload_error: 'File size MUST be below 30 MB',
     set: {
       file_name: 'Empty filename'
     }

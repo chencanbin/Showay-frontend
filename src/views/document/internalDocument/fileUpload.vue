@@ -34,9 +34,9 @@ export default {
       this.disabled = true
       this.buttonText = '正在上传...'
       const _file = params.file
-      const isLt20M = _file.size / 1024 / 1024 < 20
+      const isLt100M = _file.size / 1024 / 1024 < 100
       // 通过 FormData 对象上传文件
-      if (!isLt20M) {
+      if (!isLt100M) {
         this.$message.error(this.$t('document.upload_error'))
         return false
       }

@@ -11,12 +11,24 @@
             <i slot="prefix" class="el-input__icon el-icon-search"/>
           </el-input>
         </el-form-item>
-        <el-form-item>
-          <el-date-picker v-model="year" :placeholder="$t('client.insurance_policy.date_filter')" type="year" clearable style="width: 180px"/>
+        <el-form-item label="" prop="dateRange">
+          <el-date-picker
+            v-model="dateRange"
+            :unlink-panels="true"
+            :start-placeholder="$t('commission.credit.start')"
+            :end-placeholder="$t('commission.credit.end')"
+            :picker-options="pickerOptions"
+            value-format="timestamp"
+            type="daterange"
+            range-separator="-"
+            @change="onDateRangeChange"/>
         </el-form-item>
+
+        <!--<el-form-item>-->
+        <!--<el-date-picker v-model="year" :placeholder="$t('client.insurance_policy.date_filter')" type="year" clearable style="width: 180px"/>-->
+        <!--</el-form-item>-->
       </el-form>
       <add-client v-if="hasPermission(100039)" style="display:inline-block; margin-top: 9px"/>
-      <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <el-table
         v-loading="insurancePolicyLoading"
         :height="height"
@@ -148,13 +160,13 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-if="hasPermission(100047)">
-                  <edit v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row" :list-query="listQuery" :year="year"/>
+                  <edit v-if="!isIneffectiveStatus(scope.row.policyStatus) && scope.row.editable" :data="scope.row" :list-query="listQuery" :year="year"/>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="hasPermission(100047)">
-                  <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus)" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency" :submit-date="scope.row.submitDate" :list-query="listQuery" :year="year"/>
+                  <riderBenefits v-if="!isIneffectiveStatus(scope.row.policyStatus) && scope.row.editable" :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency" :submit-date="scope.row.submitDate" :list-query="listQuery" :year="year"/>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="hasPermission(100052)">
-                  <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0)" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
+                  <renewal v-if="!isIneffectiveStatus(scope.row.policyStatus) && (scope.row.premiumPlan === 3 || scope.row.riderBenefits.length > 0) && scope.row.editable" :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan"/>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="hasPermission(100082)">
                   <policy-document :id="scope.row.number"/>
@@ -175,6 +187,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item v-if="hasPermission(100048)">
                   <el-button
+                    v-if="scope.row.editable"
                     type="text"
                     size="small"
                     @click="verifyPassword(scope.row.id)">{{ $t('common.delete') }}
@@ -184,13 +197,14 @@
                   <company-expenses v-if="hasPermission(100113)" :policy="scope.row"/>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <channel-expenses v-if="hasPermission(100118)" :policy="scope.row"/>
+                  <channel-expenses v-if="hasPermission(100118) && scope.row.editable" :policy="scope.row"/>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
+      <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit"/>
       <add v-if="hasPermission(100044)" :list-query="listQuery" :year="year"/>
     </basic-container>
     <el-dialog
@@ -231,6 +245,8 @@ import elDragDialog from '@/directive/el-dragDialog'
 import clientDetail from '../info/clientDetail'
 const _ = require('lodash')
 const currencyFormatter = require('currency-formatter')
+const now = new Date()
+
 export default {
   name: 'InsurancePolicy',
   components: {
@@ -249,6 +265,97 @@ export default {
   directives: { elDragDialog },
   data() {
     return {
+      pickerOptions: {
+        shortcuts: [{
+          text: now.getFullYear() - 10,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 10)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 9,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 9)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 8,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 8)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 7,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 7)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 6,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 6)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 5,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 5)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 4,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 4)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 3,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 3)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 2,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 2)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear() - 1,
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear() - 1)
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: now.getFullYear(),
+          onClick(picker) {
+            const time = new Date().setFullYear(now.getFullYear())
+            const start = getYearFirst(time)
+            const end = getYearLast(time)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
       height: this.hasPermission(100044) ? document.body.clientHeight - 180 : document.body.clientHeight - 130,
       id: 0,
       dialogVisible: false,
@@ -256,6 +363,7 @@ export default {
       submitLoading: false,
       wildcard: '',
       year: '',
+      dateRange: [],
       listQuery: {
         page: 1,
         limit: 50
@@ -294,14 +402,26 @@ export default {
       this.listQuery = { page: 1, limit: 50 }
       this.getInsurancePolicyList()
     }, 500),
+    onDateRangeChange() {
+      console.log('...............')
+      this.getInsurancePolicyList()
+    },
     // 获取保单列表
     getInsurancePolicyList(params) {
+      console.log(this.dateRange)
       params = Object.assign({ sort: 'sn,submitDate', order: 'asc,asc', wildcard: this.wildcard, ...params })
-      if (this.year) {
-        const geSubmitDate = getYearFirst(this.year)
-        const leSubmitDate = getYearLast(this.year)
-        params = Object.assign({ geSubmitDate, leSubmitDate, ...params })
+      // if (this.year) {
+      //   const geSubmitDate = getYearFirst(this.year)
+      //   const leSubmitDate = getYearLast(this.year)
+      //   params = Object.assign({ geSubmitDate, leSubmitDate, ...params })
+      // }
+      let geSubmitDate = ''
+      let leSubmitDate = ''
+      if (this.dateRange && this.dateRange.length) {
+        geSubmitDate = this.dateRange[0]
+        leSubmitDate = this.dateRange[1]
       }
+      params = Object.assign({ geSubmitDate, leSubmitDate, ...params })
       this.$store.dispatch('client/FetchInsurancePolicyList', { params })
     },
     // 格式化事件

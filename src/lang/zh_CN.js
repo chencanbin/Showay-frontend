@@ -543,7 +543,7 @@ export default {
     edit_title: '编辑文件',
     file_name: '文件名',
     upload_tips: '将文件拖到此处，或点击上传',
-    upload_error: '请上传20M以下的文件',
+    upload_error: '请上传100M以下的文件',
     set: {
       file_name: '请输入文件名'
     }
