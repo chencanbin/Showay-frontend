@@ -4,43 +4,61 @@
     :visible="dialogVisible"
     :before-close="handleClose"
     :fullscreen="true"
-    :title="title">
+    :title="title"
+  >
     <el-row style="margin-bottom: 5px; padding: 5px">
-      <file-upload v-permission="[1]" @afterComplete="afterComplete"/>
+      <file-upload 
+        v-permission="[1]" 
+        @afterComplete="afterComplete" />
     </el-row>
     <el-table
       v-loading="fileLoading"
       :data="folder.items"
       :height="tableHeight"
-      stripe>
-      <el-table-column
-        prop="name"
+      stripe
+    >
+      <el-table-column 
+        prop="name" 
         label="文件名称">
         <template slot-scope="scope">
-          <svg-icon :icon-class="getFileType(scope.row.extention)" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>
+          <svg-icon
+            :icon-class="getFileType(scope.row.extention)"
+            style="font-size: 30px; margin-right: 15px; vertical-align: middle"
+          />
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="文件大小" width="150">
+      <el-table-column 
+        label="文件大小" 
+        width="150">
         <template slot-scope="scope">
           {{ bytesToSize(scope.row.size) }}
         </template>
       </el-table-column>
-      <el-table-column v-if="checkPermission([1])" label="首页展示" width="100">
+      <el-table-column 
+        v-if="checkPermission([1])" 
+        label="首页展示" 
+        width="100">
         <template slot-scope="scope">
-          <show-in-home-page-switch :file="scope.row"/>
+          <show-in-home-page-switch :file="scope.row" />
         </template>
       </el-table-column>
       <el-table-column
         :formatter="dateFormat"
         label="创建时间"
         prop="creationDate"
-        width="200px"/>
-      <el-table-column label="操作" width="200">
+        width="200px"
+      />
+      <el-table-column 
+        label="操作" 
+        width="200">
         <template slot-scope="scope">
           <el-dropdown>
-            <el-button type="primary" plain size="mini">
-              <i class="el-icon-more"/>
+            <el-button 
+              type="primary" 
+              plain 
+              size="mini">
+              <i class="el-icon-more" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
@@ -48,18 +66,22 @@
                   type="text"
                   size="small"
                   icon="el-icon-download"
-                  @click="handleDownload(scope.$index, scope.row)">{{ $t('common.download') }}
+                  @click="handleDownload(scope.$index, scope.row)"
+                >{{ $t("common.download") }}
                 </el-button>
               </el-dropdown-item>
               <el-dropdown-item v-if="checkPermission([1])">
-                <edit :data="scope.row" :id="id"/>
+                <edit 
+                  :data="scope.row" 
+                  :id="id" />
               </el-dropdown-item>
               <el-dropdown-item v-if="checkPermission([1])">
                 <el-button
                   type="text"
                   size="small"
                   icon="el-icon-delete"
-                  @click="handleDelete(scope.$index, scope.row)">{{ $t('common.delete') }}
+                  @click="handleDelete(scope.$index, scope.row)"
+                >{{ $t("common.delete") }}
                 </el-button>
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -84,135 +106,141 @@
 </template>
 
 <script>
-import fileUpload from './fileUpload'
-import showInHomePageSwitch from './showInHomePageSwitch'
-import { mapState } from 'vuex'
-import { fileType } from '@/utils/constant'
-import edit from './editFile'
-import { parseTime } from '@/utils'
-import axios from 'axios'
-import permission from '@/directive/permission/index.js' // 权限判断指令
-import checkPermission from '@/utils/permission' // 权限判断函数
+import fileUpload from "./fileUpload";
+import showInHomePageSwitch from "./showInHomePageSwitch";
+import { mapState } from "vuex";
+import { fileType } from "@/utils/constant";
+import edit from "./editFile";
+import { parseTime } from "@/utils";
+import axios from "axios";
+import permission from "@/directive/permission/index.js"; // 权限判断指令
+import checkPermission from "@/utils/permission"; // 权限判断函数
 
 export default {
-  name: 'CompanyDocument',
+  name: "CompanyDocument",
   components: {
     fileUpload,
     edit,
-    showInHomePageSwitch
+    showInHomePageSwitch,
   },
   directives: { permission },
   data() {
     return {
-      id: '',
-      title: '',
+      id: "",
+      title: "",
       dialogVisible: false,
-      tableHeight: window.screen.height - 250
-    }
+      tableHeight: window.screen.height - 250,
+    };
   },
   computed: {
-    ...mapState(
-      {
-        fileLoading: state => state.document.fileLoading,
-        folder: state => state.document.folders
-      })
+    ...mapState({
+      fileLoading: (state) => state.document.fileLoading,
+      folder: (state) => state.document.folders,
+    }),
   },
   methods: {
     checkPermission,
     openDialog(id, name) {
       if (!this.checkPermission([1])) {
-        this.tableHeight = document.body.clientHeight - 100
+        this.tableHeight = document.body.clientHeight - 100;
       }
-      this.id = id
-      this.title = name
-      this.dialogVisible = true
-      this.getFileList(this.id)
+      this.id = id;
+      this.title = name;
+      this.dialogVisible = true;
+      this.getFileList(this.id);
     },
     dateFormat(row, column) {
-      const date = row[column.property]
-      return parseTime(date)
+      const date = row[column.property];
+      return parseTime(date);
     },
     handleClose() {
-      this.getFileList(1)
-      this.dialogVisible = false
+      this.getFileList(1);
+      this.dialogVisible = false;
     },
     getFileType(val) {
-      const type = fileType[val] || 'default'
-      return `file_${type}`
+      const type = fileType[val] || "default";
+      return `file_${type}`;
     },
     bytesToSize(bytes) {
-      if (bytes === 0) return '0 B'
-      const k = 1000 // or 1024
-      const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-      const i = Math.floor(Math.log(bytes) / Math.log(k))
-      return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
+      if (bytes === 0) return "0 B";
+      const k = 1000; // or 1024
+      const sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return (bytes / Math.pow(k, i)).toPrecision(3) + " " + sizes[i];
     },
     getFileList(id, params) {
-      this.$store.dispatch('document/FetchFolderById', { id, params })
+      this.$store.dispatch("document/FetchFolderById", { id, params });
     },
     handleDownload(index, row) {
-      this.$api.document.getCompanyDownloadLink(row.resourceKey).then(res => {
-        this.download(res.data.url, row.name)
-      })
+      this.$api.document.getCompanyDownloadLink(row.resourceKey).then((res) => {
+        this.download(res.data.url, row.name);
+      });
     },
     download(url, fileName) {
-      axios.get(url, {
-        responseType: 'blob'
-      }).then(res => {
-        const blob = new Blob([res.data])
-        const downloadElement = document.createElement('a')
-        const href = window.URL.createObjectURL(blob) //  创建下载的链接
-        downloadElement.href = href
-        downloadElement.download = fileName //  下载后文件名
-        document.body.appendChild(downloadElement)
-        downloadElement.click() //  点击下载
-        document.body.removeChild(downloadElement) // 下载完成移除元素
-        window.URL.revokeObjectURL(href) // 释放blob对象
-      })
+      axios
+        .get(url, {
+          responseType: "blob",
+        })
+        .then((res) => {
+          const blob = new Blob([res.data]);
+          const downloadElement = document.createElement("a");
+          const href = window.URL.createObjectURL(blob); //  创建下载的链接
+          downloadElement.href = href;
+          downloadElement.download = fileName; //  下载后文件名
+          document.body.appendChild(downloadElement);
+          downloadElement.click(); //  点击下载
+          document.body.removeChild(downloadElement); // 下载完成移除元素
+          window.URL.revokeObjectURL(href); // 释放blob对象
+        });
     },
     afterComplete(_file) {
-      this.$api.document.createFile({
-        'name': _file.name,
-        'parent': this.id,
-        'size': _file.size,
-        'extension': _file.type || '-',
-        'resourceKey': _file.uid
-      }).then(_ => {
-        this.getFileList(this.id)
-      })
+      this.$api.document
+        .createFile({
+          name: _file.name,
+          parent: this.id,
+          size: _file.size,
+          extension: _file.type || "-",
+          resourceKey: _file.uid,
+        })
+        .then((_) => {
+          this.getFileList(this.id);
+        });
     },
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', `提示`, {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
+      this.$confirm("此操作将永久删除该文件, 是否继续?", `提示`, {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
         beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api.document.deleteFile(row.id).then(res => {
-              this.$message({
-                message: this.$t('common.success'),
-                type: 'success',
-                duration: 5 * 1000
+          if (action === "confirm") {
+            instance.confirmButtonLoading = true;
+            this.$api.document
+              .deleteFile(row.id)
+              .then((res) => {
+                this.$message({
+                  message: this.$t("common.success"),
+                  type: "success",
+                  duration: 5 * 1000,
+                });
+                this.getFileList(this.id);
+                instance.confirmButtonLoading = false;
+                done();
               })
-              this.getFileList(this.id)
-              instance.confirmButtonLoading = false
-              done()
-            }).catch(_ => {
-              instance.confirmButtonLoading = false
-            })
+              .catch((_) => {
+                instance.confirmButtonLoading = false;
+              });
           } else {
-            done()
+            done();
           }
-        }
-      })
-    }
-  }
-}
+        },
+      });
+    },
+  },
+};
 </script>
 
 <style type="text/scss" rel="stylesheet/scss">
-  #fileList .el-dialog__body {
-    padding: 5px 10px;
-  }
+#fileList .el-dialog__body {
+  padding: 5px 10px;
+}
 </style>

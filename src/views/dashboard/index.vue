@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import adminDashboard from './admin'
+import adminDashboard from "./admin";
 
 export default {
-  name: 'Dashboard',
-  components: { adminDashboard }
-}
+  name: "Dashboard",
+  components: { adminDashboard },
+};
 </script>

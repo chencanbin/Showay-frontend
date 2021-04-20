@@ -1,19 +1,29 @@
 <template>
-  <div
-    class="login-container pull-height"
+  <div 
+    class="login-container pull-height" 
     @keyup.enter.native="handleLogin">
     <div class="login-wrapper">
       <div class="login-left animated fadeInLeft">
         <div class="login-info">
-          <img class="login-info-title" src="../../assets/images/logo.png" alt="" width="420px" height="80px">
+          <img
+            class="login-info-title"
+            src="../../assets/images/logo.png"
+            alt=""
+            width="420px"
+            height="80px"
+          >
           <ul class="login-info-list">
-            <li v-for="(item,index) in website.info.list" :key="index" class="login-info-item">
-              <i class="el-icon-check"/>&nbsp;{{ item }}
+            <li
+              v-for="(item, index) in website.info.list"
+              :key="index"
+              class="login-info-item"
+            >
+              <i class="el-icon-check" />&nbsp;{{ item }}
             </li>
           </ul>
         </div>
       </div>
-      <div class="login-border  animated fadeInRight">
+      <div class="login-border animated fadeInRight">
         <div class="login-main">
           <h4 class="login-title">登录 {{ website.title }}</h4>
           <userLogin />
@@ -23,53 +33,51 @@
   </div>
 </template>
 <script>
-import userLogin from './userlogin'
-import { validatenull } from '@/utils/validate'
+import userLogin from "./userlogin";
+import { validatenull } from "@/utils/validate";
 export default {
-  name: 'Login',
+  name: "Login",
   components: {
-    userLogin
+    userLogin,
   },
   data() {
     return {
       website: {
-        title: '宏鑫资产',
+        title: "宏鑫资产",
         info: {
-          title: '宏鑫资产管理系统',
-          list: [
-            '可视化的数据界面',
-            '高效数据整理',
-            '提高团队协同效率'
-          ]
-        }
-      }
-    }
+          title: "宏鑫资产管理系统",
+          list: ["可视化的数据界面", "高效数据整理", "提高团队协同效率"],
+        },
+      },
+    };
   },
   watch: {
     $route() {
-      const params = this.$route.query
-      this.socialForm.state = params.state
-      this.socialForm.code = params.code
+      const params = this.$route.query;
+      this.socialForm.state = params.state;
+      this.socialForm.code = params.code;
       if (!validatenull(this.socialForm.state)) {
         const loading = this.$loading({
           lock: true,
-          text: `${this.socialForm.state === 'WX' ? '微信' : 'QQ'}登录中,请稍后。。。`,
-          spinner: 'el-icon-loading'
-        })
+          text: `${
+            this.socialForm.state === "WX" ? "微信" : "QQ"
+          }登录中,请稍后。。。`,
+          spinner: "el-icon-loading",
+        });
         setTimeout(() => {
-          loading.close()
-        }, 2000)
+          loading.close();
+        }, 2000);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss">
-  .pull-height {
-    height: 100%;
-    overflow: hidden;
-  }
+.pull-height {
+  height: 100%;
+  overflow: hidden;
+}
 .login-container {
   position: relative;
   width: 100%;
@@ -178,7 +186,7 @@ export default {
 .login-form {
   margin: 10px 0;
   /*i {*/
-    /*color: #999;*/
+  /*color: #999;*/
   /*}*/
   .el-form-item__content {
     width: 100%;

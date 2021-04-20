@@ -1,15 +1,15 @@
 <template>
   <div class="basic-container">
     <el-card>
-      <slot/>
+      <slot />
     </el-card>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'BasicContainer'
-}
+  name: "BasicContainer",
+};
 </script>
 
 <style lang="scss" type="text/scss">

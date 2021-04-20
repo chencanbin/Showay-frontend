@@ -1,36 +1,69 @@
 <template>
-  <el-col span.number="24" class="el-table-add-col">
+  <el-col 
+    span.number="24" 
+    class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t('common.add') }}</el-button>
+    <el-button 
+      class="el-table-add-row" 
+      plain 
+      type="primary" 
+      @click="initForm"
+    >+ {{ $t("common.add") }}</el-button
+    >
     <el-dialog
       v-el-drag-dialog
       :close-on-click-modal="false"
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('user.set.add_channel_title')"
-      width="500px">
-      <el-form ref="account" :model="account" :rules="ruleAccount" label-width="100px">
-        <el-form-item :label="$t('client.insurance_policy.channel')" prop="channel">
-          <el-select v-model="account.channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable style="width: 100%" @change="onChannelChange">
+      width="500px"
+    >
+      <el-form
+        ref="account"
+        :model="account"
+        :rules="ruleAccount"
+        label-width="100px"
+      >
+        <el-form-item
+          :label="$t('client.insurance_policy.channel')"
+          prop="channel"
+        >
+          <el-select
+            v-model="account.channel"
+            :placeholder="$t('client.insurance_policy.set.channel_name')"
+            filterable
+            style="width: 100%"
+            @change="onChannelChange"
+          >
             <el-option
               v-for="item in channels.list"
               :key="item.id"
               :label="item.name"
-              :value="item.id"/>
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
+      <div 
+        slot="footer" 
+        class="dialog-footer">
+        <el-button @click="handleClose">{{
+          $t("common.cancelButton")
+        }}</el-button>
+        <el-button 
+          :loading="loading" 
+          type="primary" 
+          @click="handleSubmit">{{
+            $t("common.submitButton")
+          }}</el-button>
       </div>
     </el-dialog>
   </el-col>
 </template>
 
 <script type="text/ecmascript-6">
-import elDragDialog from '@/directive/el-dragDialog'
-import { mapState } from 'vuex'
+import elDragDialog from "@/directive/el-dragDialog";
+import { mapState } from "vuex";
 
 export default {
   directives: { elDragDialog },
@@ -40,61 +73,68 @@ export default {
       users: [],
       dialogVisible: false,
       account: {
-        channel: ''
+        channel: "",
       },
       ruleAccount: {
-        channel: [{ required: true, validator: this.validateChannel, trigger: 'blur, change' }]
-      }
-    }
+        channel: [
+          {
+            required: true,
+            validator: this.validateChannel,
+            trigger: "blur, change",
+          },
+        ],
+      },
+    };
   },
   computed: {
     ...mapState({
-      channels: state => state.user.users
-    })
+      channels: (state) => state.user.users,
+    }),
   },
   methods: {
     initForm() {
-      this.getChannel()
-      this.dialogVisible = true
+      this.getChannel();
+      this.dialogVisible = true;
     },
     validateChannel(rule, value, callback) {
       if (!value) {
-        callback(new Error(this.$t('client.insurance_policy.set.channel_name')))
+        callback(
+          new Error(this.$t("client.insurance_policy.set.channel_name"))
+        );
       } else {
-        callback()
+        callback();
       }
     },
     getChannel(params) {
-      const role = { role: 2 }
+      const role = { role: 2 };
       if (params) {
-        params.role = role
+        params.role = role;
       } else {
-        params = role
+        params = role;
       }
-      this.$store.dispatch('FetchUserList', params)
+      this.$store.dispatch("FetchUserList", params);
     },
     handleClose() {
-      this.$refs['account'].resetFields()
-      this.dialogVisible = false
+      this.$refs["account"].resetFields();
+      this.dialogVisible = false;
     },
     onChannelChange() {
-      this.$refs['account'].validate()
+      this.$refs["account"].validate();
     },
     handleSubmit() {
-      this.$refs['account'].validate((valid) => {
+      this.$refs["account"].validate((valid) => {
         if (valid) {
-          this.$emit('afterSelectChannel', this.account.channel)
-          this.account.channel = ''
-          this.dialogVisible = false
+          this.$emit("afterSelectChannel", this.account.channel);
+          this.account.channel = "";
+          this.dialogVisible = false;
         } else {
-          return false
+          return false;
         }
-      })
-    }
-  }
-}
+      });
+    },
+  },
+};
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-
 </style>

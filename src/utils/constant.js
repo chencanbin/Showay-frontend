@@ -46,7 +46,7 @@ export const policyStatus = [
     'zh-TW': '已失效',
     'zh-CN': '已失效',
     'en': 'Lapse'
-  }]
+  }];
 
 export const riderBenefitStatus = [
   {
@@ -61,7 +61,7 @@ export const riderBenefitStatus = [
     'zh-CN': '已失效',
     'en': 'Lapse'
   }
-]
+];
 
 export const commissionStatus = [
   {
@@ -82,7 +82,7 @@ export const commissionStatus = [
     'zh-CN': '已提交',
     'en': 'Clear'
   }
-]
+];
 
 export const creditStatus = [
   {
@@ -108,7 +108,7 @@ export const creditStatus = [
     'zh-TW': '已外發',
     'zh-CN': '已外发',
     'en': 'Clear'
-  }]
+  }];
 
 export const commissionPaymentStatus = [
   {
@@ -139,7 +139,7 @@ export const commissionPaymentStatus = [
   //   'zh-CN': '已结清',
   //   'en': 'Clear'
   // }
-]
+];
 
 export const currencyArray = [
   {
@@ -153,7 +153,7 @@ export const currencyArray = [
   {
     id: 2,
     desc: 'CNY'
-  }]
+  }];
 
 export const insurancePolicyTrace = [
   { id: 0, 'zh-TW': '創建保單', 'zh-CN': '创建保单', 'en': 'Created' },
@@ -170,7 +170,7 @@ export const insurancePolicyTrace = [
   { id: 11, 'zh-TW': '待發賬單審核通過', 'zh-CN': '待发账单审核通过', 'en': 'Payment Approved' },
   { id: 12, 'zh-TW': '待發賬單審核不通過', 'zh-CN': '待发账单审核不通过', 'en': 'Payment Rejected' },
   { id: 13, 'zh-TW': '待發賬單已結清', 'zh-CN': '待发账单已结清', 'en': 'Payment Clear' }
-]
+];
 
 export const premiumPlan = [
   // {
@@ -208,7 +208,7 @@ export const premiumPlan = [
     'zh-TW': 'HalfYearly',
     'zh-CN': 'HalfYearly',
     'en': 'HalfYearly'
-  }]
+  }];
 
 export const fileType = {
   'application/pdf': 'pdf',
@@ -228,7 +228,7 @@ export const fileType = {
   'image/jpeg': 'img',
   'image/png': 'img',
   'application/x-zip-compressed': 'rar'
-}
+};
 
 export const expensesType = [
   {
@@ -255,9 +255,9 @@ export const expensesType = [
     'zh-CN': '其他',
     'en': 'Misc'
   }
-]
+];
 
-export const numberAcronym = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th', '13th', '14th', '15th']
+export const numberAcronym = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th', '13th', '14th', '15th'];
 
 export const homePageConfig = [
   { id: 1, 'name': 'home.creditSum', permissions: [110000] }, // 已收
@@ -273,27 +273,32 @@ export const homePageConfig = [
   { id: 12, 'name': 'home.channelPerformanceScale', permissions: [110008], roles: [1] }, // 渠道业绩分布
   { id: 13, 'name': 'home.news' }, // 最新动态
   { id: 14, 'name': 'home.balance', permissions: [110000, 110002, 110004, 110010] } // 收支分布
-]
+];
 
 export const permission = [
   { id: 1, label: '首页', action: [{ id: 100001, name: 'Dashboard' }] },
-  { label: '产品',
+  {
+    label: '产品',
     children: [
-      { 'id': 2,
+      {
+        'id': 2,
         label: '合作机构',
         action: [{ id: 100006, name: 'ListInsuranceCompany' }],
         children: [
-          { id: 16,
+          {
+            id: 16,
             label: '添加',
             action: [
               { id: 100005, name: 'CreateInsuranceCompany' }]
           },
-          { id: 17,
+          {
+            id: 17,
             label: '修改',
             action: [
               { id: 100008, name: 'UpdateInsuranceCompany' }]
           },
-          { id: 18,
+          {
+            id: 18,
             label: '编辑联系人',
             action: [
               { id: 100122, name: 'CreateContact' },
@@ -302,13 +307,15 @@ export const permission = [
               { id: 100126, name: 'DeleteContact' }
             ]
           },
-          { id: 19,
+          {
+            id: 19,
             label: '删除',
             action: [
               { id: 100009, name: 'DeleteInsuranceCompany' }]
           }]
       },
-      { 'id': 3,
+      {
+        'id': 3,
         label: '产品佣金',
         action: [{ id: 100006, name: 'ListInsuranceCompany' }, { id: 100016, name: 'ListCommissionTable' }],
         children: [
@@ -319,7 +326,8 @@ export const permission = [
           { 'id': 24, label: '删除', action: [{ id: 100019, name: 'DeleteCommissionTable' }] }
         ]
       },
-      { 'id': 4,
+      {
+        'id': 4,
         label: '渠道佣金',
         action: [{ id: 100082, name: 'ListUser' }, { id: 100030, name: 'ListChannelCommissionTable' }],
         children: [
@@ -330,9 +338,11 @@ export const permission = [
       }
     ]
   },
-  { label: '客户',
+  {
+    label: '客户',
     children: [
-      { 'id': 5,
+      {
+        'id': 5,
         label: '保单',
         action: [{ id: 100045, name: 'ListInsurancePolicy' }, { id: 100041, name: 'ShowClient' }],
         children: [
@@ -350,20 +360,25 @@ export const permission = [
           { 'id': 39, label: '公司支出', action: [{ id: 100112, name: 'CreateExpense' }, { id: 100113, name: 'ListExpense' }, { id: 100114, name: 'ShowExpense' }, { id: 100115, name: 'UpdateExpense' }, { id: 100116, name: 'DeleteExpense' }] },
           { 'id': 40, label: '渠道支出', action: [{ id: 100117, name: 'CreateChannelExpense' }, { id: 100118, name: 'ListChannelExpense' }, { id: 100119, name: 'ShowChannelExpense' }, { id: 100120, name: 'UpdateChannelExpense' }, { id: 100121, name: 'DeleteChannelExpense' }] },
           { 'id': 41, label: '添加客户', action: [{ id: 100039, name: 'CreateClient' }] }
-        ] },
-      { 'id': 6,
+        ]
+      },
+      {
+        'id': 6,
         label: '客户资料',
         action: [{ id: 100040, name: 'ListClient' }],
         children: [
           { 'id': 42, label: '添加', action: [{ id: 100039, name: 'CreateClient' }] },
           { 'id': 43, label: '修改', action: [{ id: 100042, name: 'UpdateClient' }, { id: 100041, name: 'ShowClient' }] },
           { 'id': 44, label: '删除', action: [{ id: 100043, name: 'DeleteClient' }] }
-        ] }
+        ]
+      }
     ]
   },
-  { label: '佣金',
+  {
+    label: '佣金',
     children: [
-      { 'id': 7,
+      {
+        'id': 7,
         label: '到账记录',
         action: [{ id: 100055, name: 'ListCommissionCredit' }, { id: 100060, name: 'GetFilteredCreditSum' }],
         children: [
@@ -371,7 +386,8 @@ export const permission = [
           { 'id': 46, label: '审核', action: [{ id: 100058, name: 'RejectCredit' }, { id: 100059, name: 'ClearCredit' }] }
         ]
       },
-      { 'id': 8,
+      {
+        'id': 8,
         label: '发放记录',
         action: [{ id: 100067, name: 'ListMergedPayment' }],
         children: [
@@ -386,16 +402,19 @@ export const permission = [
       { 'id': 9, label: '已结清记录', paymentStatus: [{ id: 130003, name: 'Clear' }] }
     ]
   },
-  { id: 10,
+  {
+    id: 10,
     label: '保单审计',
     action: [{ id: 100045, name: 'ListInsurancePolicy' }],
     children: [
       { 'id': 52, label: '详情', action: [{ id: 100049, name: 'TraceInsurancePolicy' }] }
     ]
   },
-  { label: '文档',
+  {
+    label: '文档',
     children: [
-      { 'id': 11,
+      {
+        'id': 11,
         label: '内部文档',
         action: [{ id: 100078, name: 'DownloadPrivateDocument' }],
         children: [
@@ -405,7 +424,8 @@ export const permission = [
           { 'id': 56, label: '删除', action: [{ id: 100079, name: 'DeletePrivateDocument' }] }
         ]
       },
-      { 'id': 12,
+      {
+        'id': 12,
         label: '公司文档',
         action: [{ id: 100074, name: 'DownloadInsuranceCompanyDocument' }],
         children: [
@@ -417,9 +437,11 @@ export const permission = [
       }
     ]
   },
-  { label: '系统',
+  {
+    label: '系统',
     children: [
-      { 'id': 13,
+      {
+        'id': 13,
         label: '用户',
         action: [{ id: 100082, name: 'ListUser' }],
         children: [
@@ -433,7 +455,8 @@ export const permission = [
           { 'id': 68, label: '删除渠道上级', action: [{ id: 100111, name: 'DeleteChannelHierarchy' }] }
         ]
       },
-      { 'id': 14,
+      {
+        'id': 14,
         label: '角色',
         action: [{ id: 100088, name: 'ListRole' }],
         children: [
@@ -442,7 +465,8 @@ export const permission = [
           { 'id': 71, label: '删除', action: [{ id: 100091, name: 'DeleteRole' }] }
         ]
       },
-      { 'id': 15,
+      {
+        'id': 15,
         label: '模板',
         action: [{ id: 100128, name: 'ListEmailTemplate' }],
         children: [
@@ -462,4 +486,4 @@ export const permission = [
       }
     ]
   }
-]
+];

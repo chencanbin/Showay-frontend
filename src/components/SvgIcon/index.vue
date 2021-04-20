@@ -1,40 +1,43 @@
 <template>
-  <svg :class="svgClass" aria-hidden="true" @click="click">
-    <use :xlink:href="iconName"/>
+  <svg 
+    :class="svgClass" 
+    aria-hidden="true" 
+    @click="click">
+    <use :xlink:href="iconName" />
   </svg>
 </template>
 
 <script>
 export default {
-  name: 'SvgIcon',
+  name: "SvgIcon",
   props: {
     iconClass: {
       type: String,
-      required: true
+      required: true,
     },
     className: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
   computed: {
     iconName() {
-      return `#icon-${this.iconClass}`
+      return `#icon-${this.iconClass}`;
     },
     svgClass() {
       if (this.className) {
-        return 'svg-icon ' + this.className
+        return "svg-icon " + this.className;
       } else {
-        return 'svg-icon'
+        return "svg-icon";
       }
-    }
+    },
   },
   methods: {
     click() {
-      this.$emit('click')
-    }
-  }
-}
+      this.$emit("click");
+    },
+  },
+};
 </script>
 
 <style scoped>

@@ -1,22 +1,38 @@
 <template>
   <span id="paymentDetail">
-    <el-button type="text" size="small" @click="initForm">{{ generateButtonText() }}</el-button>
+    <el-button 
+      type="text" 
+      size="small" 
+      @click="initForm">{{
+        generateButtonText()
+      }}</el-button>
     <el-dialog
       :visible="dialogVisible"
       :before-close="handleClose"
-      :title= "generateTitle()"
+      :title="generateTitle()"
       :fullscreen="true"
-      center>
+      center
+    >
       <el-row style="margin-bottom: 10px">
-        <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">{{ $t('commission.payment.submit_audit') }}</el-button>
-        <span v-show="status === '-1'" style="margin-left: 20px;">已选中实发金额 :
+        <el-button
+          v-if="status === '-1'"
+          :disabled="disableSubmit"
+          type="primary"
+          @click="handleSubmit"
+        >{{ $t("commission.payment.submit_audit") }}</el-button
+        >
+        <span 
+          v-show="status === '-1'" 
+          style="margin-left: 20px"
+        >已选中实发金额 :
           <count-to
             :start-val="0"
             :end-val="selectSum"
             :duration="2000"
             :decimals="2"
             prefix="HK$ "
-            style="font-weight: bold;"/>
+            style="font-weight: bold"
+          />
         </span>
       </el-row>
       <el-table
@@ -25,111 +41,178 @@
         :data="mergedPayment.payments"
         stripe
         border
-        @selection-change="handleSelectionChange">
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column
           v-if="status === '-1'"
           align="center"
           type="selection"
-          width="55" />
-        <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip>
+          width="55"
+        />
+        <el-table-column
+          :label="$t('client.insurance_policy.number')"
+          prop="insurancePolicy.number"
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
-            <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id"/>
+            <policy-detail
+              :policy-number="scope.row.insurancePolicy.number"
+              :id="scope.row.insurancePolicy.id"
+            />
           </template>
         </el-table-column>
-        <el-table-column :label="$t('client.insurance_policy.insured_name')" prop="insurancePolicy.beneficiary" width="80"/>
-        <el-table-column :label="$t('commission.credit.year')" width="80">
+        <el-table-column
+          :label="$t('client.insurance_policy.insured_name')"
+          prop="insurancePolicy.beneficiary"
+          width="80"
+        />
+        <el-table-column 
+          :label="$t('commission.credit.year')" 
+          width="80">
           <template slot-scope="scope">
-            <span>{{ $t('commission.credit.years',[scope.row.year]) }}</span>
+            <span>{{ $t("commission.credit.years", [scope.row.year]) }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('client.insurance_policy.premium')" min-width="100px">
+        <el-table-column
+          :label="$t('client.insurance_policy.premium')"
+          min-width="100px"
+        >
           <template slot-scope="scope">
-            <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{ formatterCurrency(scope.row.premium) }}</span>
+            <span class="left_text">{{ getSymbol(scope.row.currency) }}</span
+            ><span class="right_text">{{
+              formatterCurrency(scope.row.premium)
+            }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commission.payment.premiumInHkd')" min-width="120px">
+        <el-table-column
+          :label="$t('commission.payment.premiumInHkd')"
+          min-width="120px"
+        >
           <template slot-scope="scope">
             <div v-if="scope.row.currency !== 'HKD'">
-              <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.premiumInHkd) }}</span>
+              <span class="left_text">HK$ </span
+              ><span class="right_text">{{
+                formatterCurrency(scope.row.premiumInHkd)
+              }}</span>
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.exchangeRate')" prop="exchangeRateToHkd" width="80">
+        <el-table-column
+          :label="$t('common.exchangeRate')"
+          prop="exchangeRateToHkd"
+          width="80"
+        >
           <template slot-scope="scope">
-            <div v-if="scope.row.currency !== 'HKD'" style="float: right">
+            <div 
+              v-if="scope.row.currency !== 'HKD'" 
+              style="float: right">
               {{ scope.row.exchangeRateToHkd }}
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commission.payment.calculatedAmountInHkd')" min-width="100px">
+        <el-table-column
+          :label="$t('commission.payment.calculatedAmountInHkd')"
+          min-width="100px"
+        >
           <template slot-scope="scope">
-            <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmountInHkd) }}</span>
+            <span class="left_text">HK$ </span
+            ><span class="right_text">{{
+              formatterCurrency(scope.row.calculatedAmountInHkd)
+            }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commission.payment.amount')" prop="amount" min-width="100px">
+        <el-table-column
+          :label="$t('commission.payment.amount')"
+          prop="amount"
+          min-width="100px"
+        >
           <template slot-scope="scope">
             <div v-if="scope.row.amount">
-              <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.amount) }}</span>
+              <span class="left_text">HK$ </span
+              ><span class="right_text">{{
+                formatterCurrency(scope.row.amount)
+              }}</span>
             </div>
             <div v-else>
-              <span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.calculatedAmountInHkd) }}</span>
+              <span class="left_text">HK$ </span
+              ><span class="right_text">{{
+                formatterCurrency(scope.row.calculatedAmountInHkd)
+              }}</span>
             </div>
           </template>
         </el-table-column>
         <el-table-column :label="$t('common.commission_rate')">
           <template slot-scope="scope">
-            <div style="float: right">{{ formatPercent(scope.row.commissionRate) }}</div>
+            <div style="float: right">
+              {{ formatPercent(scope.row.commissionRate) }}
+            </div>
           </template>
         </el-table-column>
-        <el-table-column v-show="status === '-1'" :label="$t('common.action')">
+        <el-table-column 
+          v-show="status === '-1'" 
+          :label="$t('common.action')">
           <template slot-scope="scope">
-            <edit :payment="scope.row" :key="scope.row.id"/>
+            <edit 
+              :payment="scope.row" 
+              :key="scope.row.id" />
           </template>
         </el-table-column>
       </el-table>
-      <div v-show="status === '0'" slot="footer" class="dialog-footer">
-        <el-button :loading="rejectLoading" @click="handleReject">{{ $t('common.reject') }}</el-button>
-        <el-button :loading="approveLoading" type="primary" @click="handleApprove">{{ $t('common.approve') }}</el-button>
+      <div 
+        v-show="status === '0'" 
+        slot="footer" 
+        class="dialog-footer">
+        <el-button 
+          :loading="rejectLoading" 
+          @click="handleReject">{{
+            $t("common.reject")
+          }}</el-button>
+        <el-button
+          :loading="approveLoading"
+          type="primary"
+          @click="handleApprove"
+        >{{ $t("common.approve") }}</el-button
+        >
       </div>
     </el-dialog>
   </span>
 </template>
 
 <script type="text/ecmascript-6">
-import { mapState } from 'vuex'
-import edit from './edit'
-import { getSymbol } from '@/utils'
-import CountTo from 'vue-count-to'
-import policyDetail from '../../client/policy/policyDetail'
+import { mapState } from "vuex";
+import edit from "./edit";
+import { getSymbol } from "@/utils";
+import CountTo from "vue-count-to";
+import policyDetail from "../../client/policy/policyDetail";
 
-const _ = require('lodash')
-const currencyFormatter = require('currency-formatter')
+const _ = require("lodash");
+const currencyFormatter = require("currency-formatter");
 export default {
-  name: 'MergedPayment',
+  name: "MergedPayment",
   components: {
     edit,
     CountTo,
-    policyDetail
+    policyDetail,
   },
   props: {
     channel: {
       type: Object,
       default() {
-        return {}
-      }
+        return {};
+      },
     },
     status: {
       type: String,
       default() {
-        return ''
-      }
+        return "";
+      },
     },
     id: {
       type: Number,
       default() {
-        return 0
-      }
-    }
+        return 0;
+      },
+    },
   },
   data() {
     return {
@@ -138,172 +221,208 @@ export default {
       selectedRow: [],
       rejectLoading: false,
       approveLoading: false,
-      selectSum: 0
-    }
+      selectSum: 0,
+    };
   },
   computed: {
     ...mapState({
-      mergedPayment: state => state.commission.mergedPayment,
-      mergedPaymentLoading: state => state.commission.mergedPaymentLoading
+      mergedPayment: (state) => state.commission.mergedPayment,
+      mergedPaymentLoading: (state) => state.commission.mergedPaymentLoading,
     }),
-    disableSubmit: function() {
-      return this.selectedRow.length === 0
-    }
+    disableSubmit: function () {
+      return this.selectedRow.length === 0;
+    },
   },
   watch: {
     mergedPayment(val) {
       if (val.payments.length === 0) {
-        this.dialogVisible = false
+        this.dialogVisible = false;
       }
-    }
+    },
   },
   methods: {
     initForm() {
-      this.getMergedPayment()
-      this.dialogVisible = true
+      this.getMergedPayment();
+      this.dialogVisible = true;
     },
     getRandom() {
-      return Math.random()
+      return Math.random();
     },
     generateTitle() {
-      if (this.status === '-1') {
-        return `${this.channel.name} ${this.$t('commission.payment.generated_list')}`
-      } else if (this.status === '0') {
-        return `${this.channel.name} ${this.$t('commission.payment.audit_commission')}`
+      if (this.status === "-1") {
+        return `${this.channel.name} ${this.$t(
+          "commission.payment.generated_list"
+        )}`;
+      } else if (this.status === "0") {
+        return `${this.channel.name} ${this.$t(
+          "commission.payment.audit_commission"
+        )}`;
       }
     },
     generateButtonText() {
-      if (this.status === '-1') {
-        return this.$t('commission.payment.generated_list')
-      } else if (this.status === '0') {
-        return this.$t('commission.payment.audit_list')
+      if (this.status === "-1") {
+        return this.$t("commission.payment.generated_list");
+      } else if (this.status === "0") {
+        return this.$t("commission.payment.audit_list");
       }
     },
     getSymbol,
     handleClose() {
-      this.dialogVisible = false
+      this.dialogVisible = false;
     },
     getMergedPayment() {
-      this.$store.dispatch('commission/FetchMergedPayment', { id: this.id, params: { channel: this.channel.id }})
+      this.$store.dispatch("commission/FetchMergedPayment", {
+        id: this.id,
+        params: { channel: this.channel.id },
+      });
     },
     formatterCurrency(value) {
-      return currencyFormatter.format(Math.floor(value * 100) / 100, { symbol: '' })
+      return currencyFormatter.format(Math.floor(value * 100) / 100, {
+        symbol: "",
+      });
     },
     handleSelectionChange(val) {
-      this.selectedRow = val
-      let selectSum = 0
-      _.forEach(val, item => {
+      this.selectedRow = val;
+      let selectSum = 0;
+      _.forEach(val, (item) => {
         if (item.amount) {
-          selectSum = selectSum + _.toFinite(item.amount)
+          selectSum = selectSum + _.toFinite(item.amount);
         } else {
-          selectSum = selectSum + _.toFinite(item.calculatedAmountInHkd)
+          selectSum = selectSum + _.toFinite(item.calculatedAmountInHkd);
         }
-      })
-      this.selectSum = selectSum
+      });
+      this.selectSum = selectSum;
     },
     formatPercent(value) {
-      return _.toNumber(value).toFixed(2) + '%'
+      return _.toNumber(value).toFixed(2) + "%";
     },
     handleReject() {
-      this.$confirm(this.$t('commission.payment.tooltip.reject'), this.$t('common.prompt'), {
-        confirmButtonText: this.$t('common.confirmButton'),
-        cancelButtonText: this.$t('common.cancelButton'),
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api.commission.mergedPaymentReject(this.id).then(_ => {
-              this.$message({
-                message: this.$t('common.success'),
-                type: 'success',
-                duration: 5 * 1000
-              })
-              this.$store.dispatch('commission/FetchAuditPayment', { status: 0 })
-              this.dialogVisible = false
-              instance.confirmButtonLoading = false
-              done()
-            }).catch(_ => {
-              instance.confirmButtonLoading = false
-            })
-          } else {
-            done()
-          }
+      this.$confirm(
+        this.$t("commission.payment.tooltip.reject"),
+        this.$t("common.prompt"),
+        {
+          confirmButtonText: this.$t("common.confirmButton"),
+          cancelButtonText: this.$t("common.cancelButton"),
+          type: "warning",
+          beforeClose: (action, instance, done) => {
+            if (action === "confirm") {
+              instance.confirmButtonLoading = true;
+              this.$api.commission
+                .mergedPaymentReject(this.id)
+                .then((_) => {
+                  this.$message({
+                    message: this.$t("common.success"),
+                    type: "success",
+                    duration: 5 * 1000,
+                  });
+                  this.$store.dispatch("commission/FetchAuditPayment", {
+                    status: 0,
+                  });
+                  this.dialogVisible = false;
+                  instance.confirmButtonLoading = false;
+                  done();
+                })
+                .catch((_) => {
+                  instance.confirmButtonLoading = false;
+                });
+            } else {
+              done();
+            }
+          },
         }
-      })
+      );
     },
     handleApprove() {
-      this.$confirm(this.$t('commission.payment.tooltip.approve'), this.$t('common.prompt'), {
-        confirmButtonText: this.$t('common.confirmButton'),
-        cancelButtonText: this.$t('common.cancelButton'),
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api.commission.mergedPaymentApprove(this.id).then(_ => {
-              this.$message({
-                message: this.$t('common.success'),
-                type: 'success',
-                duration: 5 * 1000
-              })
-              this.$store.dispatch('commission/FetchAuditPayment', { status: 0 })
-              instance.confirmButtonLoading = false
-              this.dialogVisible = false
-              done()
-            }).catch(_ => {
-              instance.confirmButtonLoading = false
-            })
-          } else {
-            done()
-          }
+      this.$confirm(
+        this.$t("commission.payment.tooltip.approve"),
+        this.$t("common.prompt"),
+        {
+          confirmButtonText: this.$t("common.confirmButton"),
+          cancelButtonText: this.$t("common.cancelButton"),
+          type: "warning",
+          beforeClose: (action, instance, done) => {
+            if (action === "confirm") {
+              instance.confirmButtonLoading = true;
+              this.$api.commission
+                .mergedPaymentApprove(this.id)
+                .then((_) => {
+                  this.$message({
+                    message: this.$t("common.success"),
+                    type: "success",
+                    duration: 5 * 1000,
+                  });
+                  this.$store.dispatch("commission/FetchAuditPayment", {
+                    status: 0,
+                  });
+                  instance.confirmButtonLoading = false;
+                  this.dialogVisible = false;
+                  done();
+                })
+                .catch((_) => {
+                  instance.confirmButtonLoading = false;
+                });
+            } else {
+              done();
+            }
+          },
         }
-      })
+      );
     },
     handleSubmit() {
-      this.$confirm(this.$t('commission.payment.tooltip.audit'), this.$t('common.prompt'), {
-        confirmButtonText: this.$t('common.confirmButton'),
-        cancelButtonText: this.$t('common.cancelButton'),
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            const data = []
-            _.forEach(this.selectedRow, item => {
-              let obj = {}
-              if (item.amount) {
-                obj = { id: item.id, amount: item.amount }
-              } else {
-                obj = { id: item.id, amount: item.predictedAmountInHkd }
-              }
-              // if(item.currency !== 'HKD') {
-              //   obj.exchangeRate = item.exchangeRateToHkd
-              // }
-              data.push(obj)
-            })
-            this.$api.commission.mergedPayment({ payments: data }).then(res => {
-              this.getMergedPayment()
-              this.$store.dispatch('commission/FetchAuditPayment', { status: -1 })
-              instance.confirmButtonLoading = false
-              done()
-            }).catch(_ => {
-              instance.confirmButtonLoading = false
-            })
-          } else {
-            done()
-          }
+      this.$confirm(
+        this.$t("commission.payment.tooltip.audit"),
+        this.$t("common.prompt"),
+        {
+          confirmButtonText: this.$t("common.confirmButton"),
+          cancelButtonText: this.$t("common.cancelButton"),
+          type: "warning",
+          beforeClose: (action, instance, done) => {
+            if (action === "confirm") {
+              instance.confirmButtonLoading = true;
+              const data = [];
+              _.forEach(this.selectedRow, (item) => {
+                let obj = {};
+                if (item.amount) {
+                  obj = { id: item.id, amount: item.amount };
+                } else {
+                  obj = { id: item.id, amount: item.predictedAmountInHkd };
+                }
+                // if(item.currency !== 'HKD') {
+                //   obj.exchangeRate = item.exchangeRateToHkd
+                // }
+                data.push(obj);
+              });
+              this.$api.commission
+                .mergedPayment({ payments: data })
+                .then((res) => {
+                  this.getMergedPayment();
+                  this.$store.dispatch("commission/FetchAuditPayment", {
+                    status: -1,
+                  });
+                  instance.confirmButtonLoading = false;
+                  done();
+                })
+                .catch((_) => {
+                  instance.confirmButtonLoading = false;
+                });
+            } else {
+              done();
+            }
+          },
         }
-      })
-    }
-  }
-}
+      );
+    },
+  },
+};
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
-  #paymentDetail .el-dialog__body {
-    padding: 5px 20px;
-    tr:nth-child(odd) td {
-      background-color: #ffffff;
-    }
-    tr:nth-child(even) td {
-      background-color: #fafafa;
-    }
+#paymentDetail .el-dialog__body {
+  padding: 5px 20px;
+  tr:nth-child(odd) td {
+    background-color: #ffffff;
   }
+  tr:nth-child(even) td {
+    background-color: #fafafa;
+  }
+}
 </style>

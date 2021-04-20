@@ -1,7 +1,11 @@
 <template>
   <span>
-    <span :class="type" class="badge-status-dot badge-status-processing"/>
-    <span v-if="text" class="badge-status-text">{{ text }}</span>
+    <span 
+      :class="type" 
+      class="badge-status-dot badge-status-processing" />
+    <span 
+      v-if="text" 
+      class="badge-status-text">{{ text }}</span>
   </span>
 </template>
 
@@ -10,97 +14,97 @@ export default {
   props: {
     type: {
       type: String,
-      default: 'default-badge'
+      default: "default-badge",
     },
     text: {
       type: String,
-      default: ''
-    }
-  }
-}
+      default: "",
+    },
+  },
+};
 </script>
 
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
-  @-webkit-keyframes statusProcessing {
-    0% {
-      -webkit-transform:scale(.8);
-      transform:scale(.8);
-      opacity:.5
-    }
-    to {
-      -webkit-transform:scale(2.4);
-      transform:scale(2.4);
-      opacity:0
-    }
+@-webkit-keyframes statusProcessing {
+  0% {
+    -webkit-transform: scale(0.8);
+    transform: scale(0.8);
+    opacity: 0.5;
   }
-  @keyframes statusProcessing {
-    0% {
-      -webkit-transform:scale(.8);
-      transform:scale(.8);
-      opacity:.5
-    }
-    to {
-      -webkit-transform:scale(2.4);
-      transform:scale(2.4);
-      opacity:0
-    }
+  to {
+    -webkit-transform: scale(2.4);
+    transform: scale(2.4);
+    opacity: 0;
   }
+}
+@keyframes statusProcessing {
+  0% {
+    -webkit-transform: scale(0.8);
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  to {
+    -webkit-transform: scale(2.4);
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
 
-  .processing-badge {
-    background-color: #409EFF;
-    &:after {
-      border: 1px solid #409EFF;
-    }
+.processing-badge {
+  background-color: #409eff;
+  &:after {
+    border: 1px solid #409eff;
   }
-  .error-badge {
-    background-color: #F56C6C;
-    &:after {
-      border: 1px solid #F56C6C;
-    }
+}
+.error-badge {
+  background-color: #f56c6c;
+  &:after {
+    border: 1px solid #f56c6c;
   }
-  .warning-badge {
-    background-color: #E6A23C;
-    &:after {
-      border: 1px solid #E6A23C;
-    }
+}
+.warning-badge {
+  background-color: #e6a23c;
+  &:after {
+    border: 1px solid #e6a23c;
   }
-  .default-badge {
-    background-color: #909399;
-    &:after {
-      border: 1px solid #909399;
-    }
+}
+.default-badge {
+  background-color: #909399;
+  &:after {
+    border: 1px solid #909399;
   }
-  .success-badge {
-    background-color: #67C23A;
-    &:after {
-      border: 1px solid #67C23A;
-    }
+}
+.success-badge {
+  background-color: #67c23a;
+  &:after {
+    border: 1px solid #67c23a;
   }
-  .badge-status-processing {
-    position: relative;
-  }
-  .badge-status-dot {
-    width: 6px;
-    height: 6px;
-    display: inline-block;
-    border-radius: 50%;
-    vertical-align: middle;
-    top: -1px;
-  }
-  .badge-status-processing:after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    content: '';
-    -webkit-animation: statusProcessing 1.2s infinite ease-in-out;
-    animation: statusProcessing 1.2s infinite ease-in-out;
-  }
-  .badge-status-text {
-    /*color: #000;*/
-    /*font-size: 14px;*/
-    margin-left: 8px;
-  }
+}
+.badge-status-processing {
+  position: relative;
+}
+.badge-status-dot {
+  width: 6px;
+  height: 6px;
+  display: inline-block;
+  border-radius: 50%;
+  vertical-align: middle;
+  top: -1px;
+}
+.badge-status-processing:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  content: "";
+  -webkit-animation: statusProcessing 1.2s infinite ease-in-out;
+  animation: statusProcessing 1.2s infinite ease-in-out;
+}
+.badge-status-text {
+  /*color: #000;*/
+  /*font-size: 14px;*/
+  margin-left: 8px;
+}
 </style>

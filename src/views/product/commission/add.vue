@@ -1,6 +1,14 @@
 <template>
-  <el-col span.number="24" class="el-table-add-col">
-    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t('common.add') }}</el-button>
+  <el-col 
+    span.number="24" 
+    class="el-table-add-col">
+    <el-button 
+      class="el-table-add-row" 
+      plain 
+      type="primary" 
+      @click="initForm"
+    >+ {{ $t("common.add") }}</el-button
+    >
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <!--<el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>-->
     <el-dialog
@@ -9,9 +17,18 @@
       :visible="dialogVisible"
       :before-close="handleClose"
       :title="$t('product.commission.add.title')"
-      width="500px">
-      <el-form ref="commission" :model="commission" :rules="rule" label-width="100px">
-        <el-form-item :label="$t('product.commission.add.company')" prop="companyId">
+      width="500px"
+    >
+      <el-form
+        ref="commission"
+        :model="commission"
+        :rules="rule"
+        label-width="100px"
+      >
+        <el-form-item
+          :label="$t('product.commission.add.company')"
+          prop="companyId"
+        >
           <el-select
             ref="company"
             v-model="commission.companyId"
@@ -19,32 +36,43 @@
             :placeholder="$t('product.commission.add.company_rule_message')"
             remote
             filterable
-            style="width: 100%;"
-            @change="onCompanyChange">
+            style="width: 100%"
+            @change="onCompanyChange"
+          >
             <el-option
               v-for="company in companyList"
               :key="company.id"
               :value="company.id"
-              :label="company.name"/>
+              :label="company.name"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('product.commission.add.template')" prop="template">
+        <el-form-item
+          :label="$t('product.commission.add.template')"
+          prop="template"
+        >
           <el-select
             ref="commissionTableList"
             v-model="commission.template"
             :disabled="disableTemplate"
             :placeholder="$t('product.commission.add.template_placeholder')"
             clearable
-            style="width: 100%;">
+            style="width: 100%"
+          >
             <el-option
               v-for="commissionTable in commissionTableList"
               :key="commissionTable.id"
               :value="commissionTable.id"
-              :label="getFormattedDate(commissionTable.effectiveDate)"/>
+              :label="getFormattedDate(commissionTable.effectiveDate)"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="commission.template" :label="$t('product.commission.add.generate_commission_rate')" prop="generateRates">
-          <el-checkbox v-model="commission.generateRates"/>
+        <el-form-item
+          v-if="commission.template"
+          :label="$t('product.commission.add.generate_commission_rate')"
+          prop="generateRates"
+        >
+          <el-checkbox v-model="commission.generateRates" />
         </el-form-item>
         <!--<el-form-item>-->
         <!--<el-radio-group v-model="commission.template" style="margin-left: 70px">-->
@@ -53,18 +81,27 @@
         <!--</el-radio-group>-->
         <!--</el-form-item>-->
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
-        <el-button :loading="loading" type="primary" @click="handleSubmit">{{ $t('common.submitButton') }}</el-button>
+      <div 
+        slot="footer" 
+        class="dialog-footer">
+        <el-button @click="handleClose">{{
+          $t("common.cancelButton")
+        }}</el-button>
+        <el-button 
+          :loading="loading" 
+          type="primary" 
+          @click="handleSubmit">{{
+            $t("common.submitButton")
+          }}</el-button>
       </div>
     </el-dialog>
   </el-col>
 </template>
 
 <script type="text/ecmascript-6">
-import { mapState } from 'vuex'
-import elDragDialog from '@/directive/el-dragDialog'
-import { parseTime } from '@/utils'
+import { mapState } from "vuex";
+import elDragDialog from "@/directive/el-dragDialog";
+import { parseTime } from "@/utils";
 
 export default {
   directives: { elDragDialog },
@@ -73,86 +110,103 @@ export default {
       loading: false,
       dialogVisible: false,
       commission: {
-        companyId: '',
-        template: '',
-        generateRates: false
+        companyId: "",
+        template: "",
+        generateRates: false,
       },
       commissionTableList: [],
       rule: {
-        companyId: [{ required: true, message: this.$t('product.commission.add.company_rule_message'), trigger: 'blur' }]
-      }
-    }
+        companyId: [
+          {
+            required: true,
+            message: this.$t("product.commission.add.company_rule_message"),
+            trigger: "blur",
+          },
+        ],
+      },
+    };
   },
   computed: {
     disableTemplate() {
       if (this.commission.companyId) {
-        return false
+        return false;
       } else {
-        return true
+        return true;
       }
     },
     ...mapState({
-      companyList: state => state.company.companyList.list
-    })
+      companyList: (state) => state.company.companyList.list,
+    }),
   },
   methods: {
     initForm() {
-      this.$store.dispatch('company/FetchCompanyList', {})
-      this.dialogVisible = true
+      this.$store.dispatch("company/FetchCompanyList", {});
+      this.dialogVisible = true;
     },
     getCommissionTableList(id, params) {
-      this.$api.commission.fetchCommissionTableList(id, params).then(res => {
-        this.commissionTableList = res.data.list
-      })
+      this.$api.commission.fetchCommissionTableList(id, params).then((res) => {
+        this.commissionTableList = res.data.list;
+      });
     },
     remoteSearch(query) {
-      this.$store.dispatch('company/FetchCompanyList', { name: query })
+      this.$store.dispatch("company/FetchCompanyList", { name: query });
     },
     getFormattedDate(value) {
       if (isNaN(value)) {
-        return value
+        return value;
       }
-      return parseTime(value, '{y}-{m}-{d}')
+      return parseTime(value, "{y}-{m}-{d}");
     },
     onCompanyChange() {
-      this.getCommissionTableList('', { company: this.commission.companyId, neStatus: 0 })
+      this.getCommissionTableList("", {
+        company: this.commission.companyId,
+        neStatus: 0,
+      });
     },
     handleClose() {
-      this.$refs['commission'].resetFields()
-      this.dialogVisible = false
+      this.$refs["commission"].resetFields();
+      this.dialogVisible = false;
     },
     handleSubmit() {
-      this.$refs['commission'].validate((valid) => {
+      this.$refs["commission"].validate((valid) => {
         if (valid) {
-          this.loading = true
-          const data = { company: this.commission.companyId }
+          this.loading = true;
+          const data = { company: this.commission.companyId };
           if (this.commission.template || this.commission.template === 0) {
-            data.template = this.commission.template
+            data.template = this.commission.template;
           }
           if (this.commission.generateRates) {
-            data.generateRates = this.commission.generateRates
+            data.generateRates = this.commission.generateRates;
           }
-          this.$api.commission.addCommission(data).then(res => {
-            this.$emit('afterAddCommissionTable', res.data.id, this.commission.companyId)
-            this.$message({
-              message: this.$t('common.success'),
-              type: 'success',
-              duration: 5 * 1000
+          this.$api.commission
+            .addCommission(data)
+            .then((res) => {
+              this.$emit(
+                "afterAddCommissionTable",
+                res.data.id,
+                this.commission.companyId
+              );
+              this.$message({
+                message: this.$t("common.success"),
+                type: "success",
+                duration: 5 * 1000,
+              });
+              this.$store.dispatch("commission/FetchCommissionTableList", {
+                id: this.commission.companyId,
+              });
+              this.handleClose();
+              this.loading = false;
             })
-            this.$store.dispatch('commission/FetchCommissionTableList', { id: this.commission.companyId })
-            this.handleClose()
-            this.loading = false
-          }).catch(_ => {
-            this.loading = false
-          })
+            .catch((_) => {
+              this.loading = false;
+            });
         } else {
-          return false
+          return false;
         }
-      })
-    }
-  }
-}
+      });
+    },
+  },
+};
 </script>
 <style lang="scss" rel="stylesheet/scss">
-
 </style>
