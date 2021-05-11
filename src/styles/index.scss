@@ -2,7 +2,7 @@
 @import './mixin.scss';
 @import './transition.scss';
 @import './sidebar.scss';
-@import './btn.scss';
+// @import './btn.scss';
 @import './media.scss';
 @import './element-ui.scss';
 
@@ -126,6 +126,13 @@ code {
       color: rgb(32, 160, 255);
     }
   }
+}
+
+input[type=submit],
+input[type=reset],
+input[type=button] {
+  outline: none;
+  filter: chroma(color=#000000);
 }
 
 .warn-content {

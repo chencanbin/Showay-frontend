@@ -1,145 +1,63 @@
 <template>
   <span>
-    <el-button 
-      type="primary" 
-      @click="initForm">{{
-        $t("client.info.set.add_title")
-      }}</el-button>
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('client.info.set.add_title')"
-      top="50px"
-      width="450px"
-    >
-      <el-form 
-        ref="client" 
-        :model="client" 
-        :rules="rule" 
-        label-width="120px">
-        <el-form-item 
-          :label="$t('client.info.type')" 
-          prop="type">
-          <el-select 
-            v-model="client.isOrganization" 
-            style="width: 100%">
-            <el-option
-              key="0"
-              :label="$t('client.info.individual')"
-              :value="false"
-            />
-            <el-option
-              key="1"
-              :label="$t('client.info.organization')"
-              :value="true"
-            />
+    <el-button type="primary" @click="initForm">{{ $t("client.info.set.add_title") }}</el-button>
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.info.set.add_title')" top="50px" width="450px">
+      <el-form ref="client" :model="client" :rules="rule" label-width="80px">
+        <el-form-item :label="$t('client.info.type')" prop="type">
+          <el-select v-model="client.isOrganization" style="width: 100%">
+            <el-option key="0" :label="$t('client.info.individual')" :value="false" />
+            <el-option key="1" :label="$t('client.info.organization')" :value="true" />
           </el-select>
         </el-form-item>
-        <el-form-item 
-          :label="$t('client.info.name')" 
-          prop="name">
-          <el-input
-            v-model="client.name"
-            :placeholder="$t('client.info.set.name')"
-          />
+        <el-form-item :label="$t('client.info.name')" prop="name">
+          <el-input v-model="client.name" :placeholder="$t('client.info.set.name')" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('client.info.enName')" 
-          prop="englishName">
-          <el-input
-            v-model="client.englishName"
-            :placeholder="$t('client.info.set.enName')"
-          />
+        <el-form-item :label="$t('client.info.enName')" prop="englishName">
+          <el-input v-model="client.englishName" :placeholder="$t('client.info.set.enName')" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('client.info.idNumber')" 
-          prop="idNumber">
-          <el-input
-            v-model="client.idNumber"
-            :placeholder="
+        <el-form-item :label="$t('client.info.idNumber')" prop="idNumber">
+          <el-input v-model="client.idNumber" :placeholder="
               client.isOrganization
                 ? $t('client.info.set.organization_id')
                 : $t('client.info.set.idNumber')
-            "
-          />
+            " />
         </el-form-item>
-        <el-form-item
-          v-show="!client.isOrganization"
-          :label="$t('client.info.sex')"
-          prop="sex"
-        >
+        <el-form-item v-show="!client.isOrganization" :label="$t('client.info.sex')" prop="sex">
           <el-radio-group v-model="client.sex">
             <el-radio :label="0">{{ $t("client.info.male") }}</el-radio>
             <el-radio :label="1">{{ $t("client.info.female") }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item
-          v-show="!client.isOrganization"
-          :label="$t('client.info.locale')"
-          prop="locale"
-        >
-          <el-select
-            v-model="client.locale"
-            :placeholder="$t('client.info.set.locale')"
-            filterable
-            style="width: 100%"
-          >
-            <el-option-group
-              v-for="group in country"
-              :key="group.label"
-              :label="group.label"
-            >
-              <el-option
-                v-for="item in group.options"
-                :key="item.code"
-                :label="item[language]"
-                :value="item.code"
-              />
+        <el-form-item v-show="!client.isOrganization" :label="$t('client.info.locale')" prop="locale">
+          <el-select v-model="client.locale" :placeholder="$t('client.info.set.locale')" filterable style="width: 100%">
+            <el-option-group v-for="group in country" :key="group.label" :label="group.label">
+              <el-option v-for="item in group.options" :key="item.code" :label="item[language]" :value="item.code" />
             </el-option-group>
           </el-select>
         </el-form-item>
-        <el-form-item
-          :label="
+        <el-form-item :label="
             client.isOrganization
               ? $t('client.info.established_time')
               : $t('client.info.birthday')
-          "
-          prop="birthday"
-        >
-          <el-date-picker
-            v-model="client.birthday"
-            :placeholder="
+          " prop="birthday">
+          <el-date-picker v-model="client.birthday" :placeholder="
               client.isOrganization
                 ? $t('client.info.set.established_time')
                 : $t('client.info.set.birthday')
-            "
-            style="width: 100%"
-            type="date"
-          />
+            " style="width: 100%" type="date" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('client.info.phone')" 
-          prop="phone">
+        <el-form-item :label="$t('client.info.phone')" prop="phone">
           <el-input v-model="client.phone" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('client.info.email')" 
-          prop="email">
+        <el-form-item :label="$t('client.info.email')" prop="email">
           <el-input v-model="client.email" />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>

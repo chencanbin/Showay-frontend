@@ -1,36 +1,19 @@
 <template>
-  <div
-    :class="classObj"
-    tabindex="0"
-    class="app-wrapper"
-    @click="onPageClicked()"
-    @mousemove="onPageClicked()"
-    @keyup="onPageClicked()"
-  >
-    <div
-      v-if="device === 'mobile' && sidebar.opened"
-      class="drawer-bg"
-      @click="handleClickOutside"
-    />
+  <div :class="classObj" tabindex="0" class="app-wrapper" @click="onPageClicked()" @mousemove="onPageClicked()" @keyup="onPageClicked()">
+    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+    <div v-if="sidebar.opened" class="logo-wrapper">
+      <div class="logo">LOGO</div>
+    </div>
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <navbar />
       <!--<tags-view/>-->
       <app-main />
     </div>
-    <el-dialog
-      id="timeout"
-      :close-on-click-modal="false"
-      :visible="timeoutDialog"
-      :before-close="handleTimeoutDialogClose"
-      title="提示"
-      width="400px"
-    >
-      <span
-      >由于长时间未操作系统，系统将在{{
+    <el-dialog id="timeout" :close-on-click-modal="false" :visible="timeoutDialog" :before-close="handleTimeoutDialogClose" title="提示" width="400px">
+      <span>由于长时间未操作系统，系统将在{{
         parseTime(closeTime, "{i}:{s}")
-      }}后登出</span
-      >
+      }}后登出</span>
     </el-dialog>
   </div>
 </template>
@@ -94,6 +77,27 @@ export default {
   &.mobile.openSidebar {
     position: fixed;
     top: 0;
+  }
+  .logo-wrapper {
+    width: 180px;
+    height: 59px;
+    position: fixed;
+    background: $--purple;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .logo {
+      background: rgba(243, 242, 245, 0.08);
+      width: 170px;
+      height: 37px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: $--font-size-content;
+    }
   }
 }
 .drawer-bg {

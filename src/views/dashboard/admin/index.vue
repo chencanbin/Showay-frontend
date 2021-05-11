@@ -1,56 +1,32 @@
 <template>
   <div class="dashboard-editor-container">
     <panel-group />
-    <el-row :gutter="8">
-      <el-row 
-        :gutter="8" 
-        type="flex" 
-        justify="left">
-        <!-- 公告列表 -->
-        <el-col 
-          v-if="showHomePage(13)" 
-          :xs="24" 
-          :sm="24" 
-          :lg="8">
-          <fileList />
-        </el-col>
-        <el-col 
-          v-if="showHomePage(14)" 
-          :xs="24" 
-          :sm="24" 
-          :lg="16">
-          <income-distribution />
-        </el-col>
-      </el-row>
-      <!-- 渠道业绩趋势 -->
-      <el-col 
-        v-if="showHomePage(9)" 
-        :xs="24" 
-        :sm="24" 
-        :lg="24">
-        <profit-channel-trend />
-      </el-col>
+    <el-row :gutter="8" type="flex" justify="left">
       <!-- 公司收益趋势 -->
-      <el-col 
-        v-if="showHomePage(8)" 
-        :xs="24" 
-        :sm="24" 
-        :lg="24">
+      <el-col v-if="showHomePage(8)" :xs="24" :sm="24" :lg="16">
         <profit-trend />
       </el-col>
-      <!-- 公司业绩同比 -->
-      <el-col 
-        v-if="showHomePage(10)" 
-        :xs="24" 
-        :sm="24" 
-        :lg="24">
-        <cleared-credit />
+      <!-- 收支分布 -->
+      <el-col v-if="showHomePage(14)" :xs="24" :sm="24" :lg="8">
+        <income-distribution />
       </el-col>
     </el-row>
-    <el-row 
-      :gutter="8" 
-      type="flex" 
-      justify="center">
+    <el-row :gutter="8" type="flex" justify="left">
+      <!-- 公告列表 -->
+      <el-col v-if="showHomePage(13)" :xs="24" :sm="24" :lg="10">
+        <fileList />
+      </el-col>
+      <!-- 渠道业绩趋势 -->
+      <el-col v-if="showHomePage(9)" :xs="24" :sm="24" :lg="14">
+        <profit-channel-trend />
+      </el-col>
+    </el-row>
+    <!-- 公司业绩同比 -->
+    <el-col v-if="showHomePage(10)" :xs="24" :sm="24" :lg="24">
+      <cleared-credit />
+    </el-col>
+
+    <el-row :gutter="8" type="flex" justify="center">
       <!-- 渠道业绩Top5 -->
       <el-col v-if="showHomePage(11)">
         <channel-profit />

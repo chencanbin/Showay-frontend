@@ -1,31 +1,15 @@
 <template>
-  <el-card
-    v-loading="loading"
-    style="position: relative; padding: 16px 16px 0; margin-bottom: 32px"
-  >
-    <div 
-      slot="header" 
-      class="clearfix">
+  <el-card v-loading="loading" style="position: relative; padding: 16px 16px 0; margin-bottom: 32px">
+    <div slot="header" class="clearfix">
       <span style="float: left; font-weight: bold; line-height: 36px">{{
         $t("home.channelPerformanceScale")
       }}</span>
       <div style="display: inline-block; float: right">
-        <el-date-picker
-          :editable="false"
-          :clearable="false"
-          :unlink-panels="true"
-          v-model="year"
-          type="year"
-          value-format="timestamp"
-          style="margin-left: 20px; width: 120px"
-        />
+        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
       </div>
     </div>
     <div id="channelPie">
-      <div
-        v-show="afyp.length === 0"
-        style="position: absolute; top: 50%; right: 50%; color: #cccccc"
-      >
+      <div v-show="afyp.length === 0" style="position: absolute; top: 50%; right: 50%; color: #cccccc">
         {{ $t("common.no_data") }}
       </div>
     </div>
@@ -101,7 +85,10 @@ export default {
         padding: [50, 40, 50, 40],
       });
       this.chart.source(this.afyp);
-      this.chart.coord("theta");
+      this.chart.coord("theta", {
+        radius: 1,
+        innerRadius: 0.5
+      });
       this.chart.scale("value", {
         min: 0,
       });
@@ -111,7 +98,7 @@ export default {
       this.chart
         .intervalStack()
         .position("value")
-        .color("key")
+        .color("key", ['#515CC3', '#E96030', '#3AB29A', '#E23A3A', '#FAA600'])
         .label("value", {
           formatter: function formatter(val, item) {
             if (Number(val) === 0) {

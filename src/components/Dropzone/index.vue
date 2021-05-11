@@ -1,12 +1,6 @@
 <template>
-  <div 
-    :ref="id" 
-    :action="url" 
-    :id="id" 
-    class="dropzone">
-    <input 
-      type="file" 
-      name="file" >
+  <div :ref="id" :action="url" :id="id" class="dropzone">
+    <input type="file" name="file">
   </div>
 </template>
 
@@ -237,7 +231,7 @@ export default {
 }
 
 i {
-  color: #ccc;
+  color: #fff;
 }
 
 .dropzone .dz-image img {

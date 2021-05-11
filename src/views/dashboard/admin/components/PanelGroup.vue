@@ -1,66 +1,22 @@
 <template>
-  <el-row 
-    :gutter="10" 
-    type="flex" 
-    justify="center" 
-    class="panel-group">
-    <el-col 
-      v-if="showHomePage(1)" 
-      class="card-panel-col">
-      <panel-item
-        :title="$t('home.creditSum')"
-        :item="0"
-        :group-by="0"
-        :from="from"
-        :to="to"
-      />
+  <el-row :gutter="10" type="flex" justify="center" class="panel-group">
+    <el-col v-if="showHomePage(1)" class="card-panel-col">
+      <panel-item :title="$t('home.creditSum')" :item="0" :group-by="0" :from="from" :to="to" />
     </el-col>
-    <el-col 
-      v-if="showHomePage(2)" 
-      class="card-panel-col">
-      <panel-item
-        :title="$t('home.pendingCreditSum')"
-        :item="1"
-        :group-by="0"
-        :from="from"
-        :to="to"
-      />
+    <el-col v-if="showHomePage(2)" class="card-panel-col">
+      <panel-item :title="$t('home.pendingCreditSum')" :item="1" :group-by="0" :from="from" :to="to" />
     </el-col>
-    <el-col 
-      v-if="showHomePage(3)" 
-      class="card-panel-col">
-      <panel-item
-        :title="$t('home.paymentSum')"
-        :item="2"
-        :group-by="0"
-        :from="from"
-        :to="to"
-      />
+    <el-col v-if="showHomePage(3)" class="card-panel-col">
+      <panel-item :title="$t('home.paymentSum')" :item="2" :group-by="0" :from="from" :to="to" />
     </el-col>
-    <el-col 
-      v-if="showHomePage(4)" 
-      class="card-panel-col">
-      <panel-item
-        :title="$t('home.pendingPaymentSum')"
-        :item="3"
-        :group-by="0"
-        :from="from"
-        :to="to"
-      />
+    <el-col v-if="showHomePage(4)" class="card-panel-col">
+      <panel-item :title="$t('home.pendingPaymentSum')" :item="3" :group-by="0" :from="from" :to="to" />
     </el-col>
     <!--<el-col v-if="showHomePage(5)" class="card-panel-col">-->
     <!--<panel-item :title="$t('home.policyCount')" :item="5" :group-by="0" :from="from" :to="to"/>-->
     <!--</el-col>-->
-    <el-col 
-      v-if="showHomePage(6)" 
-      class="card-panel-col">
-      <panel-item
-        :title="$t('home.normalPolicyCount')"
-        :item="6"
-        :group-by="0"
-        :from="from"
-        :to="to"
-      />
+    <el-col v-if="showHomePage(6)" class="card-panel-col">
+      <panel-item :title="$t('home.normalPolicyCount')" :item="6" :group-by="0" :from="from" :to="to" />
     </el-col>
   </el-row>
 </template>
@@ -101,7 +57,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
 .panel-group {
   .card-panel-col {
-    margin-bottom: 32px;
+    margin-bottom: 16px;
   }
 }
 </style>

@@ -5,12 +5,17 @@
     <!--</div>-->
     <div class="card-panel-description">
       <div class="card-panel-text">{{ title }}</div>
-      <count-to
-        :start-val="0"
-        :end-val="count"
-        :duration="2600"
-        class="card-panel-num"
-      />
+      <div class="data-contrast">同比
+        <span v-if="contrast === 0" class="equal">-</span>
+        <span v-else-if="contrast > 0" class="increase">+{{contrast}}%</span>
+        <span v-else-if="contrast < 0" class="reduce">{{contrast}}%</span>
+      </div>
+      <div class="icon-contrast">
+        <i v-if="contrast === 0" class="el-icon-minus"></i>
+        <i v-else-if="contrast > 0" class="el-icon-top"></i>
+        <i v-else-if="contrast < 0" class="el-icon-bottom"></i>
+      </div>
+      <count-to :start-val="0" :end-val="count" :duration="2600" class="card-panel-num" />
     </div>
   </div>
 </template>
@@ -23,6 +28,12 @@ export default {
     CountTo,
   },
   props: {
+    contrast: { // 对比数据
+      type: Number,
+      default() {
+        return 12.5
+      }
+    },
     title: {
       type: String,
       default() {
@@ -80,75 +91,83 @@ export default {
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
 .card-panel {
-  height: 108px;
-  cursor: pointer;
+  height: 150px;
   font-size: 12px;
   position: relative;
   overflow: hidden;
-  color: #666;
   background: #fff;
   border-radius: 4px;
   box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
   border-color: rgba(0, 0, 0, 0.05);
-  &:hover {
-    .card-panel-icon-wrapper {
-      color: #fff;
-    }
-    .icon-people {
-      background: #40c9c6;
-    }
-    .icon-message {
-      background: #36a3f7;
-    }
-    .icon-payment-sum {
-      background: #e6a23c;
-    }
-    .icon-money {
-      background: #f4516c;
-    }
-    .icon-shopping {
-      background: #34bfa3;
-    }
-  }
-  .icon-people {
-    color: #40c9c6;
-  }
-  .icon-message {
-    color: #36a3f7;
-  }
-  .icon-payment-sum {
-    color: #e6a23c;
-  }
-  .icon-money {
-    color: #f4516c;
-  }
-  .icon-shopping {
-    color: #34bfa3;
-  }
-  .card-panel-icon-wrapper {
-    float: left;
-    margin: 14px 0 0 14px;
-    padding: 16px;
-    transition: all 0.38s ease-out;
-    border-radius: 6px;
-  }
-  .card-panel-icon {
-    float: left;
-    font-size: 48px;
-  }
-  .card-panel-description {
-    text-align: center;
+
+  .card-panel-text {
     font-weight: bold;
-    margin-top: 26px;
-    .card-panel-text {
-      line-height: 18px;
-      color: rgba(0, 0, 0, 0.45);
-      font-size: 16px;
-      margin-bottom: 12px;
+    color: #43475f;
+    font-size: 18px;
+    position: absolute;
+    top: 24px;
+    left: 24px;
+  }
+  .data-contrast {
+    color: #8e919f;
+    font-size: 14px;
+    font-weight: 500;
+    position: absolute;
+    top: 26px;
+    right: 24px;
+
+    .increase {
+      font-weight: bold;
+      color: $--purple;
     }
-    .card-panel-num {
-      font-size: 20px;
+    .reduce {
+      font-weight: bold;
+      color: $--yellow;
     }
+  }
+
+  .icon-contrast {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    .el-icon-minus {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      line-height: 32px;
+      text-align: center;
+      font-weight: bold;
+      color: #b5b9c6;
+      background: #f4f4f8;
+    }
+    .el-icon-top {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      line-height: 32px;
+      text-align: center;
+      font-weight: bold;
+      color: $--green;
+      background: $--green-assist;
+    }
+    .el-icon-bottom {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      line-height: 32px;
+      text-align: center;
+      font-weight: bold;
+      color: $--yellow;
+      background: $--yellow-assist;
+    }
+  }
+  .card-panel-num {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    color: #3e425e;
+    font-size: 28px;
+    font-weight: bold;
   }
 }
 </style>

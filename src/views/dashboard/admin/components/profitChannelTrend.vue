@@ -1,60 +1,19 @@
 <template>
-  <el-card
-    v-loading="loading"
-    style="background: #fff; padding: 10px 16px 0; margin-bottom: 32px"
-    class="profit"
-  >
-    <div 
-      slot="header" 
-      class="clearfix">
+  <el-card v-loading="loading" style="background: #fff; padding: 10px 16px 0; margin-bottom: 16px" class="profit">
+    <div slot="header" class="clearfix">
       <span style="float: left; font-weight: bold; line-height: 36px">{{
         $t("home.channelProfitTrend", [""])
       }}</span>
       <div style="display: inline-block; float: right">
         <el-button-group style="margin-left: 20px">
-          <el-button
-            :type="buttonProfitMonth"
-            size="small"
-            @click="profitMonth()"
-          >{{ $t("home.month") }}</el-button
-          >
-          <el-button
-            :type="buttonProfitQuarter"
-            size="small"
-            @click="profitQuarter()"
-          >{{ $t("home.quarter") }}</el-button
-          >
-          <el-button
-            :type="buttonProfitYear"
-            size="small"
-            @click="profitYear()"
-          >{{ $t("home.year") }}</el-button
-          >
+          <div :class="activeName === 0 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitMonth()">{{ $t("home.month") }}</div>
+          <div :class="activeName === 1 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitQuarter()">{{ $t("home.quarter") }}</div>
+          <div :class="activeName === 2 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitYear()">{{ $t("home.year") }}</div>
         </el-button-group>
-        <el-select
-          v-model="channel"
-          :placeholder="$t('client.insurance_policy.set.channel_name')"
-          filterable
-          remote
-          clearable
-          style="margin-left: 20px"
-        >
-          <el-option
-            v-for="item in channels.list"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
+        <el-select v-model="channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable remote clearable style="margin-left: 20px">
+          <el-option v-for="item in channels.list" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
-        <el-date-picker
-          :editable="false"
-          :clearable="false"
-          :unlink-panels="true"
-          v-model="year"
-          type="year"
-          value-format="timestamp"
-          style="margin-left: 20px; width: 120px"
-        />
+        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
       </div>
     </div>
     <div id="profitChannelTrend" />
@@ -74,7 +33,7 @@ export default {
       activeName: 0,
       channel: "",
       year: new Date(),
-      buttonProfitMonth: "primary",
+      buttonProfitMonth: "",
       buttonProfitQuarter: "",
       buttonProfitYear: "",
       profit: [],
@@ -131,19 +90,19 @@ export default {
       this.getProfit(8, 5);
       this.buttonProfitMonth = "";
       this.buttonProfitQuarter = "";
-      this.buttonProfitYear = "primary";
+      this.buttonProfitYear = "";
     },
     profitQuarter() {
       this.activeName = 1;
       this.getProfit(8, 6);
       this.buttonProfitMonth = "";
-      this.buttonProfitQuarter = "primary";
+      this.buttonProfitQuarter = "";
       this.buttonProfitYear = "";
     },
     profitMonth() {
       this.activeName = 0;
       this.getProfit(8, 7);
-      this.buttonProfitMonth = "primary";
+      this.buttonProfitMonth = "";
       this.buttonProfitQuarter = "";
       this.buttonProfitYear = "";
     },
@@ -187,14 +146,14 @@ export default {
       this.chart.axis("value", {
         label: {
           textStyle: {
-            fill: "#aaaaaa",
+            fill: "#8E919F",
           },
         },
       });
       this.chart.axis("key", {
         label: {
           textStyle: {
-            fill: "#aaaaaa",
+            fill: "#8E919F",
           },
         },
       });
@@ -203,11 +162,8 @@ export default {
       //     type: 'line'
       //   }
       // })
-      this.chart.line().position("key*value");
-      this.chart.point().position("key*value").size(3).shape("circle").style({
-        stroke: "#fff",
-        lineWidth: 1,
-      });
+      this.chart.area().position("key*value").color('#E7E8F5').shape('smooth');
+      this.chart.line().position("key*value").color('#515CC3').shape('smooth');
       this.chart.render();
     },
   },
@@ -216,22 +172,5 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 .profit {
-  .el-button:focus,
-  .el-button:hover {
-    color: #409eff;
-    border-color: #c6e2ff;
-    background-color: #ecf5ff;
-  }
-  .el-button--primary {
-    color: #fff;
-    background-color: #409eff;
-    border-color: #409eff;
-  }
-  .el-button--primary:focus,
-  .el-button--primary:hover {
-    background: #66b1ff;
-    border-color: #66b1ff;
-    color: #fff;
-  }
 }
 </style>

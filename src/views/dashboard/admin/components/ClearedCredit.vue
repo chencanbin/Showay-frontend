@@ -1,61 +1,18 @@
 <template>
-  <el-card
-    v-loading="loading"
-    style="padding: 16px 16px 0; margin-bottom: 32px"
-    class="clearedCredit"
-  >
-    <div 
-      slot="header" 
-      class="clearfix">
+  <el-card v-loading="loading" style="padding: 16px 16px 0; margin-bottom: 16px" class="clearedCredit">
+    <div slot="header" class="clearfix">
       <span style="float: left; font-weight: bold; line-height: 36px">{{
         $t("home.comparison")
       }}</span>
       <div style="display: inline-block; float: right">
-        <el-select
-          :remote-method="searchCompany"
-          :loading="companyLoading"
-          v-model="company"
-          :placeholder="$t('common.company_placeholder')"
-          filterable
-          remote
-          clearable
-          style="margin-left: 20px"
-          @focus="onCompanyFocus"
-        >
-          <el-option
-            v-for="item in companies"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
+        <el-select :remote-method="searchCompany" :loading="companyLoading" v-model="company" :placeholder="$t('common.company_placeholder')" filterable remote clearable style="margin-left: 20px" @focus="onCompanyFocus">
+          <el-option v-for="item in companies" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
-        <el-date-picker
-          :editable="false"
-          :clearable="false"
-          v-model="year"
-          type="year"
-          value-format="timestamp"
-          style="width: 120px"
-        />
+        <el-date-picker :editable="false" :clearable="false" v-model="year" type="year" value-format="timestamp" style="width: 120px" />
         <el-button-group style="margin-left: 20px">
-          <el-button
-            :type="buttonClearCreditMonth"
-            size="small"
-            @click="clearCreditMonth()"
-          >{{ $t("home.month") }}</el-button
-          >
-          <el-button
-            :type="buttonClearCreditQuarter"
-            size="small"
-            @click="clearCreditQuarter()"
-          >{{ $t("home.quarter") }}</el-button
-          >
-          <el-button
-            :type="buttonClearCreditYear"
-            size="small"
-            @click="clearCreditYear()"
-          >{{ $t("home.year") }}</el-button
-          >
+          <div size="mini" :class="activeName === 0 ? 'button-active' : 'button-no-active'" class="self-button" @click="clearCreditMonth()">{{ $t("home.month") }}</div>
+          <div size="mini" :class="activeName === 1 ? 'button-active' : 'button-no-active'" class="self-button" @click="clearCreditQuarter()">{{ $t("home.quarter") }}</div>
+          <div size="mini" :class="activeName === 2 ? 'button-active' : 'button-no-active'" class="self-button" @click="clearCreditYear()">{{ $t("home.year") }}</div>
         </el-button-group>
       </div>
     </div>
@@ -84,6 +41,7 @@ export default {
       loading: false,
       company: "",
       groupBy: 7,
+      activeName: 0
     };
   },
   computed: {
@@ -202,6 +160,7 @@ export default {
     },
     clearCreditYear() {
       this.groupBy = 5;
+      this.activeName = 2;
       this.getTrend(0, 0);
       this.buttonClearCreditMonth = "";
       this.buttonClearCreditQuarter = "";
@@ -209,6 +168,7 @@ export default {
     },
     clearCreditQuarter() {
       this.groupBy = 6;
+      this.activeName = 1;
       this.getTrend(0, 1);
       this.buttonClearCreditMonth = "";
       this.buttonClearCreditQuarter = "primary";
@@ -216,6 +176,7 @@ export default {
     },
     clearCreditMonth() {
       this.groupBy = 7;
+      this.activeName = 0;
       this.getTrend(0, 1);
       this.buttonClearCreditMonth = "primary";
       this.buttonClearCreditQuarter = "";
@@ -321,17 +282,8 @@ export default {
           return accounting.formatMoney(val, "", 2);
         },
       });
-      this.chart
-        .interval()
-        .position("key*value")
-        .color("series")
-        .adjust([
-          {
-            type: "dodge",
-            marginRatio: 1 / 32,
-          },
-        ]);
-      this.chart.line().position("key*count").color("countSeries").size(1);
+      this.chart.interval().position("key*value").color("series", ['#515CC3', '#E96030']).adjust([{ type: "dodge", marginRatio: 1 / 32 }]);
+      this.chart.line().position("key*count").color("countSeries", ['#515CC3', '#E96030']).size(1);
       // this.chart.interval().position('key*count').color('series').adjust([{
       //   type: 'dodge',
       //   marginRatio: 1 / 32
@@ -343,31 +295,33 @@ export default {
 </script>
 <style rel="stylesheet/scss" lang="scss" type="text/scss" scoped>
 .clearedCredit {
-  .el-button:focus,
-  .el-button:hover {
-    color: #409eff;
-    border-color: #c6e2ff;
-    background-color: #ecf5ff;
+  .el-button-group {
+    padding: 6px 4px;
+    background: #f6f6f6;
+    border-radius: 6px;
   }
-
-  .el-button--primary {
-    color: #fff;
-    background-color: #409eff;
-    border-color: #409eff;
+  .self-button {
+    width: 54px;
+    height: 28px;
+    line-height: 28px;
+    border: 0;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
   }
-
-  .el-button--primary:focus,
-  .el-button--primary:hover {
-    background: #66b1ff;
-    border-color: #66b1ff;
-    color: #fff;
+  .self-button:focus {
+    border: 0;
   }
-
-  .el-button--primary:focus,
-  .el-button--primary:hover {
-    background: #66b1ff;
-    border-color: #66b1ff;
-    color: #fff;
+  .button-active {
+    background: #ffffff;
+    border-radius: 6px;
+    color: $--purple;
+    font-weight: bold;
+  }
+  .button-no-active {
+    font-weight: 400;
+    color: #8e919f;
+    background-color: transparent;
   }
 }
 </style>

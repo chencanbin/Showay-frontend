@@ -1,170 +1,89 @@
 <template>
-  <div 
-    id="clientInfo" 
-    class="table-container">
-    <basic-container>
-      <el-form 
-        :inline="true" 
-        class="search-input" 
-        @submit.native.prevent>
-        <el-form-item 
-          label="" 
-          prop="wildcard">
-          <el-input
-            v-model="wildcard"
-            :placeholder="$t('client.info.search')"
-            clearable
-            @input="search"
-          >
-            <i 
-              slot="prefix" 
-              class="el-input__icon el-icon-search" />
+  <div id="clientInfo" class="table-container">
+    <div class="header">
+      <el-form :inline="true" class="search-input" @submit.native.prevent>
+        <el-form-item label="" prop="wildcard">
+          <el-input v-model="wildcard" :placeholder="$t('client.info.search')" clearable @input="search">
+            <i slot="prefix" class="el-input__icon el-icon-search" />
           </el-input>
         </el-form-item>
+        <el-button type="primary" @click="search">搜索</el-button>
       </el-form>
-      <pagination
-        :total="client.total"
-        :page="listQuery.page"
-        :limit="listQuery.limit"
-        @pagination="pagination"
-        @update:page="updatePage"
-        @update:limit="updateLimit"
-      />
-      <el-table
-        v-loading="clientLoading"
-        :height="height"
-        :data="client.list"
-        stripe
-      >
-        <el-table-column
-          :label="$t('client.info.name')"
-          prop="name"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          :label="$t('client.info.idNumber')"
-          prop="idNumber"
-          min-width="120"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          :label="$t('client.info.locale')"
-          prop="locale"
-          width="135"
-        >
-          <template slot-scope="scope">
-            <span v-if="!scope.row.isOrganization">
-              {{ scope.row.locale }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column 
-          :label="$t('client.info.sex')" 
-          prop="sex" 
-          width="80">
-          <template slot-scope="scope">
-            <span v-if="!scope.row.isOrganization">
-              {{
-                scope.row.sex === 0
-                  ? $t("client.info.male")
-                  : $t("client.info.female")
-              }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('client.info.birthday')"
-          :formatter="dateFormat"
-          prop="birthday"
-          width="100"
-        />
-        <el-table-column
-          :label="$t('client.info.phone')"
-          prop="phone"
-          min-width="125"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          :label="$t('client.info.email')"
-          prop="email"
-          show-overflow-tooltip
-          min-width="120"
-        />
-        <el-table-column 
-          :label="$t('client.info.type')" 
-          min-width="100px">
-          <template slot-scope="scope">
-            <el-tag 
-              v-if="scope.row.isOrganization" 
-              type="warning">{{
-                $t("client.info.organization")
-              }}</el-tag>
-            <el-tag 
-              v-else 
-              type="success">{{
-                $t("client.info.individual")
-              }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('common.action')"
-          width="120"
-          align="center"
-        >
-          <template slot-scope="scope">
+    </div>
+    <basic-container>
+
+      <div class="client_list_wrapper" v-loading="clientLoading">
+        <div class="create_client" @click="createClient">
+          <i class="el-icon-plus"></i>
+          <span class="create_client_tip">{{$t("common.add")}}</span>
+        </div>
+        <div class="client_info_wrapper" v-for="scope in client.list" :key="scope.id">
+          <div class="client_info ">
+            <span class="client_name">{{scope.name}}</span>
             <el-dropdown>
-              <el-button 
-                type="primary" 
-                plain 
-                size="mini">
+              <el-button type="primary" plain size="mini">
                 <i class="el-icon-more" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit 
-                    :data="scope.row" 
-                    :list-query="listQuery" />
+                  <edit :data="scope" :list-query="listQuery" />
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button
-                    type="text"
-                    size="small"
-                    @click="verifyPassword(scope.row.id)"
-                  >{{ $t("common.delete") }}
+                  <el-button type="text" size="small" @click="verifyPassword(scope.id)">{{ $t("common.delete") }}
                   </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-      <add :list-query="listQuery" />
-      <el-dialog
-        v-el-drag-dialog
-        :close-on-click-modal="false"
-        :visible="dialogVisible"
-        :before-close="handleClose"
-        :title="$t('common.password_verify') + ' - ' + name"
-        width="400px"
-      >
-        <el-input
-          v-model="password"
-          :placeholder="$t('login.password_placeholder')"
-          type="password"
-        />
+          </div>
+          <div class="client_info">
+            <span class="label">{{$t('client.info.idNumber')}}</span>
+            <span class="value">{{scope.idNumber}}</span>
+          </div>
+          <div class="client_info">
+            <span class="label">{{$t('client.info.locale')}}</span>
+            <span class="value">{{scope.locale}}</span>
+          </div>
+          <div class="client_info">
+            <span class="label">{{$t('client.info.sex')}}</span>
+            <span class="value" v-if="!scope.isOrganization">
+              {{scope.sex === 0? $t("client.info.male"): $t("client.info.female")}}
+            </span>
+          </div>
+          <div class="client_info">
+            <span class="label">{{$t('client.info.birthday')}}</span>
+            <span class="value">{{scope.birthday | dateFormat}}</span>
+          </div>
+          <div class="client_info">
+            <span class="label">{{$t('client.info.phone')}}</span>
+            <span class="value">{{scope.phone}}</span>
+          </div>
+          <div class="client_info">
+            <span class="label">{{$t('client.info.email')}}</span>
+            <el-tooltip :content="scope.email" placement="top"><span class="value">{{scope.email}}</span></el-tooltip>
+          </div>
+          <div class="client_info">
+            <span class="label">{{$t('client.info.type')}}</span>
+            <el-tag v-if="scope.isOrganization" type="success">{{$t("client.info.organization")}}</el-tag>
+            <el-tag v-else>{{$t("client.info.individual")}}</el-tag>
+          </div>
+        </div>
+        <div class="client_empty"></div>
+        <div class="client_empty"></div>
+        <div class="client_empty"></div>
+      </div>
+      <div class="client-list-bottom">
+        <add :list-query="listQuery" ref="addClient" />
+        <pagination :total="client.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+
+      </div>
+      <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">
+        <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password" />
         <div class="tips_text">* {{ $t("common.password_verify_text") }}</div>
-        <div 
-          slot="footer" 
-          class="dialog-footer">
+        <div slot="footer" class="dialog-footer">
           <el-button @click="handleClose">{{
             $t("common.cancelButton")
           }}</el-button>
-          <el-button
-            :loading="submitLoading"
-            type="primary"
-            @click="handleDelete()"
-          >{{ $t("common.submitButton") }}</el-button
-          >
+          <el-button :loading="submitLoading" type="primary" @click="handleDelete()">{{ $t("common.submitButton") }}</el-button>
         </div>
       </el-dialog>
     </basic-container>
@@ -212,7 +131,15 @@ export default {
   mounted() {
     this.getClient();
   },
+  filters: {
+    dateFormat(val) {
+      return parseTime(val, "{y}-{m}-{d}");
+    },
+  },
   methods: {
+    createClient() {
+      this.$refs.addClient.initForm();
+    },
     getClient(params) {
       params = Object.assign({ wildcard: this.wildcard, ...params });
       this.$store.dispatch("client/FetchClientList", { params });
@@ -293,6 +220,14 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 #clientInfo {
+  background: #eff0f3;
+  .header {
+    width: 100%;
+    height: 60px;
+    background: #fff;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
   .el-dialog--center .el-dialog__body {
     padding: 15px 20px;
   }
@@ -301,6 +236,84 @@ export default {
     font-size: 14px;
     font-weight: bold;
     margin-top: 10px;
+  }
+
+  .client_list_wrapper {
+    padding: 24px 24px 60px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    box-sizing: border-box;
+    height: 74vh;
+    overflow: auto;
+    .create_client {
+      width: 310px;
+      min-height: 300px;
+      border-radius: 8px;
+      border: 1px dashed #e9e8f0;
+      margin-bottom: 24px;
+      color: #8e919f;
+      font-size: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .el-icon-plus {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+    }
+    .create_client:hover {
+      border-color: $--purple;
+      color: #fff;
+      background: $--purple;
+      transition: all 0.5s;
+    }
+    .client_empty {
+      width: 310px;
+    }
+    .client_info_wrapper {
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #e9e8f0;
+      margin-bottom: 24px;
+      padding: 24px;
+      width: 310px;
+      .client_name {
+        font-size: 18px;
+        color: #42475f;
+        font-size: 18px;
+      }
+      .client_info {
+        font-size: 14px;
+        font-weight: 500;
+        height: 36px;
+        line-height: 36px;
+        display: flex;
+        justify-content: space-between;
+        .label {
+          color: #8e919f;
+        }
+        .value {
+          color: #42475f;
+          word-wrap: normal;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          text-align: right;
+          width: 150px;
+        }
+      }
+    }
+  }
+  .client-list-bottom {
+    padding-left: 57px;
+    height: 60px;
+    background: #fff;
+    width: 100%;
+    display: flex;
+    border-top: #e9e8f0 solid 1px;
   }
 }
 </style>

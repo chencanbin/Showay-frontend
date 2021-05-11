@@ -1,8 +1,5 @@
 <template>
-  <svg 
-    :class="svgClass" 
-    aria-hidden="true" 
-    @click="click">
+  <svg :class="svgClass" aria-hidden="true" @click="click">
     <use :xlink:href="iconName" />
   </svg>
 </template>
@@ -40,7 +37,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style rel="stylesheet/scss" lang="scss" type="text/scss">
 .svg-icon {
   width: 1em;
   height: 1em;

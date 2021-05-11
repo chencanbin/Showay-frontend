@@ -1,45 +1,16 @@
 <template>
-  <el-card
-    v-loading="loading"
-    style="background: #fff; padding: 10px 16px 0; margin-bottom: 32px"
-    class="profit"
-  >
-    <div 
-      slot="header" 
-      class="clearfix">
+  <el-card v-loading="loading" style="background: #fff; padding: 10px 16px 0; margin-bottom: 16px" class="profit">
+    <div slot="header" class="clearfix">
       <span style="float: left; font-weight: bold; line-height: 36px">{{
         $t("home.companyProfit")
       }}</span>
       <div style="display: inline-block; float: right">
         <el-button-group style="margin-left: 20px">
-          <el-button
-            :type="buttonProfitMonth"
-            size="small"
-            @click="profitMonth()"
-          >{{ $t("home.month") }}</el-button
-          >
-          <el-button
-            :type="buttonProfitQuarter"
-            size="small"
-            @click="profitQuarter()"
-          >{{ $t("home.quarter") }}</el-button
-          >
-          <el-button
-            :type="buttonProfitYear"
-            size="small"
-            @click="profitYear()"
-          >{{ $t("home.year") }}</el-button
-          >
+          <div size="mini" :class="activeName === 0 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitMonth()">{{ $t("home.month") }}</div>
+          <div size="mini" :class="activeName === 1 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitQuarter()">{{ $t("home.quarter") }}</div>
+          <div size="mini" :class="activeName === 2 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitYear()">{{ $t("home.year") }}</div>
         </el-button-group>
-        <el-date-picker
-          :editable="false"
-          :clearable="false"
-          :unlink-panels="true"
-          v-model="year"
-          type="year"
-          value-format="timestamp"
-          style="margin-left: 20px; width: 120px"
-        />
+        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
       </div>
     </div>
     <div id="profitTrend" />
@@ -90,19 +61,19 @@ export default {
       this.getProfit(4, 5);
       this.buttonProfitMonth = "";
       this.buttonProfitQuarter = "";
-      this.buttonProfitYear = "primary";
+      this.buttonProfitYear = "";
     },
     profitQuarter() {
       this.activeName = 1;
       this.getProfit(4, 6);
       this.buttonProfitMonth = "";
-      this.buttonProfitQuarter = "primary";
+      this.buttonProfitQuarter = "";
       this.buttonProfitYear = "";
     },
     profitMonth() {
       this.activeName = 0;
       this.getProfit(4, 7);
-      this.buttonProfitMonth = "primary";
+      this.buttonProfitMonth = "";
       this.buttonProfitQuarter = "";
       this.buttonProfitYear = "";
     },
@@ -145,27 +116,19 @@ export default {
       this.chart.axis("value", {
         label: {
           textStyle: {
-            fill: "#aaaaaa",
+            fill: "#8E919F",
           },
         },
       });
       this.chart.axis("key", {
         label: {
           textStyle: {
-            fill: "#aaaaaa",
+            fill: "#8E919F",
           },
         },
       });
-      // this.chart.tooltip({
-      //   crosshairs: {
-      //     type: 'line'
-      //   }
-      // })
-      this.chart.line().position("key*value");
-      this.chart.point().position("key*value").size(3).shape("circle").style({
-        stroke: "#fff",
-        lineWidth: 1,
-      });
+      this.chart.area().position("key*value").color('#E7E8F5').shape('smooth');
+      this.chart.line().position("key*value").color('#515CC3').shape('smooth');
       this.chart.render();
     },
   },
@@ -174,22 +137,34 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 .profit {
-  .el-button:focus,
-  .el-button:hover {
-    color: #409eff;
-    border-color: #c6e2ff;
-    background-color: #ecf5ff;
+  .el-button-group {
+    padding: 6px 4px;
+    background: #f6f6f6;
+    border-radius: 6px;
   }
-  .el-button--primary {
-    color: #fff;
-    background-color: #409eff;
-    border-color: #409eff;
+  .self-button {
+    width: 54px;
+    height: 28px;
+    line-height: 28px;
+    border: 0;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
   }
-  .el-button--primary:focus,
-  .el-button--primary:hover {
-    background: #66b1ff;
-    border-color: #66b1ff;
-    color: #fff;
+  .self-button:focus {
+    border: 0;
   }
+  .button-active {
+    background: #ffffff;
+    border-radius: 6px;
+    color: $--purple;
+    font-weight: bold;
+  }
+  .button-no-active {
+    font-weight: 400;
+    color: #8e919f;
+    background-color: transparent;
+  }
+
 }
 </style>

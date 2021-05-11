@@ -1075,7 +1075,6 @@ export default {
   background-color: #fafafa;
 }
 .currentRow {
-  background-color: #00aa72 !important;
   color: #fafafa;
 }
 /*.handsontable tr:nth-child(odd) td {*/

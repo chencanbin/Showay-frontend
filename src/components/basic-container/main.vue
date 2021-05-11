@@ -14,8 +14,7 @@ export default {
 
 <style lang="scss" type="text/scss">
 .basic-container {
-  border-radius: 5px;
-  box-shadow: 0px 0px 9px 2px #5653534a;
+  border-radius: 8px;
   box-sizing: border-box;
   .el-card {
     width: 100%;

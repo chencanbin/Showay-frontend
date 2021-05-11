@@ -1,32 +1,21 @@
 <template>
-  <el-card style="background: #fff; padding: 16px 16px 0; margin-bottom: 32px">
-    <div 
-      slot="header" 
-      class="clearfix">
-      <span style="height: 32px; display: inline-block; font-weight: bold">{{
+  <el-card style="background: #fff; height:374px; margin-bottom: 16px" class="card-file-list">
+    <div slot="header">
+      <span style="font-weight: bold; padding-left: 14px; display: block; height: 60px;">{{
         $t("home.news")
       }}</span>
     </div>
-    <el-table
-      v-loading="loading"
-      :data="fileList"
-      :show-header="false"
-      height="307"
-    >
-      <el-table-column 
-        prop="name" 
-        label="文件名称" 
-        show-overflow-tooltip>
-        <template slot-scope="scope">
-          <!--<svg-icon :icon-class="getFileType(scope.row.extention)" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>-->
-          <a 
-            class="folderLink" 
-            @click="handleDownload(scope.row)">{{
-              fileNameFormatter(scope.row.name)
-            }}</a>
-        </template>
+    <!-- <el-table v-loading="loading" :data="fileList" :show-header="false" height="307">
+      <el-table-column prop="name" label="文件名称" show-overflow-tooltip>
+        <template slot-scope="scope"> -->
+    <!--<svg-icon :icon-class="getFileType(scope.row.extention)" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>-->
+    <div v-for="file in fileList" :key="file" class="file-list-wrapper">
+      <a type="text" class="folderLink" @click="handleDownload(file)">{{ fileNameFormatter(file.name) }}</a>
+    </div>
+
+    <!-- </template>
       </el-table-column>
-    </el-table>
+    </el-table> -->
   </el-card>
 </template>
 
@@ -100,14 +89,41 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
-.folderLink {
-  color: #424e67;
-  line-height: 2.2;
-}
-.folderLink:active,
-.folderLink:hover {
-  cursor: pointer;
-  text-decoration: none;
-  color: #00701a;
+.card-file-list {
+  .el-card__header {
+    border: 0;
+    height: 60px;
+    line-height: 60px;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+  .el-card__body {
+    height: 300px;
+    overflow: auto;
+    padding-left: 24px;
+  }
+  .file-list-wrapper {
+    height: 50px;
+    line-height: 50px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px dashed #e9e8f0;
+    .folderLink {
+      color: #43475f;
+      font-size: 16px;
+      display: block;
+      padding-left: 12px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .folderLink:active,
+    .folderLink:hover {
+      cursor: pointer;
+      text-decoration: none;
+      color: $--purple;
+    }
+  }
 }
 </style>

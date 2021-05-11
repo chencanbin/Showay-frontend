@@ -1,25 +1,11 @@
 <template>
-  <el-card
-    v-loading="loading"
-    class="channelProfit"
-    style="padding: 16px 16px 0; margin-bottom: 32px"
-  >
-    <div 
-      slot="header" 
-      class="clearfix">
+  <el-card v-loading="loading" class="channelProfit" style="padding: 16px 16px 0; margin-bottom: 32px">
+    <div slot="header" class="clearfix">
       <span style="float: left; font-weight: bold; line-height: 36px">{{
         $t("home.channelPerformanceTop")
       }}</span>
       <div style="display: inline-block; float: right">
-        <el-date-picker
-          :editable="false"
-          :clearable="false"
-          :unlink-panels="true"
-          v-model="year"
-          type="year"
-          value-format="timestamp"
-          style="margin-left: 20px; width: 120px"
-        />
+        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
       </div>
     </div>
     <div id="channelProfit" />
@@ -95,18 +81,18 @@ export default {
       this.chart.axis("value", {
         label: {
           textStyle: {
-            fill: "#aaaaaa",
+            fill: "#8E919F",
           },
         },
       });
       this.chart.axis("key", {
         label: {
           textStyle: {
-            fill: "#aaaaaa",
+            fill: "#8E919F",
           },
         },
       });
-      this.chart.interval().position("key*value");
+      this.chart.interval().position("key*value").color("key", ['#515CC3', '#E96030', '#3AB29A', '#E23A3A', '#FAA600']);
       this.chart.render();
     },
   },
