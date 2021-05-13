@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar">
+  <div class="navbar" :class="!sidebar.opened && 'mobile_navbar'">
     <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container" />
 
     <breadcrumb class="breadcrumb-container" />
@@ -324,7 +324,7 @@ export default {
   background-color: $--purple;
   position: fixed;
   z-index: 10;
-  width: 90%;
+  width: calc(100% - 180px);
   .hamburger-container {
     line-height: 60px;
     height: 60px;
@@ -400,6 +400,9 @@ export default {
       line-height: 30px;
     }
   }
+}
+.mobile_navbar {
+  width: calc(100% - 60px);
 }
 .el-popover {
   min-width: 200px !important;

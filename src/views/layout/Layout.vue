@@ -4,6 +4,8 @@
     <div v-if="sidebar.opened" class="logo-wrapper">
       <div class="logo">LOGO</div>
     </div>
+    <div v-if="!sidebar.opened" class="no-logo-wrapper">
+    </div>
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <navbar />
@@ -77,6 +79,12 @@ export default {
   &.mobile.openSidebar {
     position: fixed;
     top: 0;
+  }
+  .no-logo-wrapper {
+    background: $--purple;
+    width: 60px;
+    height: 60px;
+    position: fixed;
   }
   .logo-wrapper {
     width: 180px;

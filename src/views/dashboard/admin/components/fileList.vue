@@ -9,7 +9,7 @@
       <el-table-column prop="name" label="文件名称" show-overflow-tooltip>
         <template slot-scope="scope"> -->
     <!--<svg-icon :icon-class="getFileType(scope.row.extention)" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>-->
-    <div v-for="file in fileList" :key="file" class="file-list-wrapper">
+    <div v-for="(file,index) in fileList" :key="index" class="file-list-wrapper">
       <a type="text" class="folderLink" @click="handleDownload(file)">{{ fileNameFormatter(file.name) }}</a>
     </div>
 

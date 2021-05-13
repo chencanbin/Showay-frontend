@@ -1,168 +1,75 @@
 <template>
   <span>
-    <el-badge
-      :hidden="events.length === 0"
-      :value="events.length"
-      :max="99"
-      style="line-height: 35px"
-    >
-      <svg-icon
-        icon-class="calendar"
-        style="vertical-align: 1.1em; font-size: 20px"
-        @click="initForm"
-      />
+    <el-badge :hidden="events.length === 0" :value="events.length" :max="99" style="line-height: 35px">
+      <svg-icon icon-class="calendar" style="vertical-align: 1.1em; font-size: 20px" @click="initForm" />
     </el-badge>
-    <el-dialog
-      id="renewalCalendar"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :fullscreen="true"
-      :title="$t('client.insurance_policy.renewal_calendar')"
-      append-to-body
-    >
-      <full-calendar
-        ref="fullCalendar"
-        :events="events"
-        locale="zh-cn"
-        @changeMonth="changeMonth"
-      >
-        <template 
-          slot="fc-event-more-item" 
-          slot-scope="p">
-          <el-popover 
-            placement="top-start" 
-            trigger="click">
+    <el-dialog id="renewalCalendar" :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('client.insurance_policy.renewal_calendar')" append-to-body>
+      <full-calendar ref="fullCalendar" :events="events" locale="zh-cn" @changeMonth="changeMonth">
+        <template slot="fc-event-more-item" slot-scope="p">
+          <el-popover placement="top-start" trigger="click">
             <el-card style="padding: 10px">
               <el-form label-width="80px">
-                <el-form-item
-                  :label="$t('client.insurance_policy.applicant_name')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.insurance_policy.applicant_name')" class="detail-item">
                   {{ p.event.detail.applicant.name }}
                 </el-form-item>
-                <el-form-item
-                  :label="$t('client.info.phone')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.info.phone')" class="detail-item">
                   {{ p.event.detail.applicant.phone }}
                 </el-form-item>
-                <el-form-item
-                  :label="$t('client.info.email')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.info.email')" class="detail-item">
                   {{ p.event.detail.applicant.email }}
                 </el-form-item>
-                <el-form-item
-                  :label="$t('client.insurance_policy.renewal_time')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
                   {{ getFormattedDate(p.event.start) }}
                 </el-form-item>
-                <el-form-item
-                  :label="$t('client.insurance_policy.product')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
                   {{ p.event.detail.product.name }}
                 </el-form-item>
-                <el-form-item
-                  v-if="hasPermission(100053)"
-                  :label="$t('client.insurance_policy.renewed')"
-                  class="detail-item"
-                >
-                  <el-checkbox
-                    :checked="p.event.detail.status === 1"
-                    @change="renewalChange(p.event)"
-                  />
+                <el-form-item v-if="hasPermission(100053)" :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                  <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)" />
                 </el-form-item>
                 <div style="text-align: center">
-                  <el-button
-                    v-if="hasRoles([1, 3])"
-                    @click="handleSendEmail(p.event)"
-                  >{{
+                  <el-button v-if="hasRoles([1, 3])" @click="handleSendEmail(p.event)">{{
                     $t("client.insurance_policy.renewal_notification")
-                  }}</el-button
-                  >
+                  }}</el-button>
                 </div>
               </el-form>
             </el-card>
-            <el-tooltip
-              slot="reference"
-              :content="p.event.title"
-              :open-delay="1000"
-              effect="dark"
-              placement="top-start"
-            >
+            <el-tooltip slot="reference" :content="p.event.title" :open-delay="1000" effect="dark" placement="top-start">
               <p :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>
             </el-tooltip>
           </el-popover>
         </template>
-        <template 
-          slot="fc-event-card" 
-          slot-scope="p">
-          <el-popover 
-            placement="top-start" 
-            trigger="click">
+        <template slot="fc-event-card" slot-scope="p">
+          <el-popover placement="top-start" trigger="click">
             <el-card style="padding: 10px">
               <el-form label-width="80px">
-                <el-form-item
-                  :label="$t('client.insurance_policy.applicant_name')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.insurance_policy.applicant_name')" class="detail-item">
                   {{ p.event.detail.applicant.name }}
                 </el-form-item>
-                <el-form-item
-                  :label="$t('client.info.phone')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.info.phone')" class="detail-item">
                   {{ p.event.detail.applicant.phone }}
                 </el-form-item>
-                <el-form-item
-                  :label="$t('client.info.email')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.info.email')" class="detail-item">
                   {{ p.event.detail.applicant.email }}
                 </el-form-item>
-                <el-form-item
-                  :label="$t('client.insurance_policy.renewal_time')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
                   {{ getFormattedDate(p.event.start) }}
                 </el-form-item>
-                <el-form-item
-                  :label="$t('client.insurance_policy.product')"
-                  class="detail-item"
-                >
+                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
                   {{ p.event.detail.product.name }}
                 </el-form-item>
-                <el-form-item
-                  v-if="hasPermission(100053)"
-                  :label="$t('client.insurance_policy.renewed')"
-                  class="detail-item"
-                >
-                  <el-checkbox
-                    :checked="p.event.detail.status === 1"
-                    @change="renewalChange(p.event)"
-                  />
+                <el-form-item v-if="hasPermission(100053)" :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                  <el-checkbox :checked="p.event.detail.status === 1" @change="renewalChange(p.event)" />
                 </el-form-item>
                 <div style="text-align: center">
-                  <el-button
-                    v-if="hasRoles([1, 3])"
-                    @click="handleSendEmail(p.event)"
-                  >{{
+                  <el-button v-if="hasRoles([1, 3])" @click="handleSendEmail(p.event)">{{
                     $t("client.insurance_policy.renewal_notification")
-                  }}</el-button
-                  >
+                  }}</el-button>
                 </div>
               </el-form>
             </el-card>
             <!--<p slot="reference" :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>-->
-            <el-tooltip
-              slot="reference"
-              :content="p.event.title"
-              :open-delay="1000"
-              effect="dark"
-              placement="top-start"
-            >
+            <el-tooltip slot="reference" :content="p.event.title" :open-delay="1000" effect="dark" placement="top-start">
               <p :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>
             </el-tooltip>
           </el-popover>
@@ -222,7 +129,7 @@ export default {
           this.events = res.data;
           console.log(this.events);
         })
-        .catch((_) => {});
+        .catch((_) => { });
     },
     judgeEventStatus(event) {
       const now = new Date().valueOf();
@@ -274,16 +181,61 @@ export default {
 
 <style type="text/scss" lang="scss">
 #renewalCalendar {
+  .el-dialog {
+    border-radius: 0;
+    background: #f6f6f7;
+  }
   line-height: 10px;
   .el-dialog__body {
     padding: 0;
   }
   .comp-full-calendar {
     max-width: 100%;
-    padding: 10px;
-    .weeks {
-      line-height: 40px;
+    padding: 24px;
+    background: #f6f6f7;
+    .full-calendar-header {
+      background: #fff;
+      color: #42475f;
+      font-size: 14px;
+      position: absolute;
+      right: 22px;
+      width: 170px;
+      height: 40px;
+      top: 46px;
+      border: 1px solid #ededf1;
+      border-radius: 6px;
+      .el-input__inner {
+        background: #fff;
+      }
+      .header-center {
+        flex: auto;
+      }
     }
+    .full-calendar-body {
+      background: #fff;
+      border-radius: 6px;
+      .weeks {
+        line-height: 60px;
+        border-bottom: 1px solid #efefef;
+        border-top: 0;
+        border-left: 0;
+        .week {
+          border-right: 0;
+        }
+      }
+      .dates .week-row {
+        border-left: 0;
+        .day-cell {
+        }
+        .day-cell:last-child {
+          border-right: 0;
+        }
+      }
+      .events-day {
+        height: 250px;
+      }
+    }
+
     .event-item,
     .body-item {
       position: relative;
