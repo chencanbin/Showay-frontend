@@ -79,6 +79,10 @@ export default {
         return {};
       },
     },
+    reload: { //是否需要重新加载client list
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -157,11 +161,14 @@ export default {
                 type: "success",
                 duration: 5 * 1000,
               });
-              const offset = (this.listQuery.page - 1) * this.listQuery.limit;
-              const max = this.listQuery.limit;
-              this.$store.dispatch("client/FetchClientList", {
-                params: { offset, max },
-              });
+              if (this.reload) {
+                const offset = (this.listQuery.page - 1) * this.listQuery.limit;
+                const max = this.listQuery.limit;
+                this.$store.dispatch("client/FetchClientList", {
+                  params: { offset, max },
+                });
+              }
+
               this.handleClose();
               this.loading = false;
             })

@@ -1,90 +1,31 @@
 <template>
   <span>
-    <el-button 
-      type="text" 
-      size="small" 
-      @click="initForm">{{
+    <el-button type="text" size="small" @click="initForm">{{
         this.$t("common.edit")
       }}</el-button>
-    <el-dialog 
-      v-el-drag-dialog 
-      :close-on-click-modal="false" 
-      :visible="dialogVisible" 
-      :before-close="handleClose" 
-      :title="$t('client.insurance_policy.set.edit_title')" 
-      top="50px" 
-      width="800px" 
-      append-to-body>
-      <el-form 
-        ref="insurancePolicy" 
-        :model="insurancePolicy" 
-        inline 
-        class="insurance-policy-form" 
-        label-width="120px">
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.insurance_policy.set.edit_title')" top="50px" width="800px" append-to-body>
+      <el-form ref="insurancePolicy" :model="insurancePolicy" inline class="insurance-policy-form" label-width="100px">
         <el-tabs v-model="activeName">
-          <el-tab-pane 
-            :label="$t('client.insurance_policy.basic_info')" 
-            name="basic">
-            <el-form-item 
-              :label="$t('client.insurance_policy.number')" 
-              prop="number">
-              <el-input 
-                v-model="insurancePolicy.number" 
-                :placeholder="$t('client.insurance_policy.set.number')" />
+          <el-tab-pane :label="$t('client.insurance_policy.basic_info')" name="basic">
+            <el-form-item :label="$t('client.insurance_policy.number')" prop="number">
+              <el-input v-model="insurancePolicy.number" :placeholder="$t('client.insurance_policy.set.number')" />
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.sn')" 
-              prop="sn">
-              <el-input 
-                v-model="insurancePolicy.sn" 
-                :placeholder="$t('client.insurance_policy.set.sn')" />
+            <el-form-item :label="$t('client.insurance_policy.sn')" prop="sn">
+              <el-input v-model="insurancePolicy.sn" :placeholder="$t('client.insurance_policy.set.sn')" />
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.submitDate')" 
-              prop="submitDate">
-              <el-date-picker 
-                v-model="insurancePolicy.submitDate" 
-                :placeholder="$t('client.insurance_policy.set.submitDate')" 
-                style="width: 100%" 
-                type="date" />
+            <el-form-item :label="$t('client.insurance_policy.submitDate')" prop="submitDate">
+              <el-date-picker v-model="insurancePolicy.submitDate" :placeholder="$t('client.insurance_policy.set.submitDate')" style="width: 100%" type="date" />
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.issueDate')" 
-              prop="issueDate">
-              <el-date-picker 
-                v-model="insurancePolicy.issueDate" 
-                :placeholder="$t('client.insurance_policy.set.issueDate')" 
-                style="width: 100%" 
-                type="date" />
+            <el-form-item :label="$t('client.insurance_policy.issueDate')" prop="issueDate">
+              <el-date-picker v-model="insurancePolicy.issueDate" :placeholder="$t('client.insurance_policy.set.issueDate')" style="width: 100%" type="date" />
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.premiumDate ')" 
-              prop="premiumDate">
-              <el-date-picker 
-                v-model="insurancePolicy.premiumDate" 
-                :placeholder="$t('client.insurance_policy.set.premiumDate ')" 
-                style="width: 100%" 
-                type="date" />
+            <el-form-item :label="$t('client.insurance_policy.premiumDate ')" prop="premiumDate">
+              <el-date-picker v-model="insurancePolicy.premiumDate" :placeholder="$t('client.insurance_policy.set.premiumDate ')" style="width: 100%" type="date" />
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.applicant_name')" 
-              prop="applicant.name">
-              <el-select 
-                v-model="insurancePolicy.applicant.id" 
-                :loading="applicantLoading" 
-                :remote-method="searchApplicants" 
-                :placeholder="$t('client.insurance_policy.set.applicant_name')" 
-                filterable 
-                remote 
-                style="width: 100%" 
-                @focus="onApplicantsFocus">
-                <el-option 
-                  v-for="item in applicants" 
-                  :key="item.id" 
-                  :label="item.name" 
-                  :value="item.id">
-                  <span 
-                    style="
+            <el-form-item :label="$t('client.insurance_policy.applicant_name')" prop="applicant.name">
+              <el-select v-model="insurancePolicy.applicant.id" :loading="applicantLoading" :remote-method="searchApplicants" :placeholder="$t('client.insurance_policy.set.applicant_name')" filterable remote style="width: 100%" @focus="onApplicantsFocus">
+                <el-option v-for="item in applicants" :key="item.id" :label="item.name" :value="item.id">
+                  <span style="
                       float: left;
                       margin-right: 15px;
                       max-width: 10em;
@@ -95,25 +36,10 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.insured_name')" 
-              prop="insured.name">
-              <el-select 
-                v-model="insurancePolicy.insured.id" 
-                :loading="beneficiaryLoading" 
-                :remote-method="searchBeneficiaries" 
-                :placeholder="$t('client.insurance_policy.set.insured_name')" 
-                filterable 
-                remote 
-                style="width: 100%" 
-                @focus="onBeneficiariesFocus">
-                <el-option 
-                  v-for="item in insured" 
-                  :key="item.id" 
-                  :label="item.name" 
-                  :value="item.id">
-                  <span 
-                    style="
+            <el-form-item :label="$t('client.insurance_policy.insured_name')" prop="insured.name">
+              <el-select v-model="insurancePolicy.insured.id" :loading="beneficiaryLoading" :remote-method="searchBeneficiaries" :placeholder="$t('client.insurance_policy.set.insured_name')" filterable remote style="width: 100%" @focus="onBeneficiariesFocus">
+                <el-option v-for="item in insured" :key="item.id" :label="item.name" :value="item.id">
+                  <span style="
                       float: left;
                       margin-right: 15px;
                       max-width: 10em;
@@ -124,143 +50,48 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.policyStatus')" 
-              prop="policyStatus">
-              <el-select 
-                v-model="insurancePolicy.policyStatus" 
-                :placeholder="$t('client.insurance_policy.set.policyStatus')" 
-                filterable 
-                style="width: 100%">
-                <el-option 
-                  v-for="item in policyStatus" 
-                  :key="item.id" 
-                  :label="item[language]" 
-                  :value="item.id" />
+            <el-form-item :label="$t('client.insurance_policy.policyStatus')" prop="policyStatus">
+              <el-select v-model="insurancePolicy.policyStatus" :placeholder="$t('client.insurance_policy.set.policyStatus')" filterable style="width: 100%">
+                <el-option v-for="item in policyStatus" :key="item.id" :label="item[language]" :value="item.id" />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.currency')" 
-              prop="currency">
-              <el-select 
-                v-model="insurancePolicy.currency" 
-                :placeholder="$t('client.insurance_policy.set.currency')" 
-                style="width: 100%">
-                <el-option 
-                  v-for="item in currencyArray" 
-                  :key="item.id" 
-                  :value="item.id" 
-                  :label="item.desc" />
+            <el-form-item :label="$t('client.insurance_policy.currency')" prop="currency">
+              <el-select v-model="insurancePolicy.currency" :placeholder="$t('client.insurance_policy.set.currency')" style="width: 100%">
+                <el-option v-for="item in currencyArray" :key="item.id" :value="item.id" :label="item.desc" />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.premium')" 
-              prop="premium">
-              <currency-input 
-                v-model="insurancePolicy.premium" 
-                :symbol="currency" 
-                :placeholder="$t('client.insurance_policy.set.premium')" />
+            <el-form-item :label="$t('client.insurance_policy.premium')" prop="premium">
+              <currency-input v-model="insurancePolicy.premium" :symbol="currency" :placeholder="$t('client.insurance_policy.set.premium')" />
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.amountInsured')" 
-              prop="amountInsured">
-              <currency-input 
-                v-model="insurancePolicy.amountInsured" 
-                :symbol="currency" 
-                :placeholder="$t('client.insurance_policy.set.amountInsured')" />
+            <el-form-item :label="$t('client.insurance_policy.amountInsured')" prop="amountInsured">
+              <currency-input v-model="insurancePolicy.amountInsured" :symbol="currency" :placeholder="$t('client.insurance_policy.set.amountInsured')" />
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.premiumPlan')" 
-              prop="premiumPlan">
-              <el-select 
-                v-model="insurancePolicy.premiumPlan" 
-                :placeholder="$t('client.insurance_policy.set.premiumPlan')" 
-                style="width: 100%">
-                <el-option 
-                  v-for="item in premiumPlan" 
-                  :key="item.id" 
-                  :value="item.id" 
-                  :label="item[language]" />
+            <el-form-item :label="$t('client.insurance_policy.premiumPlan')" prop="premiumPlan">
+              <el-select v-model="insurancePolicy.premiumPlan" :placeholder="$t('client.insurance_policy.set.premiumPlan')" style="width: 100%">
+                <el-option v-for="item in premiumPlan" :key="item.id" :value="item.id" :label="item[language]" />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.channel')" 
-              prop="channel">
-              <el-select 
-                v-model="insurancePolicy.channel.id" 
-                :remote-method="searchChannel" 
-                :placeholder="$t('client.insurance_policy.set.channel_name')" 
-                filterable 
-                remote 
-                style="width: 100%" 
-                @focus="onChannelFocus">
-                <el-option 
-                  v-for="item in channels" 
-                  :key="item.id" 
-                  :label="item.name" 
-                  :value="item.id" />
+            <el-form-item :label="$t('client.insurance_policy.channel')" prop="channel">
+              <el-select v-model="insurancePolicy.channel.id" :remote-method="searchChannel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable remote style="width: 100%" @focus="onChannelFocus">
+                <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.agent_name')" 
-              prop="agent">
-              <el-select 
-                v-model="insurancePolicy.agent.id" 
-                :remote-method="searchAgent" 
-                :placeholder="$t('client.insurance_policy.set.agent_name')" 
-                filterable 
-                remote 
-                style="width: 100%" 
-                @focus="onAgentFocus">
-                <el-option 
-                  v-for="item in agents" 
-                  :key="item.id" 
-                  :label="item.name" 
-                  :value="item.id" />
+            <el-form-item :label="$t('client.insurance_policy.agent_name')" prop="agent">
+              <el-select v-model="insurancePolicy.agent.id" :remote-method="searchAgent" :placeholder="$t('client.insurance_policy.set.agent_name')" filterable remote style="width: 100%" @focus="onAgentFocus">
+                <el-option v-for="item in agents" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.company')" 
-              prop="company.id">
-              <el-select 
-                :remote-method="searchCompany" 
-                :loading="companyLoading" 
-                v-model="insurancePolicy.company.id" 
-                :placeholder="$t('client.insurance_policy.set.company_name')" 
-                clearable 
-                filterable 
-                remote 
-                style="width: 100%" 
-                @focus="onCompanyFocus">
-                <el-option 
-                  v-for="item in companies" 
-                  :key="item.id" 
-                  :label="item.name" 
-                  :value="item.id" />
+            <el-form-item :label="$t('client.insurance_policy.company')" prop="company.id">
+              <el-select :remote-method="searchCompany" :loading="companyLoading" v-model="insurancePolicy.company.id" :placeholder="$t('client.insurance_policy.set.company_name')" clearable filterable remote style="width: 100%" @focus="onCompanyFocus">
+                <el-option v-for="item in companies" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="DDA">
               <el-checkbox v-model="insurancePolicy.dda" />
             </el-form-item>
-            <el-form-item 
-              :label="$t('client.insurance_policy.product')" 
-              prop="product" 
-              style="width: 124%">
-              <el-select 
-                v-model="insurancePolicy.product.id" 
-                :loading="productLoading" 
-                :remote-method="searchProduct" 
-                :placeholder="$t('client.insurance_policy.set.product_name')" 
-                filterable 
-                clearable 
-                remote 
-                style="width: 100%" 
-                @focus="onProductFocus">
-                <el-option 
-                  v-for="item in products" 
-                  :key="item.id" 
-                  :label="item.name" 
-                  :value="item.id">
+            <el-form-item :label="$t('client.insurance_policy.product')" prop="product" style="width: 124%">
+              <el-select v-model="insurancePolicy.product.id" :loading="productLoading" :remote-method="searchProduct" :placeholder="$t('client.insurance_policy.set.product_name')" filterable clearable remote style="width: 100%" @focus="onProductFocus">
+                <el-option v-for="item in products" :key="item.id" :label="item.name" :value="item.id">
                   <span style="float: left; margin-right: 15px">{{
                     item.name
                   }}</span><span style="float: left; font-weight: bold">{{
@@ -270,49 +101,22 @@
               </el-select>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane 
-            :label="$t('client.insurance_policy.beneficiary_name')" 
-            name="beneficiary">
+          <el-tab-pane :label="$t('client.insurance_policy.beneficiary_name')" name="beneficiary">
             <el-card>
-              <div 
-                slot="header" 
-                class="clearfix">
-                <el-button 
-                  style="float: right; padding: 3px 0" 
-                  type="text" 
-                  @click="addBeneficiary">{{
+              <div slot="header" class="clearfix">
+                <el-button style="float: right; padding: 3px 0" type="text" @click="addBeneficiary">{{
                     $t("client.insurance_policy.set.add_beneficiary")
                   }}</el-button>
               </div>
-              <div 
-                v-for="(item, index) in insurancePolicy.beneficiaries" 
-                :key="index" 
-                style="margin-bottom: 10px">
-                <el-form-item 
-                  :rules="{
+              <div v-for="(item, index) in insurancePolicy.beneficiaries" :key="index" style="margin-bottom: 10px">
+                <el-form-item :rules="{
                     required: true,
                     message: $t('client.insurance_policy.set.beneficiary_name'),
                     trigger: ['blur', 'change'],
-                  }" 
-                  :prop="'beneficiaries.' + index + '.name'" 
-                  :label="$t('client.insurance_policy.beneficiary_name')" 
-                  class="beneficiary_form_item">
-                  <el-select 
-                    v-model="item.name" 
-                    :loading="clientLoading" 
-                    :remote-method="searchClient" 
-                    value-key="id" 
-                    filterable 
-                    remote 
-                    style="width: 100%" 
-                    @focus="onClientFocus">
-                    <el-option 
-                      v-for="item in client.list" 
-                      :key="item.id" 
-                      :value="item" 
-                      :label="item.name">
-                      <span 
-                        style="
+                  }" :prop="'beneficiaries.' + index + '.name'" :label="$t('client.insurance_policy.beneficiary_name')" class="beneficiary_form_item">
+                  <el-select v-model="item.name" :loading="clientLoading" :remote-method="searchClient" value-key="id" filterable remote style="width: 100%" @focus="onClientFocus">
+                    <el-option v-for="item in client.list" :key="item.id" :value="item" :label="item.name">
+                      <span style="
                           float: left;
                           margin-right: 15px;
                           max-width: 10em;
@@ -323,49 +127,34 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item 
-                  :label="$t('client.insurance_policy.relationship')" 
-                  class="beneficiary_form_item">
+                <el-form-item :label="$t('client.insurance_policy.relationship')" class="beneficiary_form_item">
                   <el-input v-model="item.relationship" />
                 </el-form-item>
-                <el-form-item 
-                  :prop="'beneficiaries.' + index + '.percentage'" 
-                  :rules="{
+                <el-form-item :prop="'beneficiaries.' + index + '.percentage'" :rules="{
                     required: true,
                     message: $t('client.insurance_policy.set.percentage'),
                     trigger: ['blur', 'change'],
-                  }" 
-                  :label="$t('client.insurance_policy.percentage')" 
-                  class="beneficiary_form_item">
+                  }" :label="$t('client.insurance_policy.percentage')" class="beneficiary_form_item">
                   <el-input v-model="item.percentage">
                     <template slot="append">%</template>
                   </el-input>
                 </el-form-item>
-                <el-button 
-                  icon="el-icon-remove-outline" 
-                  size="small" 
-                  style="
+                <el-button icon="el-icon-remove-outline" size="small" style="
                     min-width: 40px;
                     font-size: 20px;
                     padding: 6px;
                     vertical-align: middle;
-                  " 
-                  @click="removeBeneficiary(index)" />
+                  " @click="removeBeneficiary(index)" />
               </div>
             </el-card>
           </el-tab-pane>
         </el-tabs>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="submitLoading" 
-          type="primary" 
-          @click="handleSubmit">{{ $t("common.submitButton") }}</el-button>
+        <el-button :loading="submitLoading" type="primary" @click="handleSubmit">{{ $t("common.submitButton") }}</el-button>
       </div>
     </el-dialog>
   </span>

@@ -26,9 +26,19 @@ exports.cssLoaders = function (options) {
   const postcssLoader = {
     loader: 'postcss-loader',
     options: {
-      sourceMap: options.sourceMap
+      sourceMap: options.sourceMap,
+      // plugins: [require('postcss-px2rem')({
+      //   remUnit: 192
+      // })]
     }
   }
+
+  // const px2remLoader = {
+  //   loader: 'px2rem-loader',
+  //   options: {
+  //     remUnit: 192
+  //   }
+  // }
 
   // generate loader string to be used with extract text plugin
   function generateLoaders(loader, loaderOptions) {
@@ -56,7 +66,6 @@ exports.cssLoaders = function (options) {
         })
       })
     }
-
     return loaders
   }
   // https://vue-loader.vuejs.org/en/configurations/extract-css.html
@@ -64,6 +73,7 @@ exports.cssLoaders = function (options) {
     css: generateLoaders(),
     postcss: generateLoaders(),
     less: generateLoaders('less'),
+
     sass: generateLoaders('sass', {
       indentedSyntax: true
     }),
@@ -111,3 +121,4 @@ exports.createNotifierCallback = () => {
     })
   }
 }
+

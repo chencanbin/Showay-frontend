@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span class="add_client_form">
     <el-button type="primary" @click="initForm">{{ $t("client.info.set.add_title") }}</el-button>
     <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.info.set.add_title')" top="50px" width="450px">
       <el-form ref="client" :model="client" :rules="rule" label-width="80px">
@@ -162,3 +162,7 @@ export default {
   },
 };
 </script>
+<style ref="sc" type="text/scss"  lang="scss" scoped>
+.add_client_form {
+}
+</style>

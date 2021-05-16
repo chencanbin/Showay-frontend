@@ -1,44 +1,19 @@
 <template>
   <span>
-    <el-button
-      type="text"
-      size="mini"
-      icon="el-icon-info"
-      style="margin-right: 10px"
-      @click="initForm"
-    >详情</el-button
-    >
-    <el-dialog
-      v-el-drag-dialog
-      id="policy-detail-dialog"
-      :close-on-click-modal="false"
-      :before-close="handleClose"
-      :visible="dialogVisible"
-      title="保险详情"
-      width="75%"
-    >
-      <el-form
-        label-position="left"
-        inline
-        class="detail-form"
-        style="padding-bottom: 20px"
-      >
+    <el-button type="text" size="mini" icon="el-icon-info" style="margin-right: 10px" @click="initForm">详情</el-button>
+    <el-dialog v-el-drag-dialog id="policy-detail-dialog" :close-on-click-modal="false" :before-close="handleClose" :visible="dialogVisible" title="保险详情" width="75%">
+      <el-form label-position="left" inline class="detail-form" style="padding-bottom: 20px">
         <el-form-item label="内部编号:">
           <span>{{ data.sn }}</span>
         </el-form-item>
-        <el-form-item 
-          label="渠道:" 
-          style="width: 25%">
+        <el-form-item label="渠道:" style="width: 25%">
           <span>{{ data.channel.name }}</span>
         </el-form-item>
         <el-form-item label="签单员:">
           <span>{{ data.agent.name }}</span>
         </el-form-item>
         <el-form-item label="保额:">
-          <span 
-            v-if="!data.amountInsured || data.amountInsured === 0"
-          >N/A</span
-          >
+          <span v-if="!data.amountInsured || data.amountInsured === 0">N/A</span>
           <span v-else>{{ numberFormat(data, data.amountInsured) }}</span>
         </el-form-item>
         <el-form-item label="保费:">
@@ -52,30 +27,19 @@
         </el-form-item>
       </el-form>
       <div v-if="data.riderBenefits && data.riderBenefits.length > 0">
-        <div
-          style="
+        <div style="
             padding: 0px 10px 10px 0;
             font-size: 14px;
             font-weight: bold;
             color: #99a9bf;
-          "
-        >
+          ">
           副险列表
         </div>
         <div style="padding: 0px 10px 30px 0">
-          <el-table 
-            :data="data.riderBenefits" 
-            style="width: 100%" 
-            stripe>
-            <el-table-column 
-              prop="product.name" 
-              label="产品" />
-            <el-table-column 
-              prop="amountInsured" 
-              label="保费" />
-            <el-table-column 
-              prop="premium" 
-              label="保额" />
+          <el-table :data="data.riderBenefits" style="width: 100%" stripe>
+            <el-table-column prop="product.name" label="产品" />
+            <el-table-column prop="amountInsured" label="保费" />
+            <el-table-column prop="premium" label="保额" />
           </el-table>
         </div>
       </div>

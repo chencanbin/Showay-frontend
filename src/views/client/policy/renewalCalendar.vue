@@ -4,7 +4,12 @@
       <svg-icon icon-class="calendar" style="vertical-align: 1.1em; font-size: 20px" @click="initForm" />
     </el-badge>
     <el-dialog id="renewalCalendar" :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('client.insurance_policy.renewal_calendar')" append-to-body>
-      <full-calendar ref="fullCalendar" :events="events" locale="zh-cn" @changeMonth="changeMonth">
+      <!-- // renewal: 续保 reservation： 预约 -->
+      <div class="tabs__header">
+        <span class="tabs_item" :class="activeName === 'renewal' ? 'active': ''" @click="switchTab('renewal')">{{$t('client.insurance_policy.renewal_calendar')}}</span>
+        <span class="tabs_item" :class="activeName === 'reservation：' ? 'active': ''" @click="switchTab('reservation：')">预约日历</span>
+      </div>
+      <full-calendar ref="fullCalendar" :events="events" locale="zh-cn" @changeMonth="changeMonth" @updateRenewalStatus="updateRenewalStatus">
         <template slot="fc-event-more-item" slot-scope="p">
           <el-popover placement="top-start" trigger="click">
             <el-card style="padding: 10px">
@@ -68,7 +73,7 @@
                 </div>
               </el-form>
             </el-card>
-            <!--<p slot="reference" :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>-->
+            <p slot="reference" :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>
             <el-tooltip slot="reference" :content="p.event.title" :open-delay="1000" effect="dark" placement="top-start">
               <p :class="judgeEventStatus(p.event)">{{ p.event.title }}</p>
             </el-tooltip>
@@ -103,6 +108,7 @@ export default {
       from: "",
       to: "",
       count: "",
+      activeName: 'renewal'// renewal: 续保 reservation： 预约
     };
   },
   computed: {
@@ -141,15 +147,8 @@ export default {
         return "el-tag--warning";
       }
     },
-    renewalChange(val) {
-      this.$api.client.editCalendarRenewal(val.detail.id).then((res) => {
-        this.$message({
-          message: this.$t("common.success"),
-          type: "success",
-          duration: 5 * 1000,
-        });
-        this.getCalendarRenewal({ from: this.from, to: this.to });
-      });
+    updateRenewalStatus(val) {
+      this.getCalendarRenewal({ from: this.from, to: this.to });
     },
     formatterCurrency(value) {
       return currencyFormatter.format(Math.floor(value * 100) / 100, {
@@ -175,6 +174,10 @@ export default {
       policy.currency = event.detail.currency;
       this.$refs.sendEmail.openEmailDialog(policy);
     },
+    switchTab(val) {
+      // renewal: 续保 reservation： 预约
+      this.activeName = val;
+    }
   },
 };
 </script>
@@ -184,28 +187,65 @@ export default {
   .el-dialog {
     border-radius: 0;
     background: #f6f6f7;
+    .el-dialog__header {
+      display: none;
+    }
+    .el-dialog__body {
+      padding: 0;
+      .tabs__header {
+        margin-top: 11px;
+        padding-left: 24px;
+        height: 76px;
+        line-height: 76px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #8e919f;
+        display: inline-block;
+        .tabs_item:first-child {
+          margin-right: 30px;
+        }
+        .tabs_item {
+          cursor: pointer;
+        }
+        .active {
+          color: #42475f;
+          position: relative;
+          &::after {
+            content: "";
+            width: 16px;
+            height: 8px;
+            background: $--purple;
+            border-radius: 8px 8px 0 0;
+            position: absolute;
+            bottom: -12px;
+            left: 39px;
+          }
+        }
+      }
+    }
   }
   line-height: 10px;
-  .el-dialog__body {
-    padding: 0;
-  }
+
   .comp-full-calendar {
     max-width: 100%;
-    padding: 24px;
+    padding: 0 24px 24px 24px;
     background: #f6f6f7;
     .full-calendar-header {
       background: #fff;
       color: #42475f;
       font-size: 14px;
       position: absolute;
-      right: 22px;
+      right: 25px;
       width: 170px;
       height: 40px;
-      top: 46px;
+      top: 40px;
       border: 1px solid #ededf1;
       border-radius: 6px;
       .el-input__inner {
         background: #fff;
+        padding-left: 17px;
+        padding-right: 17px;
+        text-align: center;
       }
       .header-center {
         flex: auto;
@@ -226,26 +266,27 @@ export default {
       .dates .week-row {
         border-left: 0;
         .day-cell {
+          padding-top: 24px;
+          padding-right: 24px;
         }
         .day-cell:last-child {
           border-right: 0;
         }
       }
-      .events-day {
-        height: 250px;
-      }
+      // .events-day {
+      //   height: 220px;
+      //   width: 190px;
+      // }
     }
 
     .event-item,
     .body-item {
       position: relative;
-      padding: 1px 4px;
       font-size: 12px;
       width: 100%;
       height: 35px;
       line-height: 35px;
       .el-popover__reference {
-        padding: 1px 4px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

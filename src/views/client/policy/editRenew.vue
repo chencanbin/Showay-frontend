@@ -1,58 +1,23 @@
 <template>
   <span>
-    <el-button
-      type="text"
-      size="small"
-      icon="el-icon-edit"
-      style="margin-right: 10px"
-      @click="initForm"
-    >{{ $t("common.edit") }}</el-button
-    >
-    <el-dialog
-      v-el-drag-dialog
-      id="editRenew"
-      :close-on-click-modal="false"
-      :before-close="handleClose"
-      :visible="dialogVisible"
-      :title="$t('client.insurance_policy.renewal')"
-      width="400px"
-      append-to-body
-    >
-      <el-form 
-        id="editRenew" 
-        ref="renewal" 
-        :model="form" 
-        label-width="60px">
+    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ $t("common.edit") }}</el-button>
+    <el-dialog v-el-drag-dialog id="editRenew" :close-on-click-modal="false" :before-close="handleClose" :visible="dialogVisible" :title="$t('client.insurance_policy.renewal')" width="400px" append-to-body>
+      <el-form id="editRenew" ref="renewal" :model="form" label-width="60px">
         <el-form-item :label="$t('client.insurance_policy.product_name')">
           <span>{{ data.product.name }}</span>
         </el-form-item>
-        <el-form-item 
-          :label="$t('client.insurance_policy.term')" 
-          prop="year">
+        <el-form-item :label="$t('client.insurance_policy.term')" prop="year">
           <span>{{ renewal.year }}</span>
         </el-form-item>
-        <el-form-item
-          :label="$t('client.insurance_policy.premium')"
-          prop="premium"
-        >
-          <currency-input
-            ref="premium"
-            v-model="form.premium"
-            :symbol="getSymbol(currency)"
-            :placeholder="$t('client.insurance_policy.set.premium')"
-          />
+        <el-form-item :label="$t('client.insurance_policy.premium')" prop="premium">
+          <currency-input ref="premium" v-model="form.premium" :symbol="getSymbol(currency)" :placeholder="$t('client.insurance_policy.set.premium')" />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>

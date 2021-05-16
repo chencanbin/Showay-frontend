@@ -1,133 +1,149 @@
 <template>
   <div class="comp-full-calendar">
     <!-- header pick month -->
-    <fc-header
-      :current-month="currentMonth"
-      :first-day="firstDay"
-      :locale="locale"
-      @change="emitChangeMonth"
-    >
-      <div slot="header-left">
-        <slot name="fc-header-left" />
-      </div>
-      <div slot="header-right">
-        <slot name="fc-header-right" />
-      </div>
+    <fc-header :current-month="currentMonth" :first-day="firstDay" :locale="locale" @change="emitChangeMonth">
     </fc-header>
     <!-- body display date day and events -->
-    <div 
-      class="full-calendar-body" 
-      @click="showMore = false">
+    <div class="full-calendar-body" @click="showMore = false">
       <div class="weeks">
-        <strong 
-          v-for="(dayIndex, index) in 7" 
-          :key="index" 
-          class="week">{{
-            (dayIndex - 1) | localeWeekDay(firstDay, locale)
-          }}</strong>
+        <strong v-for="(dayIndex, index) in 7" :key="index" class="week">{{ (dayIndex - 1) | localeWeekDay(firstDay, locale) }}</strong>
       </div>
-      <div 
-        ref="dates" 
-        class="dates">
+      <div ref="dates" class="dates">
         <div class="dates-bg">
-          <div
-            v-for="(week, index) in currentDates"
-            :key="index"
-            class="week-row"
-          >
-            <div
-              v-for="(day, index) in week"
-              :key="index"
-              :class="{ today: day.isToday, 'not-cur-month': !day.isCurMonth }"
-              class="day-cell"
-            >
-              <p class="day-number">{{ day.monthDay }}</p>
+          <div v-for="(week, index) in currentDates" :key="index" class="week-row">
+            <div v-for="(day, index) in week" :key="index" :class="{ today: day.isToday, 'not-cur-month': !day.isCurMonth }" class="day-cell">
+
             </div>
           </div>
         </div>
 
         <!-- absolute so we can make dynamic td -->
         <div class="dates-events">
-          <div
-            v-for="(week, index) in currentDates"
-            :key="index"
-            class="events-week"
-          >
-            <div
-              v-for="(day, index) in week"
-              :key="index"
-              :class="{ today: day.isToday, 'not-cur-month': !day.isCurMonth }"
-              track-by="$index"
-              class="events-day"
-            >
+          <div v-for="(week, index) in currentDates" :key="index" class="events-week">
+            <div v-for="(day, index) in week" :key="index" :class="{ today: day.isToday, 'not-cur-month': !day.isCurMonth }" track-by="$index" class="events-day" @click.stop="dayClick(day)">
               <!--@click.stop="dayClick(day.date, $event)"-->
               <p class="day-number">{{ day.monthDay }}</p>
-              <sup
-                v-if="day.events.length > eventLimit"
-                class="el-badge__content more-link"
-                @click.stop="selectThisDay(day, $event)"
-              >{{
-                day.events[day.events.length - 1].cellIndex - eventLimit
-              }}</sup
-              >
-              <div class="event-box">
-                <event-card
-                  v-for="(event, index) in day.events"
-                  v-show="event.cellIndex <= eventLimit"
-                  :event="event"
-                  :date="day.date"
-                  :first-day="firstDay"
-                  :key="index"
-                  @click="eventClick"
-                >
+              <span v-if="day.events.length" class="ordinary_tip">
+                <i class="ordinary_icon" style="margin-right: 12px;"></i> {{ day.events[day.events.length - 1].cellIndex }}条普通</span>
+              <!-- <div class="event-box">
+                <event-card v-for="(event, index) in day.events" v-show="event.cellIndex <= eventLimit" :event="event" :date="day.date" :first-day="firstDay" :key="index" @click="eventClick">
                   <template slot-scope="p">
-                    <slot 
-                      :event="p.event" 
-                      name="fc-event-card" />
+                    <slot :event="p.event" name="fc-event-card" />
                   </template>
                 </event-card>
-                <!--<p-->
-                <!--v-if="day.events.length > eventLimit"-->
-                <!--class="more-link"-->
-                <!--@click.stop="selectThisDay(day, $event)">-->
-                <!--+ {{ day.events[day.events.length -1].cellIndex - eventLimit }} more-->
-                <!--</p>-->
-              </div>
+                <p v-if="day.events.length > eventLimit" class="more-link" @click.stop="selectThisDay(day, $event)">
+                  + {{ day.events[day.events.length -1].cellIndex - eventLimit }} more
+                </p>
+              </div> -->
             </div>
           </div>
         </div>
 
         <!-- full events when click show more -->
-        <div
-          v-if="showMore"
-          :style="{ left: morePos.left + 'px', top: morePos.top + 'px' }"
-          class="more-events"
-        >
+        <!-- <div v-if="showMore" :style="{ left: morePos.left + 'px', top: morePos.top + 'px' }" class="more-events">
           <div class="more-header">
             <span class="title">{{ moreTitle(selectDay.date) }}</span>
-            <span 
-              class="close" 
-              @click.stop="showMore = false">x</span>
+            <span class="close" @click.stop="showMore = false">x</span>
           </div>
           <div class="more-body">
             <ul class="body-list">
-              <li
-                v-for="(event, index) in selectDay.events"
-                v-if="event.isShow"
-                :key="index"
-                class="body-item"
-                @click="eventClick(event, $event)"
-              >
-                <slot 
-                  :event="event" 
-                  name="fc-event-more-item" />
+              <li v-for="(event, index) in selectDay.events" v-if="event.isShow" :key="index" class="body-item" @click="eventClick(event, $event)">
+                <slot :event="event" name="fc-event-more-item" />
               </li>
             </ul>
           </div>
         </div>
-        <slot name="body-card" />
+        <slot name="body-card" /> -->
+
       </div>
     </div>
+    <el-drawer class="calendar_drawer" :title="drawerTitle" :visible.sync="drawer" :direction="direction" append-to-body size="450px">
+      <el-collapse>
+        <el-collapse-item name="ordinary">
+          <template slot="title">
+            <div class="title_wrapper">
+              <span class="iconfont icon_time"></span> <span class="title">普通</span><i class="ordinary_icon"></i>
+              <span class="event_count" v-if="currentDay.events">{{currentDay.events.length}}</span>
+            </div>
+          </template>
+          <div class="events-wrapper">
+            <!-- events -->
+            <div v-for="event in currentDay.events" :key="event.detail.id" class="event-wrapper">
+              <el-form>
+                <div class="applicant_name_wrapper">
+                  <span class="applicant_name">{{ event.detail.applicant.name }} </span><i class="ordinary_icon"></i>
+                </div>
+                <el-form-item :label="$t('client.insurance_policy.term')" class="detail-item">
+                  {{ event.detail.term }}
+                </el-form-item>
+                <el-form-item :label="$t('client.info.phone')" class="detail-item">
+                  {{ event.detail.applicant.phone }}
+                </el-form-item>
+                <el-form-item :label="$t('client.info.email')" class="detail-item">
+                  {{ event.detail.applicant.email }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
+                  {{ getFormattedDate(event.start) }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
+                  {{ event.detail.product.name }}
+                </el-form-item>
+                <el-form-item v-if="hasPermission(100053)" :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                  <el-checkbox :checked="event.detail.status === 1" @change="renewalChange(event)" />
+                </el-form-item>
+                <div style="text-align: right">
+                  <el-button v-if="hasRoles([1, 3])" @click="handleSendEmail(event)" type="primary">{{
+                    $t("client.insurance_policy.renewal_notification")
+                  }}</el-button>
+                </div>
+              </el-form>
+            </div>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item name="overdue">
+          <template slot="title">
+            <div class="title_wrapper overdue_title">
+              <span class="iconfont icon_time"></span> <span class="title">逾期</span><i class="overdue_icon"></i>
+            </div>
+          </template>
+          <div class="events-wrapper">
+            <!-- events -->
+            <div v-for="event in currentDay.events" :key="event.detail.id" class="event-wrapper">
+              <el-form>
+                <el-form-item :label="$t('client.insurance_policy.applicant_name')" class="detail-item">
+                  {{ event.detail.applicant.name }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.term')" class="detail-item">
+                  {{ event.detail.term }}
+                </el-form-item>
+
+                <el-form-item :label="$t('client.info.phone')" class="detail-item">
+                  {{ event.detail.applicant.phone }}
+                </el-form-item>
+                <el-form-item :label="$t('client.info.email')" class="detail-item">
+                  {{ event.detail.applicant.email }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
+                  {{ getFormattedDate(event.start) }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
+                  {{ event.detail.product.name }}
+                </el-form-item>
+                <el-form-item v-if="hasPermission(100053)" :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                  <el-checkbox :checked="event.detail.status === 1" @change="renewalChange(event)" />
+                </el-form-item>
+                <div style="text-align: right">
+                  <el-button v-if="hasRoles([1, 3])" @click="handleSendEmail(event)" type="primary">{{
+                    $t("client.insurance_policy.renewal_notification")
+                  }}</el-button>
+                </div>
+              </el-form>
+            </div>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+    </el-drawer>
+    <send-email ref="sendEmail" />
   </div>
 </template>
 <script type="text/babel">
@@ -135,12 +151,15 @@
 import dateFunc from "./components/dateFunc";
 import moment from "moment";
 import EventCard from "./components/eventCard";
+import { hasRoles } from "@/utils/permission";
 import header from "./components/header";
-
+import { parseTime } from "@/utils";
+import sendEmail from "@/components/SendEmail";
 export default {
   components: {
     "event-card": EventCard,
     "fc-header": header,
+    sendEmail
   },
   filters: {
     localeWeekDay(weekday, firstDay, locale) {
@@ -176,6 +195,9 @@ export default {
   },
   data() {
     return {
+      drawer: false,
+      direction: 'rtl',
+      drawerTitle: '',
       currentMonth: moment().startOf("month"),
       isLismit: true,
       eventLimit: 6,
@@ -185,6 +207,7 @@ export default {
         left: 0,
       },
       selectDay: {},
+      currentDay: {}
     };
   },
   computed: {
@@ -196,6 +219,7 @@ export default {
     this.emitChangeMonth(this.currentMonth);
   },
   methods: {
+    hasRoles,
     emitChangeMonth(firstDayOfMonth) {
       this.currentMonth = firstDayOfMonth;
       const start = dateFunc.getMonthViewStartDate(
@@ -288,15 +312,44 @@ export default {
         top: eventRect.top + eventRect.height - pageRect.top,
       };
     },
-    dayClick(day, jsEvent) {
-      this.$emit("dayClick", day, jsEvent);
+    dayClick(day) {
+      console.log(day)
+      if (!day.events.length) {
+        return
+      }
+      this.drawer = true;
+      this.currentDay = day;
+      this.drawerTitle = moment(day.date).format('YYYY-MM-DD');
+      // this.$emit("dayClick", day);
     },
     eventClick(event, jsEvent) {
       if (!event.isShow) return;
-
       jsEvent.stopPropagation();
       const pos = this.computePos(jsEvent.target);
       this.$emit("eventClick", event, jsEvent, pos);
+    },
+    getFormattedDate(value) {
+      return parseTime(value, "{y}-{m}-{d}");
+    },
+    renewalChange(val) {
+      this.$api.client.editCalendarRenewal(val.detail.id).then((res) => {
+        this.$message({
+          message: this.$t("common.success"),
+          type: "success",
+          duration: 5 * 1000,
+        });
+        // this.getCalendarRenewal({ from: this.from, to: this.to });
+        this.$emit("updateRenewalStatus");
+      });
+    },
+    handleSendEmail(event) {
+      const policy = {};
+      policy.dueDate = event.start;
+      policy.applicant = event.detail.applicant;
+      policy.premium = event.detail.premium;
+      policy.number = event.detail.number;
+      policy.currency = event.detail.currency;
+      this.$refs.sendEmail.openEmailDialog(policy);
     },
   },
 };
@@ -315,7 +368,21 @@ export default {
     padding: 0;
   }
 }
-
+.ordinary_icon {
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background: $--purple;
+  display: inline-block;
+}
+.overdue_icon {
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background: $--yellow;
+  display: inline-block;
+  margin-right: 12px;
+}
 .full-calendar-body {
   margin-top: 0;
 
@@ -329,12 +396,12 @@ export default {
       flex: 1;
       text-align: center;
       border-right: 1px solid #e0e0e0;
+      color: #8e919f;
     }
   }
 
   .dates {
     position: relative;
-
     .week-row {
       // width: 100%;
       // position:absolute;
@@ -343,17 +410,17 @@ export default {
 
       .day-cell {
         flex: 1;
-        min-height: 250px;
+        height: 220px;
+        width: 193px;
         padding: 4px;
         border-right: 1px solid #e0e0e0;
         border-bottom: 1px solid #e0e0e0;
 
         .day-number {
-          text-align: left;
-        }
-
-        &.today {
-          background-color: #fcf8e3;
+          text-align: right;
+          font-weight: bold;
+          color: $--content;
+          font-size: 22px;
         }
 
         &.not-cur-month {
@@ -377,14 +444,48 @@ export default {
         .events-day {
           cursor: pointer;
           flex: 1;
-          min-height: 250px;
+          height: 220px;
+          width: 193px;
           overflow: hidden;
           text-overflow: ellipsis;
-
+          padding: 24px;
+          flex-direction: column;
+          display: flex;
+          justify-content: space-between;
+          &:hover {
+            background: #f2f2f8;
+          }
           .day-number {
+            color: $--content;
+            font-size: 22px;
+            font-weight: bold;
             text-align: right;
-            padding: 6px;
-            opacity: 0;
+          }
+          &.today {
+            .day-number {
+              font-size: 20px;
+              color: $--purple;
+              width: 48px;
+              height: 48px;
+              line-height: 48px;
+              border-radius: 100%;
+              text-align: center;
+              background: $--purple-assist;
+              align-self: flex-end;
+            }
+          }
+          .ordinary_tip {
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            background: $--purple-assist;
+            color: $--purple;
+            display: inline-block;
+            border-radius: 16px;
+            font-weight: 500;
+            font-size: 14px;
+            padding-left: 16px;
+            align-self: flex-end;
           }
 
           &.not-cur-month {
@@ -392,13 +493,7 @@ export default {
               color: rgba(0, 0, 0, 0.24);
             }
           }
-          .more-link {
-            cursor: pointer;
-            // text-align: right;
-            margin-top: -14px;
-            margin-right: 4px;
-            float: right;
-          }
+
           .event-box {
             .event-item {
               cursor: pointer;
@@ -430,6 +525,8 @@ export default {
               }
             }
           }
+        }
+        .today {
         }
       }
     }
@@ -480,6 +577,100 @@ export default {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+          }
+        }
+      }
+    }
+  }
+}
+
+.calendar_drawer {
+  .el-drawer {
+    padding-top: 16px;
+    padding-left: 32px;
+    padding-right: 27px;
+    overflow: auto;
+    .el-drawer__header {
+      margin-bottom: 0;
+      padding: 0;
+      height: 70px;
+      line-height: 70px;
+      color: $--content;
+      font-size: 20px;
+      font-weight: bold;
+      border-bottom: 1px solid rgba(233, 232, 240, 1);
+    }
+    .el-drawer__body {
+      .el-collapse {
+        border: 0;
+        .el-collapse-item {
+          min-height: 60px;
+          border: 0;
+          .el-collapse-item__header {
+            border: 0;
+            .title_wrapper {
+              color: rgba(66, 71, 95, 1);
+              font-weight: bold;
+              font-size: 18px;
+              width: 100%;
+              .title {
+                margin-right: 8px;
+              }
+              .icon_time {
+                font-size: 22px;
+                color: $--purple;
+                vertical-align: middle;
+              }
+              .event_count {
+                padding-left: 6px;
+                padding-right: 6px;
+                float: right;
+                margin-right: 10px;
+                margin-top: 18px;
+                height: 16px;
+                line-height: 16px;
+                display: inline-block;
+                color: $--purple;
+                background: $--purple-assist;
+                border: 1px solid $--purple;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 10px;
+              }
+            }
+          }
+          .el-collapse-item__wrap {
+            border: 0;
+            .event-wrapper {
+              background: #f6f6f7;
+              border-radius: 6px;
+              padding: 16px 24px;
+              margin-bottom: 16px;
+              .applicant_name_wrapper {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                .el-collapse-item__content {
+                  padding-bottom: 0;
+                }
+                .applicant_name {
+                  color: $--content;
+                  font-weight: bold;
+                  font-size: 16px;
+                }
+              }
+              .el-form-item__label {
+                font-weight: 500;
+                color: #8e919f;
+                font-size: 14px;
+              }
+              .el-form-item__content {
+                text-align: right;
+                font-weight: 500;
+                font-size: 14px;
+                color: $--content;
+              }
+            }
           }
         }
       }

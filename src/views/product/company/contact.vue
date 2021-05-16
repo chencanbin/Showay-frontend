@@ -1,76 +1,27 @@
 <template>
   <span id="paymentDetail">
-    <el-button 
-      type="text" 
-      size="small" 
-      @click="initForm">
+    <el-button type="text" size="small" @click="initForm">
       {{ $t("product.company.set.edit_contact_title") }}
     </el-button>
-    <el-dialog
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="generateTitle()"
-      :fullscreen="true"
-      center
-      append-to-body
-    >
-      <el-table
-        v-loading="contactLoading"
-        :height="height"
-        :data="contactList.list"
-        stripe
-      >
-        <el-table-column
-          :label="$t('product.company.set.contacts_name')"
-          prop="name"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          :label="$t('product.company.set.contacts_title')"
-          prop="title"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          :label="$t('product.company.set.contacts_phone')"
-          prop="phone"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          :label="$t('product.company.set.contacts_email')"
-          prop="email"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          :label="$t('product.company.set.contacts_address')"
-          prop="address"
-          show-overflow-tooltip
-        />
-        <el-table-column 
-          :label="$t('common.action')" 
-          width="80px">
+    <el-dialog :visible="dialogVisible" :before-close="handleClose" :title="generateTitle()" :fullscreen="true" center append-to-body>
+      <el-table v-loading="contactLoading" :height="height" :data="contactList.list" stripe>
+        <el-table-column :label="$t('product.company.set.contacts_name')" prop="name" show-overflow-tooltip />
+        <el-table-column :label="$t('product.company.set.contacts_title')" prop="title" show-overflow-tooltip />
+        <el-table-column :label="$t('product.company.set.contacts_phone')" prop="phone" show-overflow-tooltip />
+        <el-table-column :label="$t('product.company.set.contacts_email')" prop="email" show-overflow-tooltip />
+        <el-table-column :label="$t('product.company.set.contacts_address')" prop="address" show-overflow-tooltip />
+        <el-table-column :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown>
-              <el-button 
-                type="primary" 
-                plain 
-                size="mini">
+              <el-button type="primary" plain size="mini">
                 <i class="el-icon-more" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit 
-                    :data="scope.row" 
-                    :company="company" />
+                  <edit :data="scope.row" :company="company" />
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button
-                    :loading="deleteLoading"
-                    size="small"
-                    type="text"
-                    icon="el-icon-delete"
-                    @click="handleDelete(scope.row)"
-                  >{{ $t("common.delete") }}</el-button
-                  >
+                  <el-button :loading="deleteLoading" size="small" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">{{ $t("common.delete") }}</el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -120,9 +71,8 @@ export default {
       this.dialogVisible = true;
     },
     generateTitle() {
-      return `${this.$t("product.company.set.contacts")} - ${
-        this.company.name
-      } `;
+      return `${this.$t("product.company.set.contacts")} - ${this.company.name
+        } `;
     },
     handleClose() {
       this.dialogVisible = false;

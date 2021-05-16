@@ -3,7 +3,7 @@
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
     <el-dialog v-el-drag-dialog id="add-policy" :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.insurance_policy.set.add_title')" top="10px" width="800px">
-      <el-form ref="insurancePolicy" :model="insurancePolicy" inline class="insurance-policy-form" label-width="120px">
+      <el-form ref="insurancePolicy" :model="insurancePolicy" inline class="insurance-policy-form" label-width="100px">
         <el-tabs v-model="activeName">
           <el-tab-pane :label="$t('client.insurance_policy.basic_info')" name="basic">
             <el-form-item :label="$t('client.insurance_policy.number')" prop="number">
@@ -411,9 +411,6 @@ export default {
 </script>
 <style ref="sc" type="text/scss"  lang="scss">
 #add-policy {
-  .el-dialog__body {
-    padding: 10px;
-  }
   .insurance-policy-form {
     font-size: 0;
     .el-form-item {

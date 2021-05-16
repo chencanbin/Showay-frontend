@@ -4,23 +4,10 @@
       <slot name="header-left" />
     </div>
     <div class="header-center">
-      <span 
-        class="prev-month" 
-        @click.stop="goPrev">{{ leftArrow }}</span>
+      <span class="prev-month" @click.stop="goPrev">{{ leftArrow }}</span>
       <!--<span class="title">{{ title }}</span>-->
-      <el-date-picker
-        :editable="false"
-        :clearable="false"
-        v-model="currentMonth"
-        prefix-icon="false"
-        type="month"
-        placeholder="选择日期"
-        style="width: 120px"
-        @change="handleDateChange"
-      />
-      <span 
-        class="next-month" 
-        @click.stop="goNext">{{ rightArrow }}</span>
+      <el-date-picker :editable="false" :clearable="false" v-model="currentMonth" prefix-icon="false" type="month" placeholder="选择日期" style="width: 100px" @change="handleDateChange" />
+      <span class="next-month" @click.stop="goNext">{{ rightArrow }}</span>
     </div>
     <div class="header-right">
       <slot name="header-right" />

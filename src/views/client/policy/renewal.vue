@@ -1,86 +1,37 @@
 <template>
   <span>
-    <el-button 
-      type="text" 
-      size="small" 
-      @click="initForm">
+    <el-button type="text" size="small" @click="initForm">
       {{ $t("client.insurance_policy.renewal") }}
     </el-button>
-    <el-dialog
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :fullscreen="true"
-      :title="$t('client.insurance_policy.renewal_title')"
-      append-to-body
-    >
-      <el-table
-        v-loading="renewalLoading"
-        id="riderBenefits"
-        :data="renewal"
-        stripe
-        border
-        row-key="product.id"
-        @expand-change="expandChange"
-      >
+    <el-dialog :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('client.insurance_policy.renewal_title')" append-to-body>
+      <el-table v-loading="renewalLoading" id="riderBenefits" :data="renewal" stripe border row-key="product.id" @expand-change="expandChange">
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <div
-              v-if="scope.row.renewals.length === 0"
-              style="text-align: center; color: #909399"
-            >
+            <div v-if="scope.row.renewals.length === 0" style="text-align: center; color: #909399">
               {{ $t("client.insurance_policy.no_renewal_record") }}
             </div>
-            <el-form 
-              v-for="item in scope.row.renewals" 
-              :key="item.id" 
-              inline>
-              <el-form-item
-                :label="$t('client.insurance_policy.term')"
-                style="width: 10%"
-              >
+            <el-form v-for="item in scope.row.renewals" :key="item.id" inline>
+              <el-form-item :label="$t('client.insurance_policy.term')" style="width: 10%">
                 <span>{{ item.year }}</span>
               </el-form-item>
-              <el-form-item
-                :label="$t('client.insurance_policy.premium')"
-                style="width: 15%"
-              >
+              <el-form-item :label="$t('client.insurance_policy.premium')" style="width: 15%">
                 <span>{{ formatterCurrency(item.premium) }}</span>
               </el-form-item>
               <el-form-item style="width: 20%">
-                <edit
-                  :data="scope.row"
-                  :renewal="item"
-                  :id="id"
-                  :currency="currency"
-                />
-                <el-button
-                  type="text"
-                  size="small"
-                  icon="el-icon-delete"
-                  @click="handleDelete(item.id)"
-                >{{ $t("common.delete") }}
+                <edit :data="scope.row" :renewal="item" :id="id" :currency="currency" />
+                <el-button type="text" size="small" icon="el-icon-delete" @click="handleDelete(item.id)">{{ $t("common.delete") }}
                 </el-button>
               </el-form-item>
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('client.insurance_policy.product_name')"
-          prop="product.name"
-        />
-        <el-table-column 
-          :label="$t('common.action')" 
-          width="150">
+        <el-table-column :label="$t('client.insurance_policy.product_name')" prop="product.name" />
+        <el-table-column :label="$t('common.action')" width="150">
           <template slot-scope="scope">
-            <renew
-              v-if="
+            <renew v-if="
                 (premiumPlan === 3 && scope.row.type === 0) ||
                   (scope.row.type === 1 && scope.row.status === 0)
-              "
-              :data="scope.row"
-              :id="id"
-              :currency="currency"
-            />
+              " :data="scope.row" :id="id" :currency="currency" />
           </template>
         </el-table-column>
       </el-table>
@@ -195,7 +146,7 @@ export default {
             }
           },
         }
-      ).then(() => {});
+      ).then(() => { });
     },
     expandChange(row, expandedRows) {
       if (this.expandKeys.indexOf(row.id) >= 0) {

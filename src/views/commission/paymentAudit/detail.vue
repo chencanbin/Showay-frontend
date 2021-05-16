@@ -1,141 +1,67 @@
 <template>
   <span id="paymentDetail">
-    <el-button 
-      type="text" 
-      size="small" 
-      @click="initForm">{{
+    <el-button type="text" size="small" @click="initForm">{{
         generateButtonText()
       }}</el-button>
-    <el-dialog
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="generateTitle()"
-      :fullscreen="true"
-      center
-    >
+    <el-dialog :visible="dialogVisible" :before-close="handleClose" :title="generateTitle()" :fullscreen="true" center>
       <el-row style="margin-bottom: 10px">
-        <el-button
-          v-if="status === '-1'"
-          :disabled="disableSubmit"
-          type="primary"
-          @click="handleSubmit"
-        >{{ $t("commission.payment.submit_audit") }}</el-button
-        >
-        <span 
-          v-show="status === '-1'" 
-          style="margin-left: 20px"
-        >已选中实发金额 :
-          <count-to
-            :start-val="0"
-            :end-val="selectSum"
-            :duration="2000"
-            :decimals="2"
-            prefix="HK$ "
-            style="font-weight: bold"
-          />
+        <el-button v-if="status === '-1'" :disabled="disableSubmit" type="primary" @click="handleSubmit">{{ $t("commission.payment.submit_audit") }}</el-button>
+        <span v-show="status === '-1'" style="margin-left: 20px">已选中实发金额 :
+          <count-to :start-val="0" :end-val="selectSum" :duration="2000" :decimals="2" prefix="HK$ " style="font-weight: bold" />
         </span>
       </el-row>
-      <el-table
-        v-loading="mergedPaymentLoading"
-        :max-height="height"
-        :data="mergedPayment.payments"
-        stripe
-        border
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column
-          v-if="status === '-1'"
-          align="center"
-          type="selection"
-          width="55"
-        />
-        <el-table-column
-          :label="$t('client.insurance_policy.number')"
-          prop="insurancePolicy.number"
-          show-overflow-tooltip
-        >
+      <el-table v-loading="mergedPaymentLoading" :max-height="height" :data="mergedPayment.payments" stripe border @selection-change="handleSelectionChange">
+        <el-table-column v-if="status === '-1'" align="center" type="selection" width="55" />
+        <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip>
           <template slot-scope="scope">
-            <policy-detail
-              :policy-number="scope.row.insurancePolicy.number"
-              :id="scope.row.insurancePolicy.id"
-            />
+            <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id" />
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('client.insurance_policy.insured_name')"
-          prop="insurancePolicy.beneficiary"
-          width="80"
-        />
-        <el-table-column 
-          :label="$t('commission.credit.year')" 
-          width="80">
+        <el-table-column :label="$t('client.insurance_policy.insured_name')" prop="insurancePolicy.beneficiary" width="80" />
+        <el-table-column :label="$t('commission.credit.year')" width="80">
           <template slot-scope="scope">
             <span>{{ $t("commission.credit.years", [scope.row.year]) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('client.insurance_policy.premium')"
-          min-width="100px"
-        >
+        <el-table-column :label="$t('client.insurance_policy.premium')" min-width="100px">
           <template slot-scope="scope">
-            <span class="left_text">{{ getSymbol(scope.row.currency) }}</span
-            ><span class="right_text">{{
+            <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{
               formatterCurrency(scope.row.premium)
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('commission.payment.premiumInHkd')"
-          min-width="120px"
-        >
+        <el-table-column :label="$t('commission.payment.premiumInHkd')" min-width="120px">
           <template slot-scope="scope">
             <div v-if="scope.row.currency !== 'HKD'">
-              <span class="left_text">HK$ </span
-              ><span class="right_text">{{
+              <span class="left_text">HK$ </span><span class="right_text">{{
                 formatterCurrency(scope.row.premiumInHkd)
               }}</span>
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('common.exchangeRate')"
-          prop="exchangeRateToHkd"
-          width="80"
-        >
+        <el-table-column :label="$t('common.exchangeRate')" prop="exchangeRateToHkd" width="80">
           <template slot-scope="scope">
-            <div 
-              v-if="scope.row.currency !== 'HKD'" 
-              style="float: right">
+            <div v-if="scope.row.currency !== 'HKD'" style="float: right">
               {{ scope.row.exchangeRateToHkd }}
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('commission.payment.calculatedAmountInHkd')"
-          min-width="100px"
-        >
+        <el-table-column :label="$t('commission.payment.calculatedAmountInHkd')" min-width="100px">
           <template slot-scope="scope">
-            <span class="left_text">HK$ </span
-            ><span class="right_text">{{
+            <span class="left_text">HK$ </span><span class="right_text">{{
               formatterCurrency(scope.row.calculatedAmountInHkd)
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('commission.payment.amount')"
-          prop="amount"
-          min-width="100px"
-        >
+        <el-table-column :label="$t('commission.payment.amount')" prop="amount" min-width="100px">
           <template slot-scope="scope">
             <div v-if="scope.row.amount">
-              <span class="left_text">HK$ </span
-              ><span class="right_text">{{
+              <span class="left_text">HK$ </span><span class="right_text">{{
                 formatterCurrency(scope.row.amount)
               }}</span>
             </div>
             <div v-else>
-              <span class="left_text">HK$ </span
-              ><span class="right_text">{{
+              <span class="left_text">HK$ </span><span class="right_text">{{
                 formatterCurrency(scope.row.calculatedAmountInHkd)
               }}</span>
             </div>
@@ -148,31 +74,17 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column 
-          v-show="status === '-1'" 
-          :label="$t('common.action')">
+        <el-table-column v-show="status === '-1'" :label="$t('common.action')">
           <template slot-scope="scope">
-            <edit 
-              :payment="scope.row" 
-              :key="scope.row.id" />
+            <edit :payment="scope.row" :key="scope.row.id" />
           </template>
         </el-table-column>
       </el-table>
-      <div 
-        v-show="status === '0'" 
-        slot="footer" 
-        class="dialog-footer">
-        <el-button 
-          :loading="rejectLoading" 
-          @click="handleReject">{{
+      <div v-show="status === '0'" slot="footer" class="dialog-footer">
+        <el-button :loading="rejectLoading" @click="handleReject">{{
             $t("common.reject")
           }}</el-button>
-        <el-button
-          :loading="approveLoading"
-          type="primary"
-          @click="handleApprove"
-        >{{ $t("common.approve") }}</el-button
-        >
+        <el-button :loading="approveLoading" type="primary" @click="handleApprove">{{ $t("common.approve") }}</el-button>
       </div>
     </el-dialog>
   </span>

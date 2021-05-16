@@ -1,101 +1,49 @@
 <template>
   <span id="riderBenefits">
-    <el-button
-      type="text"
-      size="small"
-      style="margin-right: 5px"
-      @click="initForm"
-    >
+    <el-button type="text" size="small" style="margin-right: 5px" @click="initForm">
       {{ $t("client.insurance_policy.riderBenefits") }}
     </el-button>
-    <el-dialog
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :fullscreen="true"
-      :title="$t('client.insurance_policy.riderBenefits_title')"
-      append-to-body
-    >
-      <el-table 
-        :data="riderBenefits" 
-        stripe>
-        <el-table-column
-          :label="$t('client.insurance_policy.product')"
-          prop="product.name"
-        />
+    <el-dialog :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('client.insurance_policy.riderBenefits_title')" append-to-body>
+      <el-table :data="riderBenefits" stripe>
+        <el-table-column :label="$t('client.insurance_policy.product')" prop="product.name" />
         <el-table-column :label="$t('client.insurance_policy.premium')">
           <template slot-scope="scope">
-            <span class="left_text">{{ getSymbol(currency) }}</span
-            ><span class="right_text">{{
+            <span class="left_text">{{ getSymbol(currency) }}</span><span class="right_text">{{
               formatterCurrency(scope.row.premium)
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('client.insurance_policy.amountInsured')"
-          prop="amountInsured"
-        >
+        <el-table-column :label="$t('client.insurance_policy.amountInsured')" prop="amountInsured">
           <template slot-scope="scope">
-            <span class="left_text">{{ getSymbol(currency) }}</span
-            ><span class="right_text">{{
+            <span class="left_text">{{ getSymbol(currency) }}</span><span class="right_text">{{
               formatterCurrency(scope.row.amountInsured)
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('client.insurance_policy.riderBenefits_status')"
-          prop="policyStatus"
-          min-width="100"
-        >
+        <el-table-column :label="$t('client.insurance_policy.riderBenefits_status')" prop="policyStatus" min-width="100">
           <template slot-scope="scope">
-            <el-tag 
-              v-if="scope.row.status === 1" 
-              type="danger">
+            <el-tag v-if="scope.row.status === 1" type="danger">
               {{ formatterRiderBenefitStatus(scope.row.status) }}
             </el-tag>
-            <el-tag 
-              v-if="scope.row.status === 0" 
-              type="success">
+            <el-tag v-if="scope.row.status === 0" type="success">
               {{ formatterRiderBenefitStatus(scope.row.status) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="$t('common.action')">
           <template slot-scope="scope">
-            <edit
-              :rider-benefit="scope.row"
-              :company-id="companyId"
-              :currency="currency"
-              :submit-date="submitDate"
-            />
-            <el-button
-              type="text"
-              size="small"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.$index, scope.row)"
-            >{{ $t("common.delete") }}
+            <edit :rider-benefit="scope.row" :company-id="companyId" :currency="currency" :submit-date="submitDate" />
+            <el-button type="text" size="small" icon="el-icon-delete" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-      <add
-        :company-id="companyId"
-        :currency="currency"
-        :submit-date="submitDate"
-        style="margin-top: 10px"
-        @afterAdd="afterAdd"
-      />
-      <div 
-        slot="footer" 
-        style="text-align: center">
+      <add :company-id="companyId" :currency="currency" :submit-date="submitDate" style="margin-top: 10px" @afterAdd="afterAdd" />
+      <div slot="footer" style="text-align: center">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button
-          :loading="saveLoading"
-          type="primary"
-          @click="handleSubmit"
-        >{{ $t("common.submitButton") }}</el-button
-        >
+        <el-button :loading="saveLoading" type="primary" @click="handleSubmit">{{ $t("common.submitButton") }}</el-button>
       </div>
     </el-dialog>
   </span>

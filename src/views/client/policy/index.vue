@@ -10,7 +10,8 @@
         <el-form-item label="" prop="dateRange">
           <el-date-picker v-model="dateRange" :unlink-panels="true" :start-placeholder="$t('commission.credit.start')" :end-placeholder="$t('commission.credit.end')" :picker-options="pickerOptions" value-format="timestamp" type="daterange" range-separator="-" @change="onDateRangeChange" />
         </el-form-item>
-        <add-client v-if="hasPermission(100039)" />
+        <!-- <add-client  /> -->
+        <el-button v-if="hasPermission(100039)" type="primary" @click="createClient">{{ $t("client.info.set.add_title") }}</el-button>
       </el-form>
     </div>
     <basic-container>
@@ -66,7 +67,7 @@
             </div>
           </template>
         </el-table-column> -->
-        <el-table-column :label="$t('client.insurance_policy.number')" prop="number" show-overflow-tooltip min-width="120" />
+        <el-table-column align="center" :label="$t('client.insurance_policy.number')" prop="number" show-overflow-tooltip min-width="120" />
         <el-table-column :label="$t('client.insurance_policy.sn')" prop="sn" show-overflow-tooltip min-width="120" sortable="custom" />
         <el-table-column :formatter="dateFormat" :label="$t('client.insurance_policy.submitDate')" prop="submitDate" min-width="140" sortable="custom" />
         <el-table-column :label="$t('client.insurance_policy.policyStatus')" prop="policyStatus" min-width="100">
@@ -170,7 +171,8 @@
       </div>
     </el-dialog>
     <send-email ref="sendEmail" />
-    <el-drawer class="policy-detail-wrapper" v-if="currentRow" title="保当详情" :visible.sync="drawer" :direction="direction" size="430px">
+
+    <el-drawer class="policy-detail-wrapper" v-if="currentRow" title="保单详情" :visible.sync="drawer" :direction="direction" size="430px">
       <el-form class="basic_info" label-position="left" label-width="80px">
         <el-form-item :label="$t('client.insurance_policy.number')" class="policy-form-item">
           <span>{{ currentRow.number }}</span>
@@ -237,6 +239,7 @@
         </div>
       </el-form>
     </el-drawer>
+    <add-client ref="addClient" :reload="false" />
   </div>
 </template>
 
@@ -248,7 +251,7 @@ import Cookies from "js-cookie";
 import { mapState, mapGetters } from "vuex";
 import add from "./add";
 import edit from "./edit";
-import addClient from "./addClient";
+import addClient from "../info/add";
 import riderBenefits from "./riderBenefits";
 import renewal from "./renewal";
 import policyDocument from "./policyDocument";
@@ -632,6 +635,9 @@ export default {
     handleSendEmail(row) {
       this.$refs.sendEmail.openEmailDialog(row);
     },
+    createClient() {
+      this.$refs.addClient.initForm();
+    }
   },
 };
 </script>

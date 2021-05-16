@@ -11,7 +11,6 @@
       </el-form>
     </div>
     <basic-container>
-
       <div class="client_list_wrapper" v-loading="clientLoading">
         <div class="create_client" @click="createClient">
           <i class="el-icon-plus"></i>
