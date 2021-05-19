@@ -1,6 +1,6 @@
 <template>
   <span>
-    <a class="link" @click="initForm">{{ name || "-" }}</a>
+    <a class="link" @click.stop="initForm">{{ name || "-" }}</a>
     <el-dialog v-el-drag-dialog id="client-detail-dialog" :close-on-click-modal="false" :before-close="handleClose" :visible="dialogVisible" :title="$t('client.insurance_policy.set.insurance_policy_detail')" width="75%" append-to-body>
       <el-form v-loading="loading" label-position="left" inline class="detail-form" style="padding-bottom: 20px">
         <el-form-item :label="$t('client.info.name')">

@@ -1,128 +1,50 @@
 <template>
-  <el-col 
-    :span="24" 
-    class="el-table-add-col">
+  <el-col class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button
-      class="el-table-add-row"
-      plain
-      type="primary"
-      size="small"
-      @click="initForm"
-    >+ {{ $t("common.add") }}</el-button
-    >
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('product.company.set.add_title')"
-      top="50px"
-      width="600px"
-    >
-      <el-form 
-        ref="company" 
-        :model="company" 
-        :rules="rule" 
-        label-width="110px">
-        <el-form-item 
-          :label="$t('product.company.set.name_en')" 
-          prop="en">
-          <el-input 
-            ref="en" 
-            v-model="company.en" 
-            autofocus />
+    <el-button class="el-table-add-row" plain type="primary" size="small" @click="initForm">+ {{ $t("common.add") }}</el-button>
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('product.company.set.add_title')" top="50px" width="600px">
+      <el-form ref="company" :model="company" :rules="rule" label-width="110px">
+        <el-form-item :label="$t('product.company.set.name_en')" prop="en">
+          <el-input ref="en" v-model="company.en" autofocus />
         </el-form-item>
-        <el-form-item 
-          :label="$t('product.company.set.name_zh')" 
-          prop="zhCN">
+        <el-form-item :label="$t('product.company.set.name_zh')" prop="zhCN">
           <el-input v-model="company.zhCN" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('product.company.set.acronym')" 
-          prop="acronym">
+        <el-form-item :label="$t('product.company.set.acronym')" prop="acronym">
           <el-input v-model="company.acronym" />
         </el-form-item>
-        <el-form-item 
-          label="联系电话" 
-          prop="phone">
+        <el-form-item label="联系电话" prop="phone">
           <el-input v-model="company.phone" />
         </el-form-item>
-        <el-form-item 
-          label="电子邮箱" 
-          prop="email">
+        <el-form-item label="电子邮箱" prop="email">
           <el-input v-model="company.email" />
         </el-form-item>
-        <el-form-item 
-          label="联系地址" 
-          prop="address">
+        <el-form-item label="联系地址" prop="address">
           <el-input v-model="company.address" />
         </el-form-item>
-        <el-button
-          type="primary"
-          circle
-          icon="el-icon-plus"
-          size="mini"
-          style="position: absolute; top: 408px; left: 12px"
-          @click="addWebsites"
-        />
-        <el-form-item
-          v-for="(item, index) in company.websites"
-          :key="index"
-          :label="'系统地址' + (index + 1)"
-        >
-          <el-input
-            v-model="item.name"
-            :class="company.websites.length > 1 ? 'halfWidth' : 'fullWidth'"
-            placeholder="系统地址"
-          />
-          <el-input
-            v-model="item.remark"
-            style="width: 120px"
-            placeholder="备注"
-          />
-          <el-button
-            v-if="company.websites.length > 1"
-            icon="el-icon-remove-outline"
-            size="small"
-            style="
+        <el-button type="primary" circle icon="el-icon-plus" size="mini" style="position: absolute; top: 408px; left: 12px" @click="addWebsites" />
+        <el-form-item v-for="(item, index) in company.websites" :key="index" :label="'系统地址' + (index + 1)">
+          <el-input v-model="item.name" :class="company.websites.length > 1 ? 'halfWidth' : 'fullWidth'" placeholder="系统地址" />
+          <el-input v-model="item.remark" style="width: 120px" placeholder="备注" />
+          <el-button v-if="company.websites.length > 1" icon="el-icon-remove-outline" size="small" style="
               min-width: 50px;
               font-size: 20px;
               padding: 6px;
               vertical-align: bottom;
-            "
-            @click="removeWebsite(index)"
-          />
+            " @click="removeWebsite(index)" />
         </el-form-item>
-        <el-form-item
-          :label="$t('product.company.set.contractEffectiveDate')"
-          prop="contractEffectiveDate"
-        >
-          <el-date-picker
-            v-model="company.contractEffectiveDate"
-            type="date"
-            value-format="timestamp"
-            style="width: 100%"
-          />
+        <el-form-item :label="$t('product.company.set.contractEffectiveDate')" prop="contractEffectiveDate">
+          <el-date-picker v-model="company.contractEffectiveDate" type="date" value-format="timestamp" style="width: 100%" />
         </el-form-item>
-        <el-form-item
-          :label="$t('product.company.set.secondary')"
-          prop="secondary"
-          style="margin-right: 20px"
-        >
+        <el-form-item :label="$t('product.company.set.secondary')" prop="secondary" style="margin-right: 20px">
           <el-switch v-model="company.secondary" />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>
@@ -241,6 +163,9 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
+.el-table-add-col {
+  width: 900px;
+}
 .fullWidth {
   width: 72%;
 }

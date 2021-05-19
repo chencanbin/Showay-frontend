@@ -22,6 +22,7 @@
     padding-bottom: 80px;
     z-index: 1001;
     overflow: hidden;
+    box-shadow: 0px 2px 20px 0px rgba(14, 17, 41, 0.08), -10px 0px 20px 0px rgba(4, 12, 26, 0.1);
 
     //reset element-ui css
     .horizontal-collapse-transition {
@@ -62,8 +63,13 @@
       width: 100% !important;
     }
 
+    .el-menu-item {
+      padding-left: 40px !important;
+    }
+
     .is-active>.el-submenu__title {
       color: #8E919F !important;
+      padding-left: 20px !important;
     }
 
     .el-submenu__title:hover {

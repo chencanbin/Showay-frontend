@@ -1,5 +1,5 @@
 <template>
-  <el-col :xl="12" :lg="12" :md="10" :sm="10" xs="10" class="el-table-add-col">
+  <el-col :xl="12" :lg="12" :md="10" :sm="10" :xs="10" class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ this.$t("common.add") }}</el-button>
     <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.info.set.add_title')" top="50px" width="450px">

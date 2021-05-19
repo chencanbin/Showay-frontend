@@ -35,11 +35,11 @@
             </el-dropdown>
           </div>
           <div class="client_info">
-            <span class="label">{{$t('client.info.idNumber')}}</span>
+            <span class="label">{{$t('client.info.idNumber')}}:</span>
             <span class="value">{{scope.idNumber}}</span>
           </div>
           <div class="client_info">
-            <span class="label">{{$t('client.info.locale')}}</span>
+            <span class="label">{{$t('client.info.locale')}}:</span>
             <span class="value">{{scope.locale}}</span>
           </div>
           <div class="client_info">

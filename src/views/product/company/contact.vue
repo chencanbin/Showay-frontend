@@ -1,9 +1,9 @@
 <template>
-  <span id="paymentDetail">
+  <span id="contact-wrapper">
     <el-button type="text" size="small" @click="initForm">
       {{ $t("product.company.set.edit_contact_title") }}
     </el-button>
-    <el-dialog :visible="dialogVisible" :before-close="handleClose" :title="generateTitle()" :fullscreen="true" center append-to-body>
+    <el-dialog id="contact-wrapper" :visible="dialogVisible" :before-close="handleClose" :title="generateTitle()" :fullscreen="true" center append-to-body>
       <el-table v-loading="contactLoading" :height="height" :data="contactList.list" stripe>
         <el-table-column :label="$t('product.company.set.contacts_name')" prop="name" show-overflow-tooltip />
         <el-table-column :label="$t('product.company.set.contacts_title')" prop="title" show-overflow-tooltip />
@@ -119,13 +119,18 @@ export default {
 };
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
-#paymentDetail .el-dialog__body {
-  padding: 5px 20px;
-  tr:nth-child(odd) td {
-    background-color: #ffffff;
-  }
-  tr:nth-child(even) td {
-    background-color: #fafafa;
+#contact-wrapper {
+  .el-dialog {
+    border-radius: 0;
+    .el-dialog__body {
+      padding: 5px 20px;
+      tr:nth-child(odd) td {
+        background-color: #ffffff;
+      }
+      tr:nth-child(even) td {
+        background-color: #fafafa;
+      }
+    }
   }
 }
 </style>

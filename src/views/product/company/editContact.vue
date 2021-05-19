@@ -1,71 +1,29 @@
 <template>
   <span>
-    <el-button
-      :loading="loading"
-      type="text"
-      icon="el-icon-edit"
-      size="small"
-      @click="initForm"
-    >{{ this.$t("common.edit") }}</el-button
-    >
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('product.company.set.edit_contact_title')"
-      top="50px"
-      width="500px"
-      append-to-body
-    >
-      <el-form 
-        ref="contact" 
-        :model="contact" 
-        label-width="110px">
-        <el-form-item
-          :label="$t('product.company.set.contacts_name')"
-          prop="name"
-        >
-          <el-input 
-            ref="name" 
-            v-model="contact.name" 
-            autofocus />
+    <el-button :loading="loading" type="text" icon="el-icon-edit" size="small" @click="initForm">{{ this.$t("common.edit") }}</el-button>
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('product.company.set.edit_contact_title')" top="50px" width="500px" append-to-body>
+      <el-form ref="contact" :model="contact" label-width="80px">
+        <el-form-item :label="$t('product.company.set.contacts_name')" prop="name">
+          <el-input ref="name" v-model="contact.name" autofocus />
         </el-form-item>
-        <el-form-item
-          :label="$t('product.company.set.contacts_title')"
-          prop="title"
-        >
+        <el-form-item :label="$t('product.company.set.contacts_title')" prop="title">
           <el-input v-model="contact.title" />
         </el-form-item>
-        <el-form-item
-          :label="$t('product.company.set.contacts_phone')"
-          prop="phone"
-        >
+        <el-form-item :label="$t('product.company.set.contacts_phone')" prop="phone">
           <el-input v-model="contact.phone" />
         </el-form-item>
-        <el-form-item
-          :label="$t('product.company.set.contacts_email')"
-          prop="email"
-        >
+        <el-form-item :label="$t('product.company.set.contacts_email')" prop="email">
           <el-input v-model="contact.email" />
         </el-form-item>
-        <el-form-item
-          :label="$t('product.company.set.contacts_address')"
-          prop="address"
-        >
+        <el-form-item :label="$t('product.company.set.contacts_address')" prop="address">
           <el-input v-model="contact.address" />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>

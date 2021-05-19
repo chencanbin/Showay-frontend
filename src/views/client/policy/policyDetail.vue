@@ -1,25 +1,8 @@
 <template>
   <span>
-    <a 
-      class="link" 
-      @click="initForm">{{ policyNumber }}</a>
-    <el-dialog
-      v-el-drag-dialog
-      id="policy-detail-dialog"
-      :close-on-click-modal="false"
-      :before-close="handleClose"
-      :visible="dialogVisible"
-      :title="$t('client.insurance_policy.set.insurance_policy_detail')"
-      width="75%"
-      append-to-body
-    >
-      <el-form
-        v-loading="loading"
-        label-position="left"
-        inline
-        class="detail-form"
-        style="padding-bottom: 20px"
-      >
+    <a class="link" @click="initForm">{{ policyNumber }}</a>
+    <el-dialog v-el-drag-dialog id="policy-detail-dialog" :close-on-click-modal="false" :before-close="handleClose" :visible="dialogVisible" :title="$t('client.insurance_policy.set.insurance_policy_detail')" width="75%" append-to-body>
+      <el-form v-loading="loading" label-position="left" inline class="detail-form" style="padding-bottom: 20px">
         <el-form-item :label="$t('client.insurance_policy.sn')">
           <span>{{ data.sn }}</span>
         </el-form-item>
@@ -42,10 +25,7 @@
           <span>{{ data.product.name }}</span>
         </el-form-item>
         <el-form-item :label="$t('client.insurance_policy.amountInsured')">
-          <span 
-            v-if="!data.amountInsured || data.amountInsured === 0"
-          >N/A</span
-          >
+          <span v-if="!data.amountInsured || data.amountInsured === 0">N/A</span>
           <span v-else>{{ numberFormat(data, data.amountInsured) }}</span>
         </el-form-item>
         <el-form-item :label="$t('client.insurance_policy.premium')">
@@ -62,33 +42,19 @@
         </el-form-item>
       </el-form>
       <div v-if="data.riderBenefits && data.riderBenefits.length > 0">
-        <div
-          style="
+        <div style="
             padding: 0px 10px 10px 0;
             font-size: 14px;
             font-weight: bold;
             color: #99a9bf;
-          "
-        >
+          ">
           {{ $t("client.insurance_policy.riderBenefits_title") }}
         </div>
         <div style="padding: 0px 10px 30px 0">
-          <el-table 
-            :data="data.riderBenefits" 
-            style="width: 100%" 
-            stripe>
-            <el-table-column
-              :label="$t('client.insurance_policy.product_name')"
-              prop="product.name"
-            />
-            <el-table-column
-              :label="$t('client.insurance_policy.premiumPlan')"
-              prop="amountInsured"
-            />
-            <el-table-column
-              :label="$t('client.insurance_policy.amountInsured')"
-              prop="premium"
-            />
+          <el-table :data="data.riderBenefits" style="width: 100%" stripe>
+            <el-table-column :label="$t('client.insurance_policy.product_name')" prop="product.name" />
+            <el-table-column :label="$t('client.insurance_policy.premiumPlan')" prop="amountInsured" />
+            <el-table-column :label="$t('client.insurance_policy.amountInsured')" prop="premium" />
           </el-table>
         </div>
       </div>
@@ -175,7 +141,7 @@ export default {
 
 <style type="text/scss"  lang="scss">
 .link:hover {
-  color: #00701a;
+  color: $--purple;
 }
 #policy-detail-dialog {
   .detail-form {
