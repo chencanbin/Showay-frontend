@@ -186,7 +186,7 @@
                 </div>
                 <div class="row" v-if="commissionTable.remarks">
                   <span class="label">{{ $t("common.remarks") }}:</span>
-                  <span class="content"> {{ commissionTable.remarks }}</span>
+                  <span class="content remark"> {{ commissionTable.remarks }}</span>
                 </div>
               </div>
             </el-timeline-item>
@@ -534,16 +534,21 @@ export default {
           border-radius: 6px;
           padding: 12px 24px;
           .row {
-            height: 36px;
+            min-height: 36px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             font-size: 14px;
             .label {
               color: $--label;
+              width: 300px;
             }
             .content {
               color: $--content;
+            }
+            .remark {
+              padding: 15px 0 15px 15px;
+              line-height: 2;
             }
           }
         }

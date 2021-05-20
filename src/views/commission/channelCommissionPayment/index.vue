@@ -1,44 +1,17 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <el-tabs 
-        v-model="activeName" 
-        @tab-click="handleClick">
-        <el-tab-pane
-          v-for="status in commissionPaymentStatus"
-          :label="statusFormatter(status.id)"
-          :name="status.id"
-          :key="status.id"
-        >
-          <el-form-item 
-            label="" 
-            prop="wildcard">
-            <el-input
-              v-model="wildcard"
-              clearable
-              placeholder="搜索"
-              @input="search"
-            >
-              <i 
-                slot="prefix" 
-                class="el-input__icon el-icon-search" />
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane v-for="status in commissionPaymentStatus" :label="statusFormatter(status.id)" :name="status.id" :key="status.id">
+          <el-form-item label="" prop="wildcard">
+            <el-input v-model="wildcard" clearable placeholder="搜索" @input="search">
+              <i slot="prefix" class="el-input__icon el-icon-search" />
             </el-input>
           </el-form-item>
-          <el-table
-            v-loading="loading"
-            :height="height"
-            :data="channelCommissionPayment.list"
-            stripe
-            border
-          >
+          <el-table v-loading="loading" :height="height" :data="channelCommissionPayment.list" stripe border>
             <el-table-column type="expand">
               <template slot-scope="scope">
-                <el-form
-                  label-position="right"
-                  inline
-                  class="channelCommissionPayment-table-expand"
-                  label-width="80px"
-                >
+                <el-form label-position="right" inline class="channelCommissionPayment-table-expand" label-width="80px">
                   <el-form-item label="供应商:">
                     <span>{{ scope.row.insurancePolicy.company.name }}</span>
                   </el-form-item>
@@ -53,16 +26,14 @@
                   <el-form-item label="保额:">
                     <span style="margin-right: 5px">{{
                       getSymbol(scope.row.currency)
-                    }}</span
-                    ><span>{{
+                    }}</span><span>{{
                       formatterCurrency(scope.row.insurancePolicy.amountInsured)
                     }}</span>
                   </el-form-item>
                   <el-form-item label="AFYP:">
                     <span style="margin-right: 5px">{{
                       getSymbol(scope.row.currency)
-                    }}</span
-                    ><span>{{ formatterCurrency(scope.row.afyp) }}</span>
+                    }}</span><span>{{ formatterCurrency(scope.row.afyp) }}</span>
                   </el-form-item>
                   <el-form-item label="佣金率:">
                     <span>{{
@@ -72,56 +43,35 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column
-              label="保单号"
-              prop="insurancePolicy.number"
-              min-width="120px"
-            />
-            <el-table-column 
-              label="期序" 
-              prop="year" 
-              width="50" />
-            <el-table-column 
-              label="渠道" 
-              prop="channel.name" />
-            <el-table-column 
-              label="上级渠道" 
-              prop="amount">
+            <el-table-column label="保单号" prop="insurancePolicy.number" min-width="120px" />
+            <el-table-column label="期序" prop="year" width="50" />
+            <el-table-column label="渠道" prop="channel.name" />
+            <el-table-column label="上级渠道" prop="amount">
               <template slot-scope="scope">
                 <div v-if="!scope.row.forSuperior">
                   <span>{{ scope.row.superior.name }}</span>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column 
-              label="预计到账" 
-              prop="amount" 
-              min-width="120">
+            <el-table-column label="预计到账" prop="amount" min-width="120">
               <template slot-scope="scope">
                 <span class="left_text">{{
                   getSymbol(scope.row.currency)
-                }}</span
-                ><span class="right_text">{{
+                }}</span><span class="right_text">{{
                   formatterCurrency(scope.row.calculatedAmount)
                 }}</span>
               </template>
             </el-table-column>
-            <el-table-column 
-              label="渠道外发" 
-              prop="amount" 
-              min-width="140">
+            <el-table-column label="渠道外发" prop="amount" min-width="140">
               <template slot-scope="scope">
                 <span class="left_text">{{
                   getSymbol(scope.row.currency)
-                }}</span
-                ><span class="right_text">{{
+                }}</span><span class="right_text">{{
                   formatterCurrency(scope.row.amount)
                 }}</span>
               </template>
             </el-table-column>
-            <el-table-column 
-              label="状态" 
-              min-width="100">
+            <el-table-column label="状态" min-width="100">
               <template slot-scope="scope">
                 <!--<statusBadge v-if="scope.row.status === 0" :text="statusFormatter(scope.row.status)" type="processing-badge"/>-->
                 <!--<statusBadge v-if="scope.row.status === 1" :text="statusFormatter(scope.row.status)" type="error-badge"/>-->
@@ -130,45 +80,25 @@
                 <el-tag v-if="activeName === '-1'">{{
                   statusFormatter(activeName)
                 }}</el-tag>
-                <el-tag 
-                  v-if="activeName === '0'" 
-                  type="warning">{{
+                <el-tag v-if="activeName === '0'" type="warning">{{
                     statusFormatter(activeName)
                   }}</el-tag>
-                <el-tag 
-                  v-if="activeName === '2'" 
-                  type="success">{{
+                <el-tag v-if="activeName === '2'" type="success">{{
                     statusFormatter(activeName)
                   }}</el-tag>
-                <el-tag 
-                  v-if="activeName === '3'" 
-                  type="info">{{
+                <el-tag v-if="activeName === '3'" type="info">{{
                     statusFormatter(activeName)
                   }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column 
-              label="备注" 
-              prop="remarks" 
-              min-width="150" />
+            <el-table-column label="备注" prop="remarks" min-width="150" />
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <edit
-                  v-if="scope.row.status !== 3"
-                  :commission-payment="scope.row"
-                  :active-name="activeName"
-                />
+                <edit v-if="scope.row.status !== 3" :commission-payment="scope.row" :active-name="activeName" />
               </template>
             </el-table-column>
           </el-table>
-          <pagination
-            :total="channelCommissionPayment.total"
-            :page="listQuery.page"
-            :limit="listQuery.limit"
-            @pagination="pagination"
-            @update:page="updatePage"
-            @update:limit="updateLimit"
-          />
+          <pagination :total="channelCommissionPayment.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
         </el-tab-pane>
       </el-tabs>
     </basic-container>

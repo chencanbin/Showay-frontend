@@ -110,9 +110,17 @@
    padding: 0px;
  }
 
- //.el-table .cell {
- //  padding: 0px 5px 0px 20px;
- //}
+ .el-table {
+   max-height: 77vh;
+   overflow: auto;
+ }
+
+ .el-table .cell {
+   padding: 0px 5px 0px 20px;
+   font-size: 14px;
+   color: $--content;
+ }
+
  //.el-table th td {
  //  padding: 5px 0!important;
  //}
@@ -139,7 +147,7 @@
  }
 
  .el-timeline-item__timestamp.is-top {
-   min-height: 20px;
+   min-height: 30px;
  }
 
  .el-dialog {

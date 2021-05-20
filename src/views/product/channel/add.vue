@@ -1,59 +1,20 @@
 <template>
-  <el-col 
-    span.number="24" 
-    class="el-table-add-col">
+  <el-col class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button 
-      class="el-table-add-row" 
-      plain 
-      type="primary" 
-      @click="initForm"
-    >+ {{ $t("common.add") }}</el-button
-    >
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('user.set.add_channel_title')"
-      width="500px"
-    >
-      <el-form
-        ref="account"
-        :model="account"
-        :rules="ruleAccount"
-        label-width="100px"
-      >
-        <el-form-item
-          :label="$t('client.insurance_policy.channel')"
-          prop="channel"
-        >
-          <el-select
-            v-model="account.channel"
-            :placeholder="$t('client.insurance_policy.set.channel_name')"
-            filterable
-            style="width: 100%"
-            @change="onChannelChange"
-          >
-            <el-option
-              v-for="item in channels.list"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('user.set.add_channel_title')" width="500px">
+      <el-form ref="account" :model="account" :rules="ruleAccount" label-width="100px">
+        <el-form-item :label="$t('client.insurance_policy.channel')" prop="channel">
+          <el-select v-model="account.channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable style="width: 100%" @change="onChannelChange">
+            <el-option v-for="item in channels.list" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>
@@ -137,4 +98,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
+.el-table-add-col {
+  width: 900px;
+}
 </style>
