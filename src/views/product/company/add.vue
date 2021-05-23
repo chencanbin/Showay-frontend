@@ -2,7 +2,7 @@
   <el-col class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <el-button class="el-table-add-row" plain type="primary" size="small" @click="initForm">+ {{ $t("common.add") }}</el-button>
-    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('product.company.set.add_title')" top="50px" width="600px">
+    <el-dialog append-to-body v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('product.company.set.add_title')" top="50px" width="600px">
       <el-form ref="company" :model="company" :rules="rule" label-width="110px">
         <el-form-item :label="$t('product.company.set.name_en')" prop="en">
           <el-input ref="en" v-model="company.en" autofocus />
@@ -22,10 +22,10 @@
         <el-form-item label="联系地址" prop="address">
           <el-input v-model="company.address" />
         </el-form-item>
-        <el-button type="primary" circle icon="el-icon-plus" size="mini" style="position: absolute; top: 408px; left: 12px" @click="addWebsites" />
+        <el-button type="primary" circle icon="el-icon-plus" size="mini" class="add-contact-button" @click="addWebsites" />
         <el-form-item v-for="(item, index) in company.websites" :key="index" :label="'系统地址' + (index + 1)">
           <el-input v-model="item.name" :class="company.websites.length > 1 ? 'halfWidth' : 'fullWidth'" placeholder="系统地址" />
-          <el-input v-model="item.remark" style="width: 120px" placeholder="备注" />
+          <el-input v-model="item.remark" class="remark_input" placeholder="备注" />
           <el-button v-if="company.websites.length > 1" icon="el-icon-remove-outline" size="small" style="
               min-width: 50px;
               font-size: 20px;
@@ -165,6 +165,14 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
 .el-table-add-col {
   width: 900px;
+}
+.remark_input {
+  width: 115px;
+}
+.add-contact-button {
+  position: absolute;
+  top: 420px;
+  left: 24px;
 }
 .fullWidth {
   width: 72%;

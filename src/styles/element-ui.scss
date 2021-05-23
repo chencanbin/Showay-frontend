@@ -111,8 +111,11 @@
  }
 
  .el-table {
-   max-height: 77vh;
    overflow: auto;
+ }
+
+ .el-table--enable-row-hover .el-table__body tr:hover>td {
+   background: #F2F2F8;
  }
 
  .el-table .cell {
@@ -138,8 +141,8 @@
 
  .el-table th {
    font-family: "Microsoft YaHei";
-   background-color: #f5f7fa;
-   color: #324558;
+   background-color: #f6f6f6;
+   color: $--content;
  }
 
  .el-form-item {
@@ -148,6 +151,11 @@
 
  .el-timeline-item__timestamp.is-top {
    min-height: 30px;
+   color: $--content;
+ }
+
+ .el-dialog.is-fullscreen {
+   border-radius: 0;
  }
 
  .el-dialog {
@@ -156,8 +164,8 @@
    .el-dialog__header {
      padding-top: 23px;
      padding-bottom: 22px;
-     margin-left: 24px;
-     margin-right: 24px;
+    //  margin-left: 24px;
+//  margin-right: 24px;
      border-bottom: 1px solid #EDEDF1;
 
      .el-dialog__title {

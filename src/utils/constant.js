@@ -224,9 +224,9 @@ export const fileType = {
   'video/mp4': 'video',
   'video/x-ms-wmv': 'video',
   'audio/mp3': 'audio',
-  'image/gif': 'img',
-  'image/jpeg': 'img',
-  'image/png': 'img',
+  'image/gif': 'photo',
+  'image/jpeg': 'photo',
+  'image/png': 'photo',
   'application/x-zip-compressed': 'rar'
 };
 

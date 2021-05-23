@@ -668,10 +668,9 @@ export default {
         border-bottom: 1px solid #e1e0eb;
         margin-bottom: 16px;
         margin-top: 10px;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         color: #42475f;
-        padding: 0;
       }
       .el-drawer__body {
         background: #f6f6f7;

@@ -1,13 +1,5 @@
 <template>
-  <el-upload
-    v-loading="loading"
-    :disabled="disabled"
-    :http-request="uploadFile"
-    :show-file-list="false"
-    class="file-upload"
-    drag
-    action=""
-  >
+  <el-upload v-loading="loading" :disabled="disabled" :http-request="uploadFile" :show-file-list="false" class="file-upload" drag action="">
     <i class="el-icon-upload" />
     <div class="el-upload__text">{{ $t("document.upload_tips") }}</div>
     <!--<el-button :loading="loading" size="small" icon="el-icon-upload" type="primary" disable>{{ buttonText + percentCompleted }}</el-button>-->
@@ -100,7 +92,7 @@ export default {
   },
 };
 </script>
-<style type="text/scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss" type="text/scss">
 .file-upload .el-upload {
   margin-top: 20px;
   width: 100%;
@@ -108,7 +100,11 @@ export default {
 }
 .file-upload .el-upload-dragger {
   width: 100%;
-  background-color: rgb(230, 241, 232);
+  color: $--purple;
+  background: $--purple-assist;
   height: 150px;
+  .el-icon-upload {
+    color: $--purple;
+  }
 }
 </style>

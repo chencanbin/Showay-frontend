@@ -1,138 +1,60 @@
 <template>
   <span>
-    <el-button 
-      type="text" 
-      size="small" 
-      @click="initForm">{{
+    <el-button type="text" size="small" @click="initForm">{{
         this.$t("client.insurance_policy.policy_file")
       }}</el-button>
-    <el-dialog
-      id="policy_file"
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :fullscreen="true"
-      :before-close="handleClose"
-      :title="$t('client.insurance_policy.policy_file')"
-      append-to-body
-    >
+    <el-dialog id="policy_file" :close-on-click-modal="false" :visible="dialogVisible" :fullscreen="true" :before-close="handleClose" :title="$t('client.insurance_policy.policy_file')" append-to-body>
       <basic-container>
-        <el-col 
-          :span="5" 
-          :style="treeWrapper" 
-          style="overflow: auto">
-          <el-tree
-            ref="tree"
-            :load="loadFolder"
-            :data="folderTree"
-            :key="randomKey"
-            :props="props"
-            :default-expanded-keys="expandArray"
-            node-key="id"
-            auto-expand-parent
-            lazy
-            style="margin-top: 10px"
-            @node-click="nodeExpand"
-          >
-            <span
-              slot-scope="{ node, data }"
-              :title="data.name"
-              style="
+        <el-col :span="5" :style="treeWrapper" style="overflow: auto">
+          <el-tree ref="tree" :load="loadFolder" :data="folderTree" :key="randomKey" :props="props" :default-expanded-keys="expandArray" node-key="id" auto-expand-parent lazy style="margin-top: 10px" @node-click="nodeExpand">
+            <span slot-scope="{ node, data }" :title="data.name" style="
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-              "
-            >
-              <svg-icon
-                v-if="!data.extention"
-                icon-class="folder"
-                style="
+              ">
+              <svg-icon v-if="!data.extention" icon-class="folder" style="
                   font-size: 20px;
                   margin-right: 15px;
                   vertical-align: middle;
-                "
-              />
-              <svg-icon
-                v-else
-                :icon-class="getFileType(data.extention)"
-                style="
+                " />
+              <svg-icon v-else :icon-class="getFileType(data.extention)" style="
                   font-size: 20px;
                   margin-right: 15px;
                   vertical-align: middle;
-                "
-              />
+                " />
               <a class="folderLink">{{ data.name }}</a>
             </span>
           </el-tree>
         </el-col>
-        <el-col
-          :span="19"
-          style="border-left: 1px solid #cccccc; padding: 20px 10px 10px 10px"
-        >
+        <el-col :span="19" style="border-left: 1px solid #cccccc; padding: 20px 10px 10px 10px">
           <el-row style="margin-bottom: 5px">
-            <el-breadcrumb
-              separator-class="el-icon-arrow-right"
-              style="font-size: 14px"
-            >
-              <el-breadcrumb-item 
-                v-for="item in levelList" 
-                :key="item.id">
-                <a 
-                  class="folderLink" 
-                  @click="handleFolderClick(item)">{{
+            <el-breadcrumb separator-class="el-icon-arrow-right" style="font-size: 14px">
+              <el-breadcrumb-item v-for="item in levelList" :key="item.id">
+                <a class="folderLink" @click="handleFolderClick(item)">{{
                     item.data.name
                   }}</a>
               </el-breadcrumb-item>
             </el-breadcrumb>
-            <add
-              v-if="hasPermission(100092)"
-              :folder-id="folderId"
-              @afterAddFolder="afterAddFolder"
-            />
+            <add v-if="hasPermission(100092)" :folder-id="folderId" @afterAddFolder="afterAddFolder" />
           </el-row>
-          <el-table
-            v-loading="fileLoading"
-            :height="tableHeight"
-            :data="folder.items"
-            :show-header="false"
-            stripe
-          >
-            <el-table-column 
-              show-overflow-tooltip 
-              prop="name">
+          <el-table v-loading="fileLoading" :height="tableHeight" :data="folder.items" :show-header="false" stripe>
+            <el-table-column show-overflow-tooltip prop="name">
               <template slot-scope="scope">
-                <svg-icon
-                  v-if="!scope.row.extention"
-                  icon-class="folder"
-                  style="
+                <svg-icon v-if="!scope.row.extention" icon-class="folder" style="
                     font-size: 30px;
                     margin-right: 15px;
                     vertical-align: middle;
-                  "
-                />
-                <svg-icon
-                  v-else
-                  :icon-class="getFileType(scope.row.extention)"
-                  style="
+                  " />
+                <svg-icon v-else :icon-class="getFileType(scope.row.extention)" style="
                     font-size: 30px;
                     margin-right: 15px;
                     vertical-align: middle;
-                  "
-                />
-                <a
-                  v-if="!scope.row.resourceKey"
-                  class="folderLink"
-                  @click="handleTableFolderClick(scope.row.id)"
-                >{{ scope.row.name }}</a
-                >
-                <a
-                  v-else-if="
+                  " />
+                <a v-if="!scope.row.resourceKey" class="folderLink" @click="handleTableFolderClick(scope.row.id)">{{ scope.row.name }}</a>
+                <a v-else-if="
                     scope.row.resourceKey &&
                       scope.row.extention === 'application/pdf'
-                  "
-                  class="folderLink"
-                  @click="viewPdf(scope.row)"
-                >{{ scope.row.name }}</a
-                >
+                  " class="folderLink" @click="viewPdf(scope.row)">{{ scope.row.name }}</a>
                 <span v-else>{{ scope.row.name }}</span>
               </template>
             </el-table-column>
@@ -141,51 +63,23 @@
                 {{ scope.row.size && bytesToSize(scope.row.size) }}
               </template>
             </el-table-column>
-            <el-table-column
-              :formatter="dateFormat"
-              prop="creationDate"
-              width="200px"
-            />
-            <el-table-column
-              :label="$t('common.action')"
-              width="100"
-              align="center"
-            >
+            <el-table-column :formatter="dateFormat" prop="creationDate" width="200px" />
+            <el-table-column :label="$t('common.action')" width="100" align="center">
               <template slot-scope="scope">
                 <el-dropdown>
-                  <el-button 
-                    type="primary" 
-                    plain 
-                    size="mini">
+                  <el-button type="primary" plain size="mini">
                     <i class="el-icon-more" />
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item>
-                      <el-button
-                        v-if="hasPermission(100078) && scope.row.resourceKey"
-                        type="text"
-                        size="small"
-                        icon="el-icon-download"
-                        @click="handleDownload(scope.$index, scope.row)"
-                      >{{ $t("common.download") }}
+                      <el-button v-if="hasPermission(100078) && scope.row.resourceKey" type="text" size="small" icon="el-icon-download" @click="handleDownload(scope.$index, scope.row)">{{ $t("common.download") }}
                       </el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <edit
-                        v-if="hasPermission(100084)"
-                        :data="scope.row"
-                        :folder-id="folderId"
-                        @afterEdit="afterEdit"
-                      />
+                      <edit v-if="hasPermission(100084)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit" />
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button
-                        v-if="hasPermission(100083)"
-                        type="text"
-                        size="small"
-                        icon="el-icon-delete"
-                        @click="handleDelete(scope.$index, scope.row)"
-                      >{{ $t("common.delete") }}
+                      <el-button v-if="hasPermission(100083)" type="text" size="small" icon="el-icon-delete" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
                       </el-button>
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -193,10 +87,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <file-upload
-            v-if="hasPermission(100081)"
-            @afterComplete="afterComplete"
-          />
+          <file-upload v-if="hasPermission(100081)" @afterComplete="afterComplete" />
         </el-col>
         <file-list ref="fileList" />
       </basic-container>
@@ -262,7 +153,7 @@ export default {
       fileLoading: (state) => state.document.fileLoading,
     }),
   },
-  created() {},
+  created() { },
 
   methods: {
     initForm() {
@@ -419,7 +310,7 @@ export default {
             }
           },
         }
-      ).then(() => {});
+      ).then(() => { });
     },
     handleRightSelect(key) {
       if (key === 1) {
@@ -535,7 +426,7 @@ export default {
 .folderLink:hover {
   cursor: pointer;
   text-decoration: none;
-  color: #00701a;
+  color: $--purple;
 }
 .el-breadcrumb {
   display: inline-block;

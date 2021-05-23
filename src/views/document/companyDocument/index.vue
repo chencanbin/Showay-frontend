@@ -1,133 +1,45 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <el-col 
-        :span="5" 
-        :style="treeWrapper" 
-        style="overflow: auto">
-        <el-tree
-          ref="tree"
-          :load="loadFolder"
-          :data="folderTree"
-          :key="randomKey"
-          :props="props"
-          :default-expanded-keys="expandArray"
-          node-key="id"
-          highlight-current
-          lazy
-          style="margin-top: 10px"
-          @node-click="nodeExpand"
-        >
-          <span
-            slot-scope="{ node, data }"
-            :title="data.name"
-            style="
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            "
-          >
-            <svg-icon
-              v-if="!data.extention"
-              icon-class="folder"
-              style="
-                font-size: 20px;
-                margin-right: 15px;
-                vertical-align: middle;
-              "
-            />
-            <svg-icon
-              v-else
-              :icon-class="getFileType(data.extention)"
-              style="
-                font-size: 20px;
-                margin-right: 15px;
-                vertical-align: middle;
-              "
-            />
+      <el-col :span="5" :style="treeWrapper" style="overflow: auto">
+        <el-tree ref="tree" :load="loadFolder" :data="folderTree" :key="randomKey" :props="props" :default-expanded-keys="expandArray" node-key="id" highlight-current lazy style="margin-top: 10px" @node-click="nodeExpand">
+          <span slot-scope="{ node, data }" :title="data.name" class="tree-item-wrapper">
+            <span v-if="!data.extention" class="iconfont icon_file_select" />
+            <span v-else class="iconfont" :class="getFileType(data.extention)" />
             <a class="folderLink">{{ data.name }}</a>
           </span>
         </el-tree>
       </el-col>
 
-      <el-col
-        :span="19"
-        style="border-left: 1px solid #cccccc; padding: 20px 10px 10px 10px"
-      >
+      <el-col :span="19" class="file-list">
         <el-row style="margin-bottom: 5px">
-          <el-breadcrumb
-            separator-class="el-icon-arrow-right"
-            style="font-size: 14px"
-          >
-            <el-breadcrumb-item 
-              v-for="item in levelList" 
-              :key="item.id">
-              <a 
-                class="folderLink" 
-                @click="handleFolderClick(item)">{{
+          <el-breadcrumb separator-class="el-icon-arrow-right" style="font-size: 14px">
+            <el-breadcrumb-item v-for="item in levelList" :key="item.id">
+              <a class="folderLink" @click="handleFolderClick(item)">{{
                   item.data.name
                 }}</a>
             </el-breadcrumb-item>
           </el-breadcrumb>
-          <add
-            v-if="hasPermission(100092)"
-            :folder-id="folderId"
-            @afterAddFolder="afterAddFolder"
-          />
+          <add v-if="hasPermission(100092)" :folder-id="folderId" @afterAddFolder="afterAddFolder" />
         </el-row>
-        <el-table
-          v-loading="fileLoading"
-          :height="tableHeight"
-          :data="folder.items"
-          :show-header="false"
-          stripe
-        >
-          <el-table-column 
-            show-overflow-tooltip 
-            prop="name">
+        <el-table v-loading="fileLoading" :height="tableHeight" :data="folder.items" :show-header="false" stripe>
+          <el-table-column show-overflow-tooltip prop="name">
             <template slot-scope="scope">
-              <svg-icon
-                v-if="!scope.row.extention"
-                icon-class="folder"
-                style="
-                  font-size: 30px;
-                  margin-right: 15px;
-                  vertical-align: middle;
-                "
-              />
-              <svg-icon
-                v-else
-                :icon-class="getFileType(scope.row.extention)"
-                style="
-                  font-size: 30px;
-                  margin-right: 15px;
-                  vertical-align: middle;
-                "
-              />
-              <a
-                v-if="!scope.row.resourceKey"
-                class="folderLink"
-                @click="handleTableFolderClick(scope.row.id)"
-              >{{ scope.row.name }}</a
-              >
-              <a
-                v-else-if="
+              <div class="file-item-wrapper">
+                <span v-if="!scope.row.extention" class="iconfont icon_file_nor" />
+                <span v-else class="iconfont" :class="getFileType(scope.row.extention)" />
+                <a v-if="!scope.row.resourceKey" class="folderLink" @click="handleTableFolderClick(scope.row.id)">{{ scope.row.name }}</a>
+                <a v-else-if="
                   scope.row.resourceKey &&
                     scope.row.extention === 'application/pdf'
-                "
-                class="folderLink"
-                @click="viewPdf(scope.row)"
-              >{{ scope.row.name }}</a
-              >
-              <span v-else>{{ scope.row.name }}</span>
+                " class="folderLink" @click="viewPdf(scope.row)">{{ scope.row.name }}</a>
+                <span v-else>{{ scope.row.name }}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column width="150">
             <template slot-scope="scope">
-              <show-in-home-page-switch
-                v-if="hasPermission(100076) && scope.row.resourceKey"
-                :file="scope.row"
-              />
+              <show-in-home-page-switch v-if="hasPermission(100076) && scope.row.resourceKey" :file="scope.row" />
             </template>
           </el-table-column>
           <el-table-column width="150">
@@ -135,51 +47,23 @@
               {{ scope.row.size && bytesToSize(scope.row.size) }}
             </template>
           </el-table-column>
-          <el-table-column
-            :formatter="dateFormat"
-            prop="creationDate"
-            width="150px"
-          />
-          <el-table-column
-            :label="$t('common.action')"
-            width="100"
-            align="center"
-          >
+          <el-table-column :formatter="dateFormat" prop="creationDate" width="150px" />
+          <el-table-column :label="$t('common.action')" width="100" align="center">
             <template slot-scope="scope">
               <el-dropdown>
-                <el-button 
-                  type="primary" 
-                  plain 
-                  size="mini">
+                <el-button type="primary" plain size="mini">
                   <i class="el-icon-more" />
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
-                    <el-button
-                      v-if="hasPermission(100074) && scope.row.resourceKey"
-                      type="text"
-                      size="small"
-                      icon="el-icon-download"
-                      @click="handleDownload(scope.$index, scope.row)"
-                    >{{ $t("common.download") }}
+                    <el-button v-if="hasPermission(100074) && scope.row.resourceKey" type="text" size="small" icon="el-icon-download" @click="handleDownload(scope.$index, scope.row)">{{ $t("common.download") }}
                     </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <edit
-                      v-if="hasPermission(100076)"
-                      :data="scope.row"
-                      :folder-id="folderId"
-                      @afterEdit="afterEdit"
-                    />
+                    <edit v-if="hasPermission(100076)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit" />
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <el-button
-                      v-if="hasPermission(100075)"
-                      type="text"
-                      size="small"
-                      icon="el-icon-delete"
-                      @click="handleDelete(scope.$index, scope.row)"
-                    >{{ $t("common.delete") }}
+                    <el-button v-if="hasPermission(100075)" type="text" size="small" icon="el-icon-delete" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
                     </el-button>
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -187,10 +71,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <file-upload
-          v-if="hasPermission(100073)"
-          @afterComplete="afterComplete"
-        />
+        <file-upload v-if="hasPermission(100073)" @afterComplete="afterComplete" />
       </el-col>
       <file-list ref="fileList" />
       <!--鼠标右键点击出现页面-->
@@ -325,8 +206,7 @@ export default {
       this.randomKey = +new Date();
     },
     getFileType(val) {
-      const type = fileType[val] || "default";
-      return `file_${type}`;
+      return fileType[val] ? `icon_file_${fileType[val]}` : "icon_home_wendang_nor";
     },
     getFolder(id, params) {
       this.folderId = id;
@@ -407,7 +287,7 @@ export default {
             }
           },
         }
-      ).then(() => {});
+      ).then(() => { });
     },
     handleRightSelect(key) {
       if (key === 1) {
@@ -496,7 +376,7 @@ export default {
 };
 </script>
 
-<style type="text/scss" rel="stylesheet/scss">
+<style rel="stylesheet/scss" lang="scss" type="text/scss">
 /*.upload-demo .el-upload {*/
 /*margin-top: 20px;*/
 /*width: 100%;*/
@@ -517,11 +397,42 @@ export default {
 .folderLink:hover {
   cursor: pointer;
   text-decoration: none;
-  color: #00701a;
+  color: $--purple;
 }
 .el-breadcrumb {
   display: inline-block;
   vertical-align: middle;
   margin-right: 20px;
+}
+.file-list {
+  border-left: 1px solid #cccccc;
+  padding: 20px 10px 10px 10px;
+  height: 91.5vh;
+}
+.tree-item-wrapper,
+.file-item-wrapper {
+  display: flex;
+  align-items: center;
+  .iconfont {
+    font-size: 28px;
+    color: #6f78cf;
+  }
+  .folderLink {
+    display: inline-block;
+    width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-left: 10px;
+  }
+  .icon_file_pdf {
+    color: #ce5656;
+  }
+  .icon_file_word {
+    color: #6f78cf;
+  }
+  .icon_file_excel {
+    color: #4aa794;
+  }
 }
 </style>

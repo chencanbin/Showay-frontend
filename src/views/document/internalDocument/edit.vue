@@ -1,48 +1,19 @@
 <template>
   <span>
-    <el-button 
-      type="text" 
-      size="small" 
-      icon="el-icon-edit" 
-      @click="initForm">{{
+    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{
         this.$t("common.edit")
       }}</el-button>
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('document.edit_title')"
-      top="50px"
-      width="450px"
-      append-to-body
-    >
-      <el-form 
-        ref="folder" 
-        :model="folder" 
-        :rules="rule" 
-        label-width="100px">
-        <el-form-item 
-          :label="$t('document.file_name')" 
-          prop="name">
-          <el-input
-            ref="folderName"
-            v-model="folder.name"
-            autofocus
-            @submit.native.prevent
-          />
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('document.edit_title')" top="50px" width="450px" append-to-body>
+      <el-form ref="folder" :model="folder" :rules="rule" label-width="80px">
+        <el-form-item :label="$t('document.file_name')" prop="name">
+          <el-input ref="folderName" v-model="folder.name" autofocus @submit.native.prevent />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>

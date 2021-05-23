@@ -1,61 +1,29 @@
 <template>
   <span class="credit-edit">
-    <el-button 
-      type="text" 
-      size="small" 
-      icon="el-icon-edit" 
-      @click="initForm">{{
+    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{
         $t("common.edit")
       }}</el-button>
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('commission.credit.set.edit_credit_title')"
-      top="50px"
-      width="400px"
-    >
-      <div
-        v-if="locked && credit.currency !== 'HKD'"
-        class="lock-icon"
-        @click="unlockCalculate()"
-      >
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('commission.credit.set.edit_credit_title')" top="50px" width="400px">
+      <div v-if="locked && credit.currency !== 'HKD'" class="lock-icon" @click="unlockCalculate()">
         <svg-icon icon-class="lock" />
       </div>
-      <div
-        v-if="!locked && credit.currency !== 'HKD'"
-        class="lock-icon"
-        @click="lockCalculate()"
-      >
+      <div v-if="!locked && credit.currency !== 'HKD'" class="lock-icon" @click="lockCalculate()">
         <svg-icon icon-class="unlock" />
       </div>
-      <el-form 
-        ref="credit" 
-        :model="credit" 
-        label-width="90px">
-        <el-form-item 
-          :label="$t('client.insurance_policy.number')" 
-          prop="name">
+      <el-form ref="credit" :model="credit" label-width="80px">
+        <el-form-item :label="$t('client.insurance_policy.number')" prop="name">
           {{ commissionCredit.insurancePolicy.number }}
         </el-form-item>
-        <el-form-item 
-          :label="$t('commission.credit.year')" 
-          prop="name">
+        <el-form-item :label="$t('commission.credit.year')" prop="name">
           {{ $t("commission.credit.years", [commissionCredit.year]) }}
         </el-form-item>
-        <el-form-item
-          :label="$t('client.insurance_policy.premium')"
-          prop="name"
-        >
+        <el-form-item :label="$t('client.insurance_policy.premium')" prop="name">
           {{
             getSymbol(commissionCredit.currency) +
               formatterCurrency(commissionCredit.premium)
           }}
         </el-form-item>
-        <el-form-item 
-          :label="$t('common.commission_rate')" 
-          prop="name">
+        <el-form-item :label="$t('common.commission_rate')" prop="name">
           {{
             credit.ffyap
               ? formatterNumber(commissionCredit.commissionRate) + "%"
@@ -63,9 +31,7 @@
                 "%"
           }}
         </el-form-item>
-        <el-form-item 
-          :label="$t('common.calculatedAmount')" 
-          prop="name">
+        <el-form-item :label="$t('common.calculatedAmount')" prop="name">
           {{
             credit.ffyap
               ? getSymbol(commissionCredit.currency) +
@@ -74,52 +40,24 @@
                 formatterCurrency(commissionCredit.calculatedAmountWithoutFfyap)
           }}
         </el-form-item>
-        <el-form-item
-          v-if="credit.currency !== 'HKD'"
-          :label="$t('common.exchangeRate')"
-          prop="exchangeRateToHkd"
-        >
-          <el-input
-            v-model="credit.exchangeRateToHkd"
-            :placeholder="$t('commission.credit.set.exchangeRate')"
-            @input="onExchangeRateInput"
-          />
+        <el-form-item v-if="credit.currency !== 'HKD'" :label="$t('common.exchangeRate')" prop="exchangeRateToHkd">
+          <el-input v-model="credit.exchangeRateToHkd" :placeholder="$t('commission.credit.set.exchangeRate')" @input="onExchangeRateInput" />
         </el-form-item>
         <el-form-item :label="$t('common.amount')">
-          <currency-input
-            ref="amount"
-            :value="credit.amount"
-            symbol="HK$ "
-            @input="onAmountInput"
-          />
+          <currency-input ref="amount" :value="credit.amount" symbol="HK$ " @input="onAmountInput" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('common.remarks')" 
-          prop="remarks">
-          <el-input
-            v-model="credit.remarks"
-            :placeholder="$t('common.remarks_placeholder')"
-          />
+        <el-form-item :label="$t('common.remarks')" prop="remarks">
+          <el-input v-model="credit.remarks" :placeholder="$t('common.remarks_placeholder')" />
         </el-form-item>
-        <el-form-item 
-          v-if="isBoolean(credit.ffyap)" 
-          label="FFYAP" 
-          prop="ffyap">
-          <el-checkbox 
-            v-model="credit.ffyap" 
-            @change="ffyapChange" />
+        <el-form-item v-if="isBoolean(credit.ffyap)" label="FFYAP" prop="ffyap">
+          <el-checkbox v-model="credit.ffyap" @change="ffyapChange" />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>
@@ -203,7 +141,7 @@ export default {
       loading: false,
     };
   },
-  created() {},
+  created() { },
   methods: {
     initForm() {
       this.credit = _.cloneDeep(this.commissionCredit);
@@ -328,21 +266,6 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
-.credit-edit {
-  .el-form-item {
-    margin-bottom: 10px;
-    text-align: left;
-  }
-  .el-form-item__content {
-    padding-left: 10px;
-  }
-  .el-dialog__body {
-    padding: 10px;
-  }
-  .el-form-item {
-    margin-bottom: 10px;
-  }
-}
 .lock-icon {
   width: 28px;
   height: 50px;
@@ -350,8 +273,8 @@ export default {
   border-right: 0;
   display: inline-block;
   position: absolute;
-  top: 306px;
-  left: 30px;
+  top: 385px;
+  left: 48px;
   font-size: 18px;
   z-index: 1000;
   svg {

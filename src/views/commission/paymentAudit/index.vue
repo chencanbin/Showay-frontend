@@ -1,64 +1,19 @@
 <template>
-  <div 
-    id="paymentAudit" 
-    class="table-container">
-    <el-tabs 
-      v-model="activeName" 
-      type="border-card" 
-      @tab-click="handleClick">
-      <el-tab-pane
-        v-for="item in status"
-        :name="item.id"
-        :label="statusFormatter(item.id)"
-        :key="item.id"
-        lazy
-      >
-        <el-form 
-          :inline="true" 
-          class="search-input" 
-          @submit.native.prevent>
-          <el-form-item 
-            label="" 
-            prop="wildcard">
-            <el-input
-              v-model="wildcard"
-              :placeholder="$t('commission.payment.search')"
-              clearable
-              @input="search"
-            >
-              <i 
-                slot="prefix" 
-                class="el-input__icon el-icon-search" />
+  <div id="paymentAudit" class="table-container">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane v-for="item in status" :name="item.id" :label="statusFormatter(item.id)" :key="item.id" lazy>
+        <el-form :inline="true" class="filter-form" @submit.native.prevent>
+          <el-form-item label="" prop="wildcard">
+            <el-input v-model="wildcard" :placeholder="$t('commission.payment.search')" clearable @input="search">
+              <i slot="prefix" class="el-input__icon el-icon-search" />
             </el-input>
           </el-form-item>
         </el-form>
-        <pagination
-          :total="auditPayment.total"
-          :page="listQuery.page"
-          :limit="listQuery.limit"
-          @pagination="pagination"
-          @update:page="updatePage"
-          @update:limit="updateLimit"
-        />
-        <el-table
-          v-loading="auditPaymentLoading"
-          :height="height"
-          :data="auditPayment.list"
-          stripe
-          border
-        >
-          <el-table-column
-            :label="$t('commission.payment.channel')"
-            prop="channel.name"
-            min-width="150"
-          />
-          <el-table-column
-            :label="$t('commission.payment.calculatedTotalInHkd')"
-            min-width="175"
-          >
+        <el-table v-loading="auditPaymentLoading" height="63vh" :data="auditPayment.list" stripe border>
+          <el-table-column :label="$t('commission.payment.channel')" prop="channel.name" min-width="150" />
+          <el-table-column :label="$t('commission.payment.calculatedTotalInHkd')" min-width="175">
             <template slot-scope="scope">
-              <span class="left_text">HK$ </span
-              ><span class="right_text">{{
+              <span class="left_text">HK$ </span><span class="right_text">{{
                 formatterCurrency(scope.row.calculatedTotalInHkd)
               }}</span>
             </template>
@@ -68,100 +23,51 @@
           <!--<span class="left_text">HK$ </span><span class="right_text">{{ formatterCurrency(scope.row.predictedTotalInHkd) }}</span>-->
           <!--</template>-->
           <!--</el-table-column>-->
-          <el-table-column
-            :label="$t('commission.payment.amountInHkd')"
-            min-width="120"
-          >
+          <el-table-column :label="$t('commission.payment.amountInHkd')" min-width="120">
             <template slot-scope="scope">
-              <span class="left_text">HK$ </span
-              ><span class="right_text">{{
+              <span class="left_text">HK$ </span><span class="right_text">{{
                 formatterCurrency(scope.row.amountInHkd)
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            :formatter="dateFormatter"
-            :label="$t('client.insurance_policy.submitDate')"
-            prop="creationDate"
-            min-width="120"
-          />
-          <el-table-column
-            v-if="activeName === '3'"
-            :label="$t('commission.payment.chequeNumber')"
-            prop="chequeNumber"
-          />
-          <el-table-column
-            v-if="activeName === '3'"
-            :label="$t('commission.payment.chequeCopy')"
-            prop="chequeCopy"
-            align="center"
-          >
+          <el-table-column :formatter="dateFormatter" :label="$t('client.insurance_policy.submitDate')" prop="creationDate" min-width="120" />
+          <el-table-column v-if="activeName === '3'" :label="$t('commission.payment.chequeNumber')" prop="chequeNumber" />
+          <el-table-column v-if="activeName === '3'" :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" align="center">
             <template slot-scope="scope">
-              <el-button
-                type="text"
-                @click="viewScanFile(scope.row.chequeCopy)"
-              >{{ $t("common.view") }}</el-button
-              >
+              <el-button type="text" @click="viewScanFile(scope.row.chequeCopy)">{{ $t("common.view") }}</el-button>
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('common.status')"
-            width="100"
-            align="center"
-          >
+          <el-table-column :label="$t('common.status')" width="100" align="center">
             <template slot-scope="scope">
-              <el-tag 
-                v-if="activeName === '-1'" 
-                style="color: #409eff">{{
+              <el-tag v-if="activeName === '-1'" class="primary_status">{{
                   statusFormatter(activeName)
                 }}</el-tag>
-              <el-tag 
-                v-if="activeName === '0'" 
-                type="warning">{{
+              <el-tag v-if="activeName === '0'" type="warning">{{
                   statusFormatter(activeName)
                 }}</el-tag>
-              <el-tag 
-                v-if="activeName === '2'" 
-                type="success">{{
+              <el-tag v-if="activeName === '2'" type="success">{{
                   statusFormatter(activeName)
                 }}</el-tag>
-              <el-tag 
-                v-if="activeName === '3'" 
-                type="info">{{
+              <el-tag v-if="activeName === '3'" type="info">{{
                   statusFormatter(activeName)
                 }}</el-tag>
-                <!--<statusBadge v-if="activeName === '-1'" :text="statusFormatter(activeName)" type="processing-badge"/>-->
-                <!--<statusBadge v-if="activeName === '0'" :text="statusFormatter(activeName)" type="warning-badge"/>-->
-                <!--<statusBadge v-if="activeName === '2'" :text="statusFormatter(activeName)" type="success-badge"/>-->
-                <!--<statusBadge v-if="activeName === '3'" :text="statusFormatter(activeName)"/>-->
+              <!--<statusBadge v-if="activeName === '-1'" :text="statusFormatter(activeName)" type="processing-badge"/>-->
+              <!--<statusBadge v-if="activeName === '0'" :text="statusFormatter(activeName)" type="warning-badge"/>-->
+              <!--<statusBadge v-if="activeName === '2'" :text="statusFormatter(activeName)" type="success-badge"/>-->
+              <!--<statusBadge v-if="activeName === '3'" :text="statusFormatter(activeName)"/>-->
             </template>
           </el-table-column>
-          <el-table-column
-            v-if="hasPermission(100072) && activeName !== '3'"
-            :label="$t('common.action')"
-            width="150"
-            align="center"
-          >
+          <el-table-column v-if="hasPermission(100072) && activeName !== '3'" :label="$t('common.action')" width="150" align="center">
             <template slot-scope="scope">
-              <detail
-                v-if="activeName === '-1'"
-                :channel="scope.row.channel"
-                :id="scope.row.id || 0"
-                :status="activeName"
-              />
-              <detail
-                v-if="activeName === '0'"
-                :channel="scope.row.channel"
-                :id="scope.row.id || 0"
-                :status="activeName"
-              />
-              <clear
-                v-if="hasPermission(100072) && activeName === '2'"
-                :id="scope.row.id || 0"
-              />
+              <detail v-if="activeName === '-1'" :channel="scope.row.channel" :id="scope.row.id || 0" :status="activeName" />
+              <detail v-if="activeName === '0'" :channel="scope.row.channel" :id="scope.row.id || 0" :status="activeName" />
+              <clear v-if="hasPermission(100072) && activeName === '2'" :id="scope.row.id || 0" />
             </template>
           </el-table-column>
         </el-table>
+        <div class="bottom-wrapper">
+          <pagination :total="auditPayment.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -312,11 +218,56 @@ export default {
   float: right;
 }
 #paymentAudit {
-  .search-input {
+  .filter-form {
+    margin-top: 0;
     margin-left: 0;
+    display: flex;
+    border-radius: 8px;
+    background: #fff;
+    margin-bottom: 16px;
+    padding: 20px 24px;
+    .el-form-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0;
+    }
   }
-  .el-card__body {
-    padding: 0px;
+  .bottom-wrapper {
+    background: #fff;
+    width: 100%;
+    height: 60px;
+  }
+  .el-tabs__nav {
+    .el-tabs__item {
+      background: #fff;
+      width: 100px;
+      text-align: center;
+      border: 1px solid #e9e8f0;
+      padding-right: 0;
+      padding-left: 0;
+    }
+    .el-tabs__item:nth-child(2) {
+      border-radius: 6px 0px 0px 6px;
+      border-right: 0;
+    }
+    .el-tabs__item:last-of-type {
+      border-radius: 0px 6px 6px 0px;
+      border-left: 0;
+    }
+    .el-tabs__active-bar {
+      width: 15px !important;
+      height: 4px;
+      border-radius: 3px 3px 0px 0px;
+      left: 42.5px;
+    }
+  }
+  .el-tabs__nav-wrap::after {
+    display: none;
+  }
+
+  .primary_status {
+    color: $--purple;
+    background: $--purple-assist;
   }
 }
 </style>

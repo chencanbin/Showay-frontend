@@ -1,201 +1,72 @@
 <template>
   <span class="demo">
-    <el-button
-      v-if="showButton"
-      :loading="loading"
-      size="small"
-      type="text"
-      @click="initForm"
-    >{{ $t("common.edit") }}</el-button
-    >
-    <el-dialog
-      id="commissionTableDialog"
-      :fullscreen="fullscreen"
-      :visible="commissionTableDialogVisible"
-      :before-close="handleClose"
-      class="dialog-body"
-      append-to-body
-    >
+    <el-button v-if="showButton" :loading="loading" size="small" type="text" @click="initForm">{{ $t("common.edit") }}</el-button>
+    <el-dialog id="commissionTableDialog" :fullscreen="fullscreen" :visible="commissionTableDialogVisible" :before-close="handleClose" class="dialog-body" append-to-body>
       <!--<el-button icon="el-icon-plus" type="text" @click="addNewRow">添加新行</el-button>-->
-      <el-row 
-        slot="title" 
-        class="title" 
-        style="position: relative">
-        <el-col
-          :xs="24"
-          :sm="24"
-          :lg="12"
-          style="height: 40px; line-height: 40px"
-        >
+      <el-row slot="title" class="title" style="position: relative">
+        <el-col :xs="24" :sm="24" :lg="12" style="height: 40px; line-height: 40px">
           <span style="font-size: 16px">{{
             $t("product.commission.commission_table.title", [title])
           }}</span>
-          <span 
-            v-show="effectiveDate" 
-            style="font-size: 16px; margin-left: 5px"
-          >({{ effectiveDate }})</span
-          >
+          <span v-show="effectiveDate" style="font-size: 16px; margin-left: 5px">({{ effectiveDate }})</span>
           <span style="color: #999; font-family: YouYuan; margin-left: 10px">{{
             editStatus
           }}</span>
         </el-col>
-        <el-col 
-          :xs="24" 
-          :sm="24" 
-          :lg="{ span: 8, offset: 4 }">
-          <el-input
-            ref="search"
-            v-model="wildcard"
-            :placeholder="
+        <el-col :xs="24" :sm="24" :lg="{ span: 8, offset: 4 }">
+          <el-input ref="search" v-model="wildcard" :placeholder="
               $t('product.commission.commission_table.search_placeholder')
-            "
-            @input="search"
-          >
-            <div 
-              v-if="wildcard" 
-              slot="suffix" 
-              style="margin-top: 10px">
+            " @input="search">
+            <div v-if="wildcard" slot="suffix" style="margin-top: 10px">
               {{ currentCount }} / {{ matchCount }}
             </div>
-            <i 
-              slot="prefix" 
-              class="el-input__icon el-icon-search" />
-            <el-button
-              slot="append"
-              icon="el-icon-arrow-down"
-              @click="searchNext"
-            />
-            <el-button
-              slot="append"
-              icon="el-icon-arrow-up"
-              @click="searchLast"
-            />
+            <i slot="prefix" class="el-input__icon el-icon-search" />
+            <el-button slot="append" icon="el-icon-arrow-down" @click="searchNext" />
+            <el-button slot="append" icon="el-icon-arrow-up" @click="searchLast" />
           </el-input>
         </el-col>
       </el-row>
-      <div
-        @click="onPageClicked()"
-        @mousemove="onPageClicked()"
-        @keyup="onPageClicked()"
-      >
-        <el-tabs 
-          v-model="activeName" 
-          type="border-card" 
-          tab-position="bottom">
-          <el-tab-pane
-            :label="$t('product.commission.commission_table.basic_tab')"
-            name="basic"
-          >
-            <hot-table
-              v-loading="loading"
-              ref="basicTable"
-              :settings="settings"
-            />
+      <div @click="onPageClicked()" @mousemove="onPageClicked()" @keyup="onPageClicked()">
+        <el-tabs v-model="activeName" type="border-card" tab-position="bottom">
+          <el-tab-pane :label="$t('product.commission.commission_table.basic_tab')" name="basic">
+            <hot-table v-loading="loading" ref="basicTable" :settings="settings" />
           </el-tab-pane>
-          <el-tab-pane
-            :label="$t('product.commission.commission_table.override_tab')"
-            name="override"
-          >
-            <hot-table
-              v-loading="loading"
-              ref="overrideTable"
-              :settings="settings"
-            />
+          <el-tab-pane :label="$t('product.commission.commission_table.override_tab')" name="override">
+            <hot-table v-loading="loading" ref="overrideTable" :settings="settings" />
           </el-tab-pane>
-          <el-tab-pane
-            :label="$t('product.commission.commission_table.overall_tab')"
-            name="overall"
-          >
+          <el-tab-pane :label="$t('product.commission.commission_table.overall_tab')" name="overall">
             <span style="margin-bottom: 10px; display: inline-block">
-              <el-checkbox
-                v-model="ffyap"
-                label="FFYAP"
-                @change="ffyapChange"
-              />
+              <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange" />
             </span>
-            <hot-table
-              v-loading="loading"
-              ref="overallTable"
-              :settings="overAllSettings"
-            />
+            <hot-table v-loading="loading" ref="overallTable" :settings="overAllSettings" />
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog
-        :close-on-click-modal="false"
-        :visible.sync="timeDialogVisible"
-        :title="$t('product.commission.commission_table.effectDateTitle')"
-        width="400px"
-        append-to-body
-      >
-        <el-form 
-          ref="configForm" 
-          label-width="70px">
-          <el-form-item
-            :label="$t('product.commission.commission_table.effectDate')"
-          >
-            <el-date-picker
-              v-model="effectiveDate"
-              type="datetime"
-              value-format="timestamp"
-              style="width: 100%"
-            />
+      <el-dialog :close-on-click-modal="false" :visible.sync="timeDialogVisible" :title="$t('product.commission.commission_table.effectDateTitle')" width="400px" append-to-body>
+        <el-form ref="configForm" label-width="70px">
+          <el-form-item :label="$t('product.commission.commission_table.effectDate')">
+            <el-date-picker v-model="effectiveDate" type="datetime" value-format="timestamp" style="width: 100%" />
           </el-form-item>
-          <el-form-item 
-            :label="$t('common.remarks')" 
-            prop="remarks">
-            <el-input
-              v-model="remarks"
-              :placeholder="$t('common.remarks_placeholder')"
-            />
+          <el-form-item :label="$t('common.remarks')" prop="remarks">
+            <el-input v-model="remarks" :placeholder="$t('common.remarks_placeholder')" />
           </el-form-item>
         </el-form>
-        <div 
-          slot="footer" 
-          class="dialog-footer" 
-          style="text-align: center">
-          <el-button
-            :loading="buttonLoading"
-            type="primary"
-            @click="handlePublish"
-          >{{ $t("common.submitButton") }}</el-button
-          >
+        <div slot="footer" class="dialog-footer" style="text-align: center">
+          <el-button :loading="buttonLoading" type="primary" @click="handlePublish">{{ $t("common.submitButton") }}</el-button>
         </div>
       </el-dialog>
 
-      <el-dialog
-        id="setOverrideDialog"
-        :close-on-click-modal="false"
-        :title="overrideTitle"
-        :visible.sync="setOverrideDialogVisible"
-        width="90%"
-        append-to-body
-      >
-        <hot-table
-          v-loading="loading"
-          ref="setOverrideHotInstance"
-          :settings="setOverrideSettings"
-        />
-        <div 
-          slot="footer" 
-          class="dialog-footer">
-          <el-button
-            :loading="buttonLoading"
-            type="primary"
-            @click="handleCloseSetOverrideDialog"
-          >{{ $t("common.submitButton") }}</el-button
-          >
+      <el-dialog id="setOverrideDialog" :close-on-click-modal="false" :title="overrideTitle" :visible.sync="setOverrideDialogVisible" width="90%" append-to-body>
+        <hot-table v-loading="loading" ref="setOverrideHotInstance" :settings="setOverrideSettings" />
+        <div slot="footer" class="dialog-footer">
+          <el-button :loading="buttonLoading" type="primary" @click="handleCloseSetOverrideDialog">{{ $t("common.submitButton") }}</el-button>
         </div>
       </el-dialog>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          type="primary" 
-          @click="handleTimeDialogOpen">{{
+        <el-button type="primary" @click="handleTimeDialogOpen">{{
             $t("product.commission.commission_table.publish_button")
           }}</el-button>
       </div>
@@ -315,7 +186,7 @@ export default {
         currentColClassName: "currentColumn",
         renderer: function (instance, TD, row, col, prop, value) {
           if (row % 2 === 0) {
-            TD.style.backgroundColor = "#e1eedc";
+            TD.style.backgroundColor = "#E7E8F5";
           } else {
             TD.style.backgroundColor = "#fafafa";
           }
@@ -507,10 +378,10 @@ export default {
                   "product.commission.commission_table.edit_status.latest_save",
                   [
                     date.getHours() +
-                      ":" +
-                      date.getMinutes() +
-                      ":" +
-                      date.getSeconds(),
+                    ":" +
+                    date.getMinutes() +
+                    ":" +
+                    date.getSeconds(),
                   ]
                 );
               })
@@ -556,7 +427,7 @@ export default {
         rowHeights: 45,
         renderer: function (instance, TD, row, col, prop, value) {
           if (row % 2 === 0) {
-            TD.style.backgroundColor = "#e1eedc";
+            TD.style.backgroundColor = "#E7E8F5";
           } else {
             TD.style.backgroundColor = "#fafafa";
           }
@@ -763,7 +634,7 @@ export default {
         td.innerText = _.toNumber(value).toFixed(2) + "%";
       }
       if (row % 2 === 0) {
-        td.style.backgroundColor = "#e1eedc";
+        td.style.backgroundColor = "#E7E8F5";
       } else {
         td.style.backgroundColor = "#fafafa";
       }
@@ -773,7 +644,7 @@ export default {
       td.style.cssText = "text-align: center; word-break: keep-all;";
       td.innerText = value;
       if (row % 2 === 0) {
-        td.style.backgroundColor = "#e1eedc";
+        td.style.backgroundColor = "#E7E8F5";
       } else {
         td.style.backgroundColor = "#fafafa";
       }
@@ -1075,14 +946,14 @@ export default {
   background-color: #fafafa;
 }
 .currentRow {
-  color: #fafafa;
+  color: $--content;
 }
 /*.handsontable tr:nth-child(odd) td {*/
-/*background: #e1eedc;*/
+/*background: #E7E8F5;*/
 /*}*/
 
 /*.handsontable tr:nth-child(odd):hover > td {*/
-/*background: #e1eedc;*/
+/*background: #E7E8F5;*/
 /*}*/
 /*.handsontable tr:nth-child(even):hover > td {*/
 /*background-color: #fafafa;*/
@@ -1128,9 +999,8 @@ export default {
 }
 #commissionTableDialog {
   .el-dialog__header {
-    background: url("../../../assets/images/commissionBanner.png") no-repeat;
-    background-size: cover;
-    //filter: blur(20px);
+    background: $--purple;
+    color: #fff;
     .title {
       box-shadow: 0 2px 4px hsla(0, 0%, 8%, 0.15);
       padding: 25px 15px 5px 15px;

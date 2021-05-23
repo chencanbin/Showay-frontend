@@ -117,7 +117,7 @@
           <div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399">
             {{ $t("product.channel.no_channel_policy") }}
           </div>
-          <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
+          <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" type="success" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
             <el-dropdown class="action-dropdown">
               <el-button type="primary" plain size="mini">
                 <i class="el-icon-more" />
@@ -125,14 +125,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
                   <el-button v-if="hasPermission(100035) && item.status !== 0" type="text" size="small" @click="
-                            handleTimestampDialog(
-                              item.id,
-                              item.effectiveDate,
-                              currentRow.name
-                            )
-                          ">
-                    {{ $t("common.view") }}
-                  </el-button>
+                        handleTimestampDialog(item.id,item.effectiveDate,currentRow.name)">{{ $t("common.view") }}</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <editChannelCommissionTable v-if="hasPermission(100032)" :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks" :channel-name="currentRow.name" :channel-id="currentRow.id" />
@@ -142,19 +135,12 @@
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <el-card v-if="item.remarks">
-              <!--<p style="display: inline-block; margin-left: 20px">产品数 : {{ commissionTable.policyCount }}</p>-->
-              <div class="bottom clearfix">
-                <!--<el-button-->
-                <!--type="text"-->
-                <!--size="mini"-->
-                <!--icon="el-icon-download"-->
-                <!--@click="exportPDF(item.id)">导出</el-button>-->
-                <p style="display: inline-block; margin: 0">
-                  {{ $t("common.remarks") }} : {{ item.remarks }}
-                </p>
+            <div v-if="item.remarks" class="timeline_content">
+              <div class="row">
+                <span class="label">{{ $t("common.remarks") }} :</span>
+                <span class="value">{{ item.remarks }}</span>
               </div>
-            </el-card>
+            </div>
           </el-timeline-item>
         </el-timeline>
       </div>
@@ -377,6 +363,17 @@ export default {
   .channel-detail-wrapper {
     .el-drawer {
       width: 430px !important;
+      .el-drawer__header {
+        height: 70px;
+        margin-bottom: 0;
+        border-bottom: 1px solid #e1e0eb;
+        margin-bottom: 16px;
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #42475f;
+        padding: 0 0 0 12px;
+      }
       .el-drawer__body {
         overflow: auto;
         padding: 16px 24px;
@@ -397,6 +394,26 @@ export default {
     border-top: #e9e8f0 solid 1px;
     box-sizing: border-box;
     z-index: 10;
+  }
+  .timeline_content {
+    background: #f6f6f7;
+    border-radius: 6px;
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      .label {
+        display: inline-block;
+        width: 60px;
+        color: $--label;
+      }
+      .value {
+        color: $--content;
+        line-height: 25px;
+        flex: 1;
+      }
+    }
   }
 }
 </style>

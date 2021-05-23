@@ -1,7 +1,5 @@
 <template>
-  <div 
-    id="credit" 
-    class="table-container">
+  <div id="credit" class="table-container">
     <!--<el-form :inline="true" style="display: inline-block; position: absolute; right: 10px; z-index: 1000;">-->
     <!--<el-form-item label="切换排序">-->
     <!--<el-switch v-model="mode">-->
@@ -9,213 +7,78 @@
     <!--</el-form-item>-->
     <!--</el-form>-->
     <!--<component v-bind:is="getComponent"></component>-->
-    <el-tabs
-      v-model="activeName"
-      type="border-card"
-      @tab-click="handleTabClick"
-    >
-      <el-tab-pane
-        v-for="status in creditStatus"
-        :key="status.id"
-        :name="status.id + ''"
-        :label="statusFormatter(status.id)"
-      >
-        <el-row>
-          <el-form 
-            :inline="true" 
-            class="filter-form" 
-            @submit.native.prevent>
-            <el-form-item v-if="activeName === '1' && selectData.length > 0">
-              <el-button 
-                type="primary" 
-                size="small" 
-                @click="batchPay">{{
+    <el-tabs v-model="activeName" @tab-click="handleTabClick">
+      <el-tab-pane v-for="status in creditStatus" :key="status.id" :name="status.id + ''" :label="statusFormatter(status.id)">
+        <el-form :inline="true" class="filter-form" @submit.native.prevent>
+          <el-form-item v-if="activeName === '1' && selectData.length > 0">
+            <el-button type="primary" size="small" @click="batchPay">{{
                   $t("commission.credit.batchPay")
                 }}</el-button>
-            </el-form-item>
-            <el-form-item 
-              label="" 
-              prop="wildcard">
-              <el-input
-                v-model="wildcard"
-                :placeholder="$t('commission.credit.search')"
-                clearable
-                @input="search"
-              >
-                <i 
-                  slot="prefix" 
-                  class="el-input__icon el-icon-search" />
-              </el-input>
-            </el-form-item>
-            <el-form-item 
-              label="" 
-              prop="dateRange">
-              <el-date-picker
-                v-model="dateRange"
-                :unlink-panels="true"
-                :start-placeholder="$t('commission.credit.start')"
-                :end-placeholder="$t('commission.credit.end')"
-                :picker-options="pickerOptions"
-                value-format="timestamp"
-                type="daterange"
-                range-separator="-"
-                @change="onDateRangeChange"
-              />
-            </el-form-item>
-            <el-form-item label="期序">
-              <el-select 
-                v-model="term" 
-                clearable 
-                style="width: 90px">
-                <el-option
-                  v-for="item in generateDefaultTerm()"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('commission.credit.switch_sort')">
-              <el-switch 
-                v-model="mode" 
-                @change="onSwitchChange" />
-            </el-form-item>
-          </el-form>
-          <el-tag 
-            class="tag-sum" 
-            type="success">
-            <i 
-              class="el-icon-info" 
-              style="margin-right: 5px" />
-            <span 
-              style="margin-right: 30px"
-            >{{ selectTotalText }}:
-              <count-to
-                :start-val="0"
-                :end-val="selectTotal"
-                :duration="2000"
-                :suffix="$t('commission.credit.count')"
-                style="font-weight: bold"
-              />
+          </el-form-item>
+          <el-form-item label="" prop="wildcard">
+            <el-input v-model="wildcard" :placeholder="$t('commission.credit.search')" clearable @input="search">
+              <i slot="prefix" class="el-input__icon el-icon-search" />
+            </el-input>
+          </el-form-item>
+          <el-form-item label="" prop="dateRange">
+            <el-date-picker v-model="dateRange" :unlink-panels="true" :start-placeholder="$t('commission.credit.start')" :end-placeholder="$t('commission.credit.end')" :picker-options="pickerOptions" value-format="timestamp" type="daterange" range-separator="-" @change="onDateRangeChange" />
+          </el-form-item>
+          <el-form-item label="期序">
+            <el-select v-model="term" clearable style="width: 90px">
+              <el-option v-for="item in generateDefaultTerm()" :key="item" :label="item" :value="item" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('commission.credit.switch_sort')">
+            <el-switch v-model="mode" @change="onSwitchChange" />
+          </el-form-item>
+        </el-form>
+        <el-row>
+          <div class="tag-sum">
+            <i class="el-icon-info" style="margin-right: 5px" />
+            <span class="count-item">{{ selectTotalText }}:
+              <count-to class="count-num" :start-val="0" :end-val="selectTotal" :duration="2000" :suffix="$t('commission.credit.count')" />
             </span>
-            <span 
-              style="margin-right: 30px"
-            >{{ selectSumText }}:
-              <count-to
-                :start-val="0"
-                :end-val="selectSum"
-                :duration="2000"
-                prefix="HK$ "
-                style="font-weight: bold"
-              />
+            <span class="count-item">{{ selectSumText }}:
+              <count-to class="count-num" :start-val="0" :end-val="selectSum" :duration="2000" prefix="HK$ " />
             </span>
-            <span 
-              style="margin-right: 30px"
-            >{{ totalText }}:
-              <count-to
-                :start-val="0"
-                :end-val="commissionCredit.total"
-                :duration="2000"
-                :suffix="$t('commission.credit.count')"
-                style="font-weight: bold"
-              />
+            <span class="count-item">{{ totalText }}:
+              <count-to class="count-num" :start-val="0" :end-val="commissionCredit.total" :duration="2000" :suffix="$t('commission.credit.count')" />
             </span>
-            <span
-            >{{ sumText }}:
-              <count-to
-                :start-val="0"
-                :end-val="sum"
-                :duration="2000"
-                prefix="HK$ "
-                style="font-weight: bold; font-size: 16px"
-              />
+            <span class="count-item">{{ sumText }}:
+              <count-to class="count-num" :start-val="0" :end-val="sum" :duration="2000" prefix="HK$ " />
             </span>
-          </el-tag>
+          </div>
         </el-row>
-        <el-table
-          v-loading="commissionCreditLoading"
-          :height="height"
-          :data="commissionCredit.list"
-          :row-class-name="tableRowClassName"
-          border
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column 
-            type="selection" 
-            width="40" 
-            align="center" />
-          <el-table-column
-            :label="$t('client.insurance_policy.number')"
-            prop="insurancePolicy.number"
-            min-width="100px"
-            show-overflow-tooltip
-          >
+        <el-table v-loading="commissionCreditLoading" height="63vh" :data="commissionCredit.list" :row-class-name="tableRowClassName" border @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="40" align="center" />
+          <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip>
             <template slot-scope="scope">
-              <policy-detail
-                :policy-number="scope.row.insurancePolicy.number"
-                :id="scope.row.insurancePolicy.id"
-              />
+              <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id" />
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('client.insurance_policy.premium')"
-            min-width="140"
-          >
+          <el-table-column :label="$t('client.insurance_policy.premium')" min-width="140">
             <template slot-scope="scope">
-              <span class="left_text">{{ getSymbol(scope.row.currency) }}</span
-              ><span class="right_text">{{
+              <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{
                 formatterCurrency(scope.row.premium)
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('client.insurance_policy.applicant_name')"
-            prop="insurancePolicy.applicant.name"
-            min-width="120"
-            show-overflow-tooltip
-          >
+          <el-table-column :label="$t('client.insurance_policy.applicant_name')" prop="insurancePolicy.applicant.name" min-width="120" show-overflow-tooltip>
             <template slot-scope="scope">
-              <client-detail
-                :id="scope.row.insurancePolicy.applicant.id"
-                :name="scope.row.insurancePolicy.applicant.name"
-              />
+              <client-detail :id="scope.row.insurancePolicy.applicant.id" :name="scope.row.insurancePolicy.applicant.name" />
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('commission.credit.year')"
-            prop="year"
-            align="center"
-          />
-          <el-table-column
-            :formatter="formatterSubmitDate"
-            :label="$t('client.insurance_policy.submitDate')"
-            prop="insurancePolicy.submitDate"
-            min-width="120"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            :formatter="formatterIssueDate"
-            :label="$t('client.insurance_policy.issueDate')"
-            prop="insurancePolicy.issueDate"
-            min-width="100"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            :label="$t('common.calculatedAmount')"
-            min-width="120"
-          >
+          <el-table-column :label="$t('commission.credit.year')" prop="year" align="center" />
+          <el-table-column :formatter="formatterSubmitDate" :label="$t('client.insurance_policy.submitDate')" prop="insurancePolicy.submitDate" min-width="120" show-overflow-tooltip />
+          <el-table-column :formatter="formatterIssueDate" :label="$t('client.insurance_policy.issueDate')" prop="insurancePolicy.issueDate" min-width="100" show-overflow-tooltip />
+          <el-table-column :label="$t('common.calculatedAmount')" min-width="120">
             <template slot-scope="scope">
-              <span class="left_text">{{ getSymbol(scope.row.currency) }}</span
-              ><span class="right_text">{{
+              <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{
                 formatterCurrency(scope.row.calculatedAmount)
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('common.amount')"
-            prop="amount"
-            min-width="120"
-          >
+          <el-table-column :label="$t('common.amount')" prop="amount" min-width="120">
             <template slot-scope="scope">
               <span class="left_text">HK$ </span>
               <span class="right_text">{{
@@ -223,78 +86,37 @@
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('common.status')"
-            min-width="80"
-            align="center"
-          >
+          <el-table-column :label="$t('common.status')" min-width="80" align="center">
             <template slot-scope="scope">
-              <el-tag 
-                v-if="scope.row.status === 0" 
-                style="color: #409eff">{{
+              <el-tag v-if="scope.row.status === 0" class="primary_status">{{
                   statusFormatter(scope.row.status)
                 }}</el-tag>
-              <el-tag 
-                v-if="scope.row.status === 1" 
-                type="warning">{{
+              <el-tag v-if="scope.row.status === 1" type="warning">{{
                   statusFormatter(scope.row.status)
                 }}</el-tag>
-              <el-tag 
-                v-if="scope.row.status === 2" 
-                type="success">{{
+              <el-tag v-if="scope.row.status === 2" type="success">{{
                   statusFormatter(scope.row.status)
                 }}</el-tag>
-              <el-tag 
-                v-if="scope.row.status === 3" 
-                type="success">{{
+              <el-tag v-if="scope.row.status === 3" type="success">{{
                   statusFormatter(scope.row.status)
                 }}</el-tag>
-                <!--<statusBadge v-if="scope.row.status === 0" :text="statusFormatter(scope.row.status)" type="processing-badge"/>-->
-                <!--<statusBadge v-if="scope.row.status === 1" :text="statusFormatter(scope.row.status)" type="warning-badge"/>-->
-                <!--<statusBadge v-if="scope.row.status === 2" :text="statusFormatter(scope.row.status)" type="error-badge"/>-->
-                <!--<statusBadge v-if="scope.row.status === 3" :text="statusFormatter(scope.row.status)" type="success-badge"/>-->
+              <!--<statusBadge v-if="scope.row.status === 0" :text="statusFormatter(scope.row.status)" type="processing-badge"/>-->
+              <!--<statusBadge v-if="scope.row.status === 1" :text="statusFormatter(scope.row.status)" type="warning-badge"/>-->
+              <!--<statusBadge v-if="scope.row.status === 2" :text="statusFormatter(scope.row.status)" type="error-badge"/>-->
+              <!--<statusBadge v-if="scope.row.status === 3" :text="statusFormatter(scope.row.status)" type="success-badge"/>-->
             </template>
           </el-table-column>
           <!--<el-table-column label="备注" prop="remarks" min-width="140"/>-->
-          <el-table-column
-            v-if="activeName !== '2'"
-            :label="$t('common.action')"
-            width="100"
-          >
+          <el-table-column v-if="activeName !== '2'" :label="$t('common.action')" width="100">
             <template slot-scope="scope">
-              <edit
-                v-if="scope.row.status === 0"
-                :commission-credit="scope.row"
-                :wildcard="wildcard"
-                :date-range="dateRange"
-                :active-name="activeName"
-                :key="scope.row.id"
-                :sort="sort"
-                :order="order"
-                :term="term"
-                :list-query="listQuery"
-              />
-              <audit
-                v-if="scope.row.status === 1"
-                :commission-credit="scope.row"
-                :active-name="activeName"
-                :wildcard="wildcard"
-                :date-range="dateRange"
-                :sort="sort"
-                :order="order"
-                :list-query="listQuery"
-              />
+              <edit v-if="scope.row.status === 0" :commission-credit="scope.row" :wildcard="wildcard" :date-range="dateRange" :active-name="activeName" :key="scope.row.id" :sort="sort" :order="order" :term="term" :list-query="listQuery" />
+              <audit v-if="scope.row.status === 1" :commission-credit="scope.row" :active-name="activeName" :wildcard="wildcard" :date-range="dateRange" :sort="sort" :order="order" :list-query="listQuery" />
             </template>
           </el-table-column>
         </el-table>
-        <pagination
-          :total="commissionCredit.total"
-          :page="listQuery.page"
-          :limit="listQuery.limit"
-          @pagination="pagination"
-          @update:page="updatePage"
-          @update:limit="updateLimit"
-        />
+        <div class="bottom-wrapper">
+          <pagination :total="commissionCredit.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -435,7 +257,6 @@ export default {
       sumText: "",
       selectTotalText: "",
       selectSumText: "",
-      height: document.body.clientHeight - 300,
       creditStatus,
       language: Cookies.get("language") || "zh-CN",
       activeName: "0",
@@ -710,28 +531,83 @@ export default {
   .el-table tr td:first-child {
     padding-left: 0px;
   }
+  .el-tabs__nav {
+    .el-tabs__item {
+      background: #fff;
+      width: 100px;
+      text-align: center;
+      border: 1px solid #e9e8f0;
+      padding-right: 0;
+      padding-left: 0;
+    }
+    .el-tabs__item:nth-child(2) {
+      border-radius: 6px 0px 0px 6px;
+      border-right: 0;
+    }
+    .el-tabs__item:last-of-type {
+      border-radius: 0px 6px 6px 0px;
+      border-left: 0;
+    }
+    .el-tabs__active-bar {
+      width: 15px !important;
+      height: 4px;
+      border-radius: 3px 3px 0px 0px;
+      left: 42.5px;
+    }
+  }
+  .el-tabs__nav-wrap::after {
+    display: none;
+  }
+
+  // .el-tabs__nav:nth-child(0) {
+  //   border-radius: 6px 0px 0px 6px;
+
+  //   color: red;
+  //   background: red;
+  // }
   .filter-form {
     margin-top: 0;
     margin-left: 0;
-    display: block;
+    display: flex;
+    border-radius: 8px;
+    background: #fff;
+    margin-bottom: 16px;
+    padding: 20px 24px;
+    .el-form-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0;
+    }
+  }
+  .bottom-wrapper {
+    background: #fff;
+    width: 100%;
+    height: 60px;
   }
 }
 
 .tag-sum {
   margin-bottom: 10px;
+  padding-left: 16px;
   width: 100%;
   font-size: 14px;
-  line-height: 40px;
-  height: 40px;
+  line-height: 50px;
+  height: 50px;
   overflow-x: auto;
   overflow-y: hidden;
-}
-.el-table .selected-row {
-  background: #e1eedc;
-}
-.el-table .selected-row:hover {
-  td {
-    background: #e1eedc !important;
+  color: $--purple;
+  background: $--purple-assist;
+  border-radius: 6px;
+  border: 1px solid #e7e8f5;
+  .count-item {
+    margin-right: 50px;
+    .count-num {
+      font-weight: 800;
+    }
   }
+}
+.primary_status {
+  color: $--purple;
+  background: $--purple-assist;
 }
 </style>

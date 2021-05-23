@@ -14,98 +14,6 @@
       </div>
       <basic-container>
         <el-table class="commission_table" v-loading="companyLoading" ref="companyTable" :expand-row-keys="expandKeys" :data="companyList.list" row-key="id" stripe @row-click="expandChange">
-          <!-- <el-table-column type="expand" width="60px">
-            <template slot-scope="scope" style="width: 50%">
-              <div v-loading="commissionTableListLoading" class="clearfix">
-                <el-timeline v-loading="commissionTableListLoading" id="commissionTableList">
-                  <div v-if="
-                    commissionTableList.list &&
-                      commissionTableList.list.length === 0
-                  " style="text-align: center; color: #909399">
-                    {{
-                    $t(
-                      "product.commission.commission_table_list.no_commission_table"
-                    )
-                  }}
-                  </div>
-                  <el-timeline-item v-for="(commissionTable, index) in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="index" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
-                    <el-dropdown class="action-dropdown">
-                      <el-button type="primary" plain size="mini">
-                        <i class="el-icon-more" />
-                      </el-button>
-                      <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>
-                          <el-button v-if="
-                            hasPermission(100017) &&
-                              commissionTable.status !== 0
-                          " size="small" type="text" @click="
-                            handleView(
-                              commissionTable.id,
-                              getFormattedDate(commissionTable.effectiveDate),
-                              commissionTable.status
-                            )
-                          ">
-                            {{ $t("common.view") }}
-                          </el-button>
-                        </el-dropdown-item>
-                        <el-dropdown-item>
-                          <commission-table v-if="hasPermission(100018)" :id="commissionTable.id" :company-id="scope.row.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name" :effective-date="
-                            getFormattedDate(commissionTable.effectiveDate)
-                          " />
-                        </el-dropdown-item>
-                        <el-dropdown-item>
-                          <el-button v-if="
-                            hasPermission(100020) &&
-                              commissionTable.status !== 0
-                          " :ref="`export_${commissionTable.id}`" size="small" type="text" @click="exportExcel(commissionTable)">{{ $t("common.export") }}</el-button>
-                        </el-dropdown-item>
-                        <el-dropdown-item>
-                          <el-button v-if="hasPermission(100019)" size="small" type="text" @click="
-                            verifyPassword(scope.row.id, commissionTable.id)
-                          ">{{ $t("common.delete") }}
-                          </el-button>
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </el-dropdown>
-                    <el-card>
-                      <p style="display: inline-block">
-                        {{
-                        $t("product.commission.commission_table_list.status")
-                      }}
-                        :
-                        <el-tag v-if="commissionTable.status === 0" type="info" size="mini">{{
-                        $t(
-                          "product.commission.commission_table_list.status_info"
-                        )
-                      }}</el-tag>
-                        <el-tag v-if="commissionTable.status === 1" type="success" size="mini">{{
-                        $t(
-                          "product.commission.commission_table_list.status_success"
-                        )
-                      }}</el-tag>
-                        <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">{{
-                        $t(
-                          "product.commission.commission_table_list.status_warning"
-                        )
-                      }}</el-tag>
-                      </p>
-                      <p style="display: inline-block; margin-left: 20px">
-                        {{
-                        $t(
-                          "product.commission.commission_table_list.product_count"
-                        )
-                      }}
-                        : {{ commissionTable.policyCount }}
-                      </p>
-                      <p v-if="commissionTable.remarks" style="display: inline-block; margin: 0 0 0 20px">
-                        {{ $t("common.remarks") }} : {{ commissionTable.remarks }}
-                      </p>
-                    </el-card>
-                  </el-timeline-item>
-                </el-timeline>
-              </div>
-            </template>
-          </el-table-column> -->
           <el-table-column :label="$t('product.company.table_header.name')" prop="name" min-width="150px" show-overflow-tooltip>
             <template slot-scope="scope">
               {{ scope.row.acronym }} - {{ scope.row.name }}
@@ -541,13 +449,11 @@ export default {
             font-size: 14px;
             .label {
               color: $--label;
-              width: 300px;
             }
             .content {
               color: $--content;
             }
             .remark {
-              padding: 15px 0 15px 15px;
               line-height: 2;
             }
           }
