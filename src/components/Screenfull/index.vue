@@ -53,8 +53,6 @@ export default {
   display: inline-block;
   cursor: pointer;
   fill: $--purple-assist;
-  width: 20px;
-  height: 20px;
-  vertical-align: 10px;
+  font-size: 20px;
 }
 </style>

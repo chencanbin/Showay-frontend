@@ -7,9 +7,6 @@
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
         <!--<error-log class="errLog-container right-menu-item"/>-->
-        <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
-          <screenfull class="screenfull right-menu-item" />
-        </el-tooltip>
         <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
           <size-select class="international right-menu-item" />
         </el-tooltip>
@@ -28,10 +25,10 @@
       </template>
       <el-tooltip content="首页配置" effect="dark" placement="bottom">
         <div class="setting_class right-menu-item">
-          <svg-icon icon-class="customization" @click="showHomePageSetting = true" />
+          <i class="iconfont icon_shouye_peizhi" @click="showHomePageSetting = true" />
         </div>
       </el-tooltip>
-      <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" style="right: 12px">
+      <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99">
         <el-popover width="150" trigger="click">
           <div v-if="hasPermission(100055)" class="notification-list-item">
             <a @click="handleCreditClick">
@@ -51,11 +48,11 @@
               </div>
             </a>
           </div>
-          <svg-icon slot="reference" icon-class="notification" class="notification" style="margin-left: 15px" />
+          <i slot="reference" class="iconfont icon_notice" />
         </el-popover>
       </el-badge>
       <el-tooltip v-if="hasPermission(100105)" :enterable="false" :content="$t('navbar.calendar')" effect="dark" placement="bottom">
-        <renewal-calendar class="calendar right-menu-item" style="margin-right: 15px" />
+        <renewal-calendar class="calendar right-menu-item" />
       </el-tooltip>
       <div style="
             display: inline-block;
@@ -128,7 +125,6 @@ import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
 import ErrorLog from "@/components/ErrorLog";
-import Screenfull from "@/components/Screenfull";
 import SizeSelect from "@/components/SizeSelect";
 import LangSelect from "@/components/LangSelect";
 import ThemePicker from "@/components/ThemePicker";
@@ -144,7 +140,6 @@ export default {
     Breadcrumb,
     Hamburger,
     ErrorLog,
-    Screenfull,
     SizeSelect,
     LangSelect,
     ThemePicker,
@@ -341,27 +336,22 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
+    display: flex;
+    align-items: center;
+    .iconfont {
+      margin-right: 0;
+    }
     &:focus {
       outline: none;
     }
     .right-menu-item {
-      display: inline-block;
-      margin: 0 10px;
-    }
-    .screenfull {
-      height: 20px;
     }
     .setting_class {
-      font-size: 20px;
       cursor: pointer;
       vertical-align: 13px;
     }
     .international {
-      top: -15px;
       color: $--purple-assist;
-    }
-    .calendar {
-      height: 20px;
     }
     .theme-switch {
       vertical-align: 8px;
@@ -384,9 +374,6 @@ export default {
       vertical-align: baseline;
     }
     .notification {
-      font-size: 20px;
-      position: relative;
-      margin-bottom: 14px;
     }
   }
   .transverse {

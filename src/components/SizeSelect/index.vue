@@ -1,26 +1,16 @@
 <template>
-  <el-dropdown 
-    trigger="click" 
-    @command="handleSetSize">
+  <el-dropdown trigger="click" @command="handleSetSize">
     <div>
-      <svg-icon 
-        class-name="size-icon" 
-        icon-class="size" />
+      <i class="iconfont icon_ziti_slde" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item 
-        :disabled="size === 'medium'" 
-        command="medium">
+      <el-dropdown-item :disabled="size === 'medium'" command="medium">
         <span class="size_text">{{ this.$t("common.medium") }}</span>
       </el-dropdown-item>
-      <el-dropdown-item 
-        :disabled="size === 'small'" 
-        command="small">
+      <el-dropdown-item :disabled="size === 'small'" command="small">
         <span class="size_text">{{ this.$t("common.small") }}</span>
       </el-dropdown-item>
-      <el-dropdown-item 
-        :disabled="size === 'mini'" 
-        command="mini">
+      <el-dropdown-item :disabled="size === 'mini'" command="mini">
         <span class="size_text">{{ this.$t("common.mini") }}</span>
       </el-dropdown-item>
     </el-dropdown-menu>
