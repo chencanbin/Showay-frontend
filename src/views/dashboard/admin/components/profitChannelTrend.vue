@@ -1,10 +1,10 @@
 <template>
-  <el-card v-loading="loading" style="background: #fff; padding: 10px 16px 0; margin-bottom: 16px" class="profit">
+  <el-card v-loading="loading" class="profit">
     <div slot="header" class="clearfix">
-      <span style="float: left; font-weight: bold; line-height: 36px">{{
+      <span class="card-header-title">{{
         $t("home.channelProfitTrend", [""])
       }}</span>
-      <div style="display: inline-block; float: right">
+      <div class="card-header-action">
         <el-button-group style="margin-left: 20px">
           <div :class="activeName === 0 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitMonth()">{{ $t("home.month") }}</div>
           <div :class="activeName === 1 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitQuarter()">{{ $t("home.quarter") }}</div>
@@ -13,7 +13,7 @@
         <el-select v-model="channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable remote clearable style="margin-left: 20px">
           <el-option v-for="item in channels.list" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
-        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
+        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" class="date-picker" />
       </div>
     </div>
     <div id="profitChannelTrend" />
@@ -129,7 +129,7 @@ export default {
       this.chart = new G2.Chart({
         container: "profitChannelTrend",
         forceFit: true,
-        height: 300,
+        height: 327,
         padding: [20, 40, 50, 90],
       });
       this.chart.source(this.profit);
@@ -172,5 +172,11 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 .profit {
+  background: #fff;
+  margin-bottom: 16px;
+  .date-picker {
+    margin-left: 20px;
+    width: 120px;
+  }
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
-  <el-card v-loading="loading" style="position: relative; padding: 16px 16px 0; margin-bottom: 32px">
+  <el-card v-loading="loading" class="channel-pie">
     <div slot="header" class="clearfix">
-      <span style="float: left; font-weight: bold; line-height: 36px">{{
+      <span class="card-header-title">{{
         $t("home.channelPerformanceScale")
       }}</span>
-      <div style="display: inline-block; float: right">
-        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
+      <div class="card-header-action">
+        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" class="date-picker" />
       </div>
     </div>
     <div id="channelPie">
@@ -133,5 +133,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style rel="stylesheet/scss" lang="scss" type="text/scss">
+.channel-pie {
+  position: relative;
+  padding: 16px 16px 0;
+  .date-picker {
+    margin-left: 20px;
+    width: 120px;
+  }
+}
 </style>

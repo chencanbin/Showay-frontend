@@ -1,10 +1,10 @@
 <template>
-  <el-card v-loading="loading" style="position: relative; padding: 10px 16px 0; margin-bottom: 16px">
+  <el-card v-loading="loading" class="income">
     <div slot="header" class="clearfix">
-      <span style="float: left; font-weight: bold; line-height: 36px">{{
+      <span class="card-header-title">{{
         $t("home.balance")
       }}</span>
-      <div style="display: inline-block; float: right">
+      <div class="card-header-action">
         <el-select v-model="channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable remote clearable style="margin-left: 10px">
           <el-option v-for="item in channels.list" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -131,7 +131,7 @@ export default {
       this.chart = new G2.Chart({
         container: "IncomeDistribution",
         forceFit: true,
-        height: 300,
+        height: 327,
         padding: [20, 40, 40, 40],
       });
       this.chart.source(this.income);
@@ -170,5 +170,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
+.income {
+  position: relative;
+  margin-bottom: 16px;
+}
 </style>

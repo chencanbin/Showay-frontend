@@ -43,7 +43,7 @@ export default {
       this.chart = new G2.Chart({
         container: this.id,
         forceFit: true,
-        height: 300,
+        height: 327,
         padding: [20, 40, 50, 90],
       });
       this.chart.source(this.charData);

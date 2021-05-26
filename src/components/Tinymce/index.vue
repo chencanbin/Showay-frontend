@@ -82,7 +82,7 @@ export default {
         language_url: language_url,
         language: language,
         skin_url: "/static/tinymce/skins/lightgray",
-        height: 300,
+        height: 327,
         plugins: this.plugins,
         toolbar: this.toolbar,
         branding: false,

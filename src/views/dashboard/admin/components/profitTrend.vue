@@ -1,10 +1,10 @@
 <template>
-  <el-card v-loading="loading" style="background: #fff; padding: 10px 16px 0; margin-bottom: 16px" class="profit">
+  <el-card v-loading="loading" class="profit">
     <div slot="header" class="clearfix">
-      <span style="float: left; font-weight: bold; line-height: 36px">{{
+      <span class="card-header-title">{{
         $t("home.companyProfit")
       }}</span>
-      <div style="display: inline-block; float: right">
+      <div class="card-header-action">
         <el-button-group style="margin-left: 20px">
           <div size="mini" :class="activeName === 0 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitMonth()">{{ $t("home.month") }}</div>
           <div size="mini" :class="activeName === 1 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitQuarter()">{{ $t("home.quarter") }}</div>
@@ -99,7 +99,7 @@ export default {
       this.chart = new G2.Chart({
         container: "profitTrend",
         forceFit: true,
-        height: 300,
+        height: 327,
         padding: [20, 40, 50, 90],
       });
       this.chart.source(this.profit);
@@ -137,8 +137,11 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 .profit {
+  background: #fff;
+  margin-bottom: 16px;
   .el-button-group {
-    padding: 6px 4px;
+    padding-left: 3px;
+    padding-right: 3px;
     background: #f6f6f6;
     border-radius: 6px;
   }
@@ -165,6 +168,5 @@ export default {
     color: #8e919f;
     background-color: transparent;
   }
-
 }
 </style>

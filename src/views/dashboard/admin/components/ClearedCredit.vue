@@ -1,10 +1,10 @@
 <template>
   <el-card v-loading="loading" style="padding: 16px 16px 0; margin-bottom: 16px" class="clearedCredit">
     <div slot="header" class="clearfix">
-      <span style="float: left; font-weight: bold; line-height: 36px">{{
+      <span class="card-header-title">{{
         $t("home.comparison")
       }}</span>
-      <div style="display: inline-block; float: right">
+      <div class="card-header-action">
         <el-select :remote-method="searchCompany" :loading="companyLoading" v-model="company" :placeholder="$t('common.company_placeholder')" filterable remote clearable style="margin-left: 20px" @focus="onCompanyFocus">
           <el-option v-for="item in companies" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -255,7 +255,7 @@ export default {
       this.chart = new G2.Chart({
         container: "clearedCredit",
         forceFit: true,
-        height: 300,
+        height: 327,
         padding: [20, 30, 70, 80],
       });
       this.chart.source(this.sourceData, {
@@ -296,7 +296,8 @@ export default {
 <style rel="stylesheet/scss" lang="scss" type="text/scss" scoped>
 .clearedCredit {
   .el-button-group {
-    padding: 6px 4px;
+    padding-left: 3px;
+    padding-right: 3px;
     background: #f6f6f6;
     border-radius: 6px;
   }

@@ -1,10 +1,10 @@
 <template>
-  <el-card v-loading="loading" class="channelProfit" style="padding: 16px 16px 0; margin-bottom: 32px">
+  <el-card v-loading="loading" class="channelProfit" style="">
     <div slot="header" class="clearfix">
-      <span style="float: left; font-weight: bold; line-height: 36px">{{
+      <span class="card-header-title">{{
         $t("home.channelPerformanceTop")
       }}</span>
-      <div style="display: inline-block; float: right">
+      <div class="card-header-action">
         <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
       </div>
     </div>
@@ -99,5 +99,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style rel="stylesheet/scss" lang="scss" type="text/scss">
+.channelProfit {
+  padding: 16px 16px 0;
+  margin-bottom: 32px;
+}
 </style>

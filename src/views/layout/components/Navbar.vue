@@ -11,14 +11,7 @@
           <size-select class="international right-menu-item" />
         </el-tooltip>
         <lang-select class="international right-menu-item" />
-        <div style="
-            display: inline-block;
-            width: 1px;
-            height: 25px;
-            background: rgb(216, 208, 208);
-            margin-bottom: 8px;
-            margin-right: 5px;
-          " />
+        <div class="split-line" />
         <el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">
           <theme-picker class="theme-switch right-menu-item" />
         </el-tooltip>
@@ -28,7 +21,7 @@
           <i class="iconfont icon_shouye_peizhi" @click="showHomePageSetting = true" />
         </div>
       </el-tooltip>
-      <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99">
+      <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" class="right-menu-item">
         <el-popover width="150" trigger="click">
           <div v-if="hasPermission(100055)" class="notification-list-item">
             <a @click="handleCreditClick">
@@ -54,14 +47,7 @@
       <el-tooltip v-if="hasPermission(100105)" :enterable="false" :content="$t('navbar.calendar')" effect="dark" placement="bottom">
         <renewal-calendar class="calendar right-menu-item" />
       </el-tooltip>
-      <div style="
-            display: inline-block;
-            width: 1px;
-            height: 25px;
-            background: rgb(216, 208, 208);
-            margin-bottom: 8px;
-            margin-right: 5px;
-          " />
+      <div class="split-line" />
       <el-dropdown class="avatar-container right-menu-item">
         <span class="el-dropdown-link">
           {{ name }}
@@ -333,18 +319,38 @@ export default {
     display: inline-block;
     vertical-align: top;
   }
+  .calendar {
+    .el-badge__content.is-fixed {
+      top: 6px !important;
+    }
+  }
   .right-menu {
     float: right;
     height: 100%;
     display: flex;
     align-items: center;
+    .split-line {
+      display: inline-block;
+      width: 1px;
+      height: 25px;
+      background: rgb(216, 208, 208);
+      margin-bottom: 8px;
+      margin-right: 30px;
+    }
     .iconfont {
       margin-right: 0;
+    }
+    .el-badge__content {
+      background: $--orange;
+    }
+    .el-badge__content.is-fixed {
+      top: 15px;
     }
     &:focus {
       outline: none;
     }
     .right-menu-item {
+      margin-right: 30px;
     }
     .setting_class {
       cursor: pointer;

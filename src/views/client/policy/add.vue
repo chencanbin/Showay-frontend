@@ -425,10 +425,6 @@ export default {
       }
       width: 30%;
     }
-    .el-card__header {
-      padding: 10px 20px;
-      margin-bottom: 10px;
-    }
   }
 }
 </style>

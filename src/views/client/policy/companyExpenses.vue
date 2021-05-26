@@ -1,70 +1,28 @@
 <template>
   <span>
-    <el-button 
-      type="text" 
-      size="small" 
-      @click="initForm">
+    <el-button type="text" size="small" @click="initForm">
       {{ $t("client.insurance_policy.set.company_expense") }}
     </el-button>
-    <el-dialog 
-      v-el-drag-dialog 
-      :close-on-click-modal="false" 
-      :visible="dialogVisible" 
-      :before-close="handleClose" 
-      :title="$t('client.insurance_policy.set.company_expense')" 
-      top="50px" 
-      width="400px" 
-      class="company_expenses" 
-      append-to-body>
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.insurance_policy.set.company_expense')" top="50px" width="400px" class="company_expenses" append-to-body>
       <el-form>
         <el-card>
-          <div 
-            slot="header" 
-            class="clearfix">
+          <div slot="header" class="clearfix">
             <span style="margin-right: 10px; vertical-align: middle">{{
               $t("client.insurance_policy.set.expense_item")
             }}</span>
-            <el-button 
-              :loading="addExpensesLoading" 
-              icon="el-icon-plus" 
-              size="small" 
-              style="min-width: 40px; font-size: 16px; padding: 5px" 
-              @click="addItem" />
+            <el-button :loading="addExpensesLoading" icon="el-icon-plus" size="small" style="min-width: 40px; font-size: 16px; padding: 5px" @click="addItem" />
           </div>
-          <el-form-item 
-            v-for="(item, index) in expenses" 
-            :key="index" 
-            style="margin-top: 10px" 
-            class="input_item">
-            <el-select 
-              v-model="item.type" 
-              placeholder="请选择" 
-              style="width: 100px" 
-              class="select_inner_item" 
-              @change="expensesTypeChange(item)">
-              <el-option 
-                v-for="(item, index) in expensesType" 
-                :key="index" 
-                :label="item[language]" 
-                :value="item.id" />
+          <el-form-item v-for="(item, index) in expenses" :key="index" style="margin-top: 10px" class="input_item">
+            <el-select v-model="item.type" placeholder="请选择" style="width: 100px" class="select_inner_item" @change="expensesTypeChange(item)">
+              <el-option v-for="(item, index) in expensesType" :key="index" :label="item[language]" :value="item.id" />
             </el-select>
-            <currency-input 
-              v-model="item.amount" 
-              symbol="HK$ " 
-              style="width: 220px" 
-              class="input_inner_item" 
-              @input="expensesAmountChange(item)" />
-            <el-button 
-              :loading="removeExpensesLoading === item.id" 
-              icon="el-icon-remove-outline" 
-              size="small" 
-              style="
+            <currency-input v-model="item.amount" symbol="HK$ " style="width: 220px" class="input_inner_item" @input="expensesAmountChange(item)" />
+            <el-button :loading="removeExpensesLoading === item.id" icon="el-icon-remove-outline" size="small" style="
                 min-width: 50px;
                 font-size: 20px;
                 padding: 6px;
                 vertical-align: bottom;
-              " 
-              @click="removeItem(item.id)" />
+              " @click="removeItem(item.id)" />
           </el-form-item>
         </el-card>
       </el-form>
@@ -164,10 +122,6 @@ export default {
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 .company_expenses {
   .el-dialog__body {
-    padding: 10px;
-  }
-
-  .el-card__header {
     padding: 10px;
   }
 }

@@ -1,7 +1,7 @@
 <template>
-  <el-card style="background: #fff; height:374px; margin-bottom: 16px" class="card-file-list">
+  <el-card style="" class="card-file-list">
     <div slot="header">
-      <span style="font-weight: bold; padding-left: 14px; display: block; height: 60px;">{{
+      <span class="card-header-title">{{
         $t("home.news")
       }}</span>
     </div>
@@ -90,6 +90,10 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 .card-file-list {
+  background: #fff;
+  height: 408px;
+  margin-bottom: 16px;
+
   .el-card__header {
     border: 0;
     height: 60px;
@@ -101,6 +105,7 @@ export default {
     height: 300px;
     overflow: auto;
     padding-left: 24px;
+    padding-right: 24px;
   }
   .file-list-wrapper {
     height: 50px;

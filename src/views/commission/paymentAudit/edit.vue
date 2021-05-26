@@ -127,9 +127,6 @@ export default {
   .el-form-item {
     margin-bottom: 10px;
   }
-  .el-card__header {
-    padding: 10px;
-  }
   .input_item {
     .el-form-item__content {
       margin-left: 30px !important;

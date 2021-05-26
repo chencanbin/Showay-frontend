@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-editor-container">
     <panel-group />
-    <el-row :gutter="8" type="flex" justify="left">
+    <el-row :gutter="16" type="flex" justify="left">
       <!-- 公司收益趋势 -->
       <el-col v-if="showHomePage(8)" :xs="24" :sm="24" :lg="16">
         <profit-trend />
@@ -11,7 +11,7 @@
         <income-distribution />
       </el-col>
     </el-row>
-    <el-row :gutter="8" type="flex" justify="left">
+    <el-row :gutter="16" type="flex" justify="left">
       <!-- 公告列表 -->
       <el-col v-if="showHomePage(13)" :xs="24" :sm="24" :lg="10">
         <fileList />
@@ -26,7 +26,7 @@
       <cleared-credit />
     </el-col>
 
-    <el-row :gutter="8" type="flex" justify="center">
+    <el-row :gutter="16" type="flex" justify="center">
       <!-- 渠道业绩Top5 -->
       <el-col v-if="showHomePage(11)">
         <channel-profit />
@@ -109,10 +109,10 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 .dashboard-editor-container {
-  padding: 32px;
+  padding: 16px;
   background-color: rgb(240, 242, 245);
   .el-card__header {
-    padding: 10px;
+    margin-bottom: 10px;
   }
   .chart-wrapper {
     background: #fff;

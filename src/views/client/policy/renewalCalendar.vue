@@ -297,9 +297,6 @@ export default {
       padding: 10px;
     }
   }
-  /*.el-badge__content.is-fixed {*/
-  /*top: 15px;*/
-  /*}*/
 }
 .detail-item {
   margin-bottom: 0px !important;
