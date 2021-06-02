@@ -109,7 +109,7 @@ export default {
     left: 24px;
   }
   .data-contrast {
-    color: #8e919f;
+    color: $--label;
     font-size: 14px;
     font-weight: 500;
     position: absolute;

@@ -218,6 +218,16 @@ export default {
   float: right;
 }
 #paymentAudit {
+  .el-table td {
+    font-size: 14px;
+    border-bottom: 1px solid #edf1f8;
+  }
+  .el-table th > .cell {
+    padding-left: 16px;
+  }
+  .el-table--border td:first-child .cell {
+    padding-left: 0;
+  }
   .filter-form {
     margin-top: 0;
     margin-left: 0;

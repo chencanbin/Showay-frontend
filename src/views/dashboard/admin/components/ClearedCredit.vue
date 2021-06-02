@@ -1,5 +1,5 @@
 <template>
-  <el-card v-loading="loading" style="padding: 16px 16px 0; margin-bottom: 16px" class="clearedCredit">
+  <el-card v-loading="loading" class="clearedCredit">
     <div slot="header" class="clearfix">
       <span class="card-header-title">{{
         $t("home.comparison")
@@ -25,7 +25,7 @@ import { mapState } from "vuex";
 import G2 from "@antv/g2";
 import accounting from "accounting";
 import { getYearFirst, getYearLast } from "@/utils";
-
+const winWidth = document.body.offsetWidth;
 export default {
   data() {
     return {
@@ -77,7 +77,7 @@ export default {
             x: points[1].x + cfg.size / 2,
             y: points[1].y,
             fontFamily: "PingFang SC",
-            fontSize: 12,
+            fontSize: 14,
             fill: "#BBB",
           },
         });
@@ -255,7 +255,7 @@ export default {
       this.chart = new G2.Chart({
         container: "clearedCredit",
         forceFit: true,
-        height: 327,
+        height: (winWidth / 1680) * 300,
         padding: [20, 30, 70, 80],
       });
       this.chart.source(this.sourceData, {
@@ -321,7 +321,7 @@ export default {
   }
   .button-no-active {
     font-weight: 400;
-    color: #8e919f;
+    color: $--label;
     background-color: transparent;
   }
 }

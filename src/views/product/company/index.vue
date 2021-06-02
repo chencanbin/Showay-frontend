@@ -183,7 +183,7 @@
       </div>
       <div class="company-list-bottom">
         <add v-if="hasPermission(100005)" />
-        <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @updatme:page="updatePage" @update:limit="updateLimit" />
       </div>
     </basic-container>
 
@@ -316,8 +316,6 @@ export default {
     flex-wrap: wrap;
     justify-content: space-between;
     box-sizing: border-box;
-    padding: 24px;
-    padding-bottom: 50px;
     .company_name {
       font-weight: bold;
       color: $--content;
@@ -343,11 +341,12 @@ export default {
           font-weight: 500;
           text-align: right;
           color: $--content;
+          width: 365px;
           a {
             display: inline-block;
           }
           .link {
-            width: 384px;
+            max-width: 324px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -370,13 +369,14 @@ export default {
   .company-list-bottom {
     position: fixed;
     bottom: 0;
+    left: 216px;
     height: 60px;
     background: #fff;
     display: flex;
     justify-content: space-between;
     border-top: #e9e8f0 solid 1px;
     box-sizing: border-box;
-    width: 1710px;
+    width: calc(100% - 200px - 32px);
   }
 }
 </style>

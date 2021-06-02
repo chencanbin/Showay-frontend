@@ -54,17 +54,13 @@
           <i class="el-icon-arrow-down el-icon--right" />
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item style="padding: 10px">
-            <span style="display: block" @click="handleOpenUpdateUserDialog">
-              <svg-icon icon-class="password" style="margin-right: 5px" />{{
-                  $t("navbar.password")
-                }}
-            </span>
+          <el-dropdown-item>
+            <i class="iconfont icon_password" style="color: #D8D8D8;" />
+            <span>{{ $t("navbar.password") }}</span>
           </el-dropdown-item>
-          <el-dropdown-item style="padding: 10px" @click.native="logout">
-            <svg-icon icon-class="logout" style="margin-right: 5px" />{{
-                $t("navbar.logOut")
-              }}
+          <el-dropdown-item @click.native="logout">
+            <i class="iconfont icon_sign_out" style="color: #D8D8D8;" />
+            <span>{{ $t("navbar.logOut") }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -311,6 +307,8 @@ export default {
     height: 60px;
     float: left;
     padding: 0 10px;
+    display: flex;
+    align-items: center;
   }
   .breadcrumb-container {
     float: left;
@@ -332,8 +330,8 @@ export default {
     .split-line {
       display: inline-block;
       width: 1px;
-      height: 25px;
-      background: rgb(216, 208, 208);
+      height: 16px;
+      background: #cbceed;
       margin-bottom: 8px;
       margin-right: 30px;
     }
@@ -351,13 +349,18 @@ export default {
     }
     .right-menu-item {
       margin-right: 30px;
+      .iconfont {
+        color: rgba(203, 206, 237, 1) !important;
+      }
     }
     .setting_class {
       cursor: pointer;
       vertical-align: 13px;
     }
     .international {
-      color: $--purple-assist;
+      .iconfont {
+        color: rgba(203, 206, 237, 1) !important;
+      }
     }
     .theme-switch {
       vertical-align: 8px;
@@ -393,6 +396,38 @@ export default {
       line-height: 30px;
     }
   }
+  .avatar-container {
+    .el-dropdown-menu__item {
+      display: flex;
+      align-items: center;
+      height: 50px;
+      line-height: 50px;
+      min-width: 118px;
+      color: #43475f;
+      font-size: 16px;
+      padding: 0;
+      padding-left: 26px;
+
+      &:hover {
+        background-color: $--purple-assist;
+
+        .el-button--text {
+          color: $--purple !important;
+        }
+      }
+
+      .el-button--text {
+        color: #43475f;
+      }
+
+      &:hover {
+        i {
+          color: $--purple !important;
+          background-color: $--purple-assist;
+        }
+      }
+    }
+  }
 }
 .mobile_navbar {
   width: calc(100% - 60px);
@@ -413,16 +448,28 @@ export default {
 .notification-badge-content {
   float: right;
   border-radius: 10px;
-  color: #fff;
+  color: $--orange;
   display: inline-block;
-  font-size: 12px;
-  height: 18px;
-  line-height: 18px;
+  font-size: 10px;
+  height: 16px;
+  line-height: 16px;
   padding: 0 6px;
   text-align: center;
   white-space: nowrap;
-  border: 1px solid #fff;
-  background-color: #f56c6c;
+  border: 1px solid $--orange;
+  background-color: $--orange-assist;
+  position: relative;
+  &::before {
+    position: absolute;
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: $--orange;
+    border-radius: 50%;
+    left: -10px;
+    top: 50%;
+    margin-top: -3px;
+  }
 }
 .icon-earning {
   font-size: 18px;

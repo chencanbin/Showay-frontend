@@ -4,7 +4,7 @@
   .main-container {
     min-height: 100%;
     transition: margin-left .28s;
-    margin-left: 180px;
+    margin-left: 200px;
     background: #EFF0F3;
     position: relative;
   }
@@ -12,10 +12,10 @@
   // 侧边栏
   .sidebar-container {
     transition: width 0.28s;
-    width: 180px !important;
+    width: 200px !important;
     height: 100%;
     position: fixed;
-    font-size: 0px;
+    font-size: 16px;
     top: 59px;
     bottom: 0;
     left: 0;
@@ -33,7 +33,7 @@
       overflow-x: hidden !important;
 
       .el-scrollbar__view {
-        height: 100%;
+        height: 100vh;
       }
     }
 
@@ -49,6 +49,7 @@
       display: inline-block;
       width: 100%;
       overflow: hidden;
+      font-size: 16px;
     }
 
     .svg-icon {
@@ -64,16 +65,39 @@
     }
 
     .el-menu-item {
+      font-size: 16px !important;
       padding-left: 40px !important;
+
+      i {
+        color: $--content;
+      }
+
+      &:hover {
+        color: $--purple !important;
+      }
     }
 
     .submenu-title-noDropdown {
       padding-left: 20px !important;
+
+      i {
+        color: $--content;
+      }
     }
 
     .is-active>.el-submenu__title {
-      color: #8E919F !important;
+      color: $--label !important;
       padding-left: 20px !important;
+
+    }
+
+    .el-submenu__title {
+      font-size: 16px;
+
+      i {
+        color: $--content;
+      }
+
     }
 
     .el-submenu__title:hover {
@@ -82,6 +106,12 @@
 
     .is-active {
       background-color: $--purple-assist !important;
+    }
+
+    .router-link-active {
+      i {
+        color: $--purple !important;
+      }
     }
 
     .el-menu-item.is-active::after {
@@ -140,6 +170,7 @@
     .el-menu--collapse {
       .el-submenu {
         &>.el-submenu__title {
+
           &>span {
             height: 0;
             width: 0;
@@ -154,10 +185,15 @@
 
   .sidebar-container .nest-menu .el-submenu>.el-submenu__title,
   .sidebar-container .el-submenu .el-menu-item {
-    min-width: 180px !important;
+    min-width: 200px !important;
+    font-size: 16px !important;
 
     &:hover {
       background-color: $--purple-assist !important;
+
+      i {
+        color: $--purple !important
+      }
     }
   }
 
@@ -179,13 +215,13 @@
 
     .sidebar-container {
       transition: transform .28s;
-      width: 180px !important;
+      width: 200px !important;
     }
 
     &.hideSidebar {
       .sidebar-container {
         transition-duration: 0.3s;
-        transform: translate3d(-180px, 0, 0);
+        transform: translate3d(-200px, 0, 0);
       }
     }
   }
@@ -212,10 +248,12 @@
     .el-menu-item:focus,
     .el-menu-item:hover {
       background-color: $menuHover !important;
+
     }
 
     .el-menu-item.is-active {
       font-weight: bold;
+
     }
   }
 }

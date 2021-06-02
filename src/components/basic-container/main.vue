@@ -16,7 +16,10 @@ export default {
 .basic-container {
   border-radius: 8px;
   box-sizing: border-box;
+  background: #fff;
+  padding: 24px;
   .el-card {
+    border-radius: 8px;
     width: 100%;
   }
   &:first-child {

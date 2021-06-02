@@ -1,7 +1,7 @@
 <template>
   <div style="display: inline-block; margin-left: 10px">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加文件夾</span></div>-->
-    <el-button size="small" type="primary" @click="initForm">+ {{ $t("document.add_button") }}</el-button>
+    <el-button size="small" type="primary" @click="initForm">{{ $t("document.add_button") }}</el-button>
     <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('document.add_title')" top="50px" width="450px">
       <el-form ref="folder" :model="folder" :rules="rule" label-width="80px">
         <el-form-item :label="$t('document.file_name')" prop="name">

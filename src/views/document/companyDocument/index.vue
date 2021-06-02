@@ -376,7 +376,7 @@ export default {
 };
 </script>
 
-<style rel="stylesheet/scss" lang="scss" type="text/scss">
+<style rel="stylesheet/scss" lang="scss" type="text/scss" scoped>
 /*.upload-demo .el-upload {*/
 /*margin-top: 20px;*/
 /*width: 100%;*/

@@ -18175,7 +18175,7 @@
   }
 }
 
-@media only screen and (min-width:1920px) {
+@media only screen and (min-width:1400px) {
   .custom-theme .el-col-xl-0 {
     display: none
   }

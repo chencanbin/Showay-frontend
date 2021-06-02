@@ -97,9 +97,11 @@ export default {
   },
 };
 </script>
-<style>
-.item {
-  margin-top: 10px;
-  margin-right: 40px;
+<style lang="scss" scoped>
+.menu-wrapper {
+  .item {
+    margin-top: 10px;
+    margin-right: 40px;
+  }
 }
 </style>

@@ -10,7 +10,7 @@
           <div size="mini" :class="activeName === 1 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitQuarter()">{{ $t("home.quarter") }}</div>
           <div size="mini" :class="activeName === 2 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitYear()">{{ $t("home.year") }}</div>
         </el-button-group>
-        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
+        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" class="date-picker" />
       </div>
     </div>
     <div id="profitTrend" />
@@ -21,7 +21,7 @@
 import G2 from "@antv/g2";
 import accounting from "accounting";
 import { getYearFirst, getYearLast } from "@/utils";
-
+const winWidth = document.body.offsetWidth;
 export default {
   name: "",
   data() {
@@ -99,8 +99,8 @@ export default {
       this.chart = new G2.Chart({
         container: "profitTrend",
         forceFit: true,
-        height: 327,
-        padding: [20, 40, 50, 90],
+        height: (winWidth / 1680) * 300,
+        padding: [20, 40, 20, 90],
       });
       this.chart.source(this.profit);
       this.chart.scale("value", {
@@ -138,12 +138,15 @@ export default {
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 .profit {
   background: #fff;
-  margin-bottom: 16px;
   .el-button-group {
     padding-left: 3px;
     padding-right: 3px;
     background: #f6f6f6;
     border-radius: 6px;
+  }
+  .date-picker {
+    margin-left: 20px;
+    width: 120px;
   }
   .self-button {
     width: 54px;
@@ -165,7 +168,7 @@ export default {
   }
   .button-no-active {
     font-weight: 400;
-    color: #8e919f;
+    color: $--label;
     background-color: transparent;
   }
 }

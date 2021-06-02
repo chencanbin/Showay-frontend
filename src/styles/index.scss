@@ -5,7 +5,7 @@
 // @import './btn.scss';
 @import './media.scss';
 @import './element-ui.scss';
-@import url('http://at.alicdn.com/t/font_2539548_pcx5qbnwrfi.css');
+@import url('./icon.scss');
 
 body {
   height: 100%;
@@ -222,7 +222,7 @@ input[type=button] {
 }
 
 .table-container {
-  padding: 8px 10px;
+  padding: 16px;
   background: #eff0f3;
 
   .header {

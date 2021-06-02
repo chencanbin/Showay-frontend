@@ -82,15 +82,13 @@
    a {
      display: block
    }
-
-   button {
-     padding: 10px 4px;
-   }
  }
 
  .el-card.is-always-shadow {
    box-shadow: none;
    border: none !important;
+   height: 100%;
+   overflow: auto;
  }
 
  .pagination {
@@ -147,9 +145,19 @@
  }
 
  .el-table .cell {
-   padding: 0px 5px 0px 20px;
+   padding: 0;
    font-size: 14px;
    color: $--content;
+ }
+
+ .el-table__row {
+   height: 50px;
+ }
+
+ .el-table td {
+   border-bottom: 0;
+   padding-left: 16px;
+   padding-right: 16px;
  }
 
  //.el-table th td {
@@ -159,18 +167,14 @@
    padding: 10px
  }
 
- .el-table tr td:first-child {
-   //padding-left: 5px;
- }
 
- .el-table th.is-leaf {
-   border-bottom: solid 1px #E0E0E0;
- }
 
  .el-table th {
    font-family: "Microsoft YaHei";
    background-color: #f6f6f6;
    color: $--content;
+   font-size: 14px;
+   font-weight: bold;
  }
 
  .el-form-item {
@@ -230,52 +234,53 @@
    padding: 4px 10px;
  }
 
- .el-dropdown-menu {
-   .el-button--small {
-     padding: 10px 25px;
-     //position: relative;
-   }
 
-   .el-dropdown-menu__item--divided {
-     margin: 0;
-   }
-
-   .el-dropdown-menu__item--divided:before {
-     height: 0;
-   }
- }
-
- .el-dropdown-menu--medium .el-dropdown-menu__item.el-dropdown-menu__item--divided {
-   margin: 0;
- }
-
- // .el-button--small::after {
- //   content: "";
- //　　position: absolute;
- //　　left: -10px;
- //　　top: -10px;
- //　　right: -10px;
- //　　bottom: -10px;
- // }
 
  .el-dropdown-menu--medium {
-   padding: 0;
+   padding-top: 10px;
+   padding-bottom: 10px;
+
+   box-sizing: border-box;
+   box-shadow: 10px 10px 30px 0px rgba(4, 12, 26, 0.1);
+   border-radius: 10px;
+
 
    .el-dropdown-menu__item {
+     display: flex;
+     align-items: center;
+     height: 40px;
+     line-height: 40px;
+     min-width: 118px;
+     color: #43475F;
+     font-size: 16px;
      padding: 0;
+     padding-left: 26px;
+     padding-right: 26px;
+
+     &:hover {
+       background-color: $--purple-assist;
+
+       .el-button--text {
+         color: $--purple !important;
+       }
+     }
+
+     .el-button--text {
+       color: #43475F;
+     }
+
+     &:hover {
+       i {
+         color: $--purple !important;
+         background-color: $--purple-assist;
+       }
+     }
    }
  }
 
- // button::after{
- // 　　content: "";
- // 　　position: absolute;
- // 　　left: -10px;
- // 　　top: -10px;
- // 　　right: -10px;
- // 　　bottom: -10px;
- // }
- .el-dropdown-menu {
-   overflow: hidden;
+ .el-breadcrumb__separator {
+   margin-left: 20px;
+   margin-right: 20px;
  }
 
  .el-input__inner {

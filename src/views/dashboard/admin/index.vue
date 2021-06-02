@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-editor-container">
     <panel-group />
-    <el-row :gutter="16" type="flex" justify="left">
+    <el-row :gutter="16" type="flex" justify="left" class="chart-row">
       <!-- 公司收益趋势 -->
       <el-col v-if="showHomePage(8)" :xs="24" :sm="24" :lg="16">
         <profit-trend />
@@ -11,7 +11,7 @@
         <income-distribution />
       </el-col>
     </el-row>
-    <el-row :gutter="16" type="flex" justify="left">
+    <el-row :gutter="16" type="flex" justify="left" class="chart-row">
       <!-- 公告列表 -->
       <el-col v-if="showHomePage(13)" :xs="24" :sm="24" :lg="10">
         <fileList />
@@ -22,11 +22,11 @@
       </el-col>
     </el-row>
     <!-- 公司业绩同比 -->
-    <el-col v-if="showHomePage(10)" :xs="24" :sm="24" :lg="24">
+    <el-col v-if="showHomePage(10)" :xs="24" :sm="24" :lg="24" class="chart-row">
       <cleared-credit />
     </el-col>
 
-    <el-row :gutter="16" type="flex" justify="center">
+    <el-row :gutter="16" type="flex" justify="center" class="chart-row">
       <!-- 渠道业绩Top5 -->
       <el-col v-if="showHomePage(11)">
         <channel-profit />
@@ -118,6 +118,10 @@ export default {
     background: #fff;
     padding: 16px 16px 0;
     margin-bottom: 32px;
+  }
+  .chart-row {
+    height: 400px;
+    margin-bottom: 16px;
   }
 }
 </style>

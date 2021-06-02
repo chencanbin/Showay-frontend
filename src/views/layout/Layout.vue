@@ -87,7 +87,7 @@ export default {
     position: fixed;
   }
   .logo-wrapper {
-    width: 180px;
+    width: 200px;
     height: 59px;
     position: fixed;
     background: $--purple;

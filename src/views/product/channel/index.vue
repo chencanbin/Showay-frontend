@@ -111,7 +111,7 @@
       </div>
     </el-dialog>
     <channelCommissionView ref="channelCommissionView" />
-    <el-drawer class="channel-detail-wrapper" :title="currentRow.acronym+' - '+currentRow.name" :visible.sync="drawer" :direction="direction">
+    <el-drawer class="channel-detail-wrapper" :modal="false" :title="currentRow.acronym+' - '+currentRow.name" :visible.sync="drawer" :direction="direction">
       <div v-loading="channelCommissionLoading" class="clearfix" style="min-height: 50px">
         <el-timeline id="channelCommissionTableList">
           <div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399">
@@ -361,8 +361,13 @@ export default {
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 #channel {
   .channel-detail-wrapper {
+    .el-timeline-item__node--normal {
+      left: 0;
+    }
     .el-drawer {
       width: 430px !important;
+      padding-left: 24px;
+      padding-right: 24px;
       .el-drawer__header {
         height: 70px;
         margin-bottom: 0;
@@ -376,7 +381,7 @@ export default {
       }
       .el-drawer__body {
         overflow: auto;
-        padding: 16px 24px;
+        padding: 16px 0 16px 0;
         .action-dropdown {
           position: absolute;
           left: 140px;
@@ -386,7 +391,9 @@ export default {
     }
   }
   .channel-list-bottom {
+    position: fixed;
     bottom: 0;
+    left: 216px;
     height: 60px;
     background: #fff;
     display: flex;
@@ -394,6 +401,7 @@ export default {
     border-top: #e9e8f0 solid 1px;
     box-sizing: border-box;
     z-index: 10;
+    width: calc(100% - 232px);
   }
   .timeline_content {
     background: #f6f6f7;
@@ -414,6 +422,12 @@ export default {
         flex: 1;
       }
     }
+  }
+  .el-table__row td:first-child {
+    padding-left: 47px;
+  }
+  .el-table th:first-child {
+    padding-left: 47px;
   }
 }
 </style>

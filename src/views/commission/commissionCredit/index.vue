@@ -49,8 +49,8 @@
             </span>
           </div>
         </el-row>
-        <el-table v-loading="commissionCreditLoading" height="63vh" :data="commissionCredit.list" :row-class-name="tableRowClassName" border @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="40" align="center" />
+        <el-table v-loading="commissionCreditLoading" height="65vh" stripe :data="commissionCredit.list" :row-class-name="tableRowClassName" border @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="80" align="center" />
           <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip>
             <template slot-scope="scope">
               <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id" />
@@ -528,15 +528,19 @@ export default {
   .el-card__body {
     padding: 0px;
   }
-  .el-table tr td:first-child {
-    padding-left: 0px;
+  .el-table td {
+    font-size: 14px;
+    border-bottom: 1px solid #edf1f8;
+  }
+  .el-table th > .cell {
+    padding-left: 16px;
   }
   .el-tabs__nav {
     .el-tabs__item {
       background: #fff;
       width: 100px;
       text-align: center;
-      border: 1px solid #e9e8f0;
+      border: 1px solid #edf1f8;
       padding-right: 0;
       padding-left: 0;
     }

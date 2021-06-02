@@ -1,5 +1,5 @@
 <template>
-  <el-card v-loading="loading" class="profit">
+  <el-card v-loading="loading" class="profit-channel">
     <div slot="header" class="clearfix">
       <span class="card-header-title">{{
         $t("home.channelProfitTrend", [""])
@@ -25,7 +25,7 @@ import { mapState } from "vuex";
 import G2 from "@antv/g2";
 import accounting from "accounting";
 import { getYearFirst, getYearLast } from "@/utils";
-
+const winWidth = document.body.offsetWidth;
 export default {
   name: "",
   data() {
@@ -129,8 +129,8 @@ export default {
       this.chart = new G2.Chart({
         container: "profitChannelTrend",
         forceFit: true,
-        height: 327,
-        padding: [20, 40, 50, 90],
+        height: (winWidth / 1680) * 300,
+        padding: [20, 40, 20, 90],
       });
       this.chart.source(this.profit);
       this.chart.scale("value", {
@@ -171,12 +171,44 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
-.profit {
+.profit-channel {
   background: #fff;
-  margin-bottom: 16px;
   .date-picker {
     margin-left: 20px;
     width: 120px;
+  }
+  .el-button-group {
+    padding-left: 3px;
+    padding-right: 3px;
+    background: #f6f6f6;
+    border-radius: 6px;
+  }
+  .date-picker {
+    margin-left: 20px;
+    width: 120px;
+  }
+  .self-button {
+    width: 54px;
+    height: 28px;
+    line-height: 28px;
+    border: 0;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+  }
+  .self-button:focus {
+    border: 0;
+  }
+  .button-active {
+    background: #ffffff;
+    border-radius: 6px;
+    color: $--purple;
+    font-weight: bold;
+  }
+  .button-no-active {
+    font-weight: 400;
+    color: $--label;
+    background-color: transparent;
   }
 }
 </style>

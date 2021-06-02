@@ -243,7 +243,7 @@ export default {
     flex-wrap: wrap;
     justify-content: space-between;
     box-sizing: border-box;
-    height: 74vh;
+    height: 78vh;
     overflow: auto;
     .create_client {
       width: 310px;
@@ -251,7 +251,7 @@ export default {
       border-radius: 8px;
       border: 1px dashed #e9e8f0;
       margin-bottom: 24px;
-      color: #8e919f;
+      color: $--label;
       font-size: 18px;
       display: flex;
       flex-direction: column;
@@ -293,7 +293,7 @@ export default {
         display: flex;
         justify-content: space-between;
         .label {
-          color: #8e919f;
+          color: $--label;
         }
         .value {
           color: #42475f;
@@ -307,12 +307,17 @@ export default {
     }
   }
   .client-list-bottom {
-    padding-left: 57px;
+    position: fixed;
+    bottom: 0;
+    left: 216px;
     height: 60px;
     background: #fff;
-    width: 100%;
     display: flex;
+    justify-content: space-between;
     border-top: #e9e8f0 solid 1px;
+    box-sizing: border-box;
+    z-index: 10;
+    width: calc(100% - 232px);
   }
 }
 </style>

@@ -104,9 +104,9 @@
         </el-table-column>
         <el-table-column :label="$t('client.insurance_policy.company_name')" prop="company.name" min-width="150" show-overflow-tooltip />
         <el-table-column :label="$t('client.insurance_policy.product_name')" prop="product.name" min-width="200" show-overflow-tooltip />
-        <el-table-column :label="$t('common.action')">
+        <el-table-column :label="$t('common.action')" prop="action">
           <template slot-scope="scope">
-            <el-dropdown>
+            <el-dropdown trigger="click">
               <el-button type="primary" plain size="mini">
                 <i class="el-icon-more" />
               </el-button>
@@ -138,7 +138,7 @@
                   <el-button type="text" size="small" @click="handleSendEmail(scope.row)">{{ $t("client.insurance_policy.email_notification") }}
                   </el-button>
                 </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100050)" divided>
+                <el-dropdown-item v-if="hasPermission(100050)">
                   <el-button type="text" size="small" @click="handleReset(scope.row.id)">{{ $t("common.reset") }}
                   </el-button>
                 </el-dropdown-item>
@@ -146,7 +146,7 @@
                   <el-button v-if="scope.row.editable" type="text" size="small" @click="verifyPassword(scope.row.id)">{{ $t("common.delete") }}
                   </el-button>
                 </el-dropdown-item>
-                <el-dropdown-item divided>
+                <el-dropdown-item>
                   <company-expenses v-if="hasPermission(100113)" :policy="scope.row" />
                 </el-dropdown-item>
                 <el-dropdown-item>
@@ -157,8 +157,10 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
-      <add v-if="hasPermission(100044)" :list-query="listQuery" :year="year" />
+      <div class="policy-list-bottom">
+        <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        <add v-if="hasPermission(100044)" :list-query="listQuery" :year="year" />
+      </div>
     </basic-container>
     <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">
       <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password" />
@@ -172,7 +174,7 @@
     </el-dialog>
     <send-email ref="sendEmail" />
 
-    <el-drawer class="policy-detail-wrapper" v-if="currentRow" title="保单详情" :visible.sync="drawer" :direction="direction" size="430px">
+    <el-drawer class="policy-detail-wrapper" :modal="false" v-if="currentRow" title="保单详情" :visible.sync="drawer" :direction="direction" size="430px">
       <el-form class="basic_info" label-position="left" label-width="80px">
         <el-form-item :label="$t('client.insurance_policy.number')" class="policy-form-item">
           <span>{{ currentRow.number }}</span>
@@ -239,7 +241,7 @@
         </div>
       </el-form>
     </el-drawer>
-    <add-client ref="addClient" :reload="false" />
+    <add-client ref="addClient" :reload="false" :hiddenBtn="true" />
   </div>
 </template>
 
@@ -627,7 +629,10 @@ export default {
         expandedRows.shift();
       }
     },
-    showInsuranceDetail(row) {
+    showInsuranceDetail(row, column) {
+      if (column.property === 'action') {
+        return false;
+      }
       console.log(row)
       this.drawer = true;
       this.currentRow = row;
@@ -699,6 +704,19 @@ export default {
     font-size: 14px;
     font-weight: bold;
     margin-top: 10px;
+  }
+  .policy-list-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 216px;
+    height: 60px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    border-top: #e9e8f0 solid 1px;
+    box-sizing: border-box;
+    z-index: 10;
+    width: calc(100% - 232px);
   }
 }
 </style>

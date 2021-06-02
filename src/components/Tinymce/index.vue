@@ -1,11 +1,6 @@
 <template>
   <div class="tinymce-editor">
-    <editor
-      v-model="myValue"
-      :init="init"
-      :disabled="disabled"
-      @onClick="onClick"
-    />
+    <editor v-model="myValue" :init="init" :disabled="disabled" @onClick="onClick" />
   </div>
 </template>
 
@@ -82,7 +77,7 @@ export default {
         language_url: language_url,
         language: language,
         skin_url: "/static/tinymce/skins/lightgray",
-        height: 327,
+        height: (winWidth / 1680) * 300,
         plugins: this.plugins,
         toolbar: this.toolbar,
         branding: false,

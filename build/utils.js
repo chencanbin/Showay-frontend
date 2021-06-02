@@ -28,7 +28,7 @@ exports.cssLoaders = function (options) {
     options: {
       sourceMap: options.sourceMap,
       plugins: [require('postcss-px2rem')({
-        remUnit: 192
+        remUnit: 168
       })]
     }
   }

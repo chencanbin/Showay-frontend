@@ -24,7 +24,7 @@ import { mapState } from "vuex";
 import G2 from "@antv/g2";
 import accounting from "accounting";
 import { getYearFirst, getYearLast } from "@/utils";
-
+const winWidth = document.body.offsetWidth;
 export default {
   name: "",
   data() {
@@ -131,7 +131,7 @@ export default {
       this.chart = new G2.Chart({
         container: "IncomeDistribution",
         forceFit: true,
-        height: 327,
+        height: (winWidth / 1680) * 300,
         padding: [20, 40, 40, 40],
       });
       this.chart.source(this.income);
@@ -173,6 +173,8 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
 .income {
   position: relative;
-  margin-bottom: 16px;
+  .el-select {
+    width: 180px;
+  }
 }
 </style>

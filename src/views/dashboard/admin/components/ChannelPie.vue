@@ -20,7 +20,7 @@
 import G2 from "@antv/g2";
 import accounting from "accounting";
 import { getYearFirst, getYearLast } from "@/utils";
-
+const winWidth = document.body.offsetWidth;
 export default {
   name: "",
   data() {
@@ -81,8 +81,8 @@ export default {
       this.chart = new G2.Chart({
         container: "channelPie",
         forceFit: true,
-        height: 350,
-        padding: [50, 40, 50, 40],
+        height: (winWidth / 1680) * 300,
+        padding: [0, 40, 50, 40],
       });
       this.chart.source(this.afyp);
       this.chart.coord("theta", {
@@ -136,7 +136,6 @@ export default {
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 .channel-pie {
   position: relative;
-  padding: 16px 16px 0;
   .date-picker {
     margin-left: 20px;
     width: 120px;
