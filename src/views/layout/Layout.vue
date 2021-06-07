@@ -94,6 +94,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 100;
 
     .logo {
       background: rgba(243, 242, 245, 0.08);

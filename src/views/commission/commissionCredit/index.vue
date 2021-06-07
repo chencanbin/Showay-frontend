@@ -49,74 +49,76 @@
             </span>
           </div>
         </el-row>
-        <el-table v-loading="commissionCreditLoading" height="65vh" stripe :data="commissionCredit.list" :row-class-name="tableRowClassName" border @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="80" align="center" />
-          <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id" />
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('client.insurance_policy.premium')" min-width="140">
-            <template slot-scope="scope">
-              <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{
+        <basic-container>
+          <el-table v-loading="commissionCreditLoading" stripe :data="commissionCredit.list" :row-class-name="tableRowClassName" border @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="80" align="center" />
+            <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip>
+              <template slot-scope="scope">
+                <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id" />
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('client.insurance_policy.premium')" min-width="140">
+              <template slot-scope="scope">
+                <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{
                 formatterCurrency(scope.row.premium)
               }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('client.insurance_policy.applicant_name')" prop="insurancePolicy.applicant.name" min-width="120" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <client-detail :id="scope.row.insurancePolicy.applicant.id" :name="scope.row.insurancePolicy.applicant.name" />
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('commission.credit.year')" prop="year" align="center" />
-          <el-table-column :formatter="formatterSubmitDate" :label="$t('client.insurance_policy.submitDate')" prop="insurancePolicy.submitDate" min-width="120" show-overflow-tooltip />
-          <el-table-column :formatter="formatterIssueDate" :label="$t('client.insurance_policy.issueDate')" prop="insurancePolicy.issueDate" min-width="100" show-overflow-tooltip />
-          <el-table-column :label="$t('common.calculatedAmount')" min-width="120">
-            <template slot-scope="scope">
-              <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('client.insurance_policy.applicant_name')" prop="insurancePolicy.applicant.name" min-width="120" show-overflow-tooltip>
+              <template slot-scope="scope">
+                <client-detail :id="scope.row.insurancePolicy.applicant.id" :name="scope.row.insurancePolicy.applicant.name" />
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('commission.credit.year')" prop="year" align="center" />
+            <el-table-column :formatter="formatterSubmitDate" :label="$t('client.insurance_policy.submitDate')" prop="insurancePolicy.submitDate" min-width="120" show-overflow-tooltip />
+            <el-table-column :formatter="formatterIssueDate" :label="$t('client.insurance_policy.issueDate')" prop="insurancePolicy.issueDate" min-width="100" show-overflow-tooltip />
+            <el-table-column :label="$t('common.calculatedAmount')" min-width="120">
+              <template slot-scope="scope">
+                <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{
                 formatterCurrency(scope.row.calculatedAmount)
               }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('common.amount')" prop="amount" min-width="120">
-            <template slot-scope="scope">
-              <span class="left_text">HK$ </span>
-              <span class="right_text">{{
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('common.amount')" prop="amount" min-width="120">
+              <template slot-scope="scope">
+                <span class="left_text">HK$ </span>
+                <span class="right_text">{{
                 formatterCurrency(scope.row.amount)
               }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('common.status')" min-width="80" align="center">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.status === 0" class="primary_status">{{
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('common.status')" min-width="80" align="center">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.status === 0" class="primary_status">{{
                   statusFormatter(scope.row.status)
                 }}</el-tag>
-              <el-tag v-if="scope.row.status === 1" type="warning">{{
+                <el-tag v-if="scope.row.status === 1" type="warning">{{
                   statusFormatter(scope.row.status)
                 }}</el-tag>
-              <el-tag v-if="scope.row.status === 2" type="success">{{
+                <el-tag v-if="scope.row.status === 2" type="success">{{
                   statusFormatter(scope.row.status)
                 }}</el-tag>
-              <el-tag v-if="scope.row.status === 3" type="success">{{
+                <el-tag v-if="scope.row.status === 3" type="success">{{
                   statusFormatter(scope.row.status)
                 }}</el-tag>
-              <!--<statusBadge v-if="scope.row.status === 0" :text="statusFormatter(scope.row.status)" type="processing-badge"/>-->
-              <!--<statusBadge v-if="scope.row.status === 1" :text="statusFormatter(scope.row.status)" type="warning-badge"/>-->
-              <!--<statusBadge v-if="scope.row.status === 2" :text="statusFormatter(scope.row.status)" type="error-badge"/>-->
-              <!--<statusBadge v-if="scope.row.status === 3" :text="statusFormatter(scope.row.status)" type="success-badge"/>-->
-            </template>
-          </el-table-column>
-          <!--<el-table-column label="备注" prop="remarks" min-width="140"/>-->
-          <el-table-column v-if="activeName !== '2'" :label="$t('common.action')" width="100">
-            <template slot-scope="scope">
-              <edit v-if="scope.row.status === 0" :commission-credit="scope.row" :wildcard="wildcard" :date-range="dateRange" :active-name="activeName" :key="scope.row.id" :sort="sort" :order="order" :term="term" :list-query="listQuery" />
-              <audit v-if="scope.row.status === 1" :commission-credit="scope.row" :active-name="activeName" :wildcard="wildcard" :date-range="dateRange" :sort="sort" :order="order" :list-query="listQuery" />
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="bottom-wrapper">
-          <pagination :total="commissionCredit.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
-        </div>
+                <!--<statusBadge v-if="scope.row.status === 0" :text="statusFormatter(scope.row.status)" type="processing-badge"/>-->
+                <!--<statusBadge v-if="scope.row.status === 1" :text="statusFormatter(scope.row.status)" type="warning-badge"/>-->
+                <!--<statusBadge v-if="scope.row.status === 2" :text="statusFormatter(scope.row.status)" type="error-badge"/>-->
+                <!--<statusBadge v-if="scope.row.status === 3" :text="statusFormatter(scope.row.status)" type="success-badge"/>-->
+              </template>
+            </el-table-column>
+            <!--<el-table-column label="备注" prop="remarks" min-width="140"/>-->
+            <el-table-column v-if="activeName !== '2'" :label="$t('common.action')" width="100">
+              <template slot-scope="scope">
+                <edit v-if="scope.row.status === 0" :commission-credit="scope.row" :wildcard="wildcard" :date-range="dateRange" :active-name="activeName" :key="scope.row.id" :sort="sort" :order="order" :term="term" :list-query="listQuery" />
+                <audit v-if="scope.row.status === 1" :commission-credit="scope.row" :active-name="activeName" :wildcard="wildcard" :date-range="dateRange" :sort="sort" :order="order" :list-query="listQuery" />
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="table-bottom">
+            <pagination :total="commissionCredit.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+          </div>
+        </basic-container>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -522,6 +524,10 @@ export default {
   }
 }
 #credit {
+  .table-bottom {
+    display: flex;
+    justify-content: flex-end;
+  }
   .search-input {
     margin-left: 0;
   }

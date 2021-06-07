@@ -15,7 +15,7 @@
       </el-form>
     </div>
     <basic-container>
-      <el-table v-loading="insurancePolicyLoading" :height="height" :data="insurancePolicy.list" stripe row-key="id" @sort-change="handleSubmitDateSort" @expand-change="expandChange" @row-click="showInsuranceDetail">
+      <el-table v-loading="insurancePolicyLoading" :data="insurancePolicy.list" stripe row-key="id" @sort-change="handleSubmitDateSort" @expand-change="expandChange" @row-click="showInsuranceDetail">
         <!-- <el-table-column type="expand">
           <template slot-scope="scope">
             <div>
@@ -67,7 +67,7 @@
             </div>
           </template>
         </el-table-column> -->
-        <el-table-column align="center" :label="$t('client.insurance_policy.number')" prop="number" show-overflow-tooltip min-width="120" />
+        <el-table-column :label="$t('client.insurance_policy.number')" prop="number" show-overflow-tooltip min-width="120" />
         <el-table-column :label="$t('client.insurance_policy.sn')" prop="sn" show-overflow-tooltip min-width="120" sortable="custom" />
         <el-table-column :formatter="dateFormat" :label="$t('client.insurance_policy.submitDate')" prop="submitDate" min-width="140" sortable="custom" />
         <el-table-column :label="$t('client.insurance_policy.policyStatus')" prop="policyStatus" min-width="100">
@@ -157,9 +157,9 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="policy-list-bottom">
-        <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+      <div class="table-bottom">
         <add v-if="hasPermission(100044)" :list-query="listQuery" :year="year" />
+        <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
       </div>
     </basic-container>
     <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">

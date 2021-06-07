@@ -77,7 +77,7 @@ export default {
         language_url: language_url,
         language: language,
         skin_url: "/static/tinymce/skins/lightgray",
-        height: (winWidth / 1680) * 300,
+        height: 310,
         plugins: this.plugins,
         toolbar: this.toolbar,
         branding: false,

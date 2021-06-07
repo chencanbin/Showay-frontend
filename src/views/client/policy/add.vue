@@ -1,5 +1,5 @@
 <template>
-  <el-col span.number="24" class="el-table-add-col">
+  <div class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
     <el-dialog v-el-drag-dialog id="add-policy" :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.insurance_policy.set.add_title')" top="10px" width="800px">
@@ -160,7 +160,7 @@
         <el-button :loading="submitLoading" type="primary" @click="handleSubmit">{{ $t("common.submitButton") }}</el-button>
       </div>
     </el-dialog>
-  </el-col>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -409,7 +409,10 @@ export default {
   },
 };
 </script>
-<style ref="sc" type="text/scss"  lang="scss">
+<style type="text/scss" lang="scss">
+.el-table-add-col {
+  width: 900px;
+}
 #add-policy {
   .insurance-policy-form {
     font-size: 0;

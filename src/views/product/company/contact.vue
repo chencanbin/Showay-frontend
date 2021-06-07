@@ -4,7 +4,7 @@
       {{ $t("product.company.set.edit_contact_title") }}
     </el-button>
     <el-dialog id="contact-wrapper" :visible="dialogVisible" :before-close="handleClose" :title="generateTitle()" :fullscreen="true" center append-to-body>
-      <el-table v-loading="contactLoading" :height="height" :data="contactList.list" stripe>
+      <el-table v-loading="contactLoading" :data="contactList.list" stripe>
         <el-table-column :label="$t('product.company.set.contacts_name')" prop="name" show-overflow-tooltip />
         <el-table-column :label="$t('product.company.set.contacts_title')" prop="title" show-overflow-tooltip />
         <el-table-column :label="$t('product.company.set.contacts_phone')" prop="phone" show-overflow-tooltip />

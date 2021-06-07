@@ -1,38 +1,19 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <el-table 
-        v-loading="loading" 
-        :data="roles" 
-        :height="height" 
-        stripe>
-        <el-table-column 
-          prop="id" 
-          label="ID" />
-        <el-table-column 
-          :label="$t('role.name')" 
-          prop="name" />
-        <el-table-column
-          :formatter="dateFormat"
-          :label="$t('user.create_time')"
-          prop="creationDay"
-        />
-        <el-table-column 
-          :label="$t('common.action')" 
-          width="80px">
+      <el-table v-loading="loading" :data="roles" stripe>
+        <el-table-column prop="id" label="ID" />
+        <el-table-column :label="$t('role.name')" prop="name" />
+        <el-table-column :formatter="dateFormat" :label="$t('user.create_time')" prop="creationDay" />
+        <el-table-column align="center" :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown>
-              <el-button 
-                type="primary" 
-                plain 
-                size="mini">
+              <el-button type="primary" plain size="mini">
                 <i class="el-icon-more" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit 
-                    :role="scope.row" 
-                    @afterUpdateRole="afterUpdateRole" />
+                  <edit :role="scope.row" @afterUpdateRole="afterUpdateRole" />
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>

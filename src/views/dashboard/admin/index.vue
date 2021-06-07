@@ -120,7 +120,6 @@ export default {
     margin-bottom: 32px;
   }
   .chart-row {
-    height: 400px;
     margin-bottom: 16px;
   }
 }

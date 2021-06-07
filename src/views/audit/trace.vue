@@ -1,31 +1,10 @@
 <template>
   <span id="trace">
-    <el-button
-      type="text"
-      size="small"
-      icon="el-icon-edit"
-      style="margin-right: 10px"
-      @click="initForm"
-    >{{ $t("audit.detail") }}</el-button
-    >
-    <el-dialog
-      v-el-drag-dialog
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('audit.detail_title')"
-      top="10px"
-      width="450px"
-    >
-      <div 
-        class="block" 
-        style="min-height: 200px">
+    <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ $t("audit.detail") }}</el-button>
+    <el-dialog v-el-drag-dialog :visible="dialogVisible" :before-close="handleClose" :title="$t('audit.detail_title')" top="10px" width="450px">
+      <div class="block" style="min-height: 200px">
         <el-timeline v-loading="loading">
-          <el-timeline-item
-            v-for="trace in traceList"
-            :key="trace.id"
-            :timestamp="dateFormat(trace.timestamp)"
-            placement="top"
-          >
+          <el-timeline-item v-for="trace in traceList" :key="trace.id" :timestamp="dateFormat(trace.timestamp)" placement="top">
             <el-card>
               <h4>{{ getTraceDesc(trace.type) }}</h4>
               <p>{{ $t("audit.doer") }}: {{ trace.doer.name }}</p>

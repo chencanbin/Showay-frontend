@@ -97,13 +97,13 @@ export const asyncRouterMap = [
         path: 'productCommission',
         component: () => import('@/views/product/commission/index'),
         name: 'productCommission',
-        meta: { title: 'productCommission', icon: 'icon_commission_nor-28', noCache: true, id: 100016 }
+        meta: { title: 'productCommission', icon: 'icon_commission_nor', noCache: true, id: 100016 }
       },
       {
         path: 'channelCommission',
         component: () => import('@/views/product/channel/index'),
         name: 'channelCommission',
-        meta: { title: 'channelCommission', icon: 'icon_qudaoyj_select', noCache: true, id: 100082 }
+        meta: { title: 'channelCommission', icon: 'icon_qudaoyj_nor', noCache: true, id: 100082 }
       }
     ]
   },
@@ -111,13 +111,13 @@ export const asyncRouterMap = [
     path: '/client',
     component: Layout,
     redirect: 'noredirect',
-    meta: { title: 'client', icon: 'icon_home_kehu', noCache: true },
+    meta: { title: 'client', icon: 'icon_home_kehu_nor', noCache: true },
     children: [
       {
         path: '/insurancePolicy',
         component: () => import('@/views/client/policy'),
         name: 'insurancePolicy',
-        meta: { title: 'insurancePolicy', icon: 'icon_kehu_baodan_select', noCache: true, id: 100045 }
+        meta: { title: 'insurancePolicy', icon: 'icon_kehu_baodan_nor', noCache: true, id: 100045 }
       },
       {
         path: '/clientInfo',
@@ -131,7 +131,7 @@ export const asyncRouterMap = [
     path: '/commission',
     component: Layout,
     redirect: 'noredirect',
-    meta: { title: 'commission', icon: 'icon_home_yongjin', noCache: true },
+    meta: { title: 'commission', icon: 'icon_home_yongjin_nor', noCache: true },
     children: [
       {
         path: 'commissionCredit',
@@ -168,7 +168,7 @@ export const asyncRouterMap = [
         path: '',
         name: 'audit',
         component: () => import('@/views/audit/index'),
-        meta: { title: 'audit', icon: 'icon_home_baodan', noCache: true, id: 100049 }
+        meta: { title: 'audit', icon: 'icon_home_baodan_nor', noCache: true, id: 100049 }
       }
     ]
   },
@@ -208,13 +208,13 @@ export const asyncRouterMap = [
         path: 'internalDocument',
         component: () => import('@/views/document/internalDocument'),
         name: 'internalDocument',
-        meta: { title: 'internalDocument', icon: 'icon_file_interior_select', noCache: true, id: 100078 }
+        meta: { title: 'internalDocument', icon: 'icon_file_interior_nor', noCache: true, id: 100078 }
       },
       {
         path: 'companyDocument',
         component: () => import('@/views/document/companyDocument'),
         name: 'companyDocument',
-        meta: { title: 'companyDocument', icon: 'icon_commission_nor-43', noCache: true, id: 100074 }
+        meta: { title: 'companyDocument', icon: 'icon_commission-43_nor', noCache: true, id: 100074 }
       }
     ]
   },
@@ -235,7 +235,7 @@ export const asyncRouterMap = [
     path: '/system',
     component: Layout,
     redirect: 'user',
-    meta: { title: 'system', icon: 'icon_home_setting_nor', noCache: true },
+    meta: { title: 'system', icon: 'icon_home_setting', noCache: true },
     children: [
       {
         path: 'user',

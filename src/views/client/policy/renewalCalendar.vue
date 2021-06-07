@@ -12,7 +12,7 @@
             <span class="tabs_item" :class="activeName === 'renewal' ? 'active': ''" @click="switchTab('renewal')">{{$t('client.insurance_policy.renewal_calendar')}}</span>
             <span class="tabs_item" :class="activeName === 'reservation：' ? 'active': ''" @click="switchTab('reservation：')">预约日历</span>
           </div>
-          <full-calendar ref="fullCalendar" :events="events" locale="zh-cn" @triggerDay="triggerDay" @changeMonth="changeMonth" @updateRenewalStatus="updateRenewalStatus">
+          <full-calendar ref="fullCalendar" :events="events" locale="zh-cn" @triggerDay="triggerDay" @changeMonth="changeMonth">
             <template slot="fc-event-more-item" slot-scope="p">
               <el-popover placement="top-start" trigger="click">
                 <el-card style="padding: 10px">
@@ -235,6 +235,17 @@ export default {
         })
         .catch((_) => { });
     },
+    renewalChange(val) {
+      this.$api.client.editCalendarRenewal(val.detail.id).then((res) => {
+        this.$message({
+          message: this.$t("common.success"),
+          type: "success",
+          duration: 5 * 1000,
+        });
+        // this.getCalendarRenewal({ from: this.from, to: this.to });
+        this.updateRenewalStatus();
+      });
+    },
     judgeEventStatus(event) {
       const now = new Date().valueOf();
       if (event.detail.status === 1) {
@@ -333,9 +344,12 @@ export default {
   line-height: 10px;
   .calendar-wrapper {
     display: flex;
+    justify-content: space-between;
     .calendar {
-      width: 100%;
+      flex: 1;
+      min-width: 0;
       position: relative;
+      flex: 1;
       .comp-full-calendar {
         max-width: 100%;
         margin: 0 48px 0 32px;

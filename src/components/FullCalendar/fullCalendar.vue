@@ -21,7 +21,7 @@
           <!-- absolute so we can make dynamic td -->
           <div class="dates-events">
             <div v-for="(week, index) in currentDates" :key="index" class="events-week">
-              <div v-for="(day, index) in week" :key="index" :class="{ today: day.isToday, 'not-cur-month': !day.isCurMonth }" track-by="$index" class="events-day" @click.stop="dayClick(day)">
+              <div v-for="(day, index) in week" :key="index" :class="{ today: day.isToday, 'not-cur-month': !day.isCurMonth, 'is-selected': day.monthDay === selectDay.monthDay}" track-by="$index" class="events-day" @click.stop="dayClick(day)">
                 <!--@click.stop="dayClick(day.date, $event)"-->
                 <p class="day-number">{{ day.monthDay }}</p>
                 <span v-if="day.events.length" class="ordinary_tip">
@@ -289,6 +289,7 @@ export default {
     },
     dayClick(day) {
       console.log(day)
+      this.selectDay = day;
       if (!day.events.length) {
         return
       }
@@ -500,6 +501,9 @@ export default {
           }
           .today {
           }
+        }
+        .is-selected {
+          background: #f2f2f8;
         }
       }
 

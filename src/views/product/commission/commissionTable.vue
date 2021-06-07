@@ -919,9 +919,7 @@ export default {
   color: #3a4735;
   font-size: 14px;
 }
-.el-dialog__headerbtn {
-  top: 5px;
-}
+
 .htContextMenu:not(.htGhostTable) {
   z-index: 2200;
 }

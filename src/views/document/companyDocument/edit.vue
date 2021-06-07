@@ -3,7 +3,6 @@
     <el-button 
       type="text" 
       size="small" 
-      icon="el-icon-edit" 
       @click="initForm">{{
         this.$t("common.edit")
       }}</el-button>

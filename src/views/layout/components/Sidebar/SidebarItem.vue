@@ -5,7 +5,7 @@
           (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
           !item.alwaysShow
       ">
-      <app-link :to="resolvePath(onlyOneChild.path)">
+      <app-link :to="resolvePath(onlyOneChild.path)" @click.native="onMenuItemClick(onlyOneChild,$event)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
           <item v-if="onlyOneChild.meta" :icon="onlyOneChild.meta.icon || item.meta.icon" :title="generateTitle(onlyOneChild.meta.title)" />
         </el-menu-item>
@@ -19,7 +19,7 @@
       <template v-for="child in item.children" v-if="!child.hidden">
         <sidebar-item v-if="child.children && child.children.length > 0" :is-nest="true" :item="child" :key="child.path" :base-path="resolvePath(child.path)" class="nest-menu" />
         <app-link v-else :to="resolvePath(child.path)" :key="child.name">
-          <el-menu-item :index="resolvePath(child.path)">
+          <el-menu-item :index="resolvePath(child.path)" @click.native="onMenuItemClick(child,$event)">
             <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" />
           </el-menu-item>
         </app-link>
@@ -58,9 +58,20 @@ export default {
   data() {
     return {
       onlyOneChild: null,
+      currentChild: ''
     };
   },
   methods: {
+    onMenuItemClick(item, $event) {
+      if (this.currentChild) {
+        const iconStr = this.currentChild.meta.icon.slice(0, -7)
+        console.log(iconStr)
+        this.currentChild.meta.icon = `${iconStr}_nor`
+      }
+      this.currentChild = item
+      const iconStr = item.meta.icon.slice(0, -4)
+      item.meta.icon = `${iconStr}_select`
+    },
     hasOneShowingChild(children, parent) {
       const showingChildren = children.filter((item) => {
         if (item.hidden) {

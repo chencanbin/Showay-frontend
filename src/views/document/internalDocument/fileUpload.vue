@@ -94,9 +94,9 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 .file-upload .el-upload {
-  margin-top: 20px;
   width: 100%;
   height: 150px;
+  margin-top: 24px;
 }
 .file-upload .el-upload-dragger {
   width: 100%;

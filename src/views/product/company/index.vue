@@ -98,9 +98,9 @@
       </el-table> -->
       <div class="list" v-loading="companyLoading">
         <div class="list_item" v-for="row in companyList.list" :key="row.id">
-          <div class="row">
+          <div class="row" style="height: 60px; line-height: 60px">
             <span class="company_name">{{ row.acronym }} - {{ row.name }}</span>
-            <span class="content">
+            <span>
               <el-dropdown>
                 <el-button type="primary" plain size="mini">
                   <i class="el-icon-more" />
@@ -322,8 +322,8 @@ export default {
       font-size: 18px;
     }
     .list_item {
-      width: 530px;
-      padding: 18px 24px;
+      width: 455px;
+      padding: 8px 20px;
       border-radius: 8px;
       border: 1px solid #e9e8f0;
       margin-bottom: 24px;
@@ -341,7 +341,6 @@ export default {
           font-weight: 500;
           text-align: right;
           color: $--content;
-          width: 365px;
           a {
             display: inline-block;
           }

@@ -6,7 +6,6 @@
 import echarts from "echarts";
 require("echarts/theme/macarons"); // echarts theme
 import { debounce } from "@/utils";
-const winWidth = document.body.offsetWidth;
 export default {
   props: {
     className: {

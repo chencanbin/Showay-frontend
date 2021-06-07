@@ -2,7 +2,7 @@
   <el-col class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
-    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('user.set.add_channel_title')" width="500px">
+    <el-dialog append-to-body v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('user.set.add_channel_title')" width="500px">
       <el-form ref="account" :model="account" :rules="ruleAccount" label-width="100px">
         <el-form-item :label="$t('client.insurance_policy.channel')" prop="channel">
           <el-select v-model="account.channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable style="width: 100%" @change="onChannelChange">

@@ -8,7 +8,7 @@
               <i slot="prefix" class="el-input__icon el-icon-search" />
             </el-input>
           </el-form-item>
-          <el-table v-loading="loading" :height="height" :data="channelCommissionPayment.list" stripe border>
+          <el-table v-loading="loading" :data="channelCommissionPayment.list" stripe border>
             <el-table-column type="expand">
               <template slot-scope="scope">
                 <el-form label-position="right" inline class="channelCommissionPayment-table-expand" label-width="80px">

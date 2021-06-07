@@ -1,61 +1,26 @@
 <template>
   <div class="table-container">
     <basic-container>
-      <pagination
-        :total="templates.total"
-        :page="listQuery.page"
-        :limit="listQuery.limit"
-        @pagination="pagination"
-        @update:page="updatePage"
-        @update:limit="updateLimit"
-      />
-      <el-table
-        v-loading="loading"
-        :data="templates.list"
-        :height="height"
-        stripe
-      >
-        <el-table-column 
-          width="50px" 
-          align="center">
+      <el-table v-loading="loading" :data="templates.list" :height="height" stripe>
+        <el-table-column width="50px" align="center">
           <template slot-scope="scope">
-            <svg-icon
-              v-if="scope.row.isBuiltin"
-              icon-class="lock"
-              style="font-size: 18px"
-            />
+            <svg-icon v-if="scope.row.isBuiltin" icon-class="lock" style="font-size: 18px" />
           </template>
         </el-table-column>
-        <el-table-column 
-          :label="$t('template.title')" 
-          prop="title" />
-        <el-table-column 
-          :label="$t('template.subject')" 
-          prop="subject" />
-        <el-table-column 
-          :label="$t('common.action')" 
-          width="80px">
+        <el-table-column :label="$t('template.title')" prop="title" />
+        <el-table-column :label="$t('template.subject')" prop="subject" />
+        <el-table-column :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown>
-              <el-button 
-                type="primary" 
-                plain 
-                size="mini">
+              <el-button type="primary" plain size="mini">
                 <i class="el-icon-more" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit 
-                    :id="scope.row.id" 
-                    @submitSuccess="submitSuccess" />
+                  <edit :id="scope.row.id" @submitSuccess="submitSuccess" />
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button
-                    v-if="hasPermission(100085) && !scope.row.isBuiltin"
-                    type="text"
-                    size="small"
-                    @click="handleDelete(scope.row.id)"
-                  >{{ $t("common.delete") }}
+                  <el-button v-if="hasPermission(100085) && !scope.row.isBuiltin" type="text" size="small" @click="handleDelete(scope.row.id)">{{ $t("common.delete") }}
                   </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -63,7 +28,12 @@
           </template>
         </el-table-column>
       </el-table>
-      <add @submitSuccess="submitSuccess" />
+      <div class="table-bottom">
+        <add @submitSuccess="submitSuccess" />
+        <pagination :total="templates.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+
+      </div>
+
     </basic-container>
   </div>
 </template>
@@ -136,7 +106,7 @@ export default {
             }
           },
         }
-      ).then(() => {});
+      ).then(() => { });
     },
     submitSuccess() {
       this.getTemplates();

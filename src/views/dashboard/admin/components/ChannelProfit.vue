@@ -16,7 +16,6 @@
 import G2 from "@antv/g2";
 import accounting from "accounting";
 import { getYearFirst, getYearLast } from "@/utils";
-const winWidth = document.body.offsetWidth;
 export default {
   name: "",
   data() {
@@ -67,7 +66,7 @@ export default {
       this.chart = new G2.Chart({
         container: "channelProfit",
         forceFit: true,
-        height: (winWidth / 1680) * 300,
+        height: 310,
         padding: [30, 20, 20, 90],
       });
       this.chart.source(this.afyp);

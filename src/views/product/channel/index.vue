@@ -423,11 +423,5 @@ export default {
       }
     }
   }
-  .el-table__row td:first-child {
-    padding-left: 47px;
-  }
-  .el-table th:first-child {
-    padding-left: 47px;
-  }
 }
 </style>

@@ -69,6 +69,8 @@
         <div class="client_empty"></div>
         <div class="client_empty"></div>
         <div class="client_empty"></div>
+        <div class="client_empty"></div>
+        <div class="client_empty"></div>
       </div>
       <div class="client-list-bottom">
         <add :list-query="listQuery" ref="addClient" />
@@ -238,7 +240,6 @@ export default {
   }
 
   .client_list_wrapper {
-    padding: 24px 24px 60px 24px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;

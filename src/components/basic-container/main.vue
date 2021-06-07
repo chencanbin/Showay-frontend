@@ -17,13 +17,13 @@ export default {
   border-radius: 8px;
   box-sizing: border-box;
   background: #fff;
-  padding: 24px;
+  padding: 24px 24px 40px 24px;
   .el-card {
     border-radius: 8px;
     width: 100%;
   }
-  &:first-child {
-    padding-top: 0;
-  }
+  // &:first-child {
+  //   padding-top: 0;
+  // }
 }
 </style>

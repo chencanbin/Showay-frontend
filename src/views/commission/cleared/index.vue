@@ -10,7 +10,7 @@
         <el-date-picker :clearable="true" :unlink-panels="true" v-model="year" type="daterange" value-format="timestamp" style="margin-left: 20px" />
       </el-form-item>
     </el-form>
-    <el-table v-loading="auditPaymentLoading" height="65vh" :data="auditPayment.list" stripe border>
+    <el-table v-loading="auditPaymentLoading" :data="auditPayment.list" stripe border>
       <el-table-column :label="$t('commission.payment.channel')" prop="channel.name" min-width="150" />
       <el-table-column :label="$t('commission.payment.amountInHkd')" min-width="150">
         <template slot-scope="scope">

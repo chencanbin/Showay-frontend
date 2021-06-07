@@ -88,7 +88,6 @@
    box-shadow: none;
    border: none !important;
    height: 100%;
-   overflow: auto;
  }
 
  .pagination {
@@ -230,6 +229,32 @@
    }
  }
 
+ .el-table__row td:first-child {
+   padding-left: 47px;
+ }
+
+ .el-table th:first-child {
+   padding-left: 47px;
+
+   .cell {
+     padding-left: 0;
+   }
+ }
+
+ .table-bottom {
+   position: fixed;
+   bottom: 0;
+   left: 216px;
+   height: 60px;
+   background: #fff;
+   display: flex;
+   justify-content: space-between;
+   border-top: #e9e8f0 solid 1px;
+   box-sizing: border-box;
+   width: calc(100% - 232px);
+   z-index: 10;
+ }
+
  .el-button--mini {
    padding: 4px 10px;
  }
@@ -324,4 +349,8 @@
  .iconfont {
    font-size: 30px;
    margin-right: 12px;
+ }
+
+ .el-select__tags {
+   max-width: 400px !important;
  }

@@ -1,53 +1,19 @@
 <template>
-  <div 
-    id="user" 
-    class="table-container">
+  <div id="user" class="table-container">
     <basic-container>
-      <pagination
-        :total="users.total"
-        :page="listQuery.page"
-        :limit="listQuery.limit"
-        @pagination="pagination"
-        @update:page="updatePage"
-        @update:limit="updateLimit"
-      />
-      <el-table
-        v-loading="userLoading"
-        :data="users.list"
-        :row-class-name="setClassName"
-        :height="height"
-        :expand-row-keys="expandKeys"
-        row-key="id"
-        stripe
-        @expand-change="expandChange"
-      >
-        <el-table-column 
-          v-if="hasPermission(100108)" 
-          type="expand">
+      <el-table v-loading="userLoading" :data="users.list" :row-class-name="setClassName" @row-click="expandChange" row-key="id" stripe>
+        <!-- <el-table-column v-if="hasPermission(100108)" type="expand">
           <template slot-scope="scope">
-            <div 
-              v-loading="channelHierarchyLoading" 
-              class="clearfix">
+            <div v-loading="channelHierarchyLoading" class="clearfix">
               <el-timeline id="channelCommissionTableList">
-                <div
-                  v-if="
+                <div v-if="
                     channelHierarchy.list && channelHierarchy.list.length === 0
-                  "
-                  style="text-align: center; color: #909399"
-                >
+                  " style="text-align: center; color: #909399">
                   {{ $t("user.set.none_superior") }}
                 </div>
-                <el-timeline-item
-                  v-for="(item, index) in channelHierarchy.list"
-                  :key="index"
-                  :timestamp="getFormattedDate(item.effectiveDate)"
-                  placement="top"
-                >
+                <el-timeline-item v-for="(item, index) in channelHierarchy.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
                   <el-dropdown class="action-dropdown">
-                    <el-button 
-                      type="primary" 
-                      plain 
-                      size="mini">
+                    <el-button type="primary" plain size="mini">
                       <i class="el-icon-more" />
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
@@ -55,12 +21,7 @@
                         <edit-channel-hierarchy :hierarchy="item" />
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <el-button
-                          type="text"
-                          size="small"
-                          @click="handleDeleteChannelHierarchy(item.id)"
-                        >{{ $t("common.delete") }}</el-button
-                        >
+                        <el-button type="text" size="small" @click="handleDeleteChannelHierarchy(item.id)">{{ $t("common.delete") }}</el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -80,87 +41,40 @@
               <add-channel-hierarchy :user="scope.row" />
             </div>
           </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('user.name')"
-          prop="name"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          :label="$t('user.acronym')"
-          prop="acronym"
-          show-overflow-tooltip
-        />
-        <el-table-column 
-          :label="$t('user.account')" 
-          prop="login" />
+        </el-table-column> -->
+        <el-table-column :label="$t('user.name')" prop="name" show-overflow-tooltip />
+        <el-table-column :label="$t('user.acronym')" prop="acronym" show-overflow-tooltip />
+        <el-table-column :label="$t('user.account')" prop="login" />
         <!--<el-table-column :label="$t('user.superior')" prop="superior.name" show-overflow-tooltip/>-->
-        <el-table-column
-          :label="$t('user.role')"
-          prop="roles"
-          min-width="100px"
-        >
+        <el-table-column :label="$t('user.role')" prop="roles" min-width="100px">
           <template slot-scope="scope">
-            <el-tag
-              v-for="role in scope.row.roles"
-              :key="role.id"
-              type="success"
-              style="margin-right: 5px"
-            >
+            <el-tag v-for="role in scope.row.roles" :key="role.id" type="success" style="margin-right: 5px">
               {{ role.name }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('client.info.email')"
-          prop="email"
-          min-width="100px"
-        />
-        <el-table-column 
-          :label="$t('user.locked')" 
-          min-width="100px">
+        <el-table-column :label="$t('client.info.email')" prop="email" min-width="100px" />
+        <el-table-column :label="$t('user.locked')" min-width="100px">
           <template slot-scope="scope">
-            <el-switch
-              v-if="!scope.row.isBuiltin"
-              v-model="scope.row.isLocked"
-              :active-text="$t('user.locked')"
-              @change="onLockAccount(scope.row)"
-            />
+            <el-switch v-if="!scope.row.isBuiltin" v-model="scope.row.isLocked" :active-text="$t('user.locked')" @change="onLockAccount(scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column 
-          :label="$t('common.action')" 
-          width="80px">
+        <el-table-column :label="$t('common.action')" width="80px">
           <template slot-scope="scope">
             <el-dropdown v-if="!scope.row.isBuiltin">
-              <el-button 
-                type="primary" 
-                plain 
-                size="mini">
+              <el-button type="primary" plain size="mini">
                 <i class="el-icon-more" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <edit 
-                    v-if="hasPermission(100084)" 
-                    :user="scope.row" />
+                  <edit v-if="hasPermission(100084)" :user="scope.row" />
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button
-                    v-if="hasPermission(100085) && !scope.row.isBuiltin"
-                    type="text"
-                    size="small"
-                    @click="verifyPassword(scope.$index, scope.row)"
-                  >{{ $t("common.reset_password") }}
+                  <el-button v-if="hasPermission(100085) && !scope.row.isBuiltin" type="text" size="small" @click="verifyPassword(scope.$index, scope.row)">{{ $t("common.reset_password") }}
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button
-                    v-if="hasPermission(100085) && !scope.row.isBuiltin"
-                    type="text"
-                    size="small"
-                    @click="handleDelete(scope.$index, scope.row)"
-                  >{{ $t("common.delete") }}
+                  <el-button v-if="hasPermission(100085) && !scope.row.isBuiltin" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
                   </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -168,36 +82,47 @@
           </template>
         </el-table-column>
       </el-table>
-      <add v-if="hasPermission(100081)" />
+
+      <div class="table-bottom">
+        <add v-if="hasPermission(100081)" />
+        <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+      </div>
     </basic-container>
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('common.password_verify') + ' - ' + name"
-      width="400px"
-    >
-      <el-input
-        v-model="password"
-        :placeholder="$t('login.password_placeholder')"
-        type="password"
-      />
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">
+      <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password" />
       <div class="tips_text">* {{ $t("common.password_verify_text") }}</div>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button
-          :loading="resetLoading"
-          type="primary"
-          @click="handleResetPassword"
-        >{{ $t("common.submitButton") }}</el-button
-        >
+        <el-button :loading="resetLoading" type="primary" @click="handleResetPassword">{{ $t("common.submitButton") }}</el-button>
       </div>
     </el-dialog>
+
+    <el-drawer v-if="hasPermission(100108)" class="user-detail-wrapper" :modal="false" title="用户详情" :visible.sync="drawer" :direction="direction">
+      <div class="user-detail">
+        <el-timeline v-loading="channelHierarchyLoading">
+          <div v-if="channelHierarchy.list && channelHierarchy.list.length === 0" style="text-align: center; color: #909399">
+            {{$t("product.commission.commission_table_list.no_commission_table")}}
+          </div>
+          <el-timeline-item v-for="(item, index) in channelHierarchy.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
+            <el-dropdown class="action-dropdown">
+              <el-button type="primary" plain size="mini">
+                <i class="el-icon-more" />
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+              </el-dropdown-menu>
+            </el-dropdown>
+            <div class="user_info">
+              <div class="row" v-if="item.remarks">
+                <span class="label">{{ $t("common.remarks") }}:</span>
+                <span class="content remark"> {{ item.remarks }}</span>
+              </div>
+            </div>
+          </el-timeline-item>
+        </el-timeline>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -236,6 +161,9 @@ export default {
         page: 1,
         limit: 50,
       },
+      drawer: false,
+      direction: 'rtl',
+      currentRow: ''
     };
   },
   computed: {
@@ -287,7 +215,7 @@ export default {
             done();
           }
         },
-      }).then(() => {});
+      }).then(() => { });
     },
     handleDeleteChannelHierarchy(id) {
       this.$confirm(
@@ -320,7 +248,7 @@ export default {
             }
           },
         }
-      ).then(() => {});
+      ).then(() => { });
     },
     dateFormat(row, column) {
       const date = row[column.property];
@@ -335,19 +263,23 @@ export default {
     getFormattedDate(value) {
       return parseTime(value, "{y}-{m}-{d}");
     },
-    expandChange(row, expandedRows) {
-      if (this.expandKeys.indexOf(row.id) >= 0) {
-        // 收起当前行
-        this.expandKeys.shift();
-        return;
-      }
+    expandChange(row) {
+      this.currentRow = row;
       this.getChannelHierarchy({ owner: row.id });
-      this.expandKeys.shift();
-      this.expandKeys.push(row.id);
-      if (expandedRows.length > 1) {
-        // 只展开当前选项
-        expandedRows.shift();
-      }
+      this.drawer = true;
+
+      // if (this.expandKeys.indexOf(row.id) >= 0) {
+      //   // 收起当前行
+      //   this.expandKeys.shift();
+      //   return;
+      // }
+      // this.getChannelHierarchy({ owner: row.id });
+      // this.expandKeys.shift();
+      // this.expandKeys.push(row.id);
+      // if (expandedRows.length > 1) {
+      //   // 只展开当前选项
+      //   expandedRows.shift();
+      // }
     },
     pagination(pageObj) {
       const offset = (pageObj.page - 1) * pageObj.limit;

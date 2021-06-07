@@ -411,7 +411,7 @@ export default {
 #commissionTable {
   .el-table__body-wrapper {
     overflow-y: auto !important;
-    padding-bottom: 50px;
+    padding-bottom: 20px;
   }
 
   .commission-detail-wrapper {
@@ -493,12 +493,7 @@ export default {
     width: calc(100% - 232px);
     z-index: 10;
   }
-  .el-table__row td:first-child {
-    padding-left: 47px;
-  }
-  .el-table th:first-child {
-    padding-left: 47px;
-  }
+
 }
 </style>
 
