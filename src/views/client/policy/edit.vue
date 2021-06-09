@@ -3,7 +3,7 @@
     <el-button type="text" size="small" @click="initForm">{{
         this.$t("common.edit")
       }}</el-button>
-    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.insurance_policy.set.edit_title')" top="50px" width="800px" append-to-body>
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.insurance_policy.set.edit_title')" top="50px" width="900px" append-to-body>
       <el-form ref="insurancePolicy" :model="insurancePolicy" inline class="insurance-policy-form" label-width="100px">
         <el-tabs v-model="activeName">
           <el-tab-pane :label="$t('client.insurance_policy.basic_info')" name="basic">
@@ -101,14 +101,14 @@
               </el-select>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane :label="$t('client.insurance_policy.beneficiary_name')" name="beneficiary">
+          <el-tab-pane :label="$t('client.insurance_policy.beneficiary_name')" name="beneficiary" class="add-beneficiary">
             <el-card>
               <div slot="header" class="clearfix">
-                <el-button style="float: right; padding: 3px 0" type="text" @click="addBeneficiary">{{
+                <el-button style="float: right; padding: 10px" type="primary" plain @click="addBeneficiary">+ {{
                     $t("client.insurance_policy.set.add_beneficiary")
                   }}</el-button>
               </div>
-              <div v-for="(item, index) in insurancePolicy.beneficiaries" :key="index" style="margin-bottom: 10px">
+              <div v-for="(item, index) in insurancePolicy.beneficiaries" :key="index" class="beneficiary-wrapper">
                 <el-form-item :rules="{
                     required: true,
                     message: $t('client.insurance_policy.set.beneficiary_name'),
@@ -140,10 +140,9 @@
                   </el-input>
                 </el-form-item>
                 <el-button icon="el-icon-remove-outline" size="small" style="
-                    min-width: 40px;
                     font-size: 20px;
-                    padding: 6px;
-                    vertical-align: middle;
+                    width: 48px;
+                    height: 36px;
                   " @click="removeBeneficiary(index)" />
               </div>
             </el-card>
@@ -490,21 +489,24 @@ export default {
 </script>
 <style type="text/scss"  lang="scss">
 .insurance-policy-form {
-  font-size: 0;
   .el-form-item {
-    margin-bottom: 15px;
     margin-right: 10px;
+    margin-bottom: 0;
     width: 48%;
   }
   .el-form-item__content {
     width: 65%;
   }
-  .beneficiary_form_item {
-    .el-form-item__label {
-      width: 70px !important;
+  .beneficiary-wrapper {
+    display: flex;
+    margin-bottom: 16px;
+    .beneficiary_form_item {
+      .el-form-item__label {
+        width: 70px !important;
+      }
     }
-    width: 30%;
   }
+
   .el-card__header {
     padding: 10px 20px;
     margin-bottom: 10px;

@@ -1,89 +1,35 @@
 <template>
-  <el-col 
-    span.number="24" 
-    class="el-table-add-col">
-    <el-button 
-      class="el-table-add-row" 
-      plain 
-      type="primary" 
-      @click="initForm"
-    >+ {{ $t("common.add") }}</el-button
-    >
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      title="添加渠道上级"
-      width="400px"
-    >
-      <el-form 
-        ref="channel" 
-        :model="channel" 
-        label-width="80px">
-        <el-form-item 
-          :label="$t('user.name')" 
-          prop="name">
+  <el-col span.number="24" class="el-table-add-col">
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
+    <el-dialog append-to-body v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" title="添加渠道上级" width="400px">
+      <el-form ref="channel" :model="channel" label-width="80px">
+        <el-form-item :label="$t('user.name')" prop="name">
           {{ user.name }}
         </el-form-item>
-        <el-form-item 
-          :label="$t('user.acronym')" 
-          prop="acronym">
+        <el-form-item :label="$t('user.acronym')" prop="acronym">
           {{ user.acronym }}
         </el-form-item>
-        <el-form-item 
-          :label="$t('user.account')" 
-          prop="login">
+        <el-form-item :label="$t('user.account')" prop="login">
           {{ user.login }}
         </el-form-item>
-        <el-form-item 
-          :label="$t('user.superior')" 
-          prop="superior">
-          <el-select
-            v-model="channel.superior"
-            :placeholder="$t('user.set.superior')"
-            clearable
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in users"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
+        <el-form-item :label="$t('user.superior')" prop="superior">
+          <el-select v-model="channel.superior" :placeholder="$t('user.set.superior')" clearable style="width: 100%">
+            <el-option v-for="item in users" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item 
-          :label="$t('user.effectiveDate')" 
-          prop="effectiveDate">
-          <el-date-picker
-            v-model="channel.effectiveDate"
-            :placeholder="$t('user.set.effectiveDate')"
-            type="date"
-            value-format="timestamp"
-            style="width: 100%"
-          />
+        <el-form-item :label="$t('user.effectiveDate')" prop="effectiveDate">
+          <el-date-picker v-model="channel.effectiveDate" :placeholder="$t('user.set.effectiveDate')" type="date" value-format="timestamp" style="width: 100%" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('common.remarks')" 
-          prop="remarks">
-          <el-input
-            v-model="channel.remarks"
-            :placeholder="$t('common.remarks_placeholder')"
-          />
+        <el-form-item :label="$t('common.remarks')" prop="remarks">
+          <el-input v-model="channel.remarks" :placeholder="$t('common.remarks_placeholder')" />
         </el-form-item>
       </el-form>
 
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>

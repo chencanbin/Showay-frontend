@@ -23,56 +23,58 @@
             </el-breadcrumb>
             <add v-if="hasPermission(100092)" :folder-id="folderId" @afterAddFolder="afterAddFolder" />
           </el-row>
-          <div class="table-wrapper">
-            <el-table v-loading="fileLoading" :data="folder.items" :show-header="false" stripe>
-              <el-table-column show-overflow-tooltip prop="name">
-                <template slot-scope="scope">
-                  <div class="file-item-wrapper">
-                    <span v-if="!scope.row.extention" class="iconfont icon_file_nor" />
-                    <span v-else class="iconfont" :class="getFileType(scope.row.extention)" />
-                    <a v-if="!scope.row.resourceKey" class="folderLink" @click="handleTableFolderClick(scope.row.id)">{{ scope.row.name }}</a>
-                    <a v-else-if="
+          <div class="content-wrapper">
+            <div class="table-wrapper">
+              <el-table v-loading="fileLoading" :data="folder.items" :show-header="false" stripe>
+                <el-table-column show-overflow-tooltip prop="name">
+                  <template slot-scope="scope">
+                    <div class="file-item-wrapper">
+                      <span v-if="!scope.row.extention" class="iconfont icon_file_nor" />
+                      <span v-else class="iconfont" :class="getFileType(scope.row.extention)" />
+                      <a v-if="!scope.row.resourceKey" class="folderLink" @click="handleTableFolderClick(scope.row.id)">{{ scope.row.name }}</a>
+                      <a v-else-if="
                   scope.row.resourceKey &&
                     scope.row.extention === 'application/pdf'
                 " class="folderLink" @click="viewPdf(scope.row)">{{ scope.row.name }}</a>
-                    <span v-else>{{ scope.row.name }}</span>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column width="150">
-                <template slot-scope="scope">
-                  <show-in-home-page-switch v-if="hasPermission(100076) && scope.row.resourceKey" :file="scope.row" />
-                </template>
-              </el-table-column>
-              <el-table-column width="150">
-                <template slot-scope="scope">
-                  {{ scope.row.size && bytesToSize(scope.row.size) }}
-                </template>
-              </el-table-column>
-              <el-table-column :formatter="dateFormat" prop="creationDate" width="170px" />
-              <el-table-column :label="$t('common.action')" width="100" align="center">
-                <template slot-scope="scope">
-                  <el-dropdown>
-                    <el-button type="primary" plain size="mini">
-                      <i class="el-icon-more" />
-                    </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item v-if="hasPermission(100074) && scope.row.resourceKey">
-                        <el-button v-if="hasPermission(100074) && scope.row.resourceKey" type="text" size="small" @click="handleDownload(scope.$index, scope.row)">{{ $t("common.download") }}
-                        </el-button>
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <edit v-if="hasPermission(100076)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit" />
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <el-button v-if="hasPermission(100075)" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
-                        </el-button>
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </template>
-              </el-table-column>
-            </el-table>
+                      <span v-else>{{ scope.row.name }}</span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column width="150">
+                  <template slot-scope="scope">
+                    <show-in-home-page-switch v-if="hasPermission(100076) && scope.row.resourceKey" :file="scope.row" />
+                  </template>
+                </el-table-column>
+                <el-table-column width="150">
+                  <template slot-scope="scope">
+                    {{ scope.row.size && bytesToSize(scope.row.size) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :formatter="dateFormat" prop="creationDate" width="170px" />
+                <el-table-column :label="$t('common.action')" width="100" align="center">
+                  <template slot-scope="scope">
+                    <el-dropdown>
+                      <el-button type="primary" plain size="mini">
+                        <i class="el-icon-more" />
+                      </el-button>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item v-if="hasPermission(100074) && scope.row.resourceKey">
+                          <el-button v-if="hasPermission(100074) && scope.row.resourceKey" type="text" size="small" @click="handleDownload(scope.$index, scope.row)">{{ $t("common.download") }}
+                          </el-button>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                          <edit v-if="hasPermission(100076)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit" />
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                          <el-button v-if="hasPermission(100075)" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
+                          </el-button>
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
             <file-upload v-if="hasPermission(100073)" @afterComplete="afterComplete" />
           </div>
         </div>
@@ -380,7 +382,7 @@ export default {
   height: 92vh;
   .file-menu-wrapper {
     padding-top: 16px;
-    flex-basis: 400px;
+    flex-basis: 20%;
     border-right: 1px solid #e9e8f0;
     padding-right: 16px;
     overflow: auto;
@@ -394,11 +396,18 @@ export default {
       line-height: 60px;
       border-bottom: 1px solid #e9e8f0;
     }
-    .table-wrapper {
-      padding: 24px;
-      position: relative;
-      .el-table::before {
-        display: none;
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: calc(100% - 84px);
+      overflow: auto;
+      .table-wrapper {
+        padding: 24px;
+        position: relative;
+        .el-table::before {
+          display: none;
+        }
       }
     }
   }

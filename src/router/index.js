@@ -235,19 +235,19 @@ export const asyncRouterMap = [
     path: '/system',
     component: Layout,
     redirect: 'user',
-    meta: { title: 'system', icon: 'icon_home_setting', noCache: true },
+    meta: { title: 'system', icon: 'icon_home_setting_nor', noCache: true },
     children: [
       {
         path: 'user',
         component: () => import('@/views/system/user/index'),
         name: 'user',
-        meta: { title: 'user', icon: 'user', noCache: true, id: 100082 }
+        meta: { title: 'user', icon: 'icon_yonghu_nor', noCache: true, id: 100082 }
       },
       {
         path: 'role',
         component: () => import('@/views/system/role'),
         name: 'role',
-        meta: { title: 'role', icon: 'role', noCache: true, id: 100088 }
+        meta: { title: 'role', icon: 'icon_juese_nor', noCache: true, id: 100088 }
       },
       {
         path: 'template',

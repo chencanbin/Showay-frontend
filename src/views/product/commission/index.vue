@@ -419,7 +419,7 @@ export default {
       left: 0;
     }
     .el-drawer {
-      width: 530px !important;
+      width: 550px !important;
       padding-left: 24px;
       padding-right: 24px;
     }
@@ -493,7 +493,6 @@ export default {
     width: calc(100% - 232px);
     z-index: 10;
   }
-
 }
 </style>
 

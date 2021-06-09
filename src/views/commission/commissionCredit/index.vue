@@ -538,6 +538,15 @@ export default {
     font-size: 14px;
     border-bottom: 1px solid #edf1f8;
   }
+  th:first-child {
+    padding-left: 0;
+  }
+  .el-table__row td:first-child {
+    padding-left: 16px;
+    .cell {
+      padding-left: 0;
+    }
+  }
   .el-table th > .cell {
     padding-left: 16px;
   }
@@ -567,6 +576,18 @@ export default {
   }
   .el-tabs__nav-wrap::after {
     display: none;
+  }
+  .el-checkbox__inner {
+    width: 20px;
+    height: 20px;
+    &::after {
+      height: 7px;
+      top: 4px;
+      left: 7px;
+    }
+    &::before {
+      top: 8px;
+    }
   }
 
   // .el-tabs__nav:nth-child(0) {

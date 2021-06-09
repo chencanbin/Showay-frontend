@@ -99,11 +99,11 @@
       </div>
     </el-dialog>
 
-    <el-drawer v-if="hasPermission(100108)" class="user-detail-wrapper" :modal="false" title="用户详情" :visible.sync="drawer" :direction="direction">
+    <el-drawer v-if="hasPermission(100108)" class="user-detail-wrapper" :modal="false" title="上级渠道" :visible.sync="drawer" :direction="direction">
       <div class="user-detail">
         <el-timeline v-loading="channelHierarchyLoading">
           <div v-if="channelHierarchy.list && channelHierarchy.list.length === 0" style="text-align: center; color: #909399">
-            {{$t("product.commission.commission_table_list.no_commission_table")}}
+            {{$t("common.no_data")}}
           </div>
           <el-timeline-item v-for="(item, index) in channelHierarchy.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
             <el-dropdown class="action-dropdown">
@@ -111,17 +111,24 @@
                 <i class="el-icon-more" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <edit-channel-hierarchy :hierarchy="item" />
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button type="text" size="small" @click="handleDeleteChannelHierarchy(item.id)">{{ $t("common.delete") }}</el-button>
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <div class="user_info">
-              <div class="row" v-if="item.remarks">
+            <div v-if="item.remarks" class="timeline_content">
+              <div class="row">
                 <span class="label">{{ $t("common.remarks") }}:</span>
-                <span class="content remark"> {{ item.remarks }}</span>
+                <span class="value"> {{ item.remarks }}</span>
               </div>
             </div>
           </el-timeline-item>
         </el-timeline>
       </div>
+      <add-channel-hierarchy :user="currentRow" />
     </el-drawer>
   </div>
 </template>
@@ -370,6 +377,61 @@ export default {
   }
   .el-table__expanded-cell {
     padding: 10px;
+  }
+
+  .user-detail-wrapper {
+    .el-timeline-item__node--normal {
+      left: 0;
+    }
+    .el-drawer {
+      width: 430px !important;
+      padding-left: 24px;
+      padding-right: 24px;
+      .el-drawer__header {
+        height: 70px;
+        margin-bottom: 0;
+        border-bottom: 1px solid #e1e0eb;
+        margin-bottom: 16px;
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #42475f;
+        padding: 0 0 0 12px;
+      }
+      .el-drawer__body {
+        overflow: auto;
+        padding: 16px 0 16px 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .action-dropdown {
+          position: absolute;
+          left: 140px;
+          top: -2px;
+        }
+      }
+    }
+  }
+
+  .timeline_content {
+    background: #f6f6f7;
+    border-radius: 6px;
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      .label {
+        display: inline-block;
+        width: 60px;
+        color: $--label;
+      }
+      .value {
+        color: $--content;
+        line-height: 25px;
+        flex: 1;
+      }
+    }
   }
 }
 </style>

@@ -1,69 +1,30 @@
 <template>
   <span>
-    <el-button 
-      type="text" 
-      size="small" 
-      @click="initForm">{{
+    <el-button type="text" size="small" @click="initForm">{{
         this.$t("common.edit")
       }}</el-button>
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('user.set.edit_title')"
-      width="500px"
-      append-to-body
-    >
-      <el-form
-        ref="account"
-        :model="account"
-        :rules="ruleAccount"
-        label-width="80px"
-      >
-        <el-form-item 
-          :label="$t('user.name')" 
-          prop="name">
+    <el-dialog append-to-body v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('user.set.edit_title')" width="500px" append-to-body>
+      <el-form ref="account" :model="account" :rules="ruleAccount" label-width="80px">
+        <el-form-item :label="$t('user.name')" prop="name">
           <el-input v-model="account.name" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('user.email')" 
-          prop="email">
+        <el-form-item :label="$t('user.email')" prop="email">
           <el-input v-model="account.email" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('user.acronym')" 
-          prop="acronym">
+        <el-form-item :label="$t('user.acronym')" prop="acronym">
           <el-input v-model="account.acronym" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('user.role')" 
-          prop="roles">
-          <el-select
-            v-model="account.roles"
-            :placeholder="$t('user.set.role')"
-            multiple
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
+        <el-form-item :label="$t('user.role')" prop="roles">
+          <el-select v-model="account.roles" :placeholder="$t('user.set.role')" multiple style="width: 100%">
+            <el-option v-for="item in roles" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>
