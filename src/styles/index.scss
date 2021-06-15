@@ -5,8 +5,6 @@
 // @import './btn.scss';
 @import './media.scss';
 @import './element-ui.scss';
-@import url('./icon.scss');
-
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
@@ -262,4 +260,10 @@ input[type=button] {
   margin-left: 10px;
   float: left;
   height: 45px;
+}
+
+.iconfont {
+  width: 1em;
+  height: 1em;
+  overflow: hidden;
 }
