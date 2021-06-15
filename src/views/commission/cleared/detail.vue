@@ -1,81 +1,40 @@
 <template>
   <span id="clearedDetail">
-    <el-button 
-      type="text" 
-      size="small" 
-      @click="initForm">{{
+    <el-button type="text" size="small" @click="initForm">{{
         $t("commission.payment.payment_detail")
       }}</el-button>
-    <el-dialog
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :fullscreen="true"
-      :title="generateTitle()"
-    >
-      <el-table
-        v-loading="mergedPaymentLoading"
-        :max-height="height"
-        :data="mergedPayment.payments"
-        stripe
-        border
-      >
-        <el-table-column
-          :label="$t('client.insurance_policy.number')"
-          prop="insurancePolicy.number"
-          show-overflow-tooltip
-        >
+    <el-dialog :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="generateTitle()">
+      <el-table v-loading="mergedPaymentLoading" :max-height="height" :data="mergedPayment.payments" stripe border>
+        <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip>
           <template slot-scope="scope">
-            <policy-detail
-              :policy-number="scope.row.insurancePolicy.number"
-              :id="scope.row.insurancePolicy.id"
-            />
+            <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id" />
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('client.insurance_policy.insured_name')"
-          prop="insurancePolicy.beneficiary"
-          width="120"
-        />
-        <el-table-column 
-          :label="$t('commission.credit.year')" 
-          width="100">
+        <el-table-column :label="$t('client.insurance_policy.insured_name')" prop="insurancePolicy.beneficiary" width="120" />
+        <el-table-column :label="$t('commission.credit.year')" width="100">
           <template slot-scope="scope">
             <span>{{ $t("commission.credit.years", [scope.row.year]) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('client.insurance_policy.premium')"
-          min-width="100px"
-        >
+        <el-table-column :label="$t('client.insurance_policy.premium')" min-width="100px">
           <template slot-scope="scope">
-            <span class="left_text">{{ getSymbol(scope.row.currency) }}</span
-            ><span class="right_text">{{
+            <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{
               formatterCurrency(scope.row.premium)
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('commission.payment.premiumInHkd')"
-          min-width="120px"
-        >
+        <el-table-column :label="$t('commission.payment.premiumInHkd')" min-width="120px">
           <template slot-scope="scope">
             <div v-if="scope.row.currency !== 'HKD'">
-              <span class="left_text">HK$ </span
-              ><span class="right_text">{{
+              <span class="left_text">HK$ </span><span class="right_text">{{
                 formatterCurrency(scope.row.premiumInHkd)
               }}</span>
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('common.exchangeRate')"
-          prop="exchangeRateToHkd"
-          width="140"
-        >
+        <el-table-column :label="$t('common.exchangeRate')" prop="exchangeRateToHkd" width="140">
           <template slot-scope="scope">
-            <div 
-              v-if="scope.row.currency !== 'HKD'" 
-              style="float: right">
+            <div v-if="scope.row.currency !== 'HKD'" style="float: right">
               {{ scope.row.exchangeRateToHkd }}
             </div>
           </template>
@@ -87,14 +46,9 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('commission.payment.amount')"
-          prop="amount"
-          min-width="100px"
-        >
+        <el-table-column :label="$t('commission.payment.amount')" prop="amount" min-width="100px">
           <template slot-scope="scope">
-            <span class="left_text">HK$ </span
-            ><span class="right_text">{{
+            <span class="left_text">HK$ </span><span class="right_text">{{
               formatterCurrency(scope.row.amount)
             }}</span>
           </template>

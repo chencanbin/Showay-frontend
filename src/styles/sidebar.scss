@@ -19,7 +19,7 @@
     top: 59px;
     bottom: 0;
     left: 0;
-    padding-bottom: 80px;
+    padding-bottom: 60px;
     z-index: 1001;
     overflow: hidden;
     box-shadow: 0px 2px 20px 0px rgba(14, 17, 41, 0.08), -10px 0px 20px 0px rgba(4, 12, 26, 0.1);
@@ -65,7 +65,7 @@
     }
 
     .el-menu-item {
-      font-size: 16px !important;
+      font-size: 14px !important;
       padding-left: 40px !important;
 
       i {
@@ -92,7 +92,7 @@
     }
 
     .el-submenu__title {
-      font-size: 16px;
+      font-size: 14px;
 
       i {
         color: $--content;
@@ -186,7 +186,7 @@
   .sidebar-container .nest-menu .el-submenu>.el-submenu__title,
   .sidebar-container .el-submenu .el-menu-item {
     min-width: 200px !important;
-    font-size: 16px !important;
+    font-size: 14px !important;
 
     &:hover {
       background-color: $--purple-assist !important;

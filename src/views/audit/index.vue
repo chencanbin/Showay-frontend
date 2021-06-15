@@ -1,84 +1,34 @@
 <template>
   <div class="table-container">
-    <basic-container>
-      <el-form 
-        :inline="true" 
-        class="search-input" 
-        @submit.native.prevent>
-        <el-form-item 
-          label="" 
-          prop="wildcard">
-          <el-input
-            v-model="wildcard"
-            :placeholder="$t('audit.search')"
-            clearable
-            @input="search"
-          >
-            <i 
-              slot="prefix" 
-              class="el-input__icon el-icon-search" />
+
+    <div class="header">
+      <el-form :inline="true" class="search-input" @submit.native.prevent>
+        <el-form-item label="" prop="wildcard">
+          <el-input v-model="wildcard" :placeholder="$t('audit.search')" clearable @input="search">
+            <i slot="prefix" class="el-input__icon el-icon-search" />
           </el-input>
         </el-form-item>
       </el-form>
-      <pagination
-        :total="insurancePolicy.total"
-        :page="listQuery.page"
-        :limit="listQuery.limit"
-        @pagination="pagination"
-        @update:page="updatePage"
-        @update:limit="updateLimit"
-      />
-      <el-table
-        v-loading="insurancePolicyLoading"
-        :height="height"
-        :data="insurancePolicy.list"
-        stripe
-      >
-        <el-table-column
-          :label="$t('client.insurance_policy.number')"
-          prop="number"
-          show-overflow-tooltip
-          min-width="120"
-        />
-        <el-table-column
-          :formatter="dateFormat"
-          :label="$t('client.insurance_policy.submitDate')"
-          prop="submitDate"
-          min-width="150"
-        />
-        <el-table-column
-          :label="$t('client.insurance_policy.applicant_name')"
-          prop="applicant.name"
-          show-overflow-tooltip
-          min-width="150"
-        />
-        <el-table-column
-          :label="$t('client.insurance_policy.insured_name')"
-          prop="beneficiary.name"
-          show-overflow-tooltip
-          min-width="150"
-        />
-        <el-table-column
-          :label="$t('client.insurance_policy.company_name')"
-          prop="company.name"
-          min-width="150"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          :label="$t('client.insurance_policy.product_name')"
-          prop="product.name"
-          min-width="200"
-          show-overflow-tooltip
-        />
-        <el-table-column 
-          :label="$t('common.action')" 
-          width="150">
+    </div>
+    <basic-container>
+      <el-table v-loading="insurancePolicyLoading" :data="insurancePolicy.list" stripe>
+        <el-table-column :label="$t('client.insurance_policy.number')" prop="number" show-overflow-tooltip min-width="120" />
+        <el-table-column :formatter="dateFormat" :label="$t('client.insurance_policy.submitDate')" prop="submitDate" min-width="150" />
+        <el-table-column :label="$t('client.insurance_policy.applicant_name')" prop="applicant.name" show-overflow-tooltip min-width="150" />
+        <el-table-column :label="$t('client.insurance_policy.insured_name')" prop="beneficiary.name" show-overflow-tooltip min-width="150" />
+        <el-table-column :label="$t('client.insurance_policy.company_name')" prop="company.name" min-width="150" show-overflow-tooltip />
+        <el-table-column :label="$t('client.insurance_policy.product_name')" prop="product.name" min-width="200" show-overflow-tooltip />
+        <el-table-column :label="$t('common.action')" width="150">
           <template slot-scope="scope">
             <trace :number="scope.row.number" />
           </template>
         </el-table-column>
       </el-table>
+      <div class="table-bottom">
+        <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+      </div>
     </basic-container>
+
   </div>
 </template>
 
@@ -114,7 +64,7 @@ export default {
       insurancePolicy: (state) => state.client.insurancePolicyList,
     }),
   },
-  created() {},
+  created() { },
   mounted() {
     this.getInsurancePolicyList();
   },

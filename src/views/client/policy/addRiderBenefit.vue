@@ -1,104 +1,40 @@
 <template>
-  <el-col 
-    span.number="24" 
-    class="el-table-add-col" 
-    style="padding: 0 0 10px 0">
+  <span>
     <!--<el-row style="margin-bottom: 5px">-->
     <!--<el-button type="primary" icon="el-icon-plus" style="margin-right: 10px" @click="initForm">添加副险</el-button>-->
     <!--</el-row>-->
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加副险</span></div>-->
-    <el-button 
-      class="el-table-add-row" 
-      plain 
-      type="primary" 
-      @click="initForm"
-    >+ {{ $t("common.add") }}</el-button
-    >
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('client.insurance_policy.set.add_riderBenefits_title')"
-      width="600px"
-      append-to-body
-    >
-      <el-form
-        ref="riderBenefit"
-        :model="riderBenefit"
-        :rules="riderBenefitRule"
-        label-width="120px"
-        class="riderBenefit"
-      >
-        <el-form-item
-          :label="$t('client.insurance_policy.product')"
-          prop="product"
-          style="width: 100%"
-        >
-          <el-select
-            v-model="riderBenefit.product"
-            :loading="productLoading"
-            :remote-method="searchProduct"
-            :placeholder="$t('client.insurance_policy.set.product_name')"
-            value-key="id"
-            filterable
-            clearable
-            remote
-            style="width: 100%"
-            @focus="onProductFocus"
-          >
-            <el-option
-              v-for="item in products"
-              :key="item.id"
-              :label="item.name"
-              :value="item"
-            >
+    <el-button plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.insurance_policy.set.add_riderBenefits_title')" width="600px" append-to-body>
+      <el-form ref="riderBenefit" :model="riderBenefit" :rules="riderBenefitRule" label-width="120px" class="riderBenefit">
+        <el-form-item :label="$t('client.insurance_policy.product')" prop="product" style="width: 100%">
+          <el-select v-model="riderBenefit.product" :loading="productLoading" :remote-method="searchProduct" :placeholder="$t('client.insurance_policy.set.product_name')" value-key="id" filterable clearable remote style="width: 100%" @focus="onProductFocus">
+            <el-option v-for="item in products" :key="item.id" :label="item.name" :value="item">
               <span style="float: left; margin-right: 15px">{{
                 item.name
-              }}</span
-              ><span style="float: left; font-weight: bold">{{
+              }}</span><span style="float: left; font-weight: bold">{{
                 item.acryonym
               }}</span>
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          :label="$t('client.insurance_policy.premium')"
-          prop="premium"
-        >
-          <currency-input
-            ref="premium"
-            v-model="riderBenefit.premium"
-            :symbol="getSymbol(currency)"
-            :placeholder="$t('client.insurance_policy.set.premium')"
-          />
+        <el-form-item :label="$t('client.insurance_policy.premium')" prop="premium">
+          <currency-input ref="premium" v-model="riderBenefit.premium" :symbol="getSymbol(currency)" :placeholder="$t('client.insurance_policy.set.premium')" />
         </el-form-item>
-        <el-form-item
-          :label="$t('client.insurance_policy.amountInsured')"
-          prop="amountInsured"
-        >
-          <currency-input
-            ref="amountInsured"
-            v-model="riderBenefit.amountInsured"
-            :symbol="getSymbol(currency)"
-            :placeholder="$t('client.insurance_policy.set.amountInsured')"
-          />
+        <el-form-item :label="$t('client.insurance_policy.amountInsured')" prop="amountInsured">
+          <currency-input ref="amountInsured" v-model="riderBenefit.amountInsured" :symbol="getSymbol(currency)" :placeholder="$t('client.insurance_policy.set.amountInsured')" />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>
     </el-dialog>
-  </el-col>
+  </span>
 </template>
 
 <script type="text/ecmascript-6">

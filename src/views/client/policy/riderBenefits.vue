@@ -4,6 +4,9 @@
       {{ $t("client.insurance_policy.riderBenefits") }}
     </el-button>
     <el-dialog :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('client.insurance_policy.riderBenefits_title')" append-to-body>
+      <div class="header">
+        <add :company-id="companyId" :currency="currency" :submit-date="submitDate" style="margin-top: 10px" @afterAdd="afterAdd" />
+      </div>
       <el-table :data="riderBenefits" stripe>
         <el-table-column :label="$t('client.insurance_policy.product')" prop="product.name" />
         <el-table-column :label="$t('client.insurance_policy.premium')">
@@ -38,7 +41,6 @@
           </template>
         </el-table-column>
       </el-table>
-      <add :company-id="companyId" :currency="currency" :submit-date="submitDate" style="margin-top: 10px" @afterAdd="afterAdd" />
       <div slot="footer" style="text-align: center">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
@@ -204,5 +206,11 @@ export default {
 };
 </script>
 
-<style scoped>
+<style type="text/scss"  lang="scss" scoped>
+.header {
+  width: 100%;
+  height: 60px;
+  background: #fff;
+  border-radius: 8px;
+}
 </style>

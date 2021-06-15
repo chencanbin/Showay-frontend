@@ -1,8 +1,8 @@
 <template>
   <span>
     <a class="link" @click="initForm">{{ policyNumber }}</a>
-    <el-dialog v-el-drag-dialog id="policy-detail-dialog" :close-on-click-modal="false" :before-close="handleClose" :visible="dialogVisible" :title="$t('client.insurance_policy.set.insurance_policy_detail')" width="75%" append-to-body>
-      <el-form v-loading="loading" label-position="left" inline class="detail-form" style="padding-bottom: 20px">
+    <el-dialog v-el-drag-dialog id="policy-detail-dialog" :close-on-click-modal="false" :before-close="handleClose" :visible="dialogVisible" :title="$t('client.insurance_policy.set.insurance_policy_detail')" append-to-body>
+      <!-- <el-form v-loading="loading" label-position="left" inline class="detail-form" style="padding-bottom: 20px">
         <el-form-item :label="$t('client.insurance_policy.sn')">
           <span>{{ data.sn }}</span>
         </el-form-item>
@@ -40,7 +40,65 @@
         <el-form-item :label="$t('client.insurance_policy.submitDate')">
           <span>{{ getFormattedDate(data.submitDate) }}</span>
         </el-form-item>
-      </el-form>
+      </el-form> -->
+      <div class="detail_wrapper">
+        <div class="content_wrapper">
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.sn')}}</div>
+            <div class="content">{{ data.sn }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.applicant_name')}}</div>
+            <div class="content">{{ data.applicant.name }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.channel')}}</div>
+            <div class="content">{{ data.channel.name }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.agent_name')}}</div>
+            <div class="content">{{ data.agent.name }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.insured_name')}}</div>
+            <div class="content">{{ data.insured.name }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.company_name')}}</div>
+            <div class="content">{{ data.company.name }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.product_name')}}</div>
+            <div class="content">{{ data.product.name }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.amountInsured')}}</div>
+            <div class="content">
+              <span v-if="!data.amountInsured || data.amountInsured === 0">N/A</span>
+              <span v-else>{{ numberFormat(data, data.amountInsured) }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="content_wrapper">
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.premium')}}</div>
+            <div class="content">{{ numberFormat(data, data.premium) }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.premiumPlan')}}</div>
+            <div class="content">{{ formatterPremiumPlan(data.premiumPlan) }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.issueDate')}}</div>
+            <div class="content">{{ getFormattedDate(data.issueDate) }}</div>
+          </div>
+          <div class="row">
+            <div class="label">{{$t('client.insurance_policy.submitDate')}}</div>
+            <div class="content">{{ getFormattedDate(data.submitDate) }}</div>
+          </div>
+        </div>
+      </div>
+
       <div v-if="data.riderBenefits && data.riderBenefits.length > 0">
         <div style="
             padding: 0px 10px 10px 0;
@@ -144,15 +202,51 @@ export default {
   color: $--purple;
 }
 #policy-detail-dialog {
+  .el-dialog {
+    margin-top: 50px;
+    width: 718px;
+    top: 0px;
+    .el-dialog__body {
+      padding: 24px 32px 32px 32px;
+    }
+  }
+  .detail_wrapper {
+    display: flex;
+    .content_wrapper {
+      background: #f6f6f7;
+      width: 315px;
+      border-radius: 6px;
+      padding: 24px;
+      &:first-child {
+        margin-right: 24px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        font-size: 14px;
+        .label {
+          color: $--label;
+        }
+        .content {
+          color: $--content;
+          width: 180px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          text-align: right;
+        }
+      }
+    }
+  }
   .detail-form {
     font-size: 0;
     .el-form-item {
       margin-right: 0;
       margin-bottom: 0;
-      width: 26%;
       margin-right: 50px;
       label {
-        color: #99a9bf;
+        color: $--label;
       }
     }
   }

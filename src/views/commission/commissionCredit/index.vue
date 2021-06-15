@@ -548,7 +548,7 @@ export default {
     }
   }
   .el-table th > .cell {
-    padding-left: 16px;
+    padding-left: 14px;
   }
   .el-tabs__nav {
     .el-tabs__item {

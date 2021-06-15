@@ -1,66 +1,31 @@
 <template>
   <span>
-    <el-button 
-      type="text" 
-      size="small" 
-      icon="el-icon-edit" 
-      @click="initForm">{{
+    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{
         this.$t("common.edit")
       }}</el-button>
-    <el-dialog
-      v-el-drag-dialog
-      id="editPayment"
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      title="编辑发放记录"
-      width="400px"
-      append-to-body
-    >
-      <el-form 
-        ref="payment" 
-        :model="payment" 
-        label-width="80px">
-        <el-form-item
-          :label="$t('client.insurance_policy.number')"
-          prop="number"
-        >
+    <el-dialog v-el-drag-dialog id="editPayment" :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" title="编辑发放记录" width="400px" append-to-body>
+      <el-form ref="payment" :model="payment" label-width="80px">
+        <el-form-item :label="$t('client.insurance_policy.number')" prop="number">
           {{ payment.insurancePolicy.number }}
         </el-form-item>
-        <el-form-item
-          :label="$t('commission.payment.calculatedAmount')"
-          prop="calculatedAmount"
-        >
+        <el-form-item :label="$t('commission.payment.calculatedAmount')" prop="calculatedAmount">
           {{ "HK$ " + formatterCurrency(payment.calculatedAmountInHkd) }}
         </el-form-item>
-        <el-form-item 
-          :label="$t('commission.payment.amount')" 
-          prop="amount">
+        <el-form-item :label="$t('commission.payment.amount')" prop="amount">
           <!--<el-input v-model="payment.amount" placeholder="请输入实发数额">-->
           <!--<template slot="prepend">{{ getSymbol(payment.currency) }}</template>-->
           <!--</el-input>-->
-          <currency-input 
-            v-model="paymentCopy.amount" 
-            symbol="HK$ " />
+          <currency-input v-model="paymentCopy.amount" symbol="HK$ " />
         </el-form-item>
-        <el-form-item 
-          :label="$t('common.remarks')" 
-          prop="remarks">
-          <el-input
-            v-model="payment.remarks"
-            :placeholder="$t('common.remarks_placeholder')"
-          />
+        <el-form-item :label="$t('common.remarks')" prop="remarks">
+          <el-input v-model="payment.remarks" :placeholder="$t('common.remarks_placeholder')" />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>

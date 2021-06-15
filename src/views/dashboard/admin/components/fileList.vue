@@ -92,7 +92,6 @@ export default {
 .card-file-list {
   background: #fff;
   height: 408px;
-  margin-bottom: 16px;
 
   .el-card__header {
     border: 0;
@@ -102,7 +101,7 @@ export default {
     padding-bottom: 0px !important;
   }
   .el-card__body {
-    height: 300px;
+    height: 324px;
     overflow: auto;
     padding-left: 24px;
     padding-right: 24px;

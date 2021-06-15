@@ -1,7 +1,13 @@
+<template>
+  <div>
+    <i class="iconfont" :class="icon" />
+    <span slot="title">{{title}}</span>
+  </div>
+</template>
 <script>
 export default {
   name: "MenuItem",
-  functional: true,
+  // functional: true,
   props: {
     icon: {
       type: String,
@@ -12,18 +18,19 @@ export default {
       default: "",
     },
   },
-  render(h, context) {
-    const { icon, title } = context.props;
-    const vnodes = [];
 
-    if (icon) {
-      vnodes.push(<i class="" class={`iconfont ${icon}`} />);
-    }
+  // render(h, context) {
+  //   const { icon, title } = context.props;
+  //   const vnodes = [];
 
-    if (title) {
-      vnodes.push(<span slot="title" >{title}</span>);
-    }
-    return vnodes;
-  },
+  //   if (icon) {
+  //     vnodes.push();
+  //   }
+
+  //   if (title) {
+  //     vnodes.push();
+  //   }
+  //   return vnodes;
+  // },
 };
 </script>

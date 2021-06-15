@@ -38,7 +38,7 @@
                 <el-button type="text" @click="viewScanFile(scope.row.chequeCopy)">{{ $t("common.view") }}</el-button>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('common.status')" width="100" align="center">
+            <el-table-column :label="$t('common.status')" width="120" align="center">
               <template slot-scope="scope">
                 <el-tag v-if="activeName === '-1'" class="primary_status">{{
                   statusFormatter(activeName)

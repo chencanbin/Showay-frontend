@@ -1,6 +1,6 @@
 <template>
   <el-row :gutter="10" type="flex" justify="center" class="panel-group">
-    <el-col v-if="showHomePage(1)" class="card-panel-col">
+    <el-col :lg="{span: 24}" v-if="showHomePage(1)" class="card-panel-col">
       <panel-item :title="$t('home.creditSum')" :item="0" :group-by="0" :from="from" :to="to" />
     </el-col>
     <el-col v-if="showHomePage(2)" class="card-panel-col">
@@ -56,8 +56,12 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped type="text/scss">
 .panel-group {
+  flex-wrap: wrap;
+  justify-content: space-between;
   .card-panel-col {
     margin-bottom: 16px;
+    width: 20%;
+    min-width: 260px;
   }
 }
 </style>

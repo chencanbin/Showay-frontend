@@ -1,47 +1,16 @@
 <template>
   <span>
-    <el-button 
-      type="text" 
-      size="small" 
-      icon="el-icon-edit" 
-      @click="initForm">{{
+    <el-button type="text" size="small" icon="el-icon-edit" @click="initForm">{{
         this.$t("common.edit")
       }}</el-button>
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('user.set.edit_channel_title')"
-      append-to-body
-      width="500px"
-    >
-      <el-form
-        ref="account"
-        :model="account"
-        :rules="ruleAccount"
-        label-width="100px"
-      >
-        <el-form-item 
-          :label="$t('user.set.name')" 
-          prop="name">
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('user.set.edit_channel_title')" append-to-body width="500px">
+      <el-form ref="account" :model="account" :rules="ruleAccount" label-width="100px">
+        <el-form-item :label="$t('user.set.name')" prop="name">
           <el-input v-model="account.name" />
         </el-form-item>
-        <el-form-item 
-          :label="$t('user.set.superior')" 
-          prop="superior">
-          <el-select
-            v-model="account.superior"
-            :placeholder="$t('user.set.superior_placeholder')"
-            clearable
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in users"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
+        <el-form-item :label="$t('user.set.superior')" prop="superior">
+          <el-select v-model="account.superior" :placeholder="$t('user.set.superior_placeholder')" clearable style="width: 100%">
+            <el-option v-for="item in users" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
         <!--<el-form-item v-if="account.superior" label="上级佣金率" prop="superiorCommissionRate">-->
@@ -50,16 +19,11 @@
         <!--</el-input>-->
         <!--</el-form-item>-->
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>

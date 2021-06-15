@@ -26,7 +26,7 @@
           <div class="content-wrapper">
             <div class="table-wrapper">
               <el-table v-loading="fileLoading" :data="folder.items" :show-header="false" stripe>
-                <el-table-column show-overflow-tooltip prop="name">
+                <el-table-column show-overflow-tooltip prop="name" min-width="300">
                   <template slot-scope="scope">
                     <div class="file-item-wrapper">
                       <span v-if="!scope.row.extention" class="iconfont icon_file_nor" />

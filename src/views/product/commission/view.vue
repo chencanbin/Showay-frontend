@@ -1,183 +1,65 @@
 <template>
-  <el-dialog
-    id="commissionTable"
-    :visible="dialogVisible"
-    :before-close="handleClose"
-    :title="title"
-    :fullscreen="fullscreen"
-    width="90%"
-  >
-    <div
-      style="
-        display: inline-block;
-        position: absolute;
-        right: 30px;
-        top: 61px;
-        z-index: 3000;
-      "
-    >
-      <el-input
-        v-model="wildcard"
-        :placeholder="$t('product.commission.view.search')"
-        clearable
-        style="width: 300px"
-        @input="search"
-      >
-        <i 
-          slot="prefix" 
-          class="el-input__icon el-icon-search" />
+  <el-dialog id="commissionTable" :visible="dialogVisible" :before-close="handleClose" :title="title" :fullscreen="fullscreen" width="90%">
+    <div class="wildcard-wrapper">
+      <el-input v-model="wildcard" :placeholder="$t('product.commission.view.search')" clearable style="width: 300px" @input="search">
+        <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
-      <el-button
-        size="small"
-        plain
-        icon="el-icon-download"
-        type="primary"
-        @click="exportExcel()"
-      >{{ $t("common.export") }}</el-button
-      >
+      <el-button size="small" plain icon="el-icon-download" type="primary" @click="exportExcel()">{{ $t("common.export") }}</el-button>
     </div>
-    <el-tabs 
-      v-model="activeName" 
-      type="border-card">
-      <el-tab-pane
-        :label="$t('product.commission.view.basic_tab')"
-        name="basic"
-      >
-        <el-table
-          v-loading="viewLoading"
-          :data="data"
-          :max-height="tableHeight"
-          stripe
-        >
-          <el-table-column
-            :label="$t('product.commission.view.table_header.acronym')"
-            prop="product.acronym"
-            width="100"
-            fixed="left"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            :label="$t('product.commission.view.table_header.name')"
-            prop="product.name"
-            show-overflow-tooltip
-            min-width="180"
-            fixed="left"
-          />
-          <el-table-column
-            :label="$t('product.commission.view.table_header.enName')"
-            prop="product.enName"
-            show-overflow-tooltip
-            min-width="180"
-            fixed="left"
-          />
-          <el-table-column
-            :label="$t('product.commission.view.table_header.period')"
-            prop="product.period"
-            width="80"
-          />
-          <el-table-column
-            v-for="(year, index) in columnYear"
-            :key="index"
-            :label="year"
-            width="90"
-          >
-            <template slot-scope="scope">
-              <span>{{
+    <el-tabs v-model="activeName">
+      <el-tab-pane :label="$t('product.commission.view.basic_tab')" name="basic">
+        <basic-container>
+          <el-table v-loading="viewLoading" :data="data" stripe>
+            <el-table-column :label="$t('product.commission.view.table_header.acronym')" prop="product.acronym" width="100" fixed="left" show-overflow-tooltip />
+            <el-table-column :label="$t('product.commission.view.table_header.name')" prop="product.name" show-overflow-tooltip min-width="180" fixed="left" />
+            <el-table-column :label="$t('product.commission.view.table_header.enName')" prop="product.enName" show-overflow-tooltip min-width="180" fixed="left" />
+            <el-table-column :label="$t('product.commission.view.table_header.period')" prop="product.period" width="80" />
+            <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="90">
+              <template slot-scope="scope">
+                <span>{{
                 scope.row.conditions[index]
                   ? numberFormatter(
                     scope.row.conditions[index].basicCommissionRate
                   )
                   : "-"
               }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column 
-            label="FFYAP" 
-            width="80">
-            <template slot-scope="scope">
-              <span>{{ getFFYAP(scope.row.extraConditions) }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-        <pagination
-          :total="total"
-          :page="listQuery.page"
-          :limit="listQuery.limit"
-          @pagination="pagination"
-          @update:page="updatePage"
-          @update:limit="updateLimit"
-        />
+              </template>
+            </el-table-column>
+            <el-table-column label="FFYAP" width="80">
+              <template slot-scope="scope">
+                <span>{{ getFFYAP(scope.row.extraConditions) }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+          <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        </basic-container>
       </el-tab-pane>
-      <el-tab-pane
-        :label="$t('product.commission.view.overall_tab')"
-        name="overall"
-      >
-        <span style="margin-bottom: 10px; display: inline-block">
-          <el-checkbox 
-            v-model="ffyap" 
-            label="FFYAP" 
-            @change="ffyapChange" />
-        </span>
-        <el-table
-          v-loading="viewLoading"
-          :data="data"
-          :max-height="tableHeight"
-          stripe
-        >
-          <el-table-column
-            :label="$t('product.commission.view.table_header.acronym')"
-            prop="product.acronym"
-            width="120"
-            fixed="left"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            :label="$t('product.commission.view.table_header.name')"
-            prop="product.name"
-            fixed="left"
-            min-width="180"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            :label="$t('product.commission.view.table_header.enName')"
-            prop="product.enName"
-            fixed="left"
-            min-width="180"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            :label="$t('product.commission.view.table_header.period')"
-            prop="product.period"
-            width="80"
-          />
-          <el-table-column
-            v-for="(year, index) in columnYear"
-            :key="index"
-            :label="year"
-            align="right"
-            width="90"
-          >
-            <template slot-scope="scope">
-              <div>
-                {{
+      <el-tab-pane :label="$t('product.commission.view.overall_tab')" name="overall">
+        <basic-container>
+          <span style="margin-bottom: 10px; display: inline-block">
+            <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange" />
+          </span>
+          <el-table v-loading="viewLoading" :data="data" stripe>
+            <el-table-column :label="$t('product.commission.view.table_header.acronym')" prop="product.acronym" width="120" fixed="left" show-overflow-tooltip />
+            <el-table-column :label="$t('product.commission.view.table_header.name')" prop="product.name" fixed="left" min-width="180" show-overflow-tooltip />
+            <el-table-column :label="$t('product.commission.view.table_header.enName')" prop="product.enName" fixed="left" min-width="180" show-overflow-tooltip />
+            <el-table-column :label="$t('product.commission.view.table_header.period')" prop="product.period" width="80" />
+            <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" align="right" width="90">
+              <template slot-scope="scope">
+                <div>
+                  {{
                   scope.row.conditions[index]
                     ? numberFormatter(
                       scope.row.conditions[index].overallCommissionRate
                     )
                     : "-"
                 }}
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-        <pagination
-          :total="total"
-          :page="listQuery.page"
-          :limit="listQuery.limit"
-          @pagination="pagination"
-          @update:page="updatePage"
-          @update:limit="updateLimit"
-        />
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+          <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        </basic-container>
       </el-tab-pane>
     </el-tabs>
   </el-dialog>
@@ -441,6 +323,38 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 #commissionTable .el-dialog__body {
+  .wildcard-wrapper {
+    display: inline-block;
+    position: absolute;
+    right: 34px;
+    top: 80px;
+    z-index: 3000;
+  }
+  .el-tabs__header {
+    margin-bottom: 0;
+    margin-left: 24px;
+  }
+  .el-tabs__nav-wrap::after {
+    display: none;
+  }
+  .el-tabs__active-bar {
+    display: none;
+  }
+  .el-tabs__item {
+    height: auto;
+    line-height: normal;
+    font-size: 14px;
+    background: #f2f2f8;
+    border-radius: 20px;
+    font-weight: 500;
+    color: #8e919f;
+    margin-right: 30px;
+    padding: 8px 17px !important;
+  }
+  .el-tabs__item.is-active {
+    border: 1px solid $--purple;
+    color: $--purple;
+  }
   padding: 10px 10px 5px 10px;
   .el-tabs--border-card > .el-tabs__content {
     padding: 10px;

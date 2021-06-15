@@ -5,7 +5,7 @@
         $t("home.comparison")
       }}</span>
       <div class="card-header-action">
-        <el-select :remote-method="searchCompany" :loading="companyLoading" v-model="company" :placeholder="$t('common.company_placeholder')" filterable remote clearable style="margin-left: 20px" @focus="onCompanyFocus">
+        <el-select :remote-method="searchCompany" :loading="companyLoading" v-model="company" :placeholder="$t('common.company_placeholder')" filterable remote clearable style="margin-right: 20px" @focus="onCompanyFocus">
           <el-option v-for="item in companies" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-date-picker :editable="false" :clearable="false" v-model="year" type="year" value-format="timestamp" style="width: 120px" />

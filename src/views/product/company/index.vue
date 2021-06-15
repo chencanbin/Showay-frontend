@@ -146,7 +146,7 @@
             <span class="label">{{$t('product.company.table_header.contractEffectiveDate')}}:</span>
             <span class="content">{{ row.contractEffectiveDate }}</span>
           </div>
-          <div v-for="(item, index) in row.contacts" :key="index" :label="$t('product.company.set.contacts') + (index + 1)" class="row">
+          <div v-for="(item, index) in row.contacts" :key="item.id" :label="$t('product.company.set.contacts') + (index + 1)" class="row">
             <span class="label">{{$t('product.company.set.contacts') + (index + 1)}}:</span>
 
             <el-popover placement="top-start" trigger="hover">
@@ -169,7 +169,7 @@
               <span slot="reference" class="content">{{ item.name }}</span>
             </el-popover>
           </div>
-          <div v-for="(item, index) in row.websites" :key="index" class="row">
+          <div v-for="(item, index) in row.websites" :key="item.id" class="row">
             <span class="label">{{$t('product.company.table_header.website') + (index + 1)}}:</span>
             <span v-if="item.split('-').length > 1" class="content">
               <a :href="item" class="link"><span class="link_remark">({{item.split("-")[1]}})</span>{{ item.split("-")[0] }}</a>

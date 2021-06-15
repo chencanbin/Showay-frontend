@@ -13,7 +13,7 @@
             editStatus
           }}</span>
         </el-col>
-        <el-col :xs="24" :sm="24" :lg="{ span: 8, offset: 4 }">
+        <el-col :xs="24" :sm="24" :lg="{ span: 8, offset: 3 }">
           <el-input ref="search" v-model="wildcard" :placeholder="
               $t('product.commission.commission_table.search_placeholder')
             " @input="search">

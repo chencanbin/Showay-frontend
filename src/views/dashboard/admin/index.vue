@@ -1,41 +1,47 @@
 <template>
   <div class="dashboard-editor-container">
     <panel-group />
-    <el-row :gutter="16" type="flex" justify="left" class="chart-row">
+    <el-row :gutter="16" class="chart-row">
       <!-- 公司收益趋势 -->
-      <el-col v-if="showHomePage(8)" :xs="24" :sm="24" :lg="16">
+      <el-col v-if="showHomePage(8)" :xs="24" :sm="24" :lg="24" :xl="16" class="chart-item">
         <profit-trend />
       </el-col>
       <!-- 收支分布 -->
-      <el-col v-if="showHomePage(14)" :xs="24" :sm="24" :lg="8">
+      <el-col v-if="showHomePage(14)" :xs="24" :sm="24" :lg="12" :xl="8" class="chart-item">
         <income-distribution />
       </el-col>
-    </el-row>
-    <el-row :gutter="16" type="flex" justify="left" class="chart-row">
       <!-- 公告列表 -->
-      <el-col v-if="showHomePage(13)" :xs="24" :sm="24" :lg="10">
+      <el-col v-if="showHomePage(13)" :xs="24" :sm="24" :lg="12" :xl="8" class="chart-item">
         <fileList />
       </el-col>
       <!-- 渠道业绩趋势 -->
-      <el-col v-if="showHomePage(9)" :xs="24" :sm="24" :lg="14">
+      <el-col v-if="showHomePage(9)" :xs="24" :sm="24" :lg="24" :xl="16" class="chart-item">
         <profit-channel-trend />
       </el-col>
-    </el-row>
-    <!-- 公司业绩同比 -->
-    <el-col v-if="showHomePage(10)" :xs="24" :sm="24" :lg="24" class="chart-row">
-      <cleared-credit />
-    </el-col>
 
-    <el-row :gutter="16" type="flex" justify="center" class="chart-row">
+      <!-- 公司业绩同比 -->
+      <el-col v-if="showHomePage(10)" :xs="24" :sm="24" :lg="24" class="chart-item">
+        <cleared-credit />
+      </el-col>
+
       <!-- 渠道业绩Top5 -->
-      <el-col v-if="showHomePage(11)">
+      <el-col v-if="showHomePage(11)" :xs="24" :sm="24" :lg="12" class="chart-item">
         <channel-profit />
       </el-col>
       <!-- 渠道业绩分布 -->
-      <el-col v-if="showHomePage(12)">
+      <el-col v-if="showHomePage(12)" :xs="24" :sm="24" :lg="12" class="chart-item">
         <channel-pie />
       </el-col>
     </el-row>
+    <!-- <el-row :gutter="16" class="chart-row">
+
+    </el-row>
+    <el-row class="chart-row">
+
+    </el-row>
+    <el-row :gutter="16" class="chart-row">
+      
+    </el-row> -->
   </div>
 </template>
 
@@ -118,6 +124,9 @@ export default {
     background: #fff;
     padding: 16px 16px 0;
     margin-bottom: 32px;
+  }
+  .chart-item {
+    margin-bottom: 16px;
   }
   .chart-row {
     margin-bottom: 16px;

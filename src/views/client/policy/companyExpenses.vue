@@ -8,9 +8,9 @@
         <el-card>
           <div slot="header" class="clearfix">
             <span style="margin-right: 10px; vertical-align: middle">{{
-              $t("client.insurance_policy.set.expense_item")
+              
             }}</span>
-            <el-button :loading="addExpensesLoading" icon="el-icon-plus" size="small" style="min-width: 40px; font-size: 16px; padding: 5px" @click="addItem" />
+            <el-button :loading="addExpensesLoading" plain icon="el-icon-plus" size="small" @click="addItem">{{$t("client.insurance_policy.set.expense_item")}}</el-button>
           </div>
           <el-form-item v-for="(item, index) in expenses" :key="index" style="margin-top: 10px" class="input_item">
             <el-select v-model="item.type" placeholder="请选择" style="width: 100px" class="select_inner_item" @change="expensesTypeChange(item)">

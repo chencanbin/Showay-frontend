@@ -147,7 +147,7 @@ export default {
     border-bottom: 1px solid #edf1f8;
   }
   .el-table th > .cell {
-    padding-left: 16px;
+    padding-left: 11px;
   }
   font-size: 0;
   .el-form-item {

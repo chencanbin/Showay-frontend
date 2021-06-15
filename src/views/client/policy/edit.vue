@@ -489,9 +489,31 @@ export default {
 </script>
 <style type="text/scss"  lang="scss">
 .insurance-policy-form {
+  .el-tabs__nav-wrap::after {
+    display: none;
+  }
+  .el-tabs__active-bar {
+    display: none;
+  }
+  .el-tabs__item {
+    height: auto;
+    line-height: normal;
+    font-size: 14px;
+    background: #f2f2f8;
+    border-radius: 20px;
+    font-weight: 500;
+    color: #8e919f;
+    margin-right: 30px;
+    padding: 8px 17px !important;
+  }
+  .el-tabs__item.is-active {
+    border: 1px solid $--purple;
+    color: $--purple;
+  }
+
   .el-form-item {
     margin-right: 10px;
-    margin-bottom: 0;
+    margin-bottom: 16px;
     width: 48%;
   }
   .el-form-item__content {

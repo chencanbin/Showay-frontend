@@ -60,20 +60,20 @@
                 <i class="el-icon-more" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <el-button v-if="hasPermission(100017) && commissionTable.status !== 0" size="small" type="text" @click="handleView(commissionTable.id,
+                <el-dropdown-item v-if="hasPermission(100017) && commissionTable.status !== 0">
+                  <el-button size="small" type="text" @click="handleView(commissionTable.id,
                               getFormattedDate(commissionTable.effectiveDate),
                               commissionTable.status)">{{ $t("common.view") }}</el-button>
                 </el-dropdown-item>
-                <el-dropdown-item>
-                  <commission-table v-if="hasPermission(100018)" :id="commissionTable.id" :company-id="currentRow.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name" :effective-date="
+                <el-dropdown-item v-if="hasPermission(100018)">
+                  <commission-table :company-id="currentRow.id" :id="commissionTable.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name" :effective-date="
                             getFormattedDate(commissionTable.effectiveDate)" />
                 </el-dropdown-item>
-                <el-dropdown-item>
-                  <el-button v-if="hasPermission(100020) && commissionTable.status !== 0" :ref="`export_${commissionTable.id}`" size="small" type="text" @click="exportExcel(commissionTable)">{{ $t("common.export") }}</el-button>
+                <el-dropdown-item v-if="hasPermission(100020) && commissionTable.status !== 0">
+                  <el-button :ref="`export_${commissionTable.id}`" size="small" type="text" @click="exportExcel(commissionTable)">{{ $t("common.export") }}</el-button>
                 </el-dropdown-item>
-                <el-dropdown-item>
-                  <el-button v-if="hasPermission(100019)" size="small" type="text" @click="verifyPassword(currentRow.id, commissionTable.id)">{{ $t("common.delete") }}
+                <el-dropdown-item v-if="hasPermission(100019)">
+                  <el-button size="small" type="text" @click="verifyPassword(currentRow.id, commissionTable.id)">{{ $t("common.delete") }}
                   </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>

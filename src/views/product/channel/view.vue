@@ -1,162 +1,51 @@
 <template>
-  <el-dialog
-    id="channelCommissionPreviewTable"
-    :visible="dialogVisible"
-    :before-close="handleClose"
-    :fullscreen="true"
-    :title="title"
-  >
+  <el-dialog id="channelCommissionPreviewTable" :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="title">
     <!--<div style="display: inline-block; position: absolute; right: 20px; z-index: 3000;">-->
     <!--<el-button :loading="loading" size="small" plain icon="el-icon-download" type="primary" @click="exportExcel()">导出</el-button>-->
     <!--</div>-->
-    <el-row>
-      <el-form 
-        :inline="true" 
-        @submit.native.prevent>
-        <el-form-item
-          :label="$t('product.channel.view.company')"
-          class="search_item"
-          prop="params.companies"
-        >
-          <el-select
-            :loading="companyLoading"
-            :remote-method="searchCompany"
-            :placeholder="
+    <div class="table-container">
+
+      <div class="header">
+        <el-form :inline="true" @submit.native.prevent>
+          <el-form-item :label="$t('product.channel.view.company')" class="search_item" prop="params.companies">
+            <el-select :loading="companyLoading" :remote-method="searchCompany" :placeholder="
               $t('product.channel.set.add_policy.company_placeholder')
-            "
-            v-model="params.companies"
-            multiple
-            remote
-            filterable
-            @focus="onCompanyFocus"
-            @change="getViewData"
-          >
-            <el-option
-              v-for="item in companies"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          :label="$t('product.channel.view.exclude_company')"
-          class="search_item"
-          prop="params.nCompanies"
-        >
-          <el-select
-            :loading="companyLoading"
-            :remote-method="searchCompany"
-            :placeholder="
+            " v-model="params.companies" multiple remote filterable @focus="onCompanyFocus" @change="getViewData">
+              <el-option v-for="item in companies" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('product.channel.view.exclude_company')" class="search_item" prop="params.nCompanies">
+            <el-select :loading="companyLoading" :remote-method="searchCompany" :placeholder="
               $t('product.channel.set.add_policy.company_placeholder')
-            "
-            v-model="params.nCompanies"
-            multiple
-            remote
-            filterable
-            @focus="onCompanyFocus"
-            @change="getViewData"
-          >
-            <el-option
-              v-for="item in companies"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          :label="$t('product.channel.view.product')"
-          class="search_item"
-          prop="params.products"
-        >
-          <el-select
-            :loading="productLoading"
-            :remote-method="searchProduct"
-            :placeholder="
+            " v-model="params.nCompanies" multiple remote filterable @focus="onCompanyFocus" @change="getViewData">
+              <el-option v-for="item in companies" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('product.channel.view.product')" class="search_item" prop="params.products">
+            <el-select :loading="productLoading" :remote-method="searchProduct" :placeholder="
               $t('product.channel.set.add_policy.product_placeholder')
-            "
-            v-model="params.products"
-            multiple
-            remote
-            filterable
-            @focus="onProductFocus"
-            @change="getViewData"
-          >
-            <el-option
-              v-for="item in products"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          :label="$t('product.channel.view.exclude_product')"
-          class="search_item"
-          prop="params.nproducts"
-        >
-          <el-select
-            :loading="productLoading"
-            :remote-method="searchProduct"
-            :placeholder="
+            " v-model="params.products" multiple remote filterable @focus="onProductFocus" @change="getViewData">
+              <el-option v-for="item in products" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('product.channel.view.exclude_product')" class="search_item" prop="params.nproducts">
+            <el-select :loading="productLoading" :remote-method="searchProduct" :placeholder="
               $t('product.channel.set.add_policy.product_placeholder')
-            "
-            v-model="params.nProducts"
-            multiple
-            remote
-            filterable
-            @focus="onProductFocus"
-            @change="getViewData"
-          >
-            <el-option
-              v-for="item in products"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            v-if="hasPermission(100034)"
-            :loading="exportLoading"
-            type="primary"
-            size="small"
-            icon="el-icon-download"
-            @click="exportPDF()"
-          >{{ $t("common.export") }}</el-button
-          >
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <basic-container>
-        <div class="table-container">
-          <el-table
-            v-loading="loading"
-            :data="data"
-            :height="tableHeight"
-            stripe
-          >
-            <el-table-column
-              :label="$t('product.channel.view.company')"
-              fixed
-              prop="company.name"
-              min-width="200"
-            />
-            <el-table-column
-              :label="$t('product.channel.view.product')"
-              fixed
-              prop="product.name"
-              min-width="200"
-            />
-            <el-table-column
-              v-for="(year, index) in columnYear"
-              :key="index"
-              :label="year"
-              width="100"
-            >
+            " v-model="params.nProducts" multiple remote filterable @focus="onProductFocus" @change="getViewData">
+              <el-option v-for="item in products" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button v-if="hasPermission(100034)" :loading="exportLoading" type="primary" size="small" icon="el-icon-download" @click="exportPDF()">{{ $t("common.export") }}</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <el-row>
+        <basic-container>
+          <el-table v-loading="loading" :data="data" stripe>
+            <el-table-column :label="$t('product.channel.view.company')" fixed prop="company.name" min-width="200" />
+            <el-table-column :label="$t('product.channel.view.product')" fixed prop="product.name" min-width="200" />
+            <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="100">
               <template slot-scope="scope">
                 <span>{{
                   scope.row.conditions[index]
@@ -166,17 +55,11 @@
               </template>
             </el-table-column>
           </el-table>
-          <pagination
-            :total="total"
-            :page="listQuery.page"
-            :limit="listQuery.limit"
-            @pagination="pagination"
-            @update:page="updatePage"
-            @update:limit="updateLimit"
-          />
-        </div>
-      </basic-container>
-    </el-row>
+          <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        </basic-container>
+      </el-row>
+    </div>
+
   </el-dialog>
 </template>
 
@@ -380,10 +263,21 @@ export default {
   },
 };
 </script>
-<style lang="scss" rel="stylesheet/scss" type="text/scss">
+<style lang="scss" rel="stylesheet/scss" type="text/scss" scoped>
 #channelCommissionPreviewTable {
   .el-dialog__body {
-    padding: 10px;
+    padding: 0;
+    .header {
+      height: 100%;
+      line-height: 60px;
+      padding-left: 24px;
+      .el-form--inline .el-form-item {
+        margin-bottom: 0;
+      }
+      .el-form-item__content {
+        line-height: 60px;
+      }
+    }
   }
 }
 </style>

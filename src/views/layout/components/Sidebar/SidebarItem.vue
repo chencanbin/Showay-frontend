@@ -1,11 +1,7 @@
 <template>
   <div v-if="!item.hidden && item.children && item.children.length > 0" class="menu-wrapper">
-    <template v-if="
-        hasOneShowingChild(item.children, item) &&
-          (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
-          !item.alwaysShow
-      ">
-      <app-link :to="resolvePath(onlyOneChild.path)" @click.native="onMenuItemClick(onlyOneChild,$event)">
+    <template v-if=" hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren) && !item.alwaysShow">
+      <app-link :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
           <item v-if="onlyOneChild.meta" :icon="onlyOneChild.meta.icon || item.meta.icon" :title="generateTitle(onlyOneChild.meta.title)" />
         </el-menu-item>
@@ -13,16 +9,18 @@
     </template>
     <el-submenu v-else ref="submenu" :index="resolvePath(item.path)" :show-timeout="100" :hide-timeout="300">
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" />
+        <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" v-change-icon:child="item" @click.native="onMenuItemClick(item)" />
       </template>
 
-      <template v-for="child in item.children" v-if="!child.hidden">
-        <sidebar-item v-if="child.children && child.children.length > 0" :is-nest="true" :item="child" :key="child.path" :base-path="resolvePath(child.path)" class="nest-menu" />
-        <app-link v-else :to="resolvePath(child.path)" :key="child.name">
-          <el-menu-item :index="resolvePath(child.path)" @click.native="onMenuItemClick(child,$event)">
-            <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" />
-          </el-menu-item>
-        </app-link>
+      <template v-for="child in item.children">
+        <div :key="child.path">
+          <sidebar-item v-if="child.children && child.children.length > 0" :is-nest="true" :item="child" :key="child.path" :base-path="resolvePath(child.path)" class="nest-menu" />
+          <app-link v-else :to="resolvePath(child.path)" :key="child.name">
+            <el-menu-item :index="resolvePath(child.path)">
+              <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" v-change-icon:child="child" @click.native="onMenuItemClick(child)" />
+            </el-menu-item>
+          </app-link>
+        </div>
       </template>
     </el-submenu>
   </div>
@@ -35,11 +33,22 @@ import { isExternal } from "@/utils";
 import Item from "./Item";
 import AppLink from "./Link";
 import FixiOSBug from "./FixiOSBug";
-
+const updateFlat = 1
 export default {
   name: "SidebarItem",
   components: { Item, AppLink },
   mixins: [FixiOSBug],
+  directives: {
+    'changeIcon': {
+      bind: (el, binding, vNode) => {
+        console.log(vNode)
+        if (binding.value && binding.value.meta && binding.value.meta.icon) {
+          const icon = binding.value.meta.icon;
+
+        }
+      }
+    }
+  },
   props: {
     // route object
     item: {
@@ -63,14 +72,16 @@ export default {
   },
   methods: {
     onMenuItemClick(item, $event) {
-      if (this.currentChild) {
-        const iconStr = this.currentChild.meta.icon.slice(0, -7)
-        console.log(iconStr)
-        this.currentChild.meta.icon = `${iconStr}_nor`
-      }
-      this.currentChild = item
-      const iconStr = item.meta.icon.slice(0, -4)
-      item.meta.icon = `${iconStr}_select`
+      this.$forceUpdate();
+      // this.$set(item, 'isActive', updateFlat + 1)
+      // if (this.currentChild) {
+      //   const iconStr = this.currentChild.meta.icon.slice(0, -7)
+      //   console.log(iconStr)
+      //   this.currentChild.meta.icon = `${iconStr}_nor`
+      // }
+      // this.currentChild = item
+      // const iconStr = item.meta.icon.slice(0, -4)
+      // item.meta.icon = `${iconStr}_select`
     },
     hasOneShowingChild(children, parent) {
       const showingChildren = children.filter((item) => {

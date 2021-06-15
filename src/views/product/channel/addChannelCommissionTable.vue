@@ -4,7 +4,7 @@
   <!--<el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>-->
   <el-dialog id="createChannelCommissionTableDialog" :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('product.channel.set.add_title')" append-to-body center>
     <el-table id="createChannelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
-      <el-table-column :label="$t('product.channel.set.priority')" type="index" width="80" />
+      <el-table-column :label="$t('product.channel.set.priority')" type="index" width="120" />
       <el-table-column :label="$t('product.channel.set.name')" prop="name" min-width="300">
         <template slot-scope="scope">
           <el-tag v-for="product in scope.row.products" :key="product.id" style="margin-right: 10px; margin-bottom: 5px">{{ product.name }}</el-tag>

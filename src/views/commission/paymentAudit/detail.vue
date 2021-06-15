@@ -10,7 +10,7 @@
           <count-to :start-val="0" :end-val="selectSum" :duration="2000" :decimals="2" prefix="HK$ " style="font-weight: bold" />
         </span>
       </el-row>
-      <el-table v-loading="mergedPaymentLoading" :max-height="height" :data="mergedPayment.payments" stripe border @selection-change="handleSelectionChange">
+      <el-table v-loading="mergedPaymentLoading" :data="mergedPayment.payments" stripe border @selection-change="handleSelectionChange">
         <el-table-column v-if="status === '-1'" align="center" type="selection" width="55" />
         <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" show-overflow-tooltip>
           <template slot-scope="scope">
@@ -329,12 +329,33 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 #paymentDetail .el-dialog__body {
-  padding: 5px 20px;
-  tr:nth-child(odd) td {
-    background-color: #ffffff;
+  .el-table td {
+    font-size: 14px;
+    border-bottom: 1px solid #edf1f8;
   }
-  tr:nth-child(even) td {
-    background-color: #fafafa;
+  th:first-child {
+    padding-left: 0;
+  }
+  .el-table__row td:first-child {
+    padding-left: 16px;
+    .cell {
+      padding-left: 0;
+    }
+  }
+  .el-table th > .cell {
+    padding-left: 14px;
+  }
+  .el-checkbox__inner {
+    width: 20px;
+    height: 20px;
+    &::after {
+      height: 7px;
+      top: 4px;
+      left: 7px;
+    }
+    &::before {
+      top: 8px;
+    }
   }
 }
 </style>

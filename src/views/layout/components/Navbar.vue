@@ -7,14 +7,14 @@
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
         <!--<error-log class="errLog-container right-menu-item"/>-->
-        <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
+        <!-- <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
           <size-select class="international right-menu-item" />
-        </el-tooltip>
+        </el-tooltip> -->
         <lang-select class="international right-menu-item" />
         <div class="split-line" />
-        <el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">
+        <!-- <el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">
           <theme-picker class="theme-switch right-menu-item" />
-        </el-tooltip>
+        </el-tooltip> -->
       </template>
       <el-tooltip content="首页配置" effect="dark" placement="bottom">
         <div class="setting_class right-menu-item">
@@ -54,7 +54,7 @@
           <i class="el-icon-arrow-down el-icon--right" />
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>
+          <el-dropdown-item @click.native="handleOpenUpdateUserDialog">
             <i class="iconfont icon_password" style="color: #D8D8D8;" />
             <span>{{ $t("navbar.password") }}</span>
           </el-dropdown-item>
@@ -90,7 +90,7 @@
     <!-- 首页配置弹窗 -->
     <el-dialog :visible="showHomePageSetting" title="首页配置" width="500px" @close="showHomePageSetting = false" append-to-body>
       <el-checkbox-group v-model="homePageSetting">
-        <el-checkbox v-for="item in allHomePageSetting" :key="item.id" :label="item.id" style="width: 140px; width:210px; margin-right:0; margin-bottom: 20px">{{ $t(item.name) }}</el-checkbox>
+        <el-checkbox v-for="item in allHomePageSetting" :key="item.id" :label="item.id" style="width:210px; height: 50px; line-height: 50px; margin-right:0; ">{{ $t(item.name) }}</el-checkbox>
       </el-checkbox-group>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showHomePageSetting = false">{{
@@ -320,6 +320,7 @@ export default {
   .calendar {
     .el-badge__content.is-fixed {
       top: 6px !important;
+      right: 15px;
     }
   }
   .right-menu {
@@ -342,13 +343,13 @@ export default {
       background: $--orange;
     }
     .el-badge__content.is-fixed {
-      top: 15px;
+      top: 19px;
     }
     &:focus {
       outline: none;
     }
     .right-menu-item {
-      margin-right: 30px;
+      margin-right: 34px;
       .iconfont {
         color: rgba(203, 206, 237, 1) !important;
       }
@@ -430,7 +431,10 @@ export default {
   }
 }
 .mobile_navbar {
-  width: calc(100% - 60px);
+  width: 100%;
+  .right-menu {
+    margin-right: 60px;
+  }
 }
 .el-popover {
   min-width: 200px !important;

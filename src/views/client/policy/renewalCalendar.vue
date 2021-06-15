@@ -293,7 +293,8 @@ export default {
       this.currentDay = day;
     },
     closeDetail() {
-      this.currentDay = ""
+      // this.currentDay = ""
+      this.dialogVisible = false;
     }
   },
 };
@@ -363,8 +364,9 @@ export default {
           font-size: 14px;
           position: absolute;
           right: 48px;
-          width: 170px;
           height: 40px;
+          padding-left: 16px;
+          padding-right: 16px;
           top: 31px;
           border: 1px solid #ededf1;
           border-radius: 6px;
@@ -412,7 +414,8 @@ export default {
     }
 
     .calendar-detail {
-      width: 480px;
+      // width: 480px;
+      width: 20%;
       height: 100vh;
       background: #ffffff;
       box-shadow: -10px 0px 30px 0px rgba(0, 0, 0, 0.06);

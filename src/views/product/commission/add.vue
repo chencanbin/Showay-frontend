@@ -3,7 +3,7 @@
     <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <!--<el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>-->
-    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('product.commission.add.title')" width="500px">
+    <el-dialog v-el-drag-dialog append-to-body :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('product.commission.add.title')" width="500px">
       <el-form ref="commission" :model="commission" :rules="rule" label-width="100px">
         <el-form-item :label="$t('product.commission.add.company')" prop="companyId">
           <el-select ref="company" v-model="commission.companyId" :remote-method="remoteSearch" :placeholder="$t('product.commission.add.company_rule_message')" remote filterable style="width: 100%" @change="onCompanyChange">

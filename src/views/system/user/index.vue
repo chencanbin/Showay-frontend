@@ -54,12 +54,12 @@
           </template>
         </el-table-column>
         <el-table-column :label="$t('client.info.email')" prop="email" min-width="100px" />
-        <el-table-column :label="$t('user.locked')" min-width="100px">
+        <el-table-column :label="$t('user.locked')" prop="locked" min-width="100px">
           <template slot-scope="scope">
             <el-switch v-if="!scope.row.isBuiltin" v-model="scope.row.isLocked" :active-text="$t('user.locked')" @change="onLockAccount(scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.action')" width="80px">
+        <el-table-column :label="$t('common.action')" prop="action" width="80px">
           <template slot-scope="scope">
             <el-dropdown v-if="!scope.row.isBuiltin">
               <el-button type="primary" plain size="mini">
@@ -120,6 +120,10 @@
               </el-dropdown-menu>
             </el-dropdown>
             <div v-if="item.remarks" class="timeline_content">
+              <div class="row">
+                <span class="label">{{ $t('user.superior') }}:</span>
+                <span class="value"> {{ item.superior.acronym }}</span>
+              </div>
               <div class="row">
                 <span class="label">{{ $t("common.remarks") }}:</span>
                 <span class="value"> {{ item.remarks }}</span>
@@ -270,7 +274,11 @@ export default {
     getFormattedDate(value) {
       return parseTime(value, "{y}-{m}-{d}");
     },
-    expandChange(row) {
+    expandChange(row, column) {
+      const { property } = column
+      if (property === 'locked' || property === 'action') {
+        return false
+      }
       this.currentRow = row;
       this.getChannelHierarchy({ owner: row.id });
       this.drawer = true;
@@ -430,6 +438,7 @@ export default {
         color: $--content;
         line-height: 25px;
         flex: 1;
+        text-align: right;
       }
     }
   }

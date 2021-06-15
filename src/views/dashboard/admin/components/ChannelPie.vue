@@ -86,7 +86,7 @@ export default {
       this.chart.source(this.afyp);
       this.chart.coord("theta", {
         radius: 1,
-        innerRadius: 0.5
+        innerRadius: 0.6
       });
       this.chart.scale("value", {
         min: 0,
