@@ -9,7 +9,7 @@
     </template>
     <el-submenu v-else ref="submenu" :index="resolvePath(item.path)" :show-timeout="100" :hide-timeout="300">
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" v-change-icon:child="item" @click.native="onMenuItemClick(item)" />
+        <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" @click.native="onMenuItemClick(item)" />
       </template>
 
       <template v-for="child in item.children">
@@ -17,7 +17,7 @@
           <sidebar-item v-if="child.children && child.children.length > 0" :is-nest="true" :item="child" :key="child.path" :base-path="resolvePath(child.path)" class="nest-menu" />
           <app-link v-else :to="resolvePath(child.path)" :key="child.name">
             <el-menu-item :index="resolvePath(child.path)">
-              <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" v-change-icon:child="child" @click.native="onMenuItemClick(child)" />
+              <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" @click.native="onMenuItemClick(child)" />
             </el-menu-item>
           </app-link>
         </div>
@@ -38,17 +38,7 @@ export default {
   name: "SidebarItem",
   components: { Item, AppLink },
   mixins: [FixiOSBug],
-  directives: {
-    'changeIcon': {
-      bind: (el, binding, vNode) => {
-        console.log(vNode)
-        if (binding.value && binding.value.meta && binding.value.meta.icon) {
-          const icon = binding.value.meta.icon;
 
-        }
-      }
-    }
-  },
   props: {
     // route object
     item: {
