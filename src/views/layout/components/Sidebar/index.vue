@@ -1,7 +1,7 @@
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
     <el-menu :show-timeout="300" :default-active="$route.path" :collapse="isCollapse" mode="vertical" background-color="#fff" text-color="#8E919F" active-text-color="#515CC3">
-      <sidebar-item v-for="(route, index) in permission_routers" :key="route.path" :item="route" :base-path="route.path" ref="sidebarItem" />
+      <sidebar-item v-for="(route, index) in permission_routers" :key="route.path" :item="route" :base-path="route.path" ref="sidebarItem" @menuClick="handleMenuClick" />
     </el-menu>
   </el-scrollbar>
 </template>
@@ -40,6 +40,9 @@ export default {
           }
         })
       }
+    },
+    handleMenuClick(res) {
+      console.log(res)
     }
   }
 };

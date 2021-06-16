@@ -1,8 +1,10 @@
 <template>
   <span>
-    <el-badge :hidden="events.length === 0" :value="events.length" :max="99" style="line-height: 35px">
+    <el-badge :hidden="events.length === 0" :value="events.length" :max="99">
       <!-- <svg-icon icon-class="calendar" style="vertical-align: 1.1em; font-size: 20px" @click="initForm" /> -->
-      <i class="iconfont icon_date" @click="initForm" />
+      <svg class="iconfont" aria-hidden="true" @click="initForm">
+        <use xlink:href="#icon_date"></use>
+      </svg>
     </el-badge>
     <el-dialog id="renewalCalendar" :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('client.insurance_policy.renewal_calendar')" append-to-body>
       <!-- // renewal: 续保 reservation： 预约 -->

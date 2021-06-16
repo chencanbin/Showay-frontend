@@ -2,8 +2,8 @@
   <div v-if="!item.hidden && item.children && item.children.length > 0" class="menu-wrapper">
     <template v-if=" hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren) && !item.alwaysShow">
       <app-link :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
-          <item v-if="onlyOneChild.meta" :icon="onlyOneChild.meta.icon || item.meta.icon" :title="generateTitle(onlyOneChild.meta.title)" />
+        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }" v-sidebar-item>
+          <item v-if="onlyOneChild.meta" :icon="onlyOneChild.meta.icon || item.meta.icon" :title="generateTitle(onlyOneChild.meta.title)" @click.native="onMenuItemClick(item)" />
         </el-menu-item>
       </app-link>
     </template>
@@ -16,8 +16,8 @@
         <div :key="child.path">
           <sidebar-item v-if="child.children && child.children.length > 0" :is-nest="true" :item="child" :key="child.path" :base-path="resolvePath(child.path)" class="nest-menu" />
           <app-link v-else :to="resolvePath(child.path)" :key="child.name">
-            <el-menu-item :index="resolvePath(child.path)">
-              <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" @click.native="onMenuItemClick(child)" />
+            <el-menu-item :index="resolvePath(child.path)" v-sidebar-item>
+              <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" @click.native="onMenuItemClick(child, item.children)" />
             </el-menu-item>
           </app-link>
         </div>
@@ -33,12 +33,43 @@ import { isExternal } from "@/utils";
 import Item from "./Item";
 import AppLink from "./Link";
 import FixiOSBug from "./FixiOSBug";
-const updateFlat = 1
 export default {
   name: "SidebarItem",
   components: { Item, AppLink },
   mixins: [FixiOSBug],
+  directives: {
+    sidebarItem: {
+      bind(el, binding, vNode) {
+        console.log(vNode)
+        const componentInstance = vNode.componentInstance;
+        const active = componentInstance.active;
 
+        // const active = vNode.context.$parent.active;
+        if (active && componentInstance.$children.length >= 1) {
+          const itemNode = componentInstance.$children[0];
+          const icon = itemNode.icon;
+          const iconName = icon.slice(0, -4);
+          itemNode.icon = `${iconName}_select`;
+        }
+      },
+      // update(el, binding, vNode) {
+      //   const componentInstance = vNode.componentInstance;
+      //   const active = componentInstance.active;
+
+      //   // const active = vNode.context.$parent.active;
+      //   if (active && componentInstance.$children.length >= 1) {
+      //     const itemNode = componentInstance.$children[0];
+      //     const icon = itemNode.icon;
+      //     const iconName = icon.slice(0, -4);
+      //     itemNode.icon = `${iconName}_select`;
+      //   }
+      // }
+      // update(el, binding, vNode) {
+      //   console.log('........................')
+      //   console.log()
+      // }
+    },
+  },
   props: {
     // route object
     item: {
@@ -57,19 +88,29 @@ export default {
   data() {
     return {
       onlyOneChild: null,
-      currentChild: ''
+      currentChild: '',
+      currentChildrenList: []
     };
   },
   methods: {
-    onMenuItemClick(item, $event) {
-      this.$forceUpdate();
+    onMenuItemClick(item, children) {
+      this.$emit('menuClick', item)
+      // this.$forceUpdate();
       // this.$set(item, 'isActive', updateFlat + 1)
       // if (this.currentChild) {
       //   const iconStr = this.currentChild.meta.icon.slice(0, -7)
-      //   console.log(iconStr)
       //   this.currentChild.meta.icon = `${iconStr}_nor`
       // }
+      // console.log(this.currentChildrenList)
+      // if (this.currentChildrenList.length) {
+      //   this.currentChildrenList.forEach(item => {
+      //     const iconStr = item.meta.icon.slice(0, -7)
+      //     item.meta.icon = `${iconStr}_nor`
+      //   })
+      // }
+
       // this.currentChild = item
+      // this.currentChildrenList = children;
       // const iconStr = item.meta.icon.slice(0, -4)
       // item.meta.icon = `${iconStr}_select`
     },

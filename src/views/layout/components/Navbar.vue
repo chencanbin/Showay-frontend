@@ -18,30 +18,42 @@
       </template>
       <el-tooltip content="首页配置" effect="dark" placement="bottom">
         <div class="setting_class right-menu-item">
-          <i class="iconfont icon_shouye_peizhi" @click="showHomePageSetting = true" />
+          <svg class="iconfont" aria-hidden="true" @click="showHomePageSetting = true">
+            <use xlink:href="#icon_shouye_peizhi"></use>
+          </svg>
         </div>
       </el-tooltip>
       <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" class="right-menu-item">
         <el-popover width="150" trigger="click">
           <div v-if="hasPermission(100055)" class="notification-list-item">
-            <a @click="handleCreditClick">
-              <svg-icon icon-class="earning" class-name="icon-earning" />
-              {{ credit.desc }}
+            <a @click="handleCreditClick" class="notification-content-wrapper">
+              <div class="notification-content">
+                <svg class="iconfont" aria-hidden="true">
+                  <use xlink:href="#icon_collect_money"></use>
+                </svg>
+                {{ credit.desc }}
+              </div>
               <div class="notification-badge-content">
                 {{ credit.total }}
               </div>
             </a>
           </div>
           <div v-if="hasPaymentStatuses(130000)" class="notification-list-item">
-            <a @click="handlePaymentClick">
-              <svg-icon icon-class="paymentSum" class-name="icon-payment" />
-              {{ payment.desc }}
+            <a @click="handlePaymentClick" class="notification-content-wrapper">
+              <div class="notification-content">
+                <svg class="iconfont" aria-hidden="true">
+                  <use xlink:href="#icon-60"></use>
+                </svg>
+                {{ payment.desc }}
+              </div>
               <div class="notification-badge-content is-fixed">
                 {{ payment.total }}
               </div>
             </a>
           </div>
-          <i slot="reference" class="iconfont icon_notice" />
+          <svg slot="reference" class="iconfont" aria-hidden="true">
+            <use xlink:href="#icon_notice"></use>
+          </svg>
         </el-popover>
       </el-badge>
       <el-tooltip v-if="hasPermission(100105)" :enterable="false" :content="$t('navbar.calendar')" effect="dark" placement="bottom">
@@ -55,11 +67,15 @@
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="handleOpenUpdateUserDialog">
-            <i class="iconfont icon_password" style="color: #D8D8D8;" />
+            <svg class="iconfont" aria-hidden="true">
+              <use xlink:href="#icon_password"></use>
+            </svg>
             <span>{{ $t("navbar.password") }}</span>
           </el-dropdown-item>
           <el-dropdown-item @click.native="logout">
-            <i class="iconfont icon_sign_out" style="color: #D8D8D8;" />
+            <svg class="iconfont" aria-hidden="true">
+              <use xlink:href="#icon_sign_out"></use>
+            </svg>
             <span>{{ $t("navbar.logOut") }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -291,6 +307,15 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
+.notification-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .notification-content {
+    display: flex;
+    align-items: center;
+  }
+}
 .navbar {
   padding-right: 40px;
   color: #fff;
@@ -319,10 +344,11 @@ export default {
   }
   .calendar {
     .el-badge__content.is-fixed {
-      top: 6px !important;
+      top: 0px !important;
       right: 15px;
     }
   }
+
   .right-menu {
     float: right;
     height: 100%;
@@ -333,17 +359,20 @@ export default {
       width: 1px;
       height: 16px;
       background: #cbceed;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       margin-right: 30px;
     }
     .iconfont {
       margin-right: 0;
     }
+    .el-badge {
+      display: flex;
+    }
     .el-badge__content {
       background: $--orange;
     }
     .el-badge__content.is-fixed {
-      top: 19px;
+      top: 0;
     }
     &:focus {
       outline: none;
@@ -357,11 +386,10 @@ export default {
     .setting_class {
       cursor: pointer;
       vertical-align: 13px;
+      display: flex;
     }
-    .international {
-      .iconfont {
-        color: rgba(203, 206, 237, 1) !important;
-      }
+    .el-popover__reference-wrapper {
+      display: flex;
     }
     .theme-switch {
       vertical-align: 8px;
@@ -383,9 +411,8 @@ export default {
       border: 1px solid #eee;
       vertical-align: baseline;
     }
-    .notification {
-    }
   }
+
   .transverse {
     border-right: solid 1px #ccc;
     height: 50px;

@@ -1,7 +1,9 @@
 <template>
-  <el-dropdown trigger="click" class="international" @command="handleSetLanguage">
-    <div style="font-size: 16px">
-      <i class="iconfont icon_languade" />
+  <el-dropdown trigger="click" @command="handleSetLanguage">
+    <div class="international-icon">
+      <svg slot="reference" class="iconfont" aria-hidden="true">
+        <use xlink:href="#icon_languade"></use>
+      </svg>
     </div>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item :disabled="language === 'zh-TW'" command="zh-TW" style="padding: 5px 10px">繁體中文</el-dropdown-item>
@@ -34,7 +36,7 @@ export default {
 
 <style scoped>
 .international-icon {
-  font-size: 20px;
+  font-size: 30px;
   cursor: pointer;
   vertical-align: -5px !important;
 }
