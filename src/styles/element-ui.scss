@@ -2,7 +2,7 @@
 
  .el-breadcrumb__inner,
  .el-breadcrumb__inner a {
-   font-weight: 400 !important;
+   font-weight: bold !important;
  }
 
  .el-upload {
@@ -88,6 +88,7 @@
    box-shadow: none;
    border: none !important;
    height: 100%;
+   border-radius: 8px;
  }
 
  .pagination {
@@ -129,10 +130,16 @@
    height: 34px;
    line-height: 34px;
    font-size: 14px;
-   margin-top: 13px;
+   margin-top: 16px;
    margin-right: 24px;
    display: flex;
    align-items: center;
+ }
+
+ .el-card__body {
+   padding-left: 24px;
+   padding-right: 24px;
+   padding-bottom: 24px;
  }
 
  .el-table {
@@ -311,6 +318,40 @@
  .el-input__inner {
    color: #42475F;
    background: #F6F6F7;
+   font-size: 12px;
+   font-weight: 500;
+ }
+
+ .el-input__suffix-inner {
+   font-family: "iconfont" !important;
+   font-style: normal;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   font-size: 18px;
+   position: absolute;
+   right: 0;
+   left: auto;
+   width: 18px;
+   height: 18px;
+   margin-top: 9px;
+   transform: rotate(90deg);
+
+
+   &::before {
+     content: "\e6ce";
+   }
+
+ }
+
+ .el-input__prefix {
+   i {
+     display: none;
+   }
+ }
+
+ .el-input__inner {
+   padding-left: 11px !important;
+   padding-right: 0 !important;
  }
 
  .el-range-input {

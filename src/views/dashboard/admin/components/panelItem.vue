@@ -1,5 +1,5 @@
 <template>
-  <div class="card-panel">
+  <div class="card-panel" style="border-radius: 6px;">
     <!--<div class="card-panel-icon-wrapper icon-people">-->
     <!--<svg-icon icon-class="income" class-name="card-panel-icon" />-->
     <!--</div>-->
@@ -11,9 +11,17 @@
         <span v-else-if="contrast < 0" class="reduce">{{contrast}}%</span>
       </div>
       <div class="icon-contrast">
-        <i v-if="contrast === 0" class="el-icon-minus"></i>
-        <i v-else-if="contrast > 0" class="el-icon-top"></i>
-        <i v-else-if="contrast < 0" class="el-icon-bottom"></i>
+        <svg v-if="contrast === 0" class="iconfont" aria-hidden="true">
+          <use xlink:href="#icon_shouye_peizhi"></use>
+        </svg>
+        <svg v-else-if="contrast > 0" class="iconfont" aria-hidden="true">
+          <use xlink:href="#icon_increase"></use>
+        </svg>
+        <svg v-else-if="contrast < 0" class="iconfont" aria-hidden="true">
+          <use xlink:href="#icon_reduce"></use>
+        </svg>
+        <!-- <i v-else-if="contrast > 0" class="el-icon-top"></i>
+        <i v-else-if="contrast < 0" class="el-icon-bottom"></i> -->
       </div>
       <count-to :start-val="0" :end-val="count" :duration="2600" class="card-panel-num" />
     </div>
@@ -96,7 +104,6 @@ export default {
   position: relative;
   overflow: hidden;
   background: #fff;
-  border-radius: 4px;
   box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
   border-color: rgba(0, 0, 0, 0.05);
 
@@ -130,36 +137,6 @@ export default {
     position: absolute;
     bottom: 24px;
     left: 24px;
-    .el-icon-minus {
-      width: 32px;
-      height: 32px;
-      border-radius: 4px;
-      line-height: 32px;
-      text-align: center;
-      font-weight: bold;
-      color: #b5b9c6;
-      background: #f4f4f8;
-    }
-    .el-icon-top {
-      width: 32px;
-      height: 32px;
-      border-radius: 4px;
-      line-height: 32px;
-      text-align: center;
-      font-weight: bold;
-      color: $--green;
-      background: $--green-assist;
-    }
-    .el-icon-bottom {
-      width: 32px;
-      height: 32px;
-      border-radius: 4px;
-      line-height: 32px;
-      text-align: center;
-      font-weight: bold;
-      color: $--yellow;
-      background: $--yellow-assist;
-    }
   }
   .card-panel-num {
     position: absolute;

@@ -5,10 +5,10 @@
         $t("home.comparison")
       }}</span>
       <div class="card-header-action">
-        <el-select :remote-method="searchCompany" :loading="companyLoading" v-model="company" :placeholder="$t('common.company_placeholder')" filterable remote clearable style="margin-right: 20px" @focus="onCompanyFocus">
+        <el-select :remote-method="searchCompany" :loading="companyLoading" v-model="company" :placeholder="$t('common.company_placeholder')" filterable remote clearable @focus="onCompanyFocus">
           <el-option v-for="item in companies" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
-        <el-date-picker :editable="false" :clearable="false" v-model="year" type="year" value-format="timestamp" style="width: 120px" />
+        <el-date-picker :editable="false" :clearable="false" v-model="year" type="year" value-format="timestamp" class="date-picker" />
         <el-button-group style="margin-left: 20px">
           <div size="mini" :class="activeName === 0 ? 'button-active' : 'button-no-active'" class="self-button" @click="clearCreditMonth()">{{ $t("home.month") }}</div>
           <div size="mini" :class="activeName === 1 ? 'button-active' : 'button-no-active'" class="self-button" @click="clearCreditQuarter()">{{ $t("home.quarter") }}</div>
@@ -295,10 +295,10 @@ export default {
 <style rel="stylesheet/scss" lang="scss" type="text/scss" scoped>
 .clearedCredit {
   .el-button-group {
-    padding-left: 3px;
-    padding-right: 3px;
+    padding: 3px;
     background: #f6f6f6;
     border-radius: 6px;
+    display: flex;
   }
   .self-button {
     width: 54px;
@@ -312,6 +312,9 @@ export default {
   .self-button:focus {
     border: 0;
   }
+  .date-picker {
+    width: 77px;
+  }
   .button-active {
     background: #ffffff;
     border-radius: 6px;
@@ -322,6 +325,11 @@ export default {
     font-weight: 400;
     color: $--label;
     background-color: transparent;
+    font-size: 12px;
+  }
+  .el-select {
+    width: 180px;
+    margin-right: 20px;
   }
 }
 </style>

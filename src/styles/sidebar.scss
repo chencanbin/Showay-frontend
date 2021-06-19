@@ -11,18 +11,23 @@
 
   // 侧边栏
   .sidebar-container {
+    padding-top: 24px;
     transition: width 0.28s;
     width: 200px !important;
     height: 100%;
     position: fixed;
     font-size: 16px;
-    top: 59px;
+    top: 60px;
     bottom: 0;
     left: 0;
     padding-bottom: 60px;
     z-index: 1001;
     overflow: hidden;
-    box-shadow: 0px 2px 20px 0px rgba(14, 17, 41, 0.08), -10px 0px 20px 0px rgba(4, 12, 26, 0.1);
+    box-shadow: 0px 2px 18px 0px rgba(14, 17, 41, 0.08), -9px 0px 18px 0px rgba(4, 12, 26, 0.1);
+
+    &:hover {
+      box-shadow: none;
+    }
 
     //reset element-ui css
     .horizontal-collapse-transition {
@@ -39,6 +44,7 @@
 
     .el-scrollbar__bar.is-vertical {
       right: 0px;
+      display: none;
     }
 
     .is-horizontal {
@@ -96,7 +102,15 @@
 
       i {
         color: $--content;
+        font-family: "iconfont" !important;
+        font-size: 20px;
+        margin-top: -10px;
+
+        &::before {
+          content: "\e6ce";
+        }
       }
+
 
     }
 
@@ -114,10 +128,15 @@
       }
     }
 
+    .el-menu-item.is-active .title {
+      font-weight: bold;
+    }
+
     .el-menu-item.is-active::after {
       content: '';
       position: absolute;
       right: 0;
+      top: 0;
       width: 6px;
       height: 30px;
       border-radius: 4px 0px 0px 4px;
@@ -187,6 +206,7 @@
   .sidebar-container .el-submenu .el-menu-item {
     min-width: 200px !important;
     font-size: 14px !important;
+    font-weight: 400;
 
     &:hover {
       background-color: $--purple-assist !important;

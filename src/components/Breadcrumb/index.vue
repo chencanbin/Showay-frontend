@@ -74,7 +74,7 @@ export default {
     }
     .no-redirect {
       cursor: text;
-      font-weight: 500 !important;
+      font-weight: bold !important;
       color: #fff !important;
     }
   }

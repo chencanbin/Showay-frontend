@@ -8,7 +8,7 @@
         <el-select v-model="channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable remote clearable style="margin-left: 10px">
           <el-option v-for="item in channels.list" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
-        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
+        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" class="date-picker" />
       </div>
     </div>
     <div id="IncomeDistribution">
@@ -174,6 +174,11 @@ export default {
   position: relative;
   .el-select {
     width: 180px;
+  }
+
+  .date-picker {
+    margin-left: 20px;
+    width: 77px;
   }
 }
 </style>

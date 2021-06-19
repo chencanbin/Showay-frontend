@@ -88,14 +88,14 @@ export default {
   }
   .logo-wrapper {
     width: 200px;
-    height: 59px;
+    height: 60px;
     position: fixed;
     background: $--purple;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 100;
-
+    top: 0;
     .logo {
       background: rgba(243, 242, 245, 0.08);
       width: 170px;

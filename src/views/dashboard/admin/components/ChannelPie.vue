@@ -137,7 +137,7 @@ export default {
   position: relative;
   .date-picker {
     margin-left: 20px;
-    width: 120px;
+    width: 77px;
   }
 }
 </style>

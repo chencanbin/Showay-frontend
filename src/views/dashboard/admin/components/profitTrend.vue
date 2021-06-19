@@ -100,7 +100,7 @@ export default {
         container: "profitTrend",
         forceFit: true,
         height: 310,
-        padding: [20, 40, 20, 90],
+        padding: [20, 30, 20, 90],
       });
       this.chart.source(this.profit);
       this.chart.scale("value", {
@@ -139,14 +139,14 @@ export default {
 .profit {
   background: #fff;
   .el-button-group {
-    padding-left: 3px;
-    padding-right: 3px;
+    padding: 3px;
     background: #f6f6f6;
     border-radius: 6px;
+    display: flex;
   }
   .date-picker {
     margin-left: 20px;
-    width: 120px;
+    width: 77px;
   }
   .self-button {
     width: 54px;
@@ -165,11 +165,13 @@ export default {
     border-radius: 6px;
     color: $--purple;
     font-weight: bold;
+    font-size: 12px;
   }
   .button-no-active {
     font-weight: 400;
     color: $--label;
     background-color: transparent;
+    font-size: 12px;
   }
 }
 </style>

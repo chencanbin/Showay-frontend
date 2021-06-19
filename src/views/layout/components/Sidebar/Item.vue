@@ -4,7 +4,7 @@
     <svg class="iconfont" aria-hidden="true">
       <use :xlink:href="'#' + icon"></use>
     </svg>
-    <span slot="title">{{ title }}</span>
+    <span slot="title" class="title">{{ title }}</span>
   </div>
 </template>
 <script>

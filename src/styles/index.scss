@@ -5,6 +5,8 @@
 // @import './btn.scss';
 @import './media.scss';
 @import './element-ui.scss';
+@import './icon.scss';
+
 body {
   height: 100%;
   min-width: 992px;
@@ -267,4 +269,5 @@ input[type=button] {
   width: 1em;
   height: 1em;
   overflow: hidden;
+  fill: #337ab7;
 }

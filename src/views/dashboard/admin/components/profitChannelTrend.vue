@@ -5,12 +5,12 @@
         $t("home.channelProfitTrend", [""])
       }}</span>
       <div class="card-header-action">
-        <el-button-group style="margin-left: 20px">
+        <el-button-group class="button-group">
           <div :class="activeName === 0 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitMonth()">{{ $t("home.month") }}</div>
           <div :class="activeName === 1 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitQuarter()">{{ $t("home.quarter") }}</div>
           <div :class="activeName === 2 ? 'button-active' : 'button-no-active'" class="self-button" @click="profitYear()">{{ $t("home.year") }}</div>
         </el-button-group>
-        <el-select v-model="channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable remote clearable style="margin-left: 20px">
+        <el-select v-model="channel" :placeholder="$t('client.insurance_policy.set.channel_name')" filterable remote clearable>
           <el-option v-for="item in channels.list" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" class="date-picker" />
@@ -172,19 +172,21 @@ export default {
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 .profit-channel {
   background: #fff;
-  .date-picker {
-    margin-left: 20px;
-    width: 120px;
+  .el-select {
+    width: 180px;
+  }
+  .button-group {
+    margin-right: 20px;
   }
   .el-button-group {
-    padding-left: 3px;
-    padding-right: 3px;
+    padding: 3px;
     background: #f6f6f6;
     border-radius: 6px;
+    display: flex;
   }
   .date-picker {
     margin-left: 20px;
-    width: 120px;
+    width: 77px;
   }
   .self-button {
     width: 54px;
@@ -203,11 +205,13 @@ export default {
     border-radius: 6px;
     color: $--purple;
     font-weight: bold;
+    font-size: 12px;
   }
   .button-no-active {
     font-weight: 400;
     color: $--label;
     background-color: transparent;
+    font-size: 12px;
   }
 }
 </style>

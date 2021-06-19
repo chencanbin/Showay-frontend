@@ -101,7 +101,7 @@ export default {
     padding-bottom: 0px !important;
   }
   .el-card__body {
-    height: 324px;
+    height: 346px;
     overflow: auto;
     padding-left: 24px;
     padding-right: 24px;

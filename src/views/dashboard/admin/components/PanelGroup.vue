@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="10" type="flex" justify="center" class="panel-group">
+  <el-row :gutter="16" type="flex" justify="center" class="panel-group">
     <el-col :lg="{span: 24}" v-if="showHomePage(1)" class="card-panel-col">
       <panel-item :title="$t('home.creditSum')" :item="0" :group-by="0" :from="from" :to="to" />
     </el-col>

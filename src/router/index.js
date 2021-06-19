@@ -253,7 +253,7 @@ export const asyncRouterMap = [
         path: 'template',
         component: () => import('@/views/system/template'),
         name: 'template',
-        meta: { title: 'template', icon: 'template', noCache: true, id: 100128 }
+        meta: { title: 'template', icon: 'icon_muban_nor', noCache: true, id: 100128 }
       }
     ]
   },

@@ -2,7 +2,7 @@
   <div v-if="!item.hidden && item.children && item.children.length > 0" class="menu-wrapper">
     <template v-if=" hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren) && !item.alwaysShow">
       <app-link :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }" v-sidebar-item>
+        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
           <item v-if="onlyOneChild.meta" :icon="onlyOneChild.meta.icon || item.meta.icon" :title="generateTitle(onlyOneChild.meta.title)" @click.native="onMenuItemClick(item)" />
         </el-menu-item>
       </app-link>
@@ -16,8 +16,8 @@
         <div :key="child.path">
           <sidebar-item v-if="child.children && child.children.length > 0" :is-nest="true" :item="child" :key="child.path" :base-path="resolvePath(child.path)" class="nest-menu" />
           <app-link v-else :to="resolvePath(child.path)" :key="child.name">
-            <el-menu-item :index="resolvePath(child.path)" v-sidebar-item>
-              <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" @click.native="onMenuItemClick(child, item.children)" />
+            <el-menu-item :index="resolvePath(child.path)">
+              <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" />
             </el-menu-item>
           </app-link>
         </div>

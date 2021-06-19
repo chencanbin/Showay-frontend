@@ -61,10 +61,12 @@
       </el-tooltip>
       <div class="split-line" />
       <el-dropdown class="avatar-container right-menu-item">
-        <span class="el-dropdown-link">
-          {{ name }}
-          <i class="el-icon-arrow-down el-icon--right" />
-        </span>
+        <div class="el-dropdown-link">
+          <span class="avatar-name">{{ name }}</span>
+          <svg class="iconfont action-icon" aria-hidden="true">
+            <use xlink:href="#icon_top_caozuo"></use>
+          </svg>
+        </div>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="handleOpenUpdateUserDialog">
             <svg class="iconfont" aria-hidden="true">
@@ -319,7 +321,6 @@ export default {
 .navbar {
   padding-right: 40px;
   color: #fff;
-  height: 60px;
   line-height: 60px;
   border-radius: 0px !important;
   border-bottom: solid 1px #ccc;
@@ -331,9 +332,9 @@ export default {
     line-height: 60px;
     height: 60px;
     float: left;
-    padding: 0 10px;
     display: flex;
     align-items: center;
+    margin-left: 16px;
   }
   .breadcrumb-container {
     float: left;
@@ -359,7 +360,6 @@ export default {
       width: 1px;
       height: 16px;
       background: #cbceed;
-      margin-bottom: 6px;
       margin-right: 30px;
     }
     .iconfont {
@@ -373,6 +373,9 @@ export default {
     }
     .el-badge__content.is-fixed {
       top: 0;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
     }
     &:focus {
       outline: none;
@@ -425,6 +428,18 @@ export default {
     }
   }
   .avatar-container {
+    .el-dropdown-link {
+      display: flex;
+      align-items: center;
+      display: flex;
+      .avatar-name {
+        margin-right: 35px;
+      }
+      .action-icon {
+        width: 21px;
+        height: 21px;
+      }
+    }
     .el-dropdown-menu__item {
       display: flex;
       align-items: center;

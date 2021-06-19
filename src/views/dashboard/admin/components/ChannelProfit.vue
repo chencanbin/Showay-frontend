@@ -5,7 +5,7 @@
         $t("home.channelPerformanceTop")
       }}</span>
       <div class="card-header-action">
-        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" style="margin-left: 20px; width: 120px" />
+        <el-date-picker :editable="false" :clearable="false" :unlink-panels="true" v-model="year" type="year" value-format="timestamp" class="date-picker" />
       </div>
     </div>
     <div id="channelProfit" />
@@ -99,4 +99,10 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
+.channelProfit {
+  .date-picker {
+    margin-left: 20px;
+    width: 77px;
+  }
+}
 </style>
