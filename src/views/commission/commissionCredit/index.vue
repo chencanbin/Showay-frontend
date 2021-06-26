@@ -528,9 +528,7 @@ export default {
     display: flex;
     justify-content: flex-end;
   }
-  .search-input {
-    margin-left: 0;
-  }
+
   .el-card__body {
     padding: 0px;
   }

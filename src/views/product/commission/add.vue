@@ -1,6 +1,6 @@
 <template>
   <el-col class="el-table-add-col">
-    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm"><i class="iconfont icon_add_small create-icon" /> <span>{{ $t("common.add") }}</span></el-button>
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <!--<el-button :loading="loading" type="primary" size="small" icon="el-icon-plus" @click="initForm">添加</el-button>-->
     <el-dialog v-el-drag-dialog append-to-body :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('product.commission.add.title')" width="500px">

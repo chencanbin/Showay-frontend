@@ -1,7 +1,7 @@
 <template>
   <el-col class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button class="el-table-add-row" plain type="primary" size="small" @click="initForm">+ {{ $t("common.add") }}</el-button>
+    <el-button class="el-table-add-row" plain type="primary" size="small" @click="initForm"><i class="iconfont icon_add_small create-icon" /> <span>{{ $t("common.add") }}</span></el-button>
     <el-dialog append-to-body v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('product.company.set.add_title')" top="50px" width="600px">
       <el-form ref="company" :model="company" :rules="rule" label-width="110px">
         <el-form-item :label="$t('product.company.set.name_en')" prop="en">
@@ -171,13 +171,13 @@ export default {
 }
 .add-contact-button {
   position: absolute;
-  top: 420px;
-  left: 24px;
+  margin-top: 3px;
+  left: 38px;
 }
 .fullWidth {
-  width: 72%;
+  width: 70%;
 }
 .halfWidth {
-  width: 60%;
+  width: 58%;
 }
 </style>

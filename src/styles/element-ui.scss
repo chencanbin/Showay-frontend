@@ -98,11 +98,23 @@
 
  .el-dialog__body {
    padding-bottom: 0;
-   padding: 24px 24px 0 40px;
+   padding: 24px 40px 40px 40px;
    color: #42475F;
    line-height: 24px;
    font-size: 14px
  }
+
+ .el-dialog__footer {
+   padding-bottom: 40px;
+   padding-right: 40px;
+   padding-top: 0;
+
+   .el-button {
+     height: 40px;
+   }
+ }
+
+
 
  .el-card__header {
    padding: 0px;
@@ -161,7 +173,7 @@
  }
 
  .el-table td {
-   border-bottom: 0;
+   border-bottom: 1px solid #edf1f8;
    padding-left: 16px;
    padding-right: 16px;
  }
@@ -184,7 +196,16 @@
  }
 
  .el-form-item {
-   margin-bottom: 18px;
+   margin-bottom: 16px;
+ }
+
+ .el-form-item__error {
+   position: relative;
+
+ }
+
+ .el-form-item.is-error .el-input__inner {
+   border-color: transparent;
  }
 
  .el-timeline-item__timestamp.is-top {
@@ -200,8 +221,11 @@
    border-radius: 16px;
 
    .el-dialog__header {
-     padding-top: 23px;
-     padding-bottom: 22px;
+     padding-top: 20px;
+     padding-bottom: 20px;
+     padding-left: 0;
+     margin-left: 35px;
+     margin-right: 35px;
      //  margin-left: 24px;
      //  margin-right: 24px;
      border-bottom: 1px solid #EDEDF1;
@@ -209,10 +233,16 @@
      .el-dialog__title {
        color: #42475F;
        font-size: 18px;
+       font-weight: bold;
      }
 
-     .el-dialog__headerbtn .el-dialog__close {
-       color: #D8D8D8;
+     .el-dialog__headerbtn {
+       right: 30px;
+
+       .el-dialog__close {
+         color: #D8D8D8;
+
+       }
      }
    }
  }
@@ -248,6 +278,8 @@
    }
  }
 
+
+
  .table-bottom {
    position: fixed;
    bottom: 0;
@@ -258,8 +290,29 @@
    justify-content: space-between;
    border-top: #e9e8f0 solid 1px;
    box-sizing: border-box;
-   width: calc(100% - 232px);
-   z-index: 10;
+   width: calc(100% - 200px - 32px);
+   z-index: 100;
+
+   .el-button {
+     height: 40px;
+     border-radius: 6px;
+     font-size: 16px;
+     font-weight: bold;
+     padding: 0;
+     border-radius: 6px;
+
+     span {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+     }
+
+     .create-icon {
+       font-size: 20px;
+       margin-right: 8px;
+     }
+   }
+
  }
 
  .el-button--mini {
@@ -316,10 +369,13 @@
  }
 
  .el-input__inner {
-   color: #42475F;
    background: #F6F6F7;
-   font-size: 12px;
-   font-weight: 500;
+   font-size: 14px;
+   border-radius: 6px;
+   font-size: 14px;
+   font-weight: 400;
+   color: #8E919F;
+   line-height: 18px;
  }
 
  .el-input__suffix-inner {
@@ -327,18 +383,26 @@
    font-style: normal;
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: grayscale;
-   font-size: 18px;
+   font-size: 20px;
+   width: 20px;
+   height: 20px;
    position: absolute;
    right: 0;
    left: auto;
-   width: 18px;
-   height: 18px;
+
    margin-top: 9px;
    transform: rotate(90deg);
 
 
    &::before {
-     content: "\e6ce";
+     content: "\e6c";
+     font-size: 25px;
+     position: absolute;
+     right: 0px;
+   }
+
+   .el-select__caret {
+     display: none;
    }
 
  }
@@ -357,6 +421,86 @@
  .el-range-input {
    color: #42475F;
    background: #F6F6F7;
+ }
+
+ .el-icon-close {
+   font-family: "iconfont" !important;
+   font-size: 26px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   color: #D8D8D8;
+
+   &::before {
+     content: "\e6cb";
+   }
+ }
+
+ .el-pagination {
+
+   .el-pagination__total {
+     color: #42475F;
+     font-size: 14px !important;
+     font-weight: 500;
+   }
+
+   li {
+     border-radius: 4px;
+     background: #F6F6F6;
+
+   }
+
+   li:not(.disabled).active {
+     background-color: $--purple-assist !important;
+     color: $--purple !important;
+   }
+
+   .el-select .el-input .el-input__inner {
+     padding-left: 0 !important;
+     font-size: 14px !important;
+     font-weight: 500;
+   }
+ }
+
+ .el-checkbox__input {
+   .el-checkbox__inner {
+     width: 16px;
+     height: 16px;
+
+     &::after {
+       left: 5px;
+       top: 2px;
+     }
+   }
+ }
+
+ .el-timeline-item__tail {
+   left: 5px;
+ }
+
+ .el-tag--mini {
+   padding: 4px 12px;
+   font-size: 12px;
+   font-weight: bold;
+   display: initial;
+ }
+
+ .action-dropdown {
+   .el-button {
+     border-radius: 6px;
+   }
+ }
+
+ .el-tag {
+   border-radius: 4px;
+ }
+
+ .el-tag--success {
+   border: 1px solid #3ab29a !important;
+ }
+
+ .el-tag--danger {
+   border: 1px solid #e23a3a !important;
  }
 
  body .el-table th.gutter {

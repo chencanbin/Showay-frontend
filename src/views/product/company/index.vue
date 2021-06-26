@@ -1,17 +1,19 @@
 <template>
   <div id="company" class="table-container">
-    <div class="header">
-      <el-form :inline="true" class="search-input" @submit.native.prevent>
-        <el-form-item label="" prop="wildcard">
-          <el-input v-model="wildcard" :placeholder="$t('product.company.search_company_placeholder')" clearable @input="search">
-            <i slot="prefix" class="el-input__icon el-icon-search" />
-          </el-input>
-        </el-form-item>
-        <el-button type="primary" @click="search">搜索</el-button>
-      </el-form>
-    </div>
-    <basic-container>
-      <!-- <el-table v-loading="companyLoading" :data="companyList.list" :height="height" :expand-row-keys="expandKeys" row-key="id" stripe @expand-change="expandChange">
+    <router-view></router-view>
+    <div v-show="$route.meta.showContact">
+      <div class="header">
+        <el-form :inline="true" class="search-input" @submit.native.prevent>
+          <el-form-item label="" prop="wildcard">
+            <el-input v-model="wildcard" :placeholder="$t('product.company.search_company_placeholder')" clearable @input="search">
+              <i slot="prefix" class="el-input__icon el-icon-search" />
+            </el-input>
+          </el-form-item>
+          <el-button type="primary" @click="search">搜索</el-button>
+        </el-form>
+      </div>
+      <basic-container>
+        <!-- <el-table v-loading="companyLoading" :data="companyList.list" :height="height" :expand-row-keys="expandKeys" row-key="id" stripe @expand-change="expandChange">
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-form id="policy-table-expand" label-position="left" inline>
@@ -96,97 +98,100 @@
           </template>
         </el-table-column>
       </el-table> -->
-      <div class="list" v-loading="companyLoading">
-        <div class="list_item" v-for="row in companyList.list" :key="row.id">
-          <div class="row" style="height: 60px; line-height: 60px">
-            <span class="company_name">{{ row.acronym }} - {{ row.name }}</span>
-            <span>
-              <el-dropdown>
-                <el-button type="primary" plain size="mini">
-                  <i class="el-icon-more" />
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    <edit v-if="hasPermission(100008)" :id="row.id" />
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <contact v-if="hasPermission(100123)" :company="row" />
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <el-button v-if="hasPermission(100009)" :loading="deleteLoading" size="small" type="text" @click="handleDelete(row)">{{ $t("common.delete") }}</el-button>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </span>
-          </div>
-          <div class="row">
-            <span class="label">{{$t('product.company.table_header.level')}}:</span>
-            <span class="content">
-              <el-tag v-if="row.secondary" type="warning">{{
+        <div class="list" v-loading="companyLoading">
+          <div class="list_item" v-for="row in companyList.list" :key="row.id">
+            <div class="row" style="height: 60px; line-height: 60px">
+              <span class="company_name">{{ row.acronym }} - {{ row.name }}</span>
+              <span>
+                <el-dropdown>
+                  <el-button type="primary" plain size="mini">
+                    <i class="el-icon-more" />
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>
+                      <edit v-if="hasPermission(100008)" :id="row.id" />
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <!-- <contact v-if="hasPermission(100123)" :company="row" /> -->
+                      <el-button type="text" size="small" @click="gotoContact(row)">
+                        {{ $t("product.company.set.edit_contact_title") }}
+                      </el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button v-if="hasPermission(100009)" :loading="deleteLoading" size="small" type="text" @click="handleDelete(row)">{{ $t("common.delete") }}</el-button>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </span>
+            </div>
+            <div class="row">
+              <span class="label">{{$t('product.company.table_header.level')}}:</span>
+              <span class="content">
+                <el-tag v-if="row.secondary" type="warning">{{
                 $t("product.company.levelTab.level2")
               }}</el-tag>
-              <el-tag v-else type="success">{{
+                <el-tag v-else type="success">{{
                 $t("product.company.levelTab.level1")
               }}</el-tag>
-            </span>
-          </div>
-          <!-- <div class="row">
+              </span>
+            </div>
+            <!-- <div class="row">
             <span class="label">{{$t('product.company.table_header.name')}}:</span>
             <span class="content">{{ row.acronym }} - {{ row.name }}:</span>
           </div> -->
-          <div class="row">
-            <span class="label">{{$t('product.company.table_header.phone')}}:</span>
-            <span class="content">{{ row.phone }}</span>
-          </div>
-          <div class="row">
-            <span class="label">{{$t('product.company.table_header.email')}}:</span>
-            <span class="content">{{ row.email }}</span>
-          </div>
-          <div class="row">
-            <span class="label">{{$t('product.company.table_header.contractEffectiveDate')}}:</span>
-            <span class="content">{{ row.contractEffectiveDate }}</span>
-          </div>
-          <div v-for="(item, index) in row.contacts" :key="item.id" :label="$t('product.company.set.contacts') + (index + 1)" class="row">
-            <span class="label">{{$t('product.company.set.contacts') + (index + 1)}}:</span>
+            <div class="row">
+              <span class="label">{{$t('product.company.table_header.phone')}}:</span>
+              <span class="content">{{ row.phone }}</span>
+            </div>
+            <div class="row">
+              <span class="label">{{$t('product.company.table_header.email')}}:</span>
+              <span class="content">{{ row.email }}</span>
+            </div>
+            <div class="row">
+              <span class="label">{{$t('product.company.table_header.contractEffectiveDate')}}:</span>
+              <span class="content">{{ row.contractEffectiveDate }}</span>
+            </div>
+            <div v-for="(item, index) in row.contacts" :key="item.id" :label="$t('product.company.set.contacts') + (index + 1)" class="row">
+              <span class="label">{{$t('product.company.set.contacts') + (index + 1)}}:</span>
 
-            <el-popover placement="top-start" trigger="hover">
-              <el-card style="padding: 10px">
-                <el-form label-width="80px">
-                  <el-form-item :label="$t('product.company.set.contacts_title')" class="detail-item">
-                    {{ item.title }}
-                  </el-form-item>
-                  <el-form-item :label="$t('product.company.set.contacts_phone')" class="detail-item">
-                    {{ item.phone }}
-                  </el-form-item>
-                  <el-form-item :label="$t('product.company.set.contacts_email')" class="detail-item">
-                    {{ item.email }}
-                  </el-form-item>
-                  <el-form-item :label="$t('product.company.set.address')" class="detail-item">
-                    {{ item.address }}
-                  </el-form-item>
-                </el-form>
-              </el-card>
-              <span slot="reference" class="content">{{ item.name }}</span>
-            </el-popover>
+              <el-popover placement="top-start" trigger="hover">
+                <el-card style="padding: 10px">
+                  <el-form label-width="80px">
+                    <el-form-item :label="$t('product.company.set.contacts_title')" class="detail-item">
+                      {{ item.title }}
+                    </el-form-item>
+                    <el-form-item :label="$t('product.company.set.contacts_phone')" class="detail-item">
+                      {{ item.phone }}
+                    </el-form-item>
+                    <el-form-item :label="$t('product.company.set.contacts_email')" class="detail-item">
+                      {{ item.email }}
+                    </el-form-item>
+                    <el-form-item :label="$t('product.company.set.address')" class="detail-item">
+                      {{ item.address }}
+                    </el-form-item>
+                  </el-form>
+                </el-card>
+                <span slot="reference" class="content">{{ item.name }}</span>
+              </el-popover>
+            </div>
+            <div v-for="(item, index) in row.websites" :key="item.id" class="row">
+              <span class="label">{{$t('product.company.table_header.website') + (index + 1)}}:</span>
+              <span v-if="item.split('-').length > 1" class="content">
+                <a :href="item" class="link"><span class="link_remark">({{item.split("-")[1]}})</span>{{ item.split("-")[0] }}</a>
+              </span>
+              <span v-else class="content">
+                <a :href="item" class="link">{{ item }}</a>
+              </span>
+            </div>
           </div>
-          <div v-for="(item, index) in row.websites" :key="item.id" class="row">
-            <span class="label">{{$t('product.company.table_header.website') + (index + 1)}}:</span>
-            <span v-if="item.split('-').length > 1" class="content">
-              <a :href="item" class="link"><span class="link_remark">({{item.split("-")[1]}})</span>{{ item.split("-")[0] }}</a>
-            </span>
-            <span v-else class="content">
-              <a :href="item" class="link">{{ item }}</a>
-            </span>
-          </div>
+          <div class="list_item_empty"></div>
         </div>
-        <div class="list_item_empty"></div>
-      </div>
-      <div class="company-list-bottom">
-        <add v-if="hasPermission(100005)" />
-        <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @updatme:page="updatePage" @update:limit="updateLimit" />
-      </div>
-    </basic-container>
-
+        <div class="table-bottom">
+          <add v-if="hasPermission(100005)" />
+          <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @updatme:page="updatePage" @update:limit="updateLimit" />
+        </div>
+      </basic-container>
+    </div>
   </div>
 </template>
 
@@ -196,7 +201,7 @@ import { mapState } from "vuex";
 import { parseTime } from "@/utils";
 import add from "./add";
 import edit from "./edit";
-import contact from "./contact";
+// import contact from "./contact";
 import permission from "@/directive/permission/index.js"; // 权限判断指令
 import checkPermission from "@/utils/permission"; // 权限判断函数
 
@@ -207,8 +212,7 @@ export default {
   components: {
     pagination,
     add,
-    edit,
-    contact,
+    edit
   },
   directives: { permission },
   data() {
@@ -306,6 +310,11 @@ export default {
         expandedRows.shift();
       }
     },
+    gotoContact(row) {
+      // this.getContact();
+      // this.dialogVisible = true;
+      this.$router.push({ path: `/product/company/contact?id=${row.id}` })
+    },
   },
 };
 </script>
@@ -364,18 +373,6 @@ export default {
     .list_item_empty {
       width: 530px;
     }
-  }
-  .company-list-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 216px;
-    height: 60px;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    border-top: #e9e8f0 solid 1px;
-    box-sizing: border-box;
-    width: calc(100% - 200px - 32px);
   }
 }
 </style>

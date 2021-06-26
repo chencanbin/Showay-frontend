@@ -1,23 +1,11 @@
 <template>
-  <div 
-    class="login-container pull-height" 
-    @keyup.enter.native="handleLogin">
+  <div class="login-container pull-height" @keyup.enter.native="handleLogin">
     <div class="login-wrapper">
       <div class="login-left animated fadeInLeft">
         <div class="login-info">
-          <img
-            class="login-info-title"
-            src="../../assets/images/logo.png"
-            alt=""
-            width="420px"
-            height="80px"
-          >
+          <img class="login-info-title" src="../../assets/images/logo.png" alt="" width="420px" height="80px">
           <ul class="login-info-list">
-            <li
-              v-for="(item, index) in website.info.list"
-              :key="index"
-              class="login-info-item"
-            >
+            <li v-for="(item, index) in website.info.list" :key="index" class="login-info-item">
               <i class="el-icon-check" />&nbsp;{{ item }}
             </li>
           </ul>
@@ -59,9 +47,8 @@ export default {
       if (!validatenull(this.socialForm.state)) {
         const loading = this.$loading({
           lock: true,
-          text: `${
-            this.socialForm.state === "WX" ? "微信" : "QQ"
-          }登录中,请稍后。。。`,
+          text: `${this.socialForm.state === "WX" ? "微信" : "QQ"
+            }登录中,请稍后。。。`,
           spinner: "el-icon-loading",
         });
         setTimeout(() => {
@@ -196,18 +183,23 @@ export default {
   }
   .el-input {
     input {
-      padding-bottom: 10px;
+      // padding-bottom: 10px;
+      padding-left: 30px !important;
       text-indent: 5px;
       background: transparent;
       border: none;
       border-radius: 0;
       color: #333;
       border-bottom: 1px solid rgb(235, 237, 242);
+      font-size: 16px;
     }
     .el-input__prefix {
       i {
         padding: 0 5px;
         font-size: 16px !important;
+        &::before {
+          content: "";
+        }
       }
     }
   }

@@ -1,105 +1,107 @@
 <template>
   <div id="commissionTable" class="table-container">
     <commission-table ref="commissionTable" :id="commissionTableId" :company-id="companyId" :created="true" :show-button="false" />
-    <div class="header">
-      <el-form :inline="true" class="search-input" @submit.native.prevent>
-        <el-form-item label="" prop="wildcard">
-          <el-input v-model="wildcard" :placeholder="$t('product.company.search_company_placeholder')" clearable @input="search">
-            <i slot="prefix" class="el-input__icon el-icon-search" />
-          </el-input>
-        </el-form-item>
-      </el-form>
+    <div>
+      <div class="header">
+        <el-form :inline="true" class="search-input" @submit.native.prevent>
+          <el-form-item label="" prop="wildcard">
+            <el-input v-model="wildcard" :placeholder="$t('product.company.search_company_placeholder')" clearable @input="search">
+              <i slot="prefix" class="el-input__icon el-icon-search" />
+            </el-input>
+          </el-form-item>
+        </el-form>
 
-    </div>
-    <basic-container>
-      <el-table class="commission_table" v-loading="companyLoading" ref="companyTable" :expand-row-keys="expandKeys" :data="companyList.list" row-key="id" stripe @row-click="expandChange">
-        <el-table-column :label="$t('product.company.table_header.name')" prop="name" min-width="150px" show-overflow-tooltip>
-          <template slot-scope="scope">
-            {{ scope.row.acronym }} - {{ scope.row.name }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('product.company.table_header.level')" prop="level" min-width="100px">
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.secondary" type="warning">{{
+      </div>
+      <basic-container>
+        <el-table class="commission_table" v-loading="companyLoading" ref="companyTable" :expand-row-keys="expandKeys" :data="companyList.list" row-key="id" stripe @row-click="expandChange">
+          <el-table-column :label="$t('product.company.table_header.name')" prop="name" min-width="150px" show-overflow-tooltip>
+            <template slot-scope="scope">
+              {{ scope.row.acronym }} - {{ scope.row.name }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('product.company.table_header.level')" prop="level" min-width="100px">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.secondary" type="warning">{{
                 $t("product.company.levelTab.level2")
               }}</el-tag>
-            <el-tag v-else type="success">{{
+              <el-tag v-else type="success">{{
                 $t("product.company.levelTab.level1")
               }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column :formatter="dateFormat" :label="$t('product.company.table_header.contractEffectiveDate')" prop="contractEffectiveDate" min-width="100px" />
-      </el-table>
+            </template>
+          </el-table-column>
+          <el-table-column :formatter="dateFormat" :label="$t('product.company.table_header.contractEffectiveDate')" prop="contractEffectiveDate" min-width="100px" />
+        </el-table>
 
-      <div class="commission-list-bottom">
-        <add v-if="hasPermission(100015)" @afterAddCommissionTable="handleAfterCreateCommissionTable" />
-        <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
-      </div>
-    </basic-container>
-    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">
-      <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password" />
-      <div class="tips_text">* {{ $t("common.password_verify_text") }}</div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">{{
+        <div class="table-bottom">
+          <add v-if="hasPermission(100015)" @afterAddCommissionTable="handleAfterCreateCommissionTable" />
+          <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        </div>
+      </basic-container>
+      <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">
+        <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password" />
+        <div class="tips_text">* {{ $t("common.password_verify_text") }}</div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button :loading="submitLoading" type="primary" @click="handleDelete">{{ $t("common.submitButton") }}</el-button>
-      </div>
-    </el-dialog>
-    <commission-view ref="commissionView" />
+          <el-button :loading="submitLoading" type="primary" @click="handleDelete">{{ $t("common.submitButton") }}</el-button>
+        </div>
+      </el-dialog>
+      <commission-view ref="commissionView" />
 
-    <el-drawer class="commission-detail-wrapper" :modal="false" :title="currentRow.acronym+' - '+currentRow.name" :visible.sync="drawer" :direction="direction">
-      <div v-loading="commissionTableListLoading" class="commission-detail">
-        <el-timeline v-loading="commissionTableListLoading" id="commissionTableList">
-          <div v-if="commissionTableList.list && commissionTableList.list.length === 0" style="text-align: center; color: #909399">
-            {{$t("product.commission.commission_table_list.no_commission_table")}}
-          </div>
-          <el-timeline-item v-for="(commissionTable, index) in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="index" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
-            <el-dropdown class="action-dropdown">
-              <el-button type="primary" plain size="mini">
-                <i class="el-icon-more" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="hasPermission(100017) && commissionTable.status !== 0">
-                  <el-button size="small" type="text" @click="handleView(commissionTable.id,
+      <el-drawer class="commission-detail-wrapper" :modal="false" :title="currentRow.acronym+' - '+currentRow.name" :visible.sync="drawer" :direction="direction">
+        <div v-loading="commissionTableListLoading" class="commission-detail">
+          <el-timeline v-loading="commissionTableListLoading" id="commissionTableList">
+            <div v-if="commissionTableList.list && commissionTableList.list.length === 0" style="text-align: center; color: #909399">
+              {{$t("product.commission.commission_table_list.no_commission_table")}}
+            </div>
+            <el-timeline-item v-for="(commissionTable, index) in commissionTableList.list" :type="getCommissionStatus(commissionTable.status)" :key="index" :timestamp="getFormattedDate(commissionTable.effectiveDate)" placement="top">
+              <el-dropdown class="action-dropdown">
+                <el-button type="primary" plain size="mini">
+                  <i class="el-icon-more" />
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-if="hasPermission(100017) && commissionTable.status !== 0">
+                    <el-button size="small" type="text" @click="handleView(commissionTable.id,
                               getFormattedDate(commissionTable.effectiveDate),
                               commissionTable.status)">{{ $t("common.view") }}</el-button>
-                </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100018)">
-                  <commission-table :company-id="currentRow.id" :id="commissionTable.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name" :effective-date="
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100018)">
+                    <commission-table :company-id="currentRow.id" :id="commissionTable.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name" :effective-date="
                             getFormattedDate(commissionTable.effectiveDate)" />
-                </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100020) && commissionTable.status !== 0">
-                  <el-button :ref="`export_${commissionTable.id}`" size="small" type="text" @click="exportExcel(commissionTable)">{{ $t("common.export") }}</el-button>
-                </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100019)">
-                  <el-button size="small" type="text" @click="verifyPassword(currentRow.id, commissionTable.id)">{{ $t("common.delete") }}
-                  </el-button>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <div class="commission_info">
-              <div class="row">
-                <span class="label">{{$t("product.commission.commission_table_list.status")}}:</span>
-                <span class="content">
-                  <el-tag v-if="commissionTable.status === 0" type="info" size="mini">{{$t("product.commission.commission_table_list.status_info")}}</el-tag>
-                  <el-tag v-if="commissionTable.status === 1" type="success" size="mini">{{$t("product.commission.commission_table_list.status_success")}}</el-tag>
-                  <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">{{$t("product.commission.commission_table_list.status_warning" )}}</el-tag>
-                </span>
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100020) && commissionTable.status !== 0">
+                    <el-button :ref="`export_${commissionTable.id}`" size="small" type="text" @click="exportExcel(commissionTable)">{{ $t("common.export") }}</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100019)">
+                    <el-button size="small" type="text" @click="verifyPassword(currentRow.id, commissionTable.id)">{{ $t("common.delete") }}
+                    </el-button>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              <div class="commission_info">
+                <div class="row">
+                  <span class="label">{{$t("product.commission.commission_table_list.status")}}:</span>
+                  <span class="content">
+                    <el-tag v-if="commissionTable.status === 0" type="info" size="mini">{{$t("product.commission.commission_table_list.status_info")}}</el-tag>
+                    <el-tag v-if="commissionTable.status === 1" type="success" size="mini">{{$t("product.commission.commission_table_list.status_success")}}</el-tag>
+                    <el-tag v-if="commissionTable.status === 2" type="warning" size="mini">{{$t("product.commission.commission_table_list.status_warning" )}}</el-tag>
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="label">{{$t("product.commission.commission_table_list.product_count")}}:</span>
+                  <span class="content"> {{ commissionTable.policyCount }} </span>
+                </div>
+                <div class="row" v-if="commissionTable.remarks">
+                  <span class="label">{{ $t("common.remarks") }}:</span>
+                  <span class="content remark"> {{ commissionTable.remarks }}</span>
+                </div>
               </div>
-              <div class="row">
-                <span class="label">{{$t("product.commission.commission_table_list.product_count")}}:</span>
-                <span class="content"> {{ commissionTable.policyCount }} </span>
-              </div>
-              <div class="row" v-if="commissionTable.remarks">
-                <span class="label">{{ $t("common.remarks") }}:</span>
-                <span class="content remark"> {{ commissionTable.remarks }}</span>
-              </div>
-            </div>
-          </el-timeline-item>
-        </el-timeline>
-      </div>
-    </el-drawer>
+            </el-timeline-item>
+          </el-timeline>
+        </div>
+      </el-drawer>
+    </div>
   </div>
 </template>
 
@@ -426,7 +428,7 @@ export default {
     .el-drawer__header {
       height: 70px;
       margin-bottom: 0;
-      border-bottom: 1px solid #e1e0eb;
+      border-bottom: 1px solid #e9e8f0;
       margin-bottom: 16px;
       margin-top: 10px;
       font-size: 18px;
@@ -479,19 +481,6 @@ export default {
         }
       }
     }
-  }
-  .commission-list-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 216px;
-    height: 60px;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    border-top: #e9e8f0 solid 1px;
-    box-sizing: border-box;
-    width: calc(100% - 232px);
-    z-index: 10;
   }
 }
 </style>

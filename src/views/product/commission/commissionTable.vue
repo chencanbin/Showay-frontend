@@ -1,6 +1,5 @@
 <template>
   <span class="demo">
-    <el-button v-if="showButton" :loading="loading" size="small" type="text" @click="initForm">{{ $t("common.edit") }}</el-button>
     <el-dialog id="commissionTableDialog" :fullscreen="fullscreen" :visible="commissionTableDialogVisible" :before-close="handleClose" class="dialog-body" append-to-body>
       <!--<el-button icon="el-icon-plus" type="text" @click="addNewRow">添加新行</el-button>-->
       <el-row slot="title" class="title" style="position: relative">
@@ -115,6 +114,9 @@ export default {
       default: "",
     },
   },
+  created() {
+    console.log(document.body.offsetHeight)
+  },
   data() {
     return {
       overrideTitle: "",
@@ -192,7 +194,7 @@ export default {
           }
           TD.innerHTML = value;
         },
-        height: window.screen.height - 330,
+        height: document.body.offsetHeight - 222,
         stretchH: "all",
         autoWrapRow: false,
         autoWrapCol: false,
@@ -972,6 +974,7 @@ export default {
 
 #commissionTableDialog .el-dialog__header {
   padding: 0;
+  margin: 0;
 }
 #commissionTableDialog .el-dialog__close {
   color: #909399;

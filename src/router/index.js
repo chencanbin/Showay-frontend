@@ -85,13 +85,21 @@ export const asyncRouterMap = [
   {
     path: '/product',
     component: Layout,
+    redirect: 'noRedirect',
     meta: { title: 'product', icon: 'icon_home_fenlei_nor' },
     children: [
       {
         path: 'company',
-        component: () => import('@/views/product/company'),
+        component: () => import('@/views/product/company/index'),
         name: 'company',
-        meta: { title: 'company', icon: 'icon_mechanism_nor', noCache: true, id: 100006 }
+        meta: { title: 'company', icon: 'icon_mechanism_nor', showContact: true, noCache: true, id: 100006 },
+        children: [{
+          path: 'contact',
+          component: () => import('@/views/product/company/contact'),
+          name: 'companyContact',
+          hidden: true,
+          meta: { title: 'companyContact', showContact: false, noCache: true }
+        }]
       },
       {
         path: 'productCommission',
@@ -103,7 +111,14 @@ export const asyncRouterMap = [
         path: 'channelCommission',
         component: () => import('@/views/product/channel/index'),
         name: 'channelCommission',
-        meta: { title: 'channelCommission', icon: 'icon_qudaoyj_nor', noCache: true, id: 100082 }
+        meta: { title: 'channelCommission', showChild: true, icon: 'icon_qudaoyj_nor', noCache: true, id: 100082 },
+        children: [{
+          path: 'contact',
+          component: () => import('@/views/product/channel/editChannelCommissionTable'),
+          name: 'channelCommissionTable',
+          hidden: true,
+          meta: { title: 'riderBenefits', showChild: false, noCache: true }
+        }]
       }
     ]
   },
@@ -117,7 +132,14 @@ export const asyncRouterMap = [
         path: '/insurancePolicy',
         component: () => import('@/views/client/policy'),
         name: 'insurancePolicy',
-        meta: { title: 'insurancePolicy', icon: 'icon_kehu_baodan_nor', noCache: true, id: 100045 }
+        meta: { title: 'insurancePolicy', icon: 'icon_kehu_baodan_nor', showChild: true, noCache: true, id: 100045 },
+        children: [{
+          path: 'contact',
+          component: () => import('@/views/client/policy/riderBenefits'),
+          name: 'riderBenefits',
+          hidden: true,
+          meta: { title: 'riderBenefits', showChild: false, noCache: true }
+        }]
       },
       {
         path: '/clientInfo',

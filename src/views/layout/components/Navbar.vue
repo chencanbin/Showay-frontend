@@ -85,7 +85,7 @@
     </div>
 
     <!--修改密码弹窗 -->
-    <el-dialog :visible="showEditPasswordDialog" :title="$t('navbar.password')" width="500px" class="passwordDialog" @close="handleCloseUpdateUserDialog" append-to-body>
+    <el-dialog :visible="showEditPasswordDialog" :title="$t('navbar.password')" width="2.6rem" class="passwordDialog" @close="handleCloseUpdateUserDialog" append-to-body>
       <el-form ref="password" :rules="rulePassword" :model="form" label-width="80px">
         <el-form-item :label="$t('navbar.oldPassword')" prop="oldPassword">
           <el-input v-model="form.oldPassword" :placeholder="$t('navbar.password_tip.oldPassword')" type="password" />
@@ -108,7 +108,7 @@
     <!-- 首页配置弹窗 -->
     <el-dialog :visible="showHomePageSetting" title="首页配置" width="500px" @close="showHomePageSetting = false" append-to-body>
       <el-checkbox-group v-model="homePageSetting">
-        <el-checkbox v-for="item in allHomePageSetting" :key="item.id" :label="item.id" style="width:210px; height: 50px; line-height: 50px; margin-right:0; ">{{ $t(item.name) }}</el-checkbox>
+        <el-checkbox v-for="item in allHomePageSetting" :key="item.id" :label="item.id" class="config-item-checkbox" style="">{{ $t(item.name) }}</el-checkbox>
       </el-checkbox-group>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showHomePageSetting = false">{{
@@ -309,6 +309,28 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
+.config-item-checkbox {
+  width: 50%;
+  height: 50px;
+  line-height: 50px;
+  margin-right: 0 !important;
+
+  .el-checkbox__inner {
+    width: 16px !important;
+    height: 16px !important;
+    background: #ffffff;
+    border-radius: 2px;
+    border: 1px solid #e9e8f0;
+  }
+  .el-checkbox__label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #42475f;
+  }
+}
+.el-dialog__body {
+  padding-bottom: 20px;
+}
 .notification-content-wrapper {
   display: flex;
   justify-content: space-between;
@@ -316,6 +338,8 @@ export default {
   .notification-content {
     display: flex;
     align-items: center;
+    color: #43475f;
+    font-size: 14px;
   }
 }
 .navbar {
@@ -481,6 +505,7 @@ export default {
 .el-popover {
   min-width: 200px !important;
   padding: 0 !important;
+  border-radius: 8px !important;
 }
 .notification-list-item {
   padding: 15px;
@@ -489,7 +514,7 @@ export default {
   line-height: 22px;
 }
 .notification-list-item:hover {
-  background: #e6f7ff;
+  background: $--purple-assist;
 }
 .notification-badge-content {
   float: right;
@@ -502,7 +527,7 @@ export default {
   padding: 0 6px;
   text-align: center;
   white-space: nowrap;
-  border: 1px solid $--orange;
+  border: 0.5px solid $--orange;
   background-color: $--orange-assist;
   position: relative;
   &::before {

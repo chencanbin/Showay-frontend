@@ -1,54 +1,54 @@
 <template>
-  <span id="riderBenefits">
-    <el-button type="text" size="small" style="margin-right: 5px" @click="initForm">
+  <basic-container id="riderBenefits">
+    <!-- <el-button type="text" size="small" style="margin-right: 5px" @click="initForm">
       {{ $t("client.insurance_policy.riderBenefits") }}
-    </el-button>
-    <el-dialog :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('client.insurance_policy.riderBenefits_title')" append-to-body>
-      <div class="header">
-        <add :company-id="companyId" :currency="currency" :submit-date="submitDate" style="margin-top: 10px" @afterAdd="afterAdd" />
-      </div>
-      <el-table :data="riderBenefits" stripe>
-        <el-table-column :label="$t('client.insurance_policy.product')" prop="product.name" />
-        <el-table-column :label="$t('client.insurance_policy.premium')">
-          <template slot-scope="scope">
-            <span class="left_text">{{ getSymbol(currency) }}</span><span class="right_text">{{
+    </el-button> -->
+    <!-- <el-dialog :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('client.insurance_policy.riderBenefits_title')" append-to-body> -->
+    <!-- <div class="header">
+      <add :company-id="companyId" :currency="currency" :submit-date="submitDate" style="margin-top: 10px" @afterAdd="afterAdd" />
+    </div> -->
+    <el-table :data="riderBenefits" stripe>
+      <el-table-column :label="$t('client.insurance_policy.product')" prop="product.name" />
+      <el-table-column :label="$t('client.insurance_policy.premium')">
+        <template slot-scope="scope">
+          <span class="left_text">{{ getSymbol(currency) }}</span><span class="right_text">{{
               formatterCurrency(scope.row.premium)
             }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('client.insurance_policy.amountInsured')" prop="amountInsured">
-          <template slot-scope="scope">
-            <span class="left_text">{{ getSymbol(currency) }}</span><span class="right_text">{{
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('client.insurance_policy.amountInsured')" prop="amountInsured">
+        <template slot-scope="scope">
+          <span class="left_text">{{ getSymbol(currency) }}</span><span class="right_text">{{
               formatterCurrency(scope.row.amountInsured)
             }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('client.insurance_policy.riderBenefits_status')" prop="policyStatus" min-width="100">
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 1" type="danger">
-              {{ formatterRiderBenefitStatus(scope.row.status) }}
-            </el-tag>
-            <el-tag v-if="scope.row.status === 0" type="success">
-              {{ formatterRiderBenefitStatus(scope.row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('common.action')">
-          <template slot-scope="scope">
-            <edit :rider-benefit="scope.row" :company-id="companyId" :currency="currency" :submit-date="submitDate" />
-            <el-button type="text" size="small" icon="el-icon-delete" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div slot="footer" style="text-align: center">
-        <el-button @click="handleClose">{{
-          $t("common.cancelButton")
-        }}</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('client.insurance_policy.riderBenefits_status')" prop="policyStatus" min-width="100">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status === 1" type="danger">
+            {{ formatterRiderBenefitStatus(scope.row.status) }}
+          </el-tag>
+          <el-tag v-if="scope.row.status === 0" type="success">
+            {{ formatterRiderBenefitStatus(scope.row.status) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('common.action')">
+        <template slot-scope="scope">
+          <edit :rider-benefit="scope.row" :company-id="companyId" :currency="currency" :submit-date="submitDate" />
+          <el-button type="text" size="small" icon="el-icon-delete" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="table-bottom">
+      <add class="add-rider-button" :company-id="companyId" :currency="currency" :submit-date="submitDate" @afterAdd="afterAdd" />
+      <div class="action-bottom" style="text-align: center">
         <el-button :loading="saveLoading" type="primary" @click="handleSubmit">{{ $t("common.submitButton") }}</el-button>
       </div>
-    </el-dialog>
-  </span>
+    </div>
+    <!-- </el-dialog> -->
+  </basic-container>
 </template>
 
 <script>
@@ -68,57 +68,74 @@ export default {
     add,
     edit,
   },
-  props: {
-    data: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    id: {
-      type: Number,
-      default() {
-        return 0;
-      },
-    },
-    submitDate: {
-      type: Number,
-      default() {
-        return 0;
-      },
-    },
-    currency: {
-      type: String,
-      default() {
-        return "";
-      },
-    },
-    companyId: {
-      type: Number,
-      default() {
-        return 0;
-      },
-    },
-    listQuery: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    year: {
-      type: String,
-      default() {
-        return "";
-      },
-    },
-  },
+  // props: {
+  //   data: {
+  //     type: Array,
+  //     default() {
+  //       return [];
+  //     },
+  //   },
+  //   id: {
+  //     type: Number,
+  //     default() {
+  //       return 0;
+  //     },
+  //   },
+  //   submitDate: {
+  //     type: Number,
+  //     default() {
+  //       return 0;
+  //     },
+  //   },
+  //   currency: {
+  //     type: String,
+  //     default() {
+  //       return "";
+  //     },
+  //   },
+  //   companyId: {
+  //     type: Number,
+  //     default() {
+  //       return 0;
+  //     },
+  //   },
+  //   listQuery: {
+  //     type: Object,
+  //     default() {
+  //       return {};
+  //     },
+  //   },
+  //   year: {
+  //     type: String,
+  //     default() {
+  //       return "";
+  //     },
+  //   },
+  // },
   data() {
     return {
       language: "",
       saveLoading: false,
       dialogVisible: false,
       riderBenefits: [],
+      id: 0,
+      submitDate: 0,
+      currency: '',
+      companyId: 0,
+      listQuery: {},
+      year: ''
     };
+  },
+  created() {
+    const params = this.$route.params;
+    this.id = params.id;
+    this.submitDate = params.submitDate;
+    this.currency = params.currency;
+    this.companyId = params.companyId;
+    this.listQuery = params.listQuery;
+    this.year = params.year;
+    this.language = Cookies.get("language") || "zh-CN";
+    this.riderBenefits = params.data;
   },
   methods: {
     getSymbol,
@@ -207,10 +224,14 @@ export default {
 </script>
 
 <style type="text/scss"  lang="scss" scoped>
-.header {
-  width: 100%;
-  height: 60px;
-  background: #fff;
-  border-radius: 8px;
+#riderBenefits {
+  .action-bottom {
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    .el-button {
+      width: 92px;
+    }
+  }
 }
 </style>

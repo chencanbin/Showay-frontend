@@ -182,13 +182,13 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
 .add_websites {
   position: absolute;
-  top: 375px;
-  left: 40px;
+  margin-top: 3px;
+  left: 38px;
 }
 .fullWidth {
-  width: 72%;
+  width: 70%;
 }
 .halfWidth {
-  width: 60%;
+  width: 58%;
 }
 </style>

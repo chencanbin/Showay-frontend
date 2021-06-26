@@ -458,7 +458,7 @@ export default {
     font-family: "iconfont" !important;
     font-size: 30px;
     font-style: normal;
-    content: "\e6ce";
+    content: "\e6c";
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
     position: absolute;

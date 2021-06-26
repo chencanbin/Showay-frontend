@@ -1,17 +1,19 @@
 <template>
   <div id="channel" class="table-container">
-    <div class="header">
-      <el-form :inline="true" class="search-input" @submit.native.prevent>
-        <el-form-item label="" prop="wildcard">
-          <el-input v-model="wildcard" :placeholder="$t('product.channel.search_channel_placeholder')" clearable @input="search">
-            <i slot="prefix" class="el-input__icon el-icon-search" />
-          </el-input>
-        </el-form-item>
-      </el-form>
-    </div>
-    <basic-container>
-      <el-table v-loading="userLoading" id="channelTable" ref="channelTable" :data="users.list" :expand-row-keys="expandKeys" stripe row-key="id" @row-click="expandChange">
-        <!-- <el-table-column type="expand">
+    <router-view></router-view>
+    <div v-show="$route.meta.showChild">
+      <div class="header">
+        <el-form :inline="true" class="search-input" @submit.native.prevent>
+          <el-form-item label="" prop="wildcard">
+            <el-input v-model="wildcard" :placeholder="$t('product.channel.search_channel_placeholder')" clearable @input="search">
+              <i slot="prefix" class="el-input__icon el-icon-search" />
+            </el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <basic-container>
+        <el-table v-loading="userLoading" id="channelTable" ref="channelTable" :data="users.list" :expand-row-keys="expandKeys" stripe row-key="id" @row-click="expandChange">
+          <!-- <el-table-column type="expand">
           <template slot-scope="scope">
             <div v-loading="channelCommissionLoading" class="clearfix" style="min-height: 50px">
               <el-timeline id="channelCommissionTableList">
@@ -60,91 +62,95 @@
             </div>
           </template>
         </el-table-column> -->
-        <el-table-column :label="$t('user.name')" prop="name" show-overflow-tooltip />
-        <el-table-column :label="$t('user.account')" prop="login" />
-        <el-table-column label="上级" prop="superior.name" />
-        <el-table-column v-if="false" :label="$t('common.action')" width="100px">
-          <template slot-scope="scope">
-            <el-dropdown style="margin-left: 10px">
-              <el-button type="primary" plain size="mini">
-                <i class="el-icon-more" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <commission-policy v-if="hasPermission(100025)" :id="scope.row.id" />
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+          <el-table-column :label="$t('user.name')" prop="name" show-overflow-tooltip />
+          <el-table-column :label="$t('user.account')" prop="login" />
+          <el-table-column label="上级" prop="superior.name" />
+          <el-table-column v-if="false" :label="$t('common.action')" width="100px">
+            <template slot-scope="scope">
+              <el-dropdown style="margin-left: 10px">
+                <el-button type="primary" plain size="mini">
+                  <i class="el-icon-more" />
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>
+                    <commission-policy v-if="hasPermission(100025)" :id="scope.row.id" />
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
 
-            <!--<el-button-->
-            <!--v-if="!scope.row.isBuiltin"-->
-            <!--type="text"-->
-            <!--size="mini"-->
-            <!--icon="el-icon-delete"-->
-            <!--@click="handleDelete(scope.$index, scope.row)">{{ $t('action.del') }}-->
-            <!--</el-button>-->
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="channel-list-bottom">
-        <add @afterSelectChannel="afterSelectChannel" />
-        <addChannelCommissionTable v-if="hasPermission(100029)" ref="addChannelCommissionTable" />
-        <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
-      </div>
-    </basic-container>
-    <el-dialog :close-on-click-modal="false" :visible.sync="timeDialogVisible" :title="$t('product.channel.reference_time_title')" width="400px">
-      <el-date-picker v-model="channelPolicyObj.timestamp" type="date" value-format="timestamp" style="width: 100%" />
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleView">{{
+              <!--<el-button-->
+              <!--v-if="!scope.row.isBuiltin"-->
+              <!--type="text"-->
+              <!--size="mini"-->
+              <!--icon="el-icon-delete"-->
+              <!--@click="handleDelete(scope.$index, scope.row)">{{ $t('action.del') }}-->
+              <!--</el-button>-->
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="table-bottom">
+          <add @afterSelectChannel="afterSelectChannel" />
+          <addChannelCommissionTable v-if="hasPermission(100029)" ref="addChannelCommissionTable" />
+          <pagination :total="users.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        </div>
+      </basic-container>
+      <el-dialog :close-on-click-modal="false" :visible.sync="timeDialogVisible" :title="$t('product.channel.reference_time_title')" width="400px">
+        <el-date-picker v-model="channelPolicyObj.timestamp" type="date" value-format="timestamp" style="width: 100%" />
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="handleView">{{
             $t("common.confirmButton")
           }}</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">
-      <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password" />
-      <div class="tips_text">* {{ $t("common.password_verify_text") }}</div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">{{
+        </div>
+      </el-dialog>
+      <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">
+        <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password" />
+        <div class="tips_text">* {{ $t("common.password_verify_text") }}</div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button :loading="submitLoading" type="primary" @click="handleDeleteChannelCommissionTable()">{{ $t("common.submitButton") }}</el-button>
-      </div>
-    </el-dialog>
-    <channelCommissionView ref="channelCommissionView" />
-    <el-drawer class="channel-detail-wrapper" :modal="false" :title="currentRow.acronym+' - '+currentRow.name" :visible.sync="drawer" :direction="direction">
-      <div v-loading="channelCommissionLoading" class="clearfix" style="min-height: 50px">
-        <el-timeline id="channelCommissionTableList">
-          <div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399">
-            {{ $t("product.channel.no_channel_policy") }}
-          </div>
-          <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" type="success" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
-            <el-dropdown class="action-dropdown">
-              <el-button type="primary" plain size="mini">
-                <i class="el-icon-more" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <el-button v-if="hasPermission(100035) && item.status !== 0" type="text" size="small" @click="
-                        handleTimestampDialog(item.id,item.effectiveDate,currentRow.name)">{{ $t("common.view") }}</el-button>
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <editChannelCommissionTable v-if="hasPermission(100032)" :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks" :channel-name="currentRow.name" :channel-id="currentRow.id" />
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <el-button v-if="hasPermission(100033)" type="text" size="small" @click="verifyPassword(item)">{{ $t("common.delete") }}</el-button>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <div v-if="item.remarks" class="timeline_content">
-              <div class="row">
-                <span class="label">{{ $t("common.remarks") }} :</span>
-                <span class="value">{{ item.remarks }}</span>
-              </div>
+          <el-button :loading="submitLoading" type="primary" @click="handleDeleteChannelCommissionTable()">{{ $t("common.submitButton") }}</el-button>
+        </div>
+      </el-dialog>
+      <channelCommissionView ref="channelCommissionView" />
+      <el-drawer class="channel-detail-wrapper" :modal="false" :title="currentRow.acronym+' - '+currentRow.name" :visible.sync="drawer" :direction="direction">
+        <div v-loading="channelCommissionLoading" class="clearfix" style="min-height: 50px">
+          <el-timeline id="channelCommissionTableList">
+            <div v-if="channelCommissionTableList.list && channelCommissionTableList.list.length === 0" style="text-align: center; color: #909399">
+              {{ $t("product.channel.no_channel_policy") }}
             </div>
-          </el-timeline-item>
-        </el-timeline>
-      </div>
-    </el-drawer>
+            <el-timeline-item v-for="(item, index) in channelCommissionTableList.list" :key="index" type="success" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
+              <el-dropdown class="action-dropdown">
+                <el-button type="primary" plain size="mini">
+                  <i class="el-icon-more" />
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>
+                    <el-button v-if="hasPermission(100035) && item.status !== 0" type="text" size="small" @click="
+                        handleTimestampDialog(item.id,item.effectiveDate,currentRow.name)">{{ $t("common.view") }}</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100032)">
+                    <!-- <editChannelCommissionTable :id="item.id" :effective-date="item.effectiveDate" :remarks="item.remarks" :channel-name="currentRow.name" :channel-id="currentRow.id" /> -->
+                    <el-button type="text" size="small" @click="gotoChannelCommissionTable(item, currentRow)">
+                      {{ $t("common.edit") }}
+                    </el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button v-if="hasPermission(100033)" type="text" size="small" @click="verifyPassword(item)">{{ $t("common.delete") }}</el-button>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              <div v-if="item.remarks" class="timeline_content">
+                <div class="row">
+                  <span class="label">{{ $t("common.remarks") }} :</span>
+                  <span class="value">{{ item.remarks }}</span>
+                </div>
+              </div>
+            </el-timeline-item>
+          </el-timeline>
+        </div>
+      </el-drawer>
+    </div>
   </div>
 </template>
 
@@ -355,6 +361,18 @@ export default {
     updateLimit(val) {
       this.listQuery.limit = val;
     },
+    gotoChannelCommissionTable(commission, channel) {
+      this.$router.push({
+        name: 'channelCommissionTable',
+        params: {
+          id: commission.id,
+          effectiveDate: commission.effectiveDate,
+          remarks: commission.remark,
+          channelName: channel.name,
+          channelId: channel.id
+        }
+      })
+    }
   },
 };
 </script>
@@ -371,7 +389,7 @@ export default {
       .el-drawer__header {
         height: 70px;
         margin-bottom: 0;
-        border-bottom: 1px solid #e1e0eb;
+        border-bottom: 1px solid #e9e8f0;
         margin-bottom: 16px;
         margin-top: 10px;
         font-size: 18px;
@@ -389,19 +407,6 @@ export default {
         }
       }
     }
-  }
-  .channel-list-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 216px;
-    height: 60px;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    border-top: #e9e8f0 solid 1px;
-    box-sizing: border-box;
-    z-index: 10;
-    width: calc(100% - 232px);
   }
   .timeline_content {
     background: #f6f6f7;

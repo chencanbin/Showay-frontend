@@ -9,7 +9,7 @@
     <el-tabs v-model="activeName">
       <el-tab-pane :label="$t('product.commission.view.basic_tab')" name="basic">
         <basic-container>
-          <el-table v-loading="viewLoading" :data="data" stripe>
+          <el-table v-loading="viewLoading" :data="data" stripe :height="tableHeight">
             <el-table-column :label="$t('product.commission.view.table_header.acronym')" prop="product.acronym" width="100" fixed="left" show-overflow-tooltip />
             <el-table-column :label="$t('product.commission.view.table_header.name')" prop="product.name" show-overflow-tooltip min-width="180" fixed="left" />
             <el-table-column :label="$t('product.commission.view.table_header.enName')" prop="product.enName" show-overflow-tooltip min-width="180" fixed="left" />
@@ -31,7 +31,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+          <div class="table-bottom" style="width: 110%; left: 0; padding-left: 25px; text-align: right">
+            <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+          </div>
         </basic-container>
       </el-tab-pane>
       <el-tab-pane :label="$t('product.commission.view.overall_tab')" name="overall">
@@ -39,7 +41,7 @@
           <span style="margin-bottom: 10px; display: inline-block">
             <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange" />
           </span>
-          <el-table v-loading="viewLoading" :data="data" stripe>
+          <el-table v-loading="viewLoading" :data="data" stripe :height="tableHeight">
             <el-table-column :label="$t('product.commission.view.table_header.acronym')" prop="product.acronym" width="120" fixed="left" show-overflow-tooltip />
             <el-table-column :label="$t('product.commission.view.table_header.name')" prop="product.name" fixed="left" min-width="180" show-overflow-tooltip />
             <el-table-column :label="$t('product.commission.view.table_header.enName')" prop="product.enName" fixed="left" min-width="180" show-overflow-tooltip />
@@ -58,7 +60,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+          <div class="table-bottom" style="width: 110%; left: 0; padding-left: 25px; text-align: right">
+            <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+          </div>
         </basic-container>
       </el-tab-pane>
     </el-tabs>
@@ -323,6 +327,15 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 #commissionTable .el-dialog__body {
+  .basic-container {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+  }
+  .el-table {
+    height: 86vh;
+    overflow: auto;
+  }
   .wildcard-wrapper {
     display: inline-block;
     position: absolute;
@@ -355,7 +368,7 @@ export default {
     border: 1px solid $--purple;
     color: $--purple;
   }
-  padding: 10px 10px 5px 10px;
+  padding: 10px 10px 0 10px;
   .el-tabs--border-card > .el-tabs__content {
     padding: 10px;
   }

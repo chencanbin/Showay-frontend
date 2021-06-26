@@ -72,7 +72,7 @@
         <div class="client_empty"></div>
         <div class="client_empty"></div>
       </div>
-      <div class="client-list-bottom">
+      <div class="table-bottom">
         <add :list-query="listQuery" ref="addClient" />
         <pagination :total="client.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
 
@@ -222,13 +222,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 #clientInfo {
   background: #eff0f3;
-  .header {
-    width: 100%;
-    height: 60px;
-    background: #fff;
-    margin-bottom: 16px;
-    border-radius: 8px;
-  }
+
   .el-dialog--center .el-dialog__body {
     padding: 15px 20px;
   }
@@ -306,19 +300,6 @@ export default {
         }
       }
     }
-  }
-  .client-list-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 216px;
-    height: 60px;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    border-top: #e9e8f0 solid 1px;
-    box-sizing: border-box;
-    z-index: 10;
-    width: calc(100% - 232px);
   }
 }
 </style>

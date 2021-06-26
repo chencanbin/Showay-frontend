@@ -18,6 +18,7 @@ export default {
   box-sizing: border-box;
   background: #fff;
   padding: 24px 24px 40px 24px;
+  min-height: 92vh;
   .el-card {
     border-radius: 8px;
     width: 100%;

@@ -4,10 +4,14 @@
       <slot name="header-left" />
     </div>
     <div class="header-center">
-      <span class="prev-month" @click.stop="goPrev">{{ leftArrow }}</span>
+      <svg class="prev-month iconfont" aria-hidden="true" @click.stop="goPrev">
+        <use xlink:href="#icon-61" />
+      </svg>
       <!--<span class="title">{{ title }}</span>-->
       <el-date-picker :editable="false" :clearable="false" v-model="currentMonth" prefix-icon="false" type="month" placeholder="选择日期" style="width: 100px" @change="handleDateChange" />
-      <span class="next-month" @click.stop="goNext">{{ rightArrow }}</span>
+      <svg class="next-month iconfont" aria-hidden="true" @click.stop="goNext">
+        <use xlink:href="#icon-61" />
+      </svg>
     </div>
     <div class="header-right">
       <slot name="header-right" />
@@ -88,19 +92,25 @@ export default {
 .full-calendar-header {
   display: flex;
   align-items: center;
+  .el-input__suffix-inner {
+    display: none;
+  }
   .header-left,
   .header-right {
     flex: 1;
   }
   .header-center {
-    flex: 3;
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     .title {
       margin: 0 10px;
     }
-    .prev-month,
+    .prev-month {
+      transform: rotate(180deg);
+    }
     .next-month {
-      cursor: pointer;
+      margin-right: 0;
     }
   }
   .el-input__inner {

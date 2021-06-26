@@ -4,7 +4,6 @@
     <!--<el-button :loading="loading" size="small" plain icon="el-icon-download" type="primary" @click="exportExcel()">导出</el-button>-->
     <!--</div>-->
     <div class="table-container">
-
       <div class="header">
         <el-form :inline="true" @submit.native.prevent>
           <el-form-item :label="$t('product.channel.view.company')" class="search_item" prop="params.companies">
@@ -40,24 +39,24 @@
           </el-form-item>
         </el-form>
       </div>
-      <el-row>
-        <basic-container>
-          <el-table v-loading="loading" :data="data" stripe>
-            <el-table-column :label="$t('product.channel.view.company')" fixed prop="company.name" min-width="200" />
-            <el-table-column :label="$t('product.channel.view.product')" fixed prop="product.name" min-width="200" />
-            <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="100">
-              <template slot-scope="scope">
-                <span>{{
+      <basic-container>
+        <el-table v-loading="loading" :data="data" stripe :height="tableHeight">
+          <el-table-column :label="$t('product.channel.view.company')" fixed prop="company.name" min-width="200" />
+          <el-table-column :label="$t('product.channel.view.product')" fixed prop="product.name" min-width="200" />
+          <el-table-column v-for="(year, index) in columnYear" :key="index" :label="year" width="100">
+            <template slot-scope="scope">
+              <span>{{
                   scope.row.conditions[index]
                     ? formatToPercent(scope.row.conditions[index].rate)
                     : "-"
                 }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="table-bottom" style="width: 110%; left: 0; padding-left: 25px; text-align: right">
           <pagination :total="total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
-        </basic-container>
-      </el-row>
+        </div>
+      </basic-container>
     </div>
 
   </el-dialog>
@@ -78,7 +77,7 @@ export default {
   data() {
     return {
       activeName: "basic",
-      tableHeight: document.body.clientHeight - 180,
+      tableHeight: document.body.clientHeight - 200,
       loading: false,
       productLoading: false,
       companyLoading: false,
@@ -263,21 +262,41 @@ export default {
   },
 };
 </script>
-<style lang="scss" rel="stylesheet/scss" type="text/scss" scoped>
+<style lang="scss" rel="stylesheet/scss" type="text/scss">
 #channelCommissionPreviewTable {
+  .header {
+    height: 100%;
+  }
+  .basic-container {
+    min-height: 100%;
+    padding-bottom: 0;
+  }
+  .el-dialog.is-fullscreen {
+    overflow: hidden;
+  }
+  .el-tag.el-tag--info {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center;
+  }
+  .el-select {
+    width: 300px;
+    margin-right: 20px;
+  }
   .el-dialog__body {
     padding: 0;
-    .header {
-      height: 100%;
-      line-height: 60px;
-      padding-left: 24px;
-      .el-form--inline .el-form-item {
-        margin-bottom: 0;
-      }
-      .el-form-item__content {
-        line-height: 60px;
-      }
-    }
+    // .header {
+    //   height: 100%;
+    //   line-height: 60px;
+    //   padding-left: 24px;
+    //   .el-form--inline .el-form-item {
+    //     margin-bottom: 0;
+    //     margin-right: 24px;
+    //   }
+    //   .el-form-item__content {
+    //     line-height: 60px;
+    //   }
+    // }
   }
 }
 </style>

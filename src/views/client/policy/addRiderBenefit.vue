@@ -1,10 +1,10 @@
 <template>
-  <span>
+  <el-col class="el-table-add-col" id="addRiderBenefits">
     <!--<el-row style="margin-bottom: 5px">-->
     <!--<el-button type="primary" icon="el-icon-plus" style="margin-right: 10px" @click="initForm">添加副险</el-button>-->
     <!--</el-row>-->
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加副险</span></div>-->
-    <el-button plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
+    <el-button class="el-table-add-row add-rider-button" plain type="primary" @click="initForm"><i class="iconfont icon_add_small create-icon" /> <span>{{ $t("common.add") }}</span></el-button>
     <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.insurance_policy.set.add_riderBenefits_title')" width="600px" append-to-body>
       <el-form ref="riderBenefit" :model="riderBenefit" :rules="riderBenefitRule" label-width="120px" class="riderBenefit">
         <el-form-item :label="$t('client.insurance_policy.product')" prop="product" style="width: 100%">
@@ -34,7 +34,7 @@
           }}</el-button>
       </div>
     </el-dialog>
-  </span>
+  </el-col>
 </template>
 
 <script type="text/ecmascript-6">
@@ -146,9 +146,28 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
-.riderBenefit {
+#addRiderBenefits {
   .el-form-item {
     margin-bottom: 20px;
   }
+  // .add-rider-button {
+  //   height: 40px;
+  //   border-radius: 6px;
+  //   font-size: 16px;
+  //   font-weight: bold;
+  //   padding: 0;
+  //   border-radius: 6px;
+
+  //   span {
+  //     display: flex;
+  //     align-items: center;
+  //     justify-content: center;
+  //   }
+
+  //   .create-icon {
+  //     font-size: 20px;
+  //     margin-right: 8px;
+  //   }
+  // }
 }
 </style>

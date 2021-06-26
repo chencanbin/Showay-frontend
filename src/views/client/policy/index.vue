@@ -1,22 +1,24 @@
 <template>
   <div id="policy" class="table-container">
-    <div class="header">
-      <el-form :inline="true" class="search-input" @submit.native.prevent>
-        <el-form-item label="" prop="wildcard">
-          <el-input v-model="wildcard" :placeholder="$t('client.insurance_policy.search')" clearable @input="search">
-            <i slot="prefix" class="el-input__icon el-icon-search" />
-          </el-input>
-        </el-form-item>
-        <el-form-item label="" prop="dateRange">
-          <el-date-picker v-model="dateRange" :unlink-panels="true" :start-placeholder="$t('commission.credit.start')" :end-placeholder="$t('commission.credit.end')" :picker-options="pickerOptions" value-format="timestamp" type="daterange" range-separator="-" @change="onDateRangeChange" />
-        </el-form-item>
-        <!-- <add-client  /> -->
-        <el-button v-if="hasPermission(100039)" type="primary" @click="createClient">{{ $t("client.info.set.add_title") }}</el-button>
-      </el-form>
-    </div>
-    <basic-container>
-      <el-table v-loading="insurancePolicyLoading" :data="insurancePolicy.list" stripe row-key="id" @sort-change="handleSubmitDateSort" @expand-change="expandChange" @row-click="showInsuranceDetail">
-        <!-- <el-table-column type="expand">
+    <router-view></router-view>
+    <div v-show="$route.meta.showChild">
+      <div class="header">
+        <el-form :inline="true" class="search-input" @submit.native.prevent>
+          <el-form-item label="" prop="wildcard">
+            <el-input v-model="wildcard" :placeholder="$t('client.insurance_policy.search')" clearable @input="search">
+              <i slot="prefix" class="el-input__icon el-icon-search" />
+            </el-input>
+          </el-form-item>
+          <el-form-item label="" prop="dateRange">
+            <el-date-picker v-model="dateRange" :unlink-panels="true" :start-placeholder="$t('commission.credit.start')" :end-placeholder="$t('commission.credit.end')" :picker-options="pickerOptions" value-format="timestamp" type="daterange" range-separator="-" @change="onDateRangeChange" />
+          </el-form-item>
+          <!-- <add-client  /> -->
+          <el-button v-if="hasPermission(100039)" type="primary" @click="createClient">{{ $t("client.info.set.add_title") }}</el-button>
+        </el-form>
+      </div>
+      <basic-container>
+        <el-table v-loading="insurancePolicyLoading" :data="insurancePolicy.list" stripe row-key="id" @sort-change="handleSubmitDateSort" @expand-change="expandChange" @row-click="showInsuranceDetail">
+          <!-- <el-table-column type="expand">
           <template slot-scope="scope">
             <div>
               <el-form id="policy-table-expand" label-position="left" inline label-width="80px">
@@ -67,181 +69,187 @@
             </div>
           </template>
         </el-table-column> -->
-        <el-table-column :label="$t('client.insurance_policy.number')" prop="number" show-overflow-tooltip min-width="120" />
-        <el-table-column :label="$t('client.insurance_policy.sn')" prop="sn" show-overflow-tooltip min-width="120" sortable="custom" />
-        <el-table-column :formatter="dateFormat" :label="$t('client.insurance_policy.submitDate')" prop="submitDate" min-width="140" sortable="custom" />
-        <el-table-column :label="$t('client.insurance_policy.policyStatus')" prop="policyStatus" min-width="100">
-          <template slot-scope="scope">
-            <el-tag v-if="isIneffectiveStatus(scope.row.policyStatus)" type="danger">
-              {{ formatterPolicyStatus(scope.row.policyStatus) }}
-            </el-tag>
-            <el-tag v-else-if="scope.row.policyStatus === 1" type="warning">
-              {{ formatterPolicyStatus(scope.row.policyStatus) }}
-            </el-tag>
-            <el-tag v-else-if="scope.row.policyStatus === 2" type="success">
-              {{ formatterPolicyStatus(scope.row.policyStatus) }}
-            </el-tag>
-            <el-tag v-else style="
+          <el-table-column :label="$t('client.insurance_policy.number')" prop="number" show-overflow-tooltip min-width="120" />
+          <el-table-column :label="$t('client.insurance_policy.sn')" prop="sn" show-overflow-tooltip min-width="120" sortable="custom" />
+          <el-table-column :formatter="dateFormat" :label="$t('client.insurance_policy.submitDate')" prop="submitDate" min-width="140" sortable="custom" />
+          <el-table-column :label="$t('client.insurance_policy.policyStatus')" prop="policyStatus" min-width="100">
+            <template slot-scope="scope">
+              <el-tag v-if="isIneffectiveStatus(scope.row.policyStatus)" type="danger">
+                {{ formatterPolicyStatus(scope.row.policyStatus) }}
+              </el-tag>
+              <el-tag v-else-if="scope.row.policyStatus === 1" type="warning">
+                {{ formatterPolicyStatus(scope.row.policyStatus) }}
+              </el-tag>
+              <el-tag v-else-if="scope.row.policyStatus === 2" type="success">
+                {{ formatterPolicyStatus(scope.row.policyStatus) }}
+              </el-tag>
+              <el-tag v-else style="
                 margin-right: 10px;
                 margin-bottom: 5px;
                 color: #409eff;
                 background-color: rgba(64, 158, 255, 0.1);
                 border: 1px solid rgba(64, 158, 255, 0.2);
               ">
-              {{ formatterPolicyStatus(scope.row.policyStatus) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('client.insurance_policy.applicant_name')" prop="applicant.name" show-overflow-tooltip width="110">
-          <template slot-scope="scope">
-            <client-detail :id="scope.row.applicant.id" :name="scope.row.applicant.name" />
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('client.insurance_policy.insured_name')" prop="insured.name" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <client-detail :id="scope.row.insured.id" :name="scope.row.insured.name" />
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('client.insurance_policy.company_name')" prop="company.name" min-width="150" show-overflow-tooltip />
-        <el-table-column :label="$t('client.insurance_policy.product_name')" prop="product.name" min-width="200" show-overflow-tooltip />
-        <el-table-column :label="$t('common.action')" prop="action">
-          <template slot-scope="scope">
-            <el-dropdown trigger="click">
-              <el-button type="primary" plain size="mini">
-                <i class="el-icon-more" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="hasPermission(100047)">
-                  <edit v-if="
+                {{ formatterPolicyStatus(scope.row.policyStatus) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('client.insurance_policy.applicant_name')" prop="applicant.name" show-overflow-tooltip width="110">
+            <template slot-scope="scope">
+              <client-detail :id="scope.row.applicant.id" :name="scope.row.applicant.name" />
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('client.insurance_policy.insured_name')" prop="insured.name" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <client-detail :id="scope.row.insured.id" :name="scope.row.insured.name" />
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('client.insurance_policy.company_name')" prop="company.name" min-width="150" show-overflow-tooltip />
+          <el-table-column :label="$t('client.insurance_policy.product_name')" prop="product.name" min-width="200" show-overflow-tooltip />
+          <el-table-column :label="$t('common.action')" prop="action">
+            <template slot-scope="scope">
+              <el-dropdown trigger="click">
+                <el-button type="primary" plain size="mini">
+                  <i class="el-icon-more" />
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-if="hasPermission(100047)">
+                    <edit v-if="
                       !isIneffectiveStatus(scope.row.policyStatus) &&
                         scope.row.editable
                     " :data="scope.row" :list-query="listQuery" :year="year" />
-                </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100047)">
-                  <riderBenefits v-if="
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100047)">
+                    <!-- <riderBenefits v-if="
                       !isIneffectiveStatus(scope.row.policyStatus) &&
                         scope.row.editable
-                    " :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency" :submit-date="scope.row.submitDate" :list-query="listQuery" :year="year" />
-                </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100052)">
-                  <renewal v-if="
+                    " :data="scope.row.riderBenefits" :id="scope.row.id" :company-id="scope.row.company.id" :currency="scope.row.currency" :submit-date="scope.row.submitDate" :list-query="listQuery" :year="year" /> -->
+                    <el-button v-if="
+                      !isIneffectiveStatus(scope.row.policyStatus) &&
+                        scope.row.editable" type="text" size="small" style="margin-right: 5px" @click="gotoRederBenefits(scope.row, listQuery, year)">
+                      {{ $t("client.insurance_policy.riderBenefits") }}
+                    </el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100052)">
+                    <renewal v-if="
                       !isIneffectiveStatus(scope.row.policyStatus) &&
                         (scope.row.premiumPlan === 3 ||
                         scope.row.riderBenefits.length > 0) &&
                         scope.row.editable
                     " :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan" />
-                </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100082)">
-                  <policy-document :id="scope.row.number" />
-                </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100128)">
-                  <el-button type="text" size="small" @click="handleSendEmail(scope.row)">{{ $t("client.insurance_policy.email_notification") }}
-                  </el-button>
-                </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100050)">
-                  <el-button type="text" size="small" @click="handleReset(scope.row.id)">{{ $t("common.reset") }}
-                  </el-button>
-                </el-dropdown-item>
-                <el-dropdown-item v-if="hasPermission(100048)">
-                  <el-button v-if="scope.row.editable" type="text" size="small" @click="verifyPassword(scope.row.id)">{{ $t("common.delete") }}
-                  </el-button>
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <company-expenses v-if="hasPermission(100113)" :policy="scope.row" />
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <channel-expenses v-if="hasPermission(100118) && scope.row.editable" :policy="scope.row" />
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="table-bottom">
-        <add v-if="hasPermission(100044)" :list-query="listQuery" :year="year" />
-        <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
-      </div>
-    </basic-container>
-    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">
-      <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password" />
-      <div class="tips_text">* {{ $t("common.password_verify_text") }}</div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">{{
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100082)">
+                    <policy-document :id="scope.row.number" />
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100128)">
+                    <el-button type="text" size="small" @click="handleSendEmail(scope.row)">{{ $t("client.insurance_policy.email_notification") }}
+                    </el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100050)">
+                    <el-button type="text" size="small" @click="handleReset(scope.row.id)">{{ $t("common.reset") }}
+                    </el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission(100048)">
+                    <el-button v-if="scope.row.editable" type="text" size="small" @click="verifyPassword(scope.row.id)">{{ $t("common.delete") }}
+                    </el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <company-expenses v-if="hasPermission(100113)" :policy="scope.row" />
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <channel-expenses v-if="hasPermission(100118) && scope.row.editable" :policy="scope.row" />
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="table-bottom">
+          <add v-if="hasPermission(100044)" :list-query="listQuery" :year="year" />
+          <pagination :total="insurancePolicy.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+        </div>
+      </basic-container>
+      <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('common.password_verify') + ' - ' + name" width="400px">
+        <el-input v-model="password" :placeholder="$t('login.password_placeholder')" type="password" />
+        <div class="tips_text">* {{ $t("common.password_verify_text") }}</div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button :loading="submitLoading" type="primary" @click="handleDelete()">{{ $t("common.submitButton") }}</el-button>
-      </div>
-    </el-dialog>
-    <send-email ref="sendEmail" />
-
-    <el-drawer class="policy-detail-wrapper" :modal="false" v-if="currentRow" title="保单详情" :visible.sync="drawer" :direction="direction" size="430px">
-      <el-form class="basic_info" label-position="left" label-width="80px">
-        <el-form-item :label="$t('client.insurance_policy.number')" class="policy-form-item">
-          <span>{{ currentRow.number }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.sn')" class="policy-form-item">
-          <span>{{ getFormattedDate(currentRow.sn) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.submitDate')" class="policy-form-item">
-          <span>{{ getFormattedDate(currentRow.submitDate) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.policyStatus')" class="policy-form-item">
-          <span>{{ numberFormat(currentRow, currentRow.policyStatus) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.applicant_name')" class="policy-form-item">
-          <span>{{ numberFormat(currentRow, currentRow.applicant.name) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.insured_name')" class="policy-form-item">
-          <span>{{ formatterPremiumPlan(currentRow.insured.name) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.company_name')" class="policy-form-item">
-          <span>{{ currentRow.company.name }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.product_name')" class="policy-form-item">
-          <span>{{ currentRow.product.name }}</span>
-        </el-form-item>
-      </el-form>
-
-      <el-form label-position="left" label-width="80px">
-        <el-form-item :label="$t('client.insurance_policy.agent_name')" class="policy-form-item">
-          <span>{{ currentRow && currentRow.agent.name }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.issueDate')" class="policy-form-item">
-          <span>{{ getFormattedDate(currentRow.issueDate) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.premiumDate')" class="policy-form-item">
-          <span>{{ getFormattedDate(currentRow.premiumDate) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.amountInsured')" class="policy-form-item">
-          <span>{{ numberFormat(currentRow, currentRow.amountInsured) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.premium')" class="policy-form-item">
-          <span>{{ numberFormat(currentRow, currentRow.premium) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.premiumPlan')" class="policy-form-item">
-          <span>{{ formatterPremiumPlan(currentRow.premiumPlan) }}</span>
-        </el-form-item>
-        <el-form-item :label="$t('client.insurance_policy.channel')" class="policy-form-item">
-          <span>{{ currentRow.channel.name }}</span>
-        </el-form-item>
-        <el-form-item label="DDA" class="policy-form-item">
-          <span>{{ currentRow.dda ? "Yes" : "No" }}</span>
-        </el-form-item>
-        <div v-if="currentRow.beneficiaries && currentRow.beneficiaries.length > 0 ">
-          <div style="padding: 10px 10px 10px 0;font-size: 14px;font-weight: bold;color: #99a9bf;">
-            {{ $t("client.insurance_policy.beneficiary_name") }}
-          </div>
-          <div style="padding: 10px 10px 30px 0">
-            <el-table :data="currentRow.beneficiaries" stripe>
-              <el-table-column :label="$t('client.info.name')" prop="name" />
-              <el-table-column :label="$t('client.info.email')" prop="email" />
-              <el-table-column :label="$t('client.info.idNumber')" prop="idNumber" />
-            </el-table>
-          </div>
+          <el-button :loading="submitLoading" type="primary" @click="handleDelete()">{{ $t("common.submitButton") }}</el-button>
         </div>
-      </el-form>
-    </el-drawer>
-    <add-client ref="addClient" :reload="false" :hiddenBtn="true" />
+      </el-dialog>
+      <send-email ref="sendEmail" />
+
+      <el-drawer class="policy-detail-wrapper" :modal="false" v-if="currentRow" title="保单详情" :visible.sync="drawer" :direction="direction" size="430px">
+        <el-form class="basic_info" label-position="left" label-width="80px">
+          <el-form-item :label="$t('client.insurance_policy.number')" class="policy-form-item">
+            <span>{{ currentRow.number }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.sn')" class="policy-form-item">
+            <span>{{ getFormattedDate(currentRow.sn) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.submitDate')" class="policy-form-item">
+            <span>{{ getFormattedDate(currentRow.submitDate) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.policyStatus')" class="policy-form-item">
+            <span>{{ numberFormat(currentRow, currentRow.policyStatus) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.applicant_name')" class="policy-form-item">
+            <span>{{ numberFormat(currentRow, currentRow.applicant.name) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.insured_name')" class="policy-form-item">
+            <span>{{ formatterPremiumPlan(currentRow.insured.name) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.company_name')" class="policy-form-item">
+            <span>{{ currentRow.company.name }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.product_name')" class="policy-form-item">
+            <span>{{ currentRow.product.name }}</span>
+          </el-form-item>
+        </el-form>
+
+        <el-form label-position="left" label-width="80px">
+          <el-form-item :label="$t('client.insurance_policy.agent_name')" class="policy-form-item">
+            <span>{{ currentRow && currentRow.agent.name }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.issueDate')" class="policy-form-item">
+            <span>{{ getFormattedDate(currentRow.issueDate) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.premiumDate')" class="policy-form-item">
+            <span>{{ getFormattedDate(currentRow.premiumDate) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.amountInsured')" class="policy-form-item">
+            <span>{{ numberFormat(currentRow, currentRow.amountInsured) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.premium')" class="policy-form-item">
+            <span>{{ numberFormat(currentRow, currentRow.premium) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.premiumPlan')" class="policy-form-item">
+            <span>{{ formatterPremiumPlan(currentRow.premiumPlan) }}</span>
+          </el-form-item>
+          <el-form-item :label="$t('client.insurance_policy.channel')" class="policy-form-item">
+            <span>{{ currentRow.channel.name }}</span>
+          </el-form-item>
+          <el-form-item label="DDA" class="policy-form-item">
+            <span>{{ currentRow.dda ? "Yes" : "No" }}</span>
+          </el-form-item>
+          <div v-if="currentRow.beneficiaries && currentRow.beneficiaries.length > 0 ">
+            <div style="padding: 10px 10px 10px 0;font-size: 14px;font-weight: bold;color: #99a9bf;">
+              {{ $t("client.insurance_policy.beneficiary_name") }}
+            </div>
+            <div style="padding: 10px 10px 30px 0">
+              <el-table :data="currentRow.beneficiaries" stripe>
+                <el-table-column :label="$t('client.info.name')" prop="name" />
+                <el-table-column :label="$t('client.info.email')" prop="email" />
+                <el-table-column :label="$t('client.info.idNumber')" prop="idNumber" />
+              </el-table>
+            </div>
+          </div>
+        </el-form>
+      </el-drawer>
+      <add-client ref="addClient" :reload="false" :hiddenBtn="true" />
+    </div>
   </div>
 </template>
 
@@ -642,6 +650,14 @@ export default {
     },
     createClient() {
       this.$refs.addClient.initForm();
+    },
+    gotoRederBenefits(row, listQuery, year) {
+      this.$router.push({
+        name: 'riderBenefits',
+        params: {
+          data: row.riderBenefits, id: row.id, companyId: row.company.id, currency: row.currency, submitDate: row.submitDate, listQuery: listQuery, year: year
+        }
+      })
     }
   },
 };
@@ -649,13 +665,6 @@ export default {
 
 <style type="text/scss"  lang="scss">
 #policy {
-  .header {
-    width: 100%;
-    height: 60px;
-    background: #fff;
-    margin-bottom: 16px;
-    border-radius: 8px;
-  }
   .el-dialog--center .el-dialog__body {
     padding: 15px 20px;
   }
@@ -670,12 +679,13 @@ export default {
       .el-drawer__header {
         height: 70px;
         margin-bottom: 0;
-        border-bottom: 1px solid #e1e0eb;
+        border-bottom: 1px solid #e9e8f0;
         margin-bottom: 16px;
         margin-top: 10px;
         font-size: 18px;
         font-weight: bold;
         color: #42475f;
+        padding: 0 0 0 12px;
       }
       .el-drawer__body {
         background: #f6f6f7;
@@ -704,19 +714,6 @@ export default {
     font-size: 14px;
     font-weight: bold;
     margin-top: 10px;
-  }
-  .policy-list-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 216px;
-    height: 60px;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    border-top: #e9e8f0 solid 1px;
-    box-sizing: border-box;
-    z-index: 10;
-    width: calc(100% - 232px);
   }
 }
 </style>

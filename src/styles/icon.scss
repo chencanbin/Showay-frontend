@@ -1,9 +1,9 @@
 @font-face {
   font-family: "iconfont";
   /* Project id 2539548 */
-  src: url('//at.alicdn.com/t/font_2539548_091u8lwy9wyv.woff2?t=1624021615566') format('woff2'),
-    url('//at.alicdn.com/t/font_2539548_091u8lwy9wyv.woff?t=1624021615566') format('woff'),
-    url('//at.alicdn.com/t/font_2539548_091u8lwy9wyv.ttf?t=1624021615566') format('truetype');
+  src: url('//at.alicdn.com/t/font_2539548_pye0zmoz6mm.woff2?t=1624459777578') format('woff2'),
+    url('//at.alicdn.com/t/font_2539548_pye0zmoz6mm.woff?t=1624459777578') format('woff'),
+    url('//at.alicdn.com/t/font_2539548_pye0zmoz6mm.ttf?t=1624459777578') format('truetype');
 }
 
 .iconfont {
@@ -12,6 +12,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon_add_small:before {
+  content: "\e6ce";
+}
+
+.icon_flat:before {
+  content: "\e6de";
 }
 
 .icon_top_caozuo:before {
@@ -59,7 +67,7 @@
 }
 
 .icon-61:before {
-  content: "\e6ce";
+  content: "\e6c";
 }
 
 .icon-60:before {

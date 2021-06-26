@@ -34,47 +34,6 @@
     </div>
     <el-drawer class="calendar_drawer" :title="drawerTitle" :visible.sync="drawer" :direction="direction" append-to-body size="450px">
       <el-collapse>
-        <el-collapse-item name="ordinary">
-          <template slot="title">
-            <div class="title_wrapper">
-              <span class="iconfont icon_time"></span> <span class="title">普通</span><i class="ordinary_icon"></i>
-              <span class="event_count" v-if="currentDay.events">{{currentDay.events.length}}</span>
-            </div>
-          </template>
-          <div class="events-wrapper">
-            <!-- events -->
-            <div v-for="event in currentDay.events" :key="event.detail.id" class="event-wrapper">
-              <el-form>
-                <div class="applicant_name_wrapper">
-                  <span class="applicant_name">{{ event.detail.applicant.name }} </span><i class="ordinary_icon"></i>
-                </div>
-                <el-form-item :label="$t('client.insurance_policy.term')" class="detail-item">
-                  {{ event.detail.term }}
-                </el-form-item>
-                <el-form-item :label="$t('client.info.phone')" class="detail-item">
-                  {{ event.detail.applicant.phone }}
-                </el-form-item>
-                <el-form-item :label="$t('client.info.email')" class="detail-item">
-                  {{ event.detail.applicant.email }}
-                </el-form-item>
-                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
-                  {{ getFormattedDate(event.start) }}
-                </el-form-item>
-                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
-                  {{ event.detail.product.name }}
-                </el-form-item>
-                <el-form-item v-if="hasPermission(100053)" :label="$t('client.insurance_policy.renewed')" class="detail-item">
-                  <el-checkbox :checked="event.detail.status === 1" @change="renewalChange(event)" />
-                </el-form-item>
-                <div style="text-align: right">
-                  <el-button v-if="hasRoles([1, 3])" @click="handleSendEmail(event)" type="primary">{{
-                    $t("client.insurance_policy.renewal_notification")
-                  }}</el-button>
-                </div>
-              </el-form>
-            </div>
-          </div>
-        </el-collapse-item>
         <el-collapse-item name="overdue">
           <template slot="title">
             <div class="title_wrapper overdue_title">
@@ -107,7 +66,7 @@
                 <el-form-item v-if="hasPermission(100053)" :label="$t('client.insurance_policy.renewed')" class="detail-item">
                   <el-checkbox :checked="event.detail.status === 1" @change="renewalChange(event)" />
                 </el-form-item>
-                <div style="text-align: right">
+                <div class="detail-form-bottom">
                   <el-button v-if="hasRoles([1, 3])" @click="handleSendEmail(event)" type="primary">{{
                     $t("client.insurance_policy.renewal_notification")
                   }}</el-button>
@@ -116,6 +75,48 @@
             </div>
           </div>
         </el-collapse-item>
+        <el-collapse-item name="ordinary" v-if="currentDay.events && currentDay.events.length > 0">
+          <template slot="title">
+            <div class="title_wrapper">
+              <span class="iconfont icon_time"></span> <span class="title">普通</span><i class="ordinary_icon"></i>
+              <span class="event_count" v-if="currentDay.events">{{currentDay.events.length}}</span>
+            </div>
+          </template>
+          <div class="events-wrapper">
+            <!-- events -->
+            <div v-for="event in currentDay.events" :key="event.detail.id" class="event-wrapper">
+              <el-form>
+                <div class="applicant_name_wrapper">
+                  <span class="applicant_name">{{ event.detail.applicant.name }} </span><i class="ordinary_icon"></i>
+                </div>
+                <el-form-item :label="$t('client.insurance_policy.term')" class="detail-item">
+                  {{ event.detail.term }}
+                </el-form-item>
+                <el-form-item :label="$t('client.info.phone')" class="detail-item">
+                  {{ event.detail.applicant.phone }}
+                </el-form-item>
+                <el-form-item :label="$t('client.info.email')" class="detail-item">
+                  {{ event.detail.applicant.email }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.renewal_time')" class="detail-item">
+                  {{ getFormattedDate(event.start) }}
+                </el-form-item>
+                <el-form-item :label="$t('client.insurance_policy.product')" class="detail-item">
+                  {{ event.detail.product.name }}
+                </el-form-item>
+                <el-form-item v-if="hasPermission(100053)" :label="$t('client.insurance_policy.renewed')" class="detail-item">
+                  <el-checkbox :checked="event.detail.status === 1" @change="renewalChange(event)" />
+                </el-form-item>
+                <div class="detail-form-bottom">
+                  <el-button v-if="hasRoles([1, 3])" @click="handleSendEmail(event)" type="primary">{{
+                    $t("client.insurance_policy.renewal_notification")
+                  }}</el-button>
+                </div>
+              </el-form>
+            </div>
+          </div>
+        </el-collapse-item>
+
       </el-collapse>
     </el-drawer>
     <send-email ref="sendEmail" />
@@ -290,9 +291,6 @@ export default {
     dayClick(day) {
       console.log(day)
       this.selectDay = day;
-      if (!day.events.length) {
-        return
-      }
       // this.drawer = true;
       // this.currentDay = day;
       this.$emit('triggerDay', day);
@@ -452,6 +450,7 @@ export default {
               height: 30px;
               line-height: 30px;
               background: $--purple-assist;
+              border: 0.5px solid #818be2;
               color: $--purple;
               display: inline-block;
               border-radius: 16px;
@@ -504,6 +503,7 @@ export default {
         }
         .is-selected {
           background: #f2f2f8;
+          border: 0.5px solid #ededf1;
         }
       }
 
@@ -577,7 +577,7 @@ export default {
       color: $--content;
       font-size: 20px;
       font-weight: bold;
-      border-bottom: 1px solid rgba(233, 232, 240, 1);
+      border-bottom: 1px solid #E9E8F0;
     }
     .el-drawer__body {
       .el-collapse {
@@ -587,6 +587,7 @@ export default {
           border: 0;
           .el-collapse-item__header {
             border: 0;
+            height: 60px;
             .title_wrapper {
               color: rgba(66, 71, 95, 1);
               font-weight: bold;
@@ -596,7 +597,7 @@ export default {
                 margin-right: 8px;
               }
               .icon_time {
-                font-size: 22px;
+                font-size: 30px;
                 color: $--purple;
                 vertical-align: middle;
               }
@@ -611,7 +612,7 @@ export default {
                 display: inline-block;
                 color: $--purple;
                 background: $--purple-assist;
-                border: 1px solid $--purple;
+                border: 0.5px solid $--purple;
                 border-radius: 8px;
                 font-weight: bold;
                 font-size: 10px;
@@ -648,6 +649,9 @@ export default {
                 font-weight: 500;
                 font-size: 14px;
                 color: $--content;
+              }
+              .detail-form-bottom {
+                margin-top: 16px;
               }
             }
           }

@@ -1,6 +1,6 @@
 <template>
   <el-col span.number="24" class="el-table-add-col">
-    <el-button class="el-table-add-row" plain type="primary" @click="initForm">+ {{ $t("common.add") }}</el-button>
+    <el-button class="el-table-add-row" plain type="primary" @click="initForm"><i class="iconfont icon_add_small create-icon" /> <span> {{ $t("common.add") }}</span></el-button>
     <el-dialog append-to-body v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" title="添加渠道上级" width="400px">
       <el-form ref="channel" :model="channel" label-width="80px">
         <el-form-item :label="$t('user.name')" prop="name">
