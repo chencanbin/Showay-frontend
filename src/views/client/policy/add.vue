@@ -2,7 +2,7 @@
   <div class="el-table-add-col">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <el-button class="el-table-add-row" plain type="primary" @click="initForm"><i class="iconfont icon_add_small create-icon" /> <span>{{ $t("common.add") }}</span></el-button>
-    <el-dialog v-el-drag-dialog id="add-policy" :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('client.insurance_policy.set.add_title')" top="10px" width="800px">
+    <el-dialog v-el-drag-dialog id="add-policy" :close-on-click-modal="false" :visible="dialogVisible" append-to-body :before-close="handleClose" :title="$t('client.insurance_policy.set.add_title')" top="10px" width="800px">
       <el-form ref="insurancePolicy" :model="insurancePolicy" inline class="insurance-policy-form" label-width="100px">
         <el-tabs v-model="activeName">
           <el-tab-pane :label="$t('client.insurance_policy.basic_info')" name="basic">
@@ -90,7 +90,7 @@
             <el-form-item label="DDA">
               <el-checkbox v-model="insurancePolicy.dda" />
             </el-form-item>
-            <el-form-item :label="$t('client.insurance_policy.product')" prop="product.id" style="width: 124%">
+            <el-form-item :label="$t('client.insurance_policy.product')" prop="product.id">
               <el-select v-model="insurancePolicy.product.id" :remote-method="searchProduct" :loading="productLoading" :placeholder="$t('client.insurance_policy.set.product_name')" filterable remote clearable style="width: 100%" @focus="onProductFocus">
                 <el-option v-for="item in products" :key="item.id" :label="item.name" :value="item.id">
                   <span style="float: left; margin-right: 15px">{{
@@ -426,7 +426,11 @@ export default {
       .el-form-item__label {
         width: 70px !important;
       }
-      width: 30%;
+      width: 204px;
+    }
+    .el-checkbox__inner {
+      width: 16px !important;
+      height: 16px !important;
     }
   }
 }

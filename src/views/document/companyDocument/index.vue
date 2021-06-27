@@ -1,5 +1,5 @@
 <template>
-  <div class="table-container">
+  <div id="company-file-list" class="table-container">
     <basic-container>
       <div class="internal-file-list">
         <div class="file-menu-wrapper">
@@ -371,15 +371,22 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss" scoped>
-.basic-container {
-  padding-bottom: 0;
-  padding-right: 0;
-  border-radius: 0;
-  padding-top: 0;
+/deep/#company-file-list {
+  .basic-container {
+    padding-bottom: 0;
+    padding-right: 0;
+    border-radius: 0;
+    padding-top: 0;
+    .el-card__body {
+      padding-bottom: 0 !important;
+    }
+  }
 }
+
 /deep/.internal-file-list {
   display: flex;
   height: 92vh;
+
   .file-menu-wrapper {
     padding-top: 16px;
     flex-basis: 20%;
@@ -390,6 +397,9 @@ export default {
   .file-list-wrapper {
     flex: 1;
     min-width: 0;
+    padding-left: 24px;
+    padding-right: 24px;
+    position: relative;
     .file-list-header {
       padding-left: 24px;
       height: 60px;
@@ -403,8 +413,8 @@ export default {
       height: calc(100% - 84px);
       overflow: auto;
       .table-wrapper {
-        padding: 24px;
         position: relative;
+        margin-top: 24px;
         .el-table::before {
           display: none;
         }

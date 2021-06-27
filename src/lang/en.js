@@ -9,6 +9,7 @@ export default {
     client: 'Client',
     insurancePolicy: 'Policy',
     riderBenefits: 'Riders',
+    policyFile: 'Policy File',
     clientInfo: 'Client Info',
     commission: 'Commissions',
     commissionCredit: 'Credit',

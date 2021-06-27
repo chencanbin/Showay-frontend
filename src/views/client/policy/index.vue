@@ -139,7 +139,8 @@
                     " :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan" />
                   </el-dropdown-item>
                   <el-dropdown-item v-if="hasPermission(100082)">
-                    <policy-document :id="scope.row.number" />
+                    <!-- <policy-document :id="scope.row.number" /> -->
+                    <el-button type="text" size="small" @click="gotoDocument(scope.row.number)">{{$t("client.insurance_policy.policy_file")}}</el-button>
                   </el-dropdown-item>
                   <el-dropdown-item v-if="hasPermission(100128)">
                     <el-button type="text" size="small" @click="handleSendEmail(scope.row)">{{ $t("client.insurance_policy.email_notification") }}
@@ -656,6 +657,14 @@ export default {
         name: 'riderBenefits',
         params: {
           data: row.riderBenefits, id: row.id, companyId: row.company.id, currency: row.currency, submitDate: row.submitDate, listQuery: listQuery, year: year
+        }
+      })
+    },
+    gotoDocument(id) {
+      this.$router.push({
+        name: 'policyFile',
+        params: {
+          id
         }
       })
     }

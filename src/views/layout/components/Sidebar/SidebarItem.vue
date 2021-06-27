@@ -3,13 +3,14 @@
     <template v-if=" hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren) && !item.alwaysShow">
       <app-link :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
-          <item v-if="onlyOneChild.meta" :icon="onlyOneChild.meta.icon || item.meta.icon" :title="generateTitle(onlyOneChild.meta.title)" @click.native="onMenuItemClick(item)" />
+          <!-- <item v-if="(getCurrentPath === onlyOneChild.path || getCurrentPath === item.path)" :icon="onlyOneChild.meta.activeIcon || item.meta.activeIcon" :title="generateTitle(onlyOneChild.meta.title)" /> -->
+          <item :icon="onlyOneChild.meta.icon || item.meta.icon" :title="generateTitle(onlyOneChild.meta.title)" />
         </el-menu-item>
       </app-link>
     </template>
     <el-submenu v-else ref="submenu" :index="resolvePath(item.path)" :show-timeout="100" :hide-timeout="300">
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" @click.native="onMenuItemClick(item)" />
+        <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" />
       </template>
 
       <template v-for="child in item.children">
@@ -17,7 +18,8 @@
           <sidebar-item v-if="child.children && child.children.length > 0" :is-nest="true" :item="child" :key="child.path" :base-path="resolvePath(child.path)" class="nest-menu" />
           <app-link v-else :to="resolvePath(child.path)" :key="child.name">
             <el-menu-item :index="resolvePath(child.path)">
-              <item v-if="child.meta" :icon="child.meta.icon" :title="generateTitle(child.meta.title)" />
+              <!-- <item v-if="child.meta" :icon="$route.path === child.path ? child.meta.icon : ''" :title="generateTitle(child.meta.title)" /> -->
+              <item v-if="child.meta" :icon="getCurrentPath == child.path ? child.meta.activeIcon : child.meta.icon" :title="generateTitle(child.meta.title)" />
             </el-menu-item>
           </app-link>
         </div>
@@ -92,28 +94,16 @@ export default {
       currentChildrenList: []
     };
   },
+  computed: {
+    getCurrentPath() {
+      return this.$route.path.substring(this.$route.path.lastIndexOf('/') + 1)
+    }
+  },
+  created() {
+    console.log(this.$route.path.substring(this.$route.path.lastIndexOf('/') + 1))
+  },
   methods: {
-    onMenuItemClick(item, children) {
-      this.$emit('menuClick', item)
-      // this.$forceUpdate();
-      // this.$set(item, 'isActive', updateFlat + 1)
-      // if (this.currentChild) {
-      //   const iconStr = this.currentChild.meta.icon.slice(0, -7)
-      //   this.currentChild.meta.icon = `${iconStr}_nor`
-      // }
-      // console.log(this.currentChildrenList)
-      // if (this.currentChildrenList.length) {
-      //   this.currentChildrenList.forEach(item => {
-      //     const iconStr = item.meta.icon.slice(0, -7)
-      //     item.meta.icon = `${iconStr}_nor`
-      //   })
-      // }
 
-      // this.currentChild = item
-      // this.currentChildrenList = children;
-      // const iconStr = item.meta.icon.slice(0, -4)
-      // item.meta.icon = `${iconStr}_select`
-    },
     hasOneShowingChild(children, parent) {
       const showingChildren = children.filter((item) => {
         if (item.hidden) {

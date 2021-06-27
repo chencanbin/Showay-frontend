@@ -366,6 +366,9 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" type="text/scss" scoped>
 /deep/#internal-file-list {
+  .el-card__body {
+    padding-bottom: 0;
+  }
   .basic-container {
     padding-bottom: 0;
     padding-right: 0;

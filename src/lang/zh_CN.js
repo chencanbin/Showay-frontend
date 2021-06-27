@@ -9,6 +9,7 @@ export default {
     client: '客户',
     insurancePolicy: '保单',
     riderBenefits: '副险列表',
+    policyFile: '保单文件',
     clientInfo: '客户资料',
     commission: '佣金',
     commissionCredit: '到账记录',

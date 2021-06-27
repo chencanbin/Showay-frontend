@@ -1,104 +1,80 @@
 <template>
-  <span>
-    <el-button type="text" size="small" @click="initForm">{{
-        this.$t("client.insurance_policy.policy_file")
-      }}</el-button>
-    <el-dialog id="policy_file" :close-on-click-modal="false" :visible="dialogVisible" :fullscreen="true" :before-close="handleClose" :title="$t('client.insurance_policy.policy_file')" append-to-body>
-      <basic-container>
-        <div class="policy-file-list">
-          <div class="file-menu-wrapper">
-            <el-tree ref="tree" :load="loadFolder" :data="folderTree" :key="randomKey" :props="props" :default-expanded-keys="expandArray" node-key="id" auto-expand-parent lazy style="margin-top: 10px" @node-click="nodeExpand">
-              <span slot-scope="{ node, data }" :title="data.name" style="
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-              ">
-                <svg-icon v-if="!data.extention" icon-class="folder" style="
-                  font-size: 20px;
-                  margin-right: 15px;
-                  vertical-align: middle;
-                " />
-                <svg-icon v-else :icon-class="getFileType(data.extention)" style="
-                  font-size: 20px;
-                  margin-right: 15px;
-                  vertical-align: middle;
-                " />
-                <a class="folderLink">{{ data.name }}</a>
-              </span>
-            </el-tree>
-          </div>
-          <div class="file-list-wrapper" id="file-list-wrapper" @drop.native="onUploadFile(event)">
-            <el-row class="file-list-header">
-              <el-breadcrumb separator-class="el-icon-arrow-right" style="font-size: 14px">
-                <el-breadcrumb-item v-for="item in levelList" :key="item.id">
-                  <a class="folderLink" @click="handleFolderClick(item)">{{
-                    item.data.name
-                  }}</a>
-                </el-breadcrumb-item>
-              </el-breadcrumb>
-              <add v-if="hasPermission(100092)" :folder-id="folderId" @afterAddFolder="afterAddFolder" />
-            </el-row>
-            <div class="content-wrapper">
-              <div class="table-wrapper">
-                <el-table v-loading="fileLoading" :height="tableHeight" :data="folder.items" :show-header="false" stripe>
-                  <el-table-column show-overflow-tooltip prop="name">
-                    <template slot-scope="scope">
-                      <svg-icon v-if="!scope.row.extention" icon-class="folder" style="
-                    font-size: 30px;
-                    margin-right: 15px;
-                    vertical-align: middle;
-                  " />
-                      <svg-icon v-else :icon-class="getFileType(scope.row.extention)" style="
-                    font-size: 30px;
-                    margin-right: 15px;
-                    vertical-align: middle;
-                  " />
+  <div id="policy-file-list" class="table-container">
+    <basic-container>
+      <div class="policy-file-list">
+        <div class="file-menu-wrapper">
+          <el-tree ref="tree" :load="loadFolder" :data="folderTree" :key="randomKey" :props="props" :default-expanded-keys="expandArray" node-key="id" auto-expand-parent lazy @node-click="nodeExpand">
+            <span slot-scope="{ node, data }" :title="data.name" class="tree-item-wrapper">
+              <span v-if="!data.extention" class="iconfont icon_file_select" />
+              <span v-else class="iconfont" :class="getFileType(data.extention)" />
+              <a class="folderLink">{{ data.name }}</a>
+            </span>
+          </el-tree>
+        </div>
+
+        <div class="file-list-wrapper" id="file-list-wrapper" @drop.native="onUploadFile(event)">
+          <el-row class="file-list-header">
+            <el-breadcrumb separator-class="el-icon-arrow-right" style="font-size: 14px">
+              <el-breadcrumb-item v-for="item in levelList" :key="item.id">
+                <a class="folderLink" @click="handleFolderClick(item)">{{
+                  item.data.name
+                }}</a>
+              </el-breadcrumb-item>
+            </el-breadcrumb>
+            <add v-if="hasPermission(100092)" :folder-id="folderId" @afterAddFolder="afterAddFolder" />
+          </el-row>
+          <div class="content-wrapper">
+            <div class="table-wrapper">
+              <el-table v-loading="fileLoading" :data="folder.items" :show-header="false" stripe>
+                <el-table-column show-overflow-tooltip prop="name" min-width="300">
+                  <template slot-scope="scope">
+                    <div class="file-item-wrapper">
+                      <span v-if="!scope.row.extention" class="iconfont icon_file_nor" />
+                      <span v-else class="iconfont" :class="getFileType(scope.row.extention)" />
                       <a v-if="!scope.row.resourceKey" class="folderLink" @click="handleTableFolderClick(scope.row.id)">{{ scope.row.name }}</a>
-                      <a v-else-if="
-                    scope.row.resourceKey &&
-                      scope.row.extention === 'application/pdf'
-                  " class="folderLink" @click="viewPdf(scope.row)">{{ scope.row.name }}</a>
+                      <a v-else-if="scope.row.resourceKey && scope.row.extention === 'application/pdf'" class="folderLink" @click="viewPdf(scope.row)">{{ scope.row.name }}</a>
                       <span v-else>{{ scope.row.name }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column width="150">
-                    <template slot-scope="scope">
-                      {{ scope.row.size && bytesToSize(scope.row.size) }}
-                    </template>
-                  </el-table-column>
-                  <el-table-column :formatter="dateFormat" prop="creationDate" width="200px" />
-                  <el-table-column :label="$t('common.action')" width="100" align="center">
-                    <template slot-scope="scope">
-                      <el-dropdown>
-                        <el-button type="primary" plain size="mini">
-                          <i class="el-icon-more" />
-                        </el-button>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item>
-                            <el-button v-if="hasPermission(100078) && scope.row.resourceKey" type="text" size="small" icon="el-icon-download" @click="handleDownload(scope.$index, scope.row)">{{ $t("common.download") }}
-                            </el-button>
-                          </el-dropdown-item>
-                          <el-dropdown-item>
-                            <edit v-if="hasPermission(100084)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit" />
-                          </el-dropdown-item>
-                          <el-dropdown-item>
-                            <el-button v-if="hasPermission(100083)" type="text" size="small" icon="el-icon-delete" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
-                            </el-button>
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-              <file-upload v-if="hasPermission(100081)" @afterComplete="afterComplete" />
+                    </div>
+                  </template>
+
+                </el-table-column>
+                <el-table-column width="150">
+                  <template slot-scope="scope">
+                    {{ scope.row.size && bytesToSize(scope.row.size) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :formatter="dateFormat" prop="creationDate" width="200px" />
+                <el-table-column :label="$t('common.action')" width="100" align="center">
+                  <template slot-scope="scope">
+                    <el-dropdown>
+                      <el-button type="primary" plain size="mini">
+                        <i class="el-icon-more" />
+                      </el-button>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item v-if="hasPermission(100078) && scope.row.resourceKey">
+                          <el-button v-if="hasPermission(100078) && scope.row.resourceKey" type="text" size="small" @click="handleDownload(scope.$index, scope.row)">{{ $t("common.download") }}
+                          </el-button>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                          <edit v-if="hasPermission(100080)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit" />
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                          <el-button v-if="hasPermission(100079)" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
+                          </el-button>
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </template>
+                </el-table-column>
+              </el-table>
             </div>
+            <file-upload v-if="hasPermission(100077)" @afterComplete="afterComplete" />
           </div>
         </div>
-        <file-list ref="fileList" />
-      </basic-container>
-    </el-dialog>
-  </span>
+      </div>
+      <file-list ref="fileList" />
+    </basic-container>
+  </div>
 </template>
 
 <script>
@@ -112,24 +88,17 @@ import fileList from "./fileList";
 import axios from "axios";
 
 export default {
-  name: "CompanyDocument",
+  name: "PoilcyDocument",
   components: {
     fileUpload,
     add,
     edit,
     fileList,
   },
-  props: {
-    id: {
-      type: String,
-      default() {
-        return "";
-      },
-    },
-  },
   data() {
     return {
       root: 0,
+      id: 0,
       tableHeight: this.hasPermission(100081)
         ? document.body.clientHeight - 315
         : document.body.clientHeight - 140,
@@ -143,7 +112,7 @@ export default {
       folderTree: [],
       node: "",
       resolve: "",
-      folderId: "",
+      folderId: 0,
       randomKey: 0,
       currencyNode: "",
       props: {
@@ -159,7 +128,11 @@ export default {
       fileLoading: (state) => state.document.fileLoading,
     }),
   },
-  created() { },
+  created() {
+    const params = this.$route.params;
+    this.id = params.id;
+    this.initForm();
+  },
 
   methods: {
     initForm() {
@@ -173,7 +146,7 @@ export default {
             this.levelList = [
               { id: this.id, data: { name: res.data.items[0].name } },
             ];
-            this.dialogVisible = true;
+            this.loadFolder(this.node, this.resolve);
           });
       });
     },
@@ -234,8 +207,7 @@ export default {
       this.randomKey = +new Date();
     },
     getFileType(val) {
-      const type = fileType[val] || "default";
-      return `file_${type}`;
+      return fileType[val] ? `icon_file_${fileType[val]}` : "icon_home_wendang_nor";
     },
     getFolder(id, params) {
       this.folderId = id;
@@ -406,128 +378,133 @@ export default {
 };
 </script>
 
-<style lang="scss" rel="stylesheet/scss" type="text/scss">
-/deep/#policy_file {
+<style rel="stylesheet/scss" lang="scss" type="text/scss">
+#policy-file-list {
+  padding: 0;
   .basic-container {
-    padding-bottom: 0;
-    padding-right: 0;
-    padding-top: 0;
-    border-radius: 0;
-  }
-  height: 92vh;
-}
-/deep/.policy-file-list {
-  display: flex;
-  height: 92vh;
-  overflow: auto;
-  .file-menu-wrapper {
-    padding-top: 16px;
-    flex-basis: 20%;
-    border-right: 1px solid #e9e8f0;
-    padding-right: 16px;
-    overflow: auto;
-  }
-  .file-list-wrapper {
-    flex: 1;
-    min-width: 0;
-    padding-left: 24px;
-    padding-right: 24px;
-    position: relative;
-    .file-list-header {
-      padding-left: 24px;
-      height: 60px;
-      line-height: 60px;
-      border-bottom: 1px solid #e9e8f0;
-    }
-    .content-wrapper {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: calc(100% - 84px);
-      overflow: auto;
-      .table-wrapper {
-        position: relative;
-        margin-top: 24px;
-        .el-table::before {
-          display: none;
+    padding-bottom: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    border-radius: 0 !important;
+    .el-card__body {
+      padding-bottom: 0;
+      .policy-file-list {
+        display: flex;
+        height: 92vh;
+        overflow: auto;
+        .file-menu-wrapper {
+          padding-top: 16px;
+          flex-basis: 20%;
+          border-right: 1px solid #e9e8f0;
+          padding-right: 16px;
+          overflow: auto;
+        }
+        .file-list-wrapper {
+          flex: 1;
+          min-width: 0;
+          padding-left: 24px;
+          padding-right: 24px;
+          position: relative;
+          .file-list-header {
+            padding-left: 24px;
+            height: 60px;
+            line-height: 60px;
+            border-bottom: 1px solid #e9e8f0;
+          }
+          .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: calc(100% - 84px);
+            overflow: auto;
+            .table-wrapper {
+              position: relative;
+              margin-top: 24px;
+              .el-table::before {
+                display: none;
+              }
+            }
+          }
+        }
+        .el-icon-caret-right::before {
+          font-family: "iconfont" !important;
+          font-size: 30px;
+          font-style: normal;
+          content: "\e6c";
+        }
+        .el-tree-node__content > .el-tree-node__expand-icon {
+          position: absolute;
+          right: 0;
+        }
+        .upload-demo .el-upload {
+          width: 100%;
+          height: 200px;
+        }
+        .upload-demo .el-upload-dragger {
+          width: 100%;
+          height: 200px;
+        }
+        .folderLink {
+          color: #424e67;
+        }
+        .el-tree-node__content {
+          font-size: 14px;
+          height: 50px !important;
+          border-radius: 6px;
+          &:hover {
+            background: $--purple-assist;
+          }
+          .expanded + .tree-item-wrapper {
+            .iconfont {
+              color: #6f78cf;
+            }
+          }
+        }
+        .folderLink:active,
+        .folderLink:hover {
+          cursor: pointer;
+          text-decoration: none;
+          color: $--purple;
+        }
+        .el-breadcrumb {
+          display: inline-block;
+          vertical-align: middle;
+          margin-right: 20px;
+        }
+        .tree-item-wrapper,
+        .file-item-wrapper {
+          display: flex;
+          align-items: center;
+          font-size: 14px;
+          .iconfont {
+            font-size: 28px;
+            color: #cccfd7;
+            margin-right: 8px;
+          }
+          .folderLink {
+            display: inline-block;
+            width: 260px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          .icon_file_pdf {
+            color: #ce5656 !important;
+          }
+          .icon_file_word {
+            color: #6f78cf !important;
+          }
+          .icon_file_excel {
+            color: #4aa794 !important;
+          }
+          .icon_file_ppt {
+            color: #e96030 !important;
+          }
         }
       }
     }
   }
-  .el-icon-caret-right::before {
-    font-family: "iconfont" !important;
-    font-size: 30px;
-    font-style: normal;
-    content: "\e6c";
-  }
-  .el-tree-node__content > .el-tree-node__expand-icon {
-    position: absolute;
-    right: 0;
-  }
-  .upload-demo .el-upload {
-    width: 100%;
-    height: 200px;
-  }
-  .upload-demo .el-upload-dragger {
-    width: 100%;
-    height: 200px;
-  }
-  .folderLink {
-    color: #424e67;
-  }
-  .el-tree-node__content {
-    font-size: 14px;
-    height: 50px !important;
-    border-radius: 6px;
-    &:hover {
-      background: $--purple-assist;
-    }
-    .expanded + .tree-item-wrapper {
-      .iconfont {
-        color: #6f78cf;
-      }
-    }
-  }
-  .folderLink:active,
-  .folderLink:hover {
-    cursor: pointer;
-    text-decoration: none;
-    color: $--purple;
-  }
-  .el-breadcrumb {
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 20px;
-  }
-  .tree-item-wrapper,
-  .file-item-wrapper {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    .iconfont {
-      font-size: 28px;
-      color: #cccfd7;
-      margin-right: 8px;
-    }
-    .folderLink {
-      display: inline-block;
-      width: 260px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-    .icon_file_pdf {
-      color: #ce5656 !important;
-    }
-    .icon_file_word {
-      color: #6f78cf !important;
-    }
-    .icon_file_excel {
-      color: #4aa794 !important;
-    }
-    .icon_file_ppt {
-      color: #e96030 !important;
-    }
-  }
+  height: 92vh;
 }
 </style>

@@ -20,7 +20,7 @@ export default {
     title: {
       type: String,
       default: '',
-    },
+    }
   },
   // render(h, context) {
   //   const { icon, title } = context.props;
