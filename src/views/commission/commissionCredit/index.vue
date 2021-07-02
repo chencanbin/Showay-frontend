@@ -15,7 +15,7 @@
                   $t("commission.credit.batchPay")
                 }}</el-button>
           </el-form-item>
-          <el-form-item label="" prop="wildcard">
+          <el-form-item label="" class="search-input" prop="wildcard">
             <el-input v-model="wildcard" :placeholder="$t('commission.credit.search')" clearable @input="search">
               <i slot="prefix" class="el-input__icon el-icon-search" />
             </el-input>
@@ -32,24 +32,25 @@
             <el-switch v-model="mode" @change="onSwitchChange" />
           </el-form-item>
         </el-form>
-        <el-row>
-          <div class="tag-sum">
-            <i class="el-icon-info" style="margin-right: 5px" />
-            <span class="count-item">{{ selectTotalText }}:
-              <count-to class="count-num" :start-val="0" :end-val="selectTotal" :duration="2000" :suffix="$t('commission.credit.count')" />
-            </span>
-            <span class="count-item">{{ selectSumText }}:
-              <count-to class="count-num" :start-val="0" :end-val="selectSum" :duration="2000" prefix="HK$ " />
-            </span>
-            <span class="count-item">{{ totalText }}:
-              <count-to class="count-num" :start-val="0" :end-val="commissionCredit.total" :duration="2000" :suffix="$t('commission.credit.count')" />
-            </span>
-            <span class="count-item">{{ sumText }}:
-              <count-to class="count-num" :start-val="0" :end-val="sum" :duration="2000" prefix="HK$ " />
-            </span>
-          </div>
-        </el-row>
+
         <basic-container>
+          <el-row>
+            <div class="tag-sum">
+              <i class="el-icon-info" style="margin-right: 5px" />
+              <span class="count-item">{{ selectTotalText }}:
+                <count-to class="count-num" :start-val="0" :end-val="selectTotal" :duration="2000" :suffix="$t('commission.credit.count')" />
+              </span>
+              <span class="count-item">{{ selectSumText }}:
+                <count-to class="count-num" :start-val="0" :end-val="selectSum" :duration="2000" prefix="HK$ " />
+              </span>
+              <span class="count-item">{{ totalText }}:
+                <count-to class="count-num" :start-val="0" :end-val="commissionCredit.total" :duration="2000" :suffix="$t('commission.credit.count')" />
+              </span>
+              <span class="count-item">{{ sumText }}:
+                <count-to class="count-num" :start-val="0" :end-val="sum" :duration="2000" prefix="HK$ " />
+              </span>
+            </div>
+          </el-row>
           <el-table v-loading="commissionCreditLoading" stripe :data="commissionCredit.list" :row-class-name="tableRowClassName" border @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="80" align="center" />
             <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip>
@@ -601,11 +602,26 @@ export default {
     border-radius: 8px;
     background: #fff;
     margin-bottom: 16px;
-    padding: 20px 24px;
+    padding: 15px 24px;
     .el-form-item {
       display: flex;
       align-items: center;
       margin-bottom: 0;
+    }
+    .search-input .el-input--suffix {
+      &::before {
+        font-family: "iconfont";
+        font-size: 24px;
+        content: "\E6AC";
+        position: absolute;
+        top: 0;
+        left: 0.0625rem;
+        color: #b5b9c6;
+      }
+      .el-input__inner {
+        width: 250px;
+        padding-left: 44px !important;
+      }
     }
   }
   .bottom-wrapper {
@@ -616,7 +632,7 @@ export default {
 }
 
 .tag-sum {
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   padding-left: 16px;
   width: 100%;
   font-size: 14px;
@@ -628,6 +644,11 @@ export default {
   background: $--purple-assist;
   border-radius: 6px;
   border: 1px solid #e7e8f5;
+  display: flex;
+  align-items: center;
+  i {
+    font-size: 24px;
+  }
   .count-item {
     margin-right: 50px;
     .count-num {

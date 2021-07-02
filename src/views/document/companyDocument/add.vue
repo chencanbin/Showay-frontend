@@ -1,47 +1,18 @@
 <template>
-  <div style="display: inline-block; margin-left: 10px">
+  <div style="display: inline-block; margin-left: 10px; border-radio: 6px">
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加文件夾</span></div>-->
-    <el-button 
-      size="small" 
-      type="primary" 
-      @click="initForm"
-    >+ {{ $t("document.add_button") }}</el-button
-    >
-    <el-dialog
-      v-el-drag-dialog
-      :close-on-click-modal="false"
-      :visible="dialogVisible"
-      :before-close="handleClose"
-      :title="$t('document.add_title')"
-      top="50px"
-      width="450px"
-    >
-      <el-form 
-        ref="folder" 
-        :model="folder" 
-        :rules="rule" 
-        label-width="100px">
-        <el-form-item 
-          :label="$t('document.file_name')" 
-          prop="name">
-          <el-input
-            ref="folderName"
-            v-model="folder.name"
-            autofocus
-            @submit.native.prevent
-          />
+    <el-button size="small" type="primary" @click="initForm">+ {{ $t("document.add_button") }}</el-button>
+    <el-dialog v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('document.add_title')" top="50px" width="450px">
+      <el-form ref="folder" :model="folder" :rules="rule" label-width="100px">
+        <el-form-item :label="$t('document.file_name')" prop="name">
+          <el-input ref="folderName" v-model="folder.name" autofocus @submit.native.prevent />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button 
-          :loading="loading" 
-          type="primary" 
-          @click="handleSubmit">{{
+        <el-button :loading="loading" type="primary" @click="handleSubmit">{{
             $t("common.submitButton")
           }}</el-button>
       </div>

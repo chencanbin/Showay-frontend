@@ -372,10 +372,20 @@ export default {
   .basic-container {
     padding-bottom: 0;
     padding-right: 0;
+    padding-left: 12px;
     padding-top: 0;
     border-radius: 0;
   }
   height: 92vh;
+  .el-icon-arrow-right:before {
+    font-size: 14px;
+  }
+  .el-breadcrumb {
+    line-height: 26px;
+    .el-breadcrumb__item {
+      float: none;
+    }
+  }
 }
 /deep/.internal-file-list {
   display: flex;

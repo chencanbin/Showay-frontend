@@ -450,7 +450,7 @@ export default {
         }
         .el-tree-node__content {
           font-size: 14px;
-          height: 50px !important;
+          height: 55px !important;
           border-radius: 6px;
           &:hover {
             background: $--purple-assist;

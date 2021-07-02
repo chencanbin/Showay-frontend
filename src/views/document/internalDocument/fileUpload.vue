@@ -103,6 +103,7 @@ export default {
   color: $--purple;
   background: $--purple-assist;
   height: 150px;
+  border-radius: 8px;
   .el-icon-upload {
     color: $--purple;
   }

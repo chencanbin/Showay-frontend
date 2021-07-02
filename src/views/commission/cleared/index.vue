@@ -1,7 +1,7 @@
 <template>
   <div id="paymentAudit" class="table-container">
     <el-form :inline="true" class="filter-form" @submit.native.prevent>
-      <el-form-item label="" prop="wildcard">
+      <el-form-item label="" prop="wildcard" class="search-input">
         <el-input v-model="wildcard" :placeholder="$t('commission.payment.search')" clearable @input="search">
           <i slot="prefix" class="el-input__icon el-icon-search" />
         </el-input>
@@ -10,30 +10,32 @@
         <el-date-picker :clearable="true" :unlink-panels="true" v-model="year" type="daterange" value-format="timestamp" style="margin-left: 20px" />
       </el-form-item>
     </el-form>
-    <el-table v-loading="auditPaymentLoading" :data="auditPayment.list" stripe border>
-      <el-table-column :label="$t('commission.payment.channel')" prop="channel.name" min-width="150" />
-      <el-table-column :label="$t('commission.payment.amountInHkd')" min-width="150">
-        <template slot-scope="scope">
-          <span class="left_text">HK$ </span><span class="right_text">{{
+    <basic-container>
+      <el-table v-loading="auditPaymentLoading" :data="auditPayment.list" stripe border>
+        <el-table-column :label="$t('commission.payment.channel')" prop="channel.name" min-width="150" />
+        <el-table-column :label="$t('commission.payment.amountInHkd')" min-width="150">
+          <template slot-scope="scope">
+            <span class="left_text">HK$ </span><span class="right_text">{{
               formatterCurrency(scope.row.amountInHkd)
             }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('commission.payment.chequeNumber')" prop="chequeNumber" min-width="150" />
-      <el-table-column :label="$t('common.remarks')" prop="remarks" min-width="150" show-overflow-tooltip />
-      <el-table-column :label="$t('commission.payment.chequeIssueDate')" :formatter="dateFormat" prop="chequeIssueDate" min-width="120" />
-      <el-table-column :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" min-width="120" align="center">
-        <template slot-scope="scope">
-          <el-button type="text" @click="viewScanFile(scope.row.chequeCopy)">{{ $t("common.view") }}</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('common.action')" width="150" align="center">
-        <template slot-scope="scope">
-          <detail :channel="scope.row.channel" :id="scope.row.id" :cheque-number="scope.row.chequeNumber" />
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="bottom-wrapper">
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('commission.payment.chequeNumber')" prop="chequeNumber" min-width="150" />
+        <el-table-column :label="$t('common.remarks')" prop="remarks" min-width="150" show-overflow-tooltip />
+        <el-table-column :label="$t('commission.payment.chequeIssueDate')" :formatter="dateFormat" prop="chequeIssueDate" min-width="120" />
+        <el-table-column :label="$t('commission.payment.chequeCopy')" prop="chequeCopy" min-width="120" align="center">
+          <template slot-scope="scope">
+            <el-button type="text" @click="viewScanFile(scope.row.chequeCopy)">{{ $t("common.view") }}</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('common.action')" width="150" align="center">
+          <template slot-scope="scope">
+            <detail :channel="scope.row.channel" :id="scope.row.id" :cheque-number="scope.row.chequeNumber" />
+          </template>
+        </el-table-column>
+      </el-table>
+    </basic-container>
+    <div class="table-bottom payment-audit-bottom">
       <pagination :total="auditPayment.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
     </div>
   </div>
@@ -156,6 +158,21 @@ export default {
     width: 33.3%;
     label {
       color: #99a9bf;
+    }
+    .search-input .el-input--suffix {
+      &::before {
+        font-family: "iconfont";
+        font-size: 24px;
+        content: "\E6AC";
+        position: absolute;
+        top: 0;
+        left: 0.0625rem;
+        color: #b5b9c6;
+      }
+      .el-input__inner {
+        width: 250px;
+        padding-left: 44px !important;
+      }
     }
   }
 }

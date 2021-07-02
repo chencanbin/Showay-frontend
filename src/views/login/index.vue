@@ -3,8 +3,8 @@
     <div class="login-wrapper">
       <div class="login-left animated fadeInLeft">
         <div class="login-info">
-          <img class="login-info-title" src="../../assets/images/logo.png" alt="" width="420px" height="80px">
-          <ul class="login-info-list">
+          <img class="login-info-title" src="../../assets/images/login-logo.png" alt="" width="420px">
+          <ul class=" login-info-list">
             <li v-for="(item, index) in website.info.list" :key="index" class="login-info-item">
               <i class="el-icon-check" />&nbsp;{{ item }}
             </li>

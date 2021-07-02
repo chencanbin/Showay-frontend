@@ -1,13 +1,26 @@
 <template>
   <div v-if="!item.hidden && item.children && item.children.length > 0" class="menu-wrapper">
-    <template v-if=" hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren) && !item.alwaysShow">
+    <!-- <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
+      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
+        <el-menu-item v-if="item.meta.activeIcon" :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
+          <item v-if=" ($route.name ===  item.name&& $route.meta.icon === onlyOneChild.meta.icon) || ($route.name ===  item.name &&$route.meta.icon === (item.meta&&item.meta.icon))" :icon="onlyOneChild.meta.activeIcon||(item.meta.activeIcon)" :title="$t(onlyOneChild.meta.title)" />
+          <item v-else :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="generateTitle(onlyOneChild.meta.title)" />
+        </el-menu-item>
+        <el-menu-item v-else :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
+          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="generateTitle(onlyOneChild.meta.title)" />
+        </el-menu-item>
+      </app-link>
+    </template> -->
+
+    <template v-if="hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren) && !item.alwaysShow">
       <app-link :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
-          <!-- <item v-if="(getCurrentPath === onlyOneChild.path || getCurrentPath === item.path)" :icon="onlyOneChild.meta.activeIcon || item.meta.activeIcon" :title="generateTitle(onlyOneChild.meta.title)" /> -->
-          <item :icon="onlyOneChild.meta.icon || item.meta.icon" :title="generateTitle(onlyOneChild.meta.title)" />
+          <item v-if="onlyOneChild" :icon="getIcon(onlyOneChild)" :title="generateTitle(onlyOneChild.meta.title)" />
+          <item v-else :icon="getIcon(item)" :title="generateTitle(item.meta.title)" />
         </el-menu-item>
       </app-link>
     </template>
+
     <el-submenu v-else ref="submenu" :index="resolvePath(item.path)" :show-timeout="100" :hide-timeout="300">
       <template slot="title">
         <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" />
@@ -15,11 +28,11 @@
 
       <template v-for="child in item.children">
         <div :key="child.path">
-          <sidebar-item v-if="child.children && child.children.length > 0" :is-nest="true" :item="child" :key="child.path" :base-path="resolvePath(child.path)" class="nest-menu" />
-          <app-link v-else :to="resolvePath(child.path)" :key="child.name">
+          <!-- <sidebar-item v-if="child.children && child.children.length > 0" :is-nest="true" :item="child" :key="child.path" :base-path="resolvePath(child.path)" class="nest-menu" /> -->
+          <app-link :to="resolvePath(child.path)" :key="child.name">
             <el-menu-item :index="resolvePath(child.path)">
               <!-- <item v-if="child.meta" :icon="$route.path === child.path ? child.meta.icon : ''" :title="generateTitle(child.meta.title)" /> -->
-              <item v-if="child.meta" :icon="getCurrentPath == child.path ? child.meta.activeIcon : child.meta.icon" :title="generateTitle(child.meta.title)" />
+              <item v-if="child.meta" :icon="getIcon(child)" :title="generateTitle(child.meta.title)" />
             </el-menu-item>
           </app-link>
         </div>
@@ -39,39 +52,6 @@ export default {
   name: "SidebarItem",
   components: { Item, AppLink },
   mixins: [FixiOSBug],
-  directives: {
-    sidebarItem: {
-      bind(el, binding, vNode) {
-        console.log(vNode)
-        const componentInstance = vNode.componentInstance;
-        const active = componentInstance.active;
-
-        // const active = vNode.context.$parent.active;
-        if (active && componentInstance.$children.length >= 1) {
-          const itemNode = componentInstance.$children[0];
-          const icon = itemNode.icon;
-          const iconName = icon.slice(0, -4);
-          itemNode.icon = `${iconName}_select`;
-        }
-      },
-      // update(el, binding, vNode) {
-      //   const componentInstance = vNode.componentInstance;
-      //   const active = componentInstance.active;
-
-      //   // const active = vNode.context.$parent.active;
-      //   if (active && componentInstance.$children.length >= 1) {
-      //     const itemNode = componentInstance.$children[0];
-      //     const icon = itemNode.icon;
-      //     const iconName = icon.slice(0, -4);
-      //     itemNode.icon = `${iconName}_select`;
-      //   }
-      // }
-      // update(el, binding, vNode) {
-      //   console.log('........................')
-      //   console.log()
-      // }
-    },
-  },
   props: {
     // route object
     item: {
@@ -91,19 +71,30 @@ export default {
     return {
       onlyOneChild: null,
       currentChild: '',
-      currentChildrenList: []
+      currentChildrenList: [],
+      currentName: ''
     };
   },
   computed: {
-    getCurrentPath() {
+    getCurrentPath: function () {
       return this.$route.path.substring(this.$route.path.lastIndexOf('/') + 1)
     }
   },
-  created() {
-    console.log(this.$route.path.substring(this.$route.path.lastIndexOf('/') + 1))
-  },
   methods: {
-
+    getIcon(item) {
+      const name = item.name
+      console.log(name)
+      // if (item.children) {
+      //   return;
+      // }
+      // if (this.$route.name === name) {
+      //   return item.meta.activeIcon
+      // } else {
+      //   return item.meta.icon
+      // }
+      const icon = this.$route.name === name ? item.meta.activeIcon : item.meta.icon;
+      return icon
+    },
     hasOneShowingChild(children, parent) {
       const showingChildren = children.filter((item) => {
         if (item.hidden) {

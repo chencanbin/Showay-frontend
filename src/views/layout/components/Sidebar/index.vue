@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
-    <el-menu :show-timeout="300" :default-active="$route.path" :collapse="isCollapse" mode="vertical" background-color="#fff" text-color="#8E919F" active-text-color="#515CC3">
+    <el-menu :show-timeout="300" :default-active="activeMenu" :collapse="isCollapse" mode="vertical" background-color="#fff" text-color="#8E919F" active-text-color="#515CC3">
       <sidebar-item v-for="(route, index) in permission_routers" :key="route.path" :item="route" :base-path="route.path" ref="sidebarItem" @menuClick="handleMenuClick" />
     </el-menu>
   </el-scrollbar>
@@ -16,6 +16,15 @@ export default {
     ...mapGetters(["permission_routers", "sidebar"]),
     isCollapse() {
       return !this.sidebar.opened;
+    },
+    activeMenu() {
+      const route = this.$route
+      const { meta, path } = route
+      // if set path, the sidebar will highlight the path you set
+      if (meta.activeMenu) {
+        return meta.activeMenu
+      }
+      return path
     },
   },
   data() {

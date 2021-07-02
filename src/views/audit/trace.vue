@@ -1,14 +1,20 @@
 <template>
   <span id="trace">
     <el-button type="text" size="small" icon="el-icon-edit" style="margin-right: 10px" @click="initForm">{{ $t("audit.detail") }}</el-button>
-    <el-dialog v-el-drag-dialog :visible="dialogVisible" :before-close="handleClose" :title="$t('audit.detail_title')" top="10px" width="450px">
-      <div class="block" style="min-height: 200px">
+    <el-dialog v-el-drag-dialog :visible="dialogVisible" :before-close="handleClose" :title="$t('audit.detail_title')" top="10px" width="3.125rem">
+      <div class="block">
         <el-timeline v-loading="loading">
           <el-timeline-item v-for="trace in traceList" :key="trace.id" :timestamp="dateFormat(trace.timestamp)" placement="top">
-            <el-card>
-              <h4>{{ getTraceDesc(trace.type) }}</h4>
-              <p>{{ $t("audit.doer") }}: {{ trace.doer.name }}</p>
-            </el-card>
+            <div class="content-wrapper">
+              <div class="row">
+                <div class="label">{{$t("common.action")}}:</div>
+                <div class="content">{{ getTraceDesc(trace.type) }}</div>
+              </div>
+              <div class="row">
+                <div class="label">{{ $t("audit.doer") }}:</div>
+                <div class="content">{{ trace.doer.name }}</div>
+              </div>
+            </div>
           </el-timeline-item>
         </el-timeline>
       </div>
@@ -89,6 +95,35 @@ export default {
   }
   .el-card.is-always-shadow {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  }
+  .el-timeline-item__node {
+    background: $--purple;
+  }
+  .block {
+    height: 80vh;
+    overflow: auto;
+  }
+  .content-wrapper {
+    width: 470px;
+    height: 92px;
+    padding: 10px 24px;
+    background: #f6f6f7;
+    border-radius: 6px;
+    .row {
+      line-height: 36px;
+      height: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 500;
+      .content {
+        color: $--content;
+      }
+      .label {
+        color: $--label;
+      }
+    }
   }
 }
 </style>

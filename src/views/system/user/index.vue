@@ -377,9 +377,7 @@ export default {
     top: -2px;
     left: 110px;
   }
-  .el-card.is-always-shadow {
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  }
+
   .no_expand .el-table__expand-column .cell {
     display: none;
   }

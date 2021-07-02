@@ -377,6 +377,7 @@ export default {
     padding-right: 0;
     border-radius: 0;
     padding-top: 0;
+    padding-left: 12px;
     .el-card__body {
       padding-bottom: 0 !important;
     }
@@ -386,7 +387,15 @@ export default {
 /deep/.internal-file-list {
   display: flex;
   height: 92vh;
-
+  .el-icon-arrow-right:before {
+    font-size: 14px;
+  }
+  .el-breadcrumb {
+    line-height: 26px;
+    .el-breadcrumb__item {
+      float: none;
+    }
+  }
   .file-menu-wrapper {
     padding-top: 16px;
     flex-basis: 20%;
@@ -444,7 +453,7 @@ export default {
   }
   .el-tree-node__content {
     font-size: 14px;
-    height: 50px !important;
+    height: 55px !important;
     border-radius: 6px;
     &:hover {
       background: $--purple-assist;

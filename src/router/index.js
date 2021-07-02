@@ -98,7 +98,7 @@ export const asyncRouterMap = [
           component: () => import('@/views/product/company/contact'),
           name: 'companyContact',
           hidden: true,
-          meta: { title: 'companyContact', showContact: false, noCache: true }
+          meta: { title: 'companyContact', showContact: false, noCache: true, activeMenu: '/product/company' }
         }]
       },
       {

@@ -3,7 +3,7 @@
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane v-for="item in status" :name="item.id" :label="statusFormatter(item.id)" :key="item.id" lazy>
         <el-form :inline="true" class="filter-form" @submit.native.prevent>
-          <el-form-item label="" prop="wildcard">
+          <el-form-item label="" prop="wildcard" class="search-input">
             <el-input v-model="wildcard" :placeholder="$t('commission.payment.search')" clearable @input="search">
               <i slot="prefix" class="el-input__icon el-icon-search" />
             </el-input>
@@ -237,11 +237,26 @@ export default {
     border-radius: 8px;
     background: #fff;
     margin-bottom: 16px;
-    padding: 20px 24px;
+    padding: 15px 24px;
     .el-form-item {
       display: flex;
       align-items: center;
       margin-bottom: 0;
+    }
+    .search-input .el-input--suffix {
+      &::before {
+        font-family: "iconfont";
+        font-size: 24px;
+        content: "\E6AC";
+        position: absolute;
+        top: 0;
+        left: 0.0625rem;
+        color: #b5b9c6;
+      }
+      .el-input__inner {
+        width: 250px;
+        padding-left: 44px !important;
+      }
     }
   }
   .bottom-wrapper {

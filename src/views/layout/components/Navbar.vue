@@ -371,6 +371,7 @@ export default {
     .el-badge__content.is-fixed {
       top: 0px !important;
       right: 15px;
+      font-size: 10px;
     }
   }
 
@@ -400,6 +401,7 @@ export default {
       display: flex;
       align-items: center;
       font-weight: 500;
+      font-size: 10px;
     }
     &:focus {
       outline: none;
