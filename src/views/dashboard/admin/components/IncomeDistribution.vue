@@ -131,7 +131,7 @@ export default {
         container: "IncomeDistribution",
         forceFit: true,
         height: 310,
-        padding: [20, 40, 40, 40],
+        padding: [20, 40, 60, 40],
       });
       this.chart.source(this.income);
       this.chart.coord("theta", {

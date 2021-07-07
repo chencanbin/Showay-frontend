@@ -4,6 +4,7 @@
       {{ $t("product.company.set.edit_contact_title") }}
     </el-button> -->
     <!-- <el-dialog id="contact-wrapper" :visible="dialogVisible" :before-close="handleClose" :title="generateTitle()" :fullscreen="true" center append-to-body> -->
+    <div class="title">{{$route.query.title}}</div>
     <el-table v-loading="contactLoading" :data="contactList.list" stripe>
       <el-table-column :label="$t('product.company.set.contacts_name')" prop="name" show-overflow-tooltip />
       <el-table-column :label="$t('product.company.set.contacts_title')" prop="title" show-overflow-tooltip />
@@ -28,7 +29,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="contact-bottom">
+    <div class="table-bottom">
       <add :company="company" class="add-contact" />
     </div>
     <!-- </el-dialog> -->
@@ -127,6 +128,12 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 #contact-wrapper {
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 20px;
+    padding-left: 12px;
+  }
   .el-dialog {
     border-radius: 0;
     .el-dialog__body {

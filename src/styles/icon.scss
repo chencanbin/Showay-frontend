@@ -1,9 +1,9 @@
 @font-face {
   font-family: "iconfont";
   /* Project id 2539548 */
-  src: url('//at.alicdn.com/t/font_2539548_pye0zmoz6mm.woff2?t=1624459777578') format('woff2'),
-    url('//at.alicdn.com/t/font_2539548_pye0zmoz6mm.woff?t=1624459777578') format('woff'),
-    url('//at.alicdn.com/t/font_2539548_pye0zmoz6mm.ttf?t=1624459777578') format('truetype');
+  src: url('//at.alicdn.com/t/font_2539548_pzy63cubadr.woff2?t=1625495448959') format('woff2'),
+    url('//at.alicdn.com/t/font_2539548_pzy63cubadr.woff?t=1625495448959') format('woff'),
+    url('//at.alicdn.com/t/font_2539548_pzy63cubadr.ttf?t=1625495448959') format('truetype');
 }
 
 .iconfont {
@@ -12,6 +12,22 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon_time_normall:before {
+  content: "\e6d0";
+}
+
+.icon_time_jinji:before {
+  content: "\e6e1";
+}
+
+.icon_home_baodan_select:before {
+  content: "\e6e0";
+}
+
+.icon_commission_select-43:before {
+  content: "\e6df";
 }
 
 .icon_add_small:before {
@@ -88,10 +104,6 @@
 
 .icon_commission-43_select:before {
   content: "\e6d3";
-}
-
-.icon_home_baodan_select:before {
-  content: "\e6d0";
 }
 
 .icon_mechanism_selectfuben21:before {

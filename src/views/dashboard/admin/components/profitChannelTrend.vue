@@ -129,7 +129,7 @@ export default {
         container: "profitChannelTrend",
         forceFit: true,
         height: 310,
-        padding: [20, 40, 20, 90],
+        padding: [20, 40, 40, 90],
       });
       this.chart.source(this.profit);
       this.chart.scale("value", {

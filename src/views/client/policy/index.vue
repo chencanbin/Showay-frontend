@@ -130,13 +130,11 @@
                       {{ $t("client.insurance_policy.riderBenefits") }}
                     </el-button>
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="hasPermission(100052)">
-                    <renewal v-if="
-                      !isIneffectiveStatus(scope.row.policyStatus) &&
+                  <el-dropdown-item v-if="hasPermission(100052) && !isIneffectiveStatus(scope.row.policyStatus) &&
                         (scope.row.premiumPlan === 3 ||
                         scope.row.riderBenefits.length > 0) &&
-                        scope.row.editable
-                    " :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan" />
+                        scope.row.editable">
+                    <renewal :id="scope.row.id" :currency="scope.row.currency" :premium-plan="scope.row.premiumPlan" />
                   </el-dropdown-item>
                   <el-dropdown-item v-if="hasPermission(100082)">
                     <!-- <policy-document :id="scope.row.number" /> -->

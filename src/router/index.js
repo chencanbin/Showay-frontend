@@ -98,7 +98,7 @@ export const asyncRouterMap = [
           component: () => import('@/views/product/company/contact'),
           name: 'companyContact',
           hidden: true,
-          meta: { title: 'companyContact', showContact: false, noCache: true, activeMenu: '/product/company' }
+          meta: { title: 'companyContact', parentName: 'company', showContact: false, noCache: true, activeMenu: '/product/company' }
         }]
       },
       {
@@ -117,7 +117,7 @@ export const asyncRouterMap = [
           component: () => import('@/views/product/channel/editChannelCommissionTable'),
           name: 'channelCommissionTable',
           hidden: true,
-          meta: { title: 'riderBenefits', showChild: false, noCache: true }
+          meta: { title: 'riderBenefits', parentName: 'channelCommission', showChild: false, noCache: true, activeMenu: '/product/channelCommission' }
         }]
       }
     ]
@@ -138,14 +138,14 @@ export const asyncRouterMap = [
           component: () => import('@/views/client/policy/riderBenefits'),
           name: 'riderBenefits',
           hidden: true,
-          meta: { title: 'riderBenefits', showChild: false, noCache: true }
+          meta: { title: 'riderBenefits', parentName: 'insurancePolicy', showChild: false, noCache: true, activeMenu: '/client/insurancePolicy' }
         },
         {
           path: 'policyFile',
           component: () => import('@/views/client/policy/policyDocument/index'),
           name: 'policyFile',
           hidden: true,
-          meta: { title: 'policyFile', showChild: false, noCache: true }
+          meta: { title: 'policyFile', parentName: 'insurancePolicy', showChild: false, noCache: true, activeMenu: '/client/insurancePolicy' }
         }]
       },
       {
@@ -243,7 +243,7 @@ export const asyncRouterMap = [
         path: 'companyDocument',
         component: () => import('@/views/document/companyDocument'),
         name: 'companyDocument',
-        meta: { title: 'companyDocument', icon: 'icon_commission-43_nor', activeIcon: 'icon_commission-43_select', noCache: true, id: 100074 }
+        meta: { title: 'companyDocument', icon: 'icon_commission-43_nor', activeIcon: 'icon_commission_select-43', noCache: true, id: 100074 }
       }
     ]
   },

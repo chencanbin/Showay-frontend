@@ -67,7 +67,7 @@ export default {
         container: "channelProfit",
         forceFit: true,
         height: 310,
-        padding: [30, 30, 100, 90],
+        padding: [30, 30, 80, 90],
       });
       this.chart.source(this.afyp);
       this.chart.scale("value", {

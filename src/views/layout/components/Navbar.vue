@@ -69,13 +69,13 @@
         </div>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="handleOpenUpdateUserDialog">
-            <svg class="iconfont" aria-hidden="true">
+            <svg class="iconfont password-icon" aria-hidden="true">
               <use xlink:href="#icon_password"></use>
             </svg>
             <span>{{ $t("navbar.password") }}</span>
           </el-dropdown-item>
           <el-dropdown-item @click.native="logout">
-            <svg class="iconfont" aria-hidden="true">
+            <svg class="iconfont logout-icon" aria-hidden="true">
               <use xlink:href="#icon_sign_out"></use>
             </svg>
             <span>{{ $t("navbar.logOut") }}</span>
@@ -371,7 +371,8 @@ export default {
     .el-badge__content.is-fixed {
       top: 0px !important;
       right: 15px;
-      font-size: 10px;
+      font-size: 12px;
+      font-weight: bold;
     }
   }
 
@@ -400,8 +401,8 @@ export default {
       top: 0;
       display: flex;
       align-items: center;
-      font-weight: 500;
-      font-size: 10px;
+      font-weight: bold;
+      font-size: 12px;
     }
     &:focus {
       outline: none;
@@ -476,9 +477,8 @@ export default {
       font-size: 16px;
       padding: 0;
       padding-left: 26px;
-
       &:hover {
-        background-color: $--purple-assist;
+        background-color: #f2f2f8;
 
         .el-button--text {
           color: $--purple !important;
@@ -508,6 +508,7 @@ export default {
   min-width: 200px !important;
   padding: 0 !important;
   border-radius: 8px !important;
+  padding-top: 10px !important;
 }
 .notification-list-item {
   padding: 15px;
@@ -516,7 +517,10 @@ export default {
   line-height: 22px;
 }
 .notification-list-item:hover {
-  background: $--purple-assist;
+  background: #f2f2f8;
+  .notification-content-wrapper .notification-content {
+    color: $--purple;
+  }
 }
 .notification-badge-content {
   float: right;
@@ -529,7 +533,7 @@ export default {
   padding: 0 6px;
   text-align: center;
   white-space: nowrap;
-  border: 0.5px solid $--orange;
+  border: 1px solid rgba(233, 96, 48, 0.2);
   background-color: $--orange-assist;
   position: relative;
   &::before {

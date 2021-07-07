@@ -2,7 +2,9 @@
   <div :class="classObj" tabindex="0" class="app-wrapper" @click="onPageClicked()" @mousemove="onPageClicked()" @keyup="onPageClicked()">
     <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <div v-if="sidebar.opened" class="logo-wrapper">
-      <div class="logo"></div>
+      <div class="logo">
+        <img src="../../assets/images/logo.png" />
+      </div>
     </div>
     <div v-if="!sidebar.opened" class="no-logo-wrapper">
     </div>
@@ -93,7 +95,7 @@ export default {
     background: $--purple;
     display: flex;
     align-items: center;
-    justify-content: center;
+    padding-left: 20px;
     z-index: 100;
     top: 0;
     .logo {
@@ -106,11 +108,14 @@ export default {
       // justify-content: center;
       // color: #fff;
       // font-size: $--font-size-content;
-      background-image: url("../../assets/images/logo.png");
-      width: 200px;
-      height: 60px;
+      // background-image: url("../../assets/images/logo.png");
+      width: 160px;
+      height: 44px;
       background-size: cover;
       background-position: center;
+      img {
+        height: 44px;
+      }
     }
   }
 }

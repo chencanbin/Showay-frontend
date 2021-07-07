@@ -44,6 +44,7 @@
     <div class="table-bottom">
       <add class="add-rider-button" :company-id="companyId" :currency="currency" :submit-date="submitDate" @afterAdd="afterAdd" />
       <div class="action-bottom" style="text-align: center">
+        <el-button :loading="saveLoading" @click="goBack">{{ $t("common.returnButton") }}</el-button>
         <el-button :loading="saveLoading" type="primary" @click="handleSubmit">{{ $t("common.submitButton") }}</el-button>
       </div>
     </div>
@@ -208,6 +209,9 @@ export default {
         .catch((_) => {
           this.saveLoading = false;
         });
+    },
+    goBack() {
+      this.$router.go(-1)
     },
     formatterRiderBenefitStatus(id) {
       let result = "";

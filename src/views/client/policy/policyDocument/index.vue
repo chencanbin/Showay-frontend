@@ -207,7 +207,7 @@ export default {
       this.randomKey = +new Date();
     },
     getFileType(val) {
-      return fileType[val] ? `icon_file_${fileType[val]}` : "icon_home_wendang_nor";
+      return fileType[val] ? `icon_file_${fileType[val]}` : "icon_file_unknow";
     },
     getFolder(id, params) {
       this.folderId = id;
@@ -381,9 +381,18 @@ export default {
 <style rel="stylesheet/scss" lang="scss" type="text/scss">
 #policy-file-list {
   padding: 0;
+  .el-icon-arrow-right:before {
+    font-size: 14px;
+  }
+  .el-breadcrumb {
+    line-height: 26px;
+    .el-breadcrumb__item {
+      float: none;
+    }
+  }
   .basic-container {
     padding-bottom: 0 !important;
-    padding-left: 0 !important;
+    padding-left: 16px !important;
     padding-right: 0 !important;
     padding-top: 0 !important;
     border-radius: 0 !important;
@@ -481,10 +490,11 @@ export default {
             font-size: 28px;
             color: #cccfd7;
             margin-right: 8px;
+            margin-top: 4px;
           }
           .folderLink {
             display: inline-block;
-            width: 260px;
+            width: 240px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -500,6 +510,11 @@ export default {
           }
           .icon_file_ppt {
             color: #e96030 !important;
+          }
+        }
+        .tree-item-wrapper {
+          .iconfont {
+            margin-top: -2px !important;
           }
         }
       }

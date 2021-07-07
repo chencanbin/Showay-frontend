@@ -31,9 +31,9 @@ export default {
   data() {
     return {
       website: {
-        title: "宏鑫资产",
+        title: "INSURTECH",
         info: {
-          title: "宏鑫资产管理系统",
+          title: "INSURTECH管理系统",
           list: ["可视化的数据界面", "高效数据整理", "提高团队协同效率"],
         },
       },

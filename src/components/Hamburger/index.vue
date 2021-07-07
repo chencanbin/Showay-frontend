@@ -33,6 +33,7 @@ export default {
   cursor: pointer;
   width: 21px;
   height: 21px;
+  transform: rotate(180deg);
 }
 
 .hamburger.is-active {

@@ -1,5 +1,5 @@
 <template>
-  <el-col class="el-table-add-col" id='add-contact'>
+  <el-col class="el-table-add-col" style="width: 100%" id='add-contact'>
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
     <el-button class="el-table-add-row create-contact-buttonF" plain type="primary" size="small" @click="initForm"><i class="iconfont icon_add_small create-icon" /> <span>{{ $t("common.add") }}</span></el-button>
     <el-dialog id="add-contact" v-el-drag-dialog :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('product.company.set.add_contact_title')" top="50px" width="500px" append-to-body>
@@ -107,7 +107,7 @@ export default {
     font-size: 16px;
     font-weight: bold;
     padding: 0;
-  border-radius: 6px;
+    border-radius: 6px;
 
     span {
       display: flex;

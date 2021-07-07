@@ -1,5 +1,5 @@
 <template>
-  <el-card style="" class="card-file-list">
+  <el-card class="card-file-list">
     <div slot="header">
       <span class="card-header-title">{{
         $t("home.news")
@@ -9,10 +9,11 @@
       <el-table-column prop="name" label="文件名称" show-overflow-tooltip>
         <template slot-scope="scope"> -->
     <!--<svg-icon :icon-class="getFileType(scope.row.extention)" style="font-size: 30px; margin-right: 15px; vertical-align: middle"/>-->
-    <div v-for="(file,index) in fileList" :key="index" class="file-list-wrapper">
-      <a type="text" class="folderLink" @click="handleDownload(file)">{{ fileNameFormatter(file.name) }}</a>
+    <div style="height:320px;">
+      <div v-for="(file,index) in fileList" :key="index" class="file-list-wrapper">
+        <a type="text" class="folderLink" @click="handleDownload(file)">{{ fileNameFormatter(file.name) }}</a>
+      </div>
     </div>
-
     <!-- </template>
       </el-table-column>
     </el-table> -->
@@ -101,7 +102,6 @@ export default {
     padding-bottom: 0px !important;
   }
   .el-card__body {
-    height: 346px;
     overflow: auto;
     padding-left: 24px;
     padding-right: 24px;

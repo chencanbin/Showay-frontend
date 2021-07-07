@@ -341,7 +341,7 @@ export default {
     width: 10px;
     height: 10px;
     border-radius: 100%;
-    background: $--purple;
+    background: #818be2;
     display: inline-block;
   }
   .overdue_icon {
@@ -351,6 +351,9 @@ export default {
     background: $--yellow;
     display: inline-block;
     margin-right: 12px;
+    .icon_time {
+      color: $--yellow !important;
+    }
   }
 
   .full-calendar-body {
@@ -425,6 +428,9 @@ export default {
             justify-content: space-between;
             &:hover {
               background: #f2f2f8;
+              .ordinary_tip {
+                border: 0.5px solid #818be2 !important;
+              }
             }
             .day-number {
               color: $--content;
@@ -445,12 +451,16 @@ export default {
                 align-self: flex-end;
               }
             }
+            &.is-selected {
+              .ordinary_tip {
+                border: 0.5px solid #818be2 !important;
+              }
+            }
             .ordinary_tip {
               width: 100%;
               height: 30px;
               line-height: 30px;
               background: $--purple-assist;
-              border: 0.5px solid #818be2;
               color: $--purple;
               display: inline-block;
               border-radius: 16px;
@@ -577,7 +587,7 @@ export default {
       color: $--content;
       font-size: 20px;
       font-weight: bold;
-      border-bottom: 1px solid #E9E8F0;
+      border-bottom: 1px solid #e9e8f0;
     }
     .el-drawer__body {
       .el-collapse {

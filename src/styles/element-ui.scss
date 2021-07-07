@@ -80,6 +80,16 @@
 
  //dropdown
  .el-dropdown-menu {
+   .password-icon {
+     width: 24px;
+     height: 24px;
+   }
+
+   .logout-icon {
+     width: 24px;
+     height: 24px;
+   }
+
    a {
      display: block
    }
@@ -241,7 +251,7 @@
        right: 30px;
 
        .el-dialog__close {
-         color: #D8D8D8;
+         color: #BBBCC4;
 
        }
      }
@@ -283,7 +293,10 @@
    }
  }
 
-
+ .create-icon {
+   font-size: 20px;
+   margin-right: 0 !important;
+ }
 
  .table-bottom {
    position: fixed;
@@ -312,10 +325,7 @@
        justify-content: center;
      }
 
-     .create-icon {
-       font-size: 20px;
-       margin-right: 8px;
-     }
+
    }
 
  }
@@ -338,14 +348,26 @@
    .el-dropdown-menu__item {
      display: flex;
      align-items: center;
-     height: 40px;
-     line-height: 40px;
      min-width: 118px;
      color: #43475F;
      font-size: 16px;
      padding: 0;
      padding-left: 26px;
      padding-right: 26px;
+     padding-top: 5px;
+     padding-bottom: 5px;
+
+     .el-button--text {
+       width: 100%;
+       text-align: left;
+
+
+     }
+
+     span {
+       width: 100%;
+       text-align: left;
+     }
 
      &:hover {
        background-color: $--purple-assist;
@@ -435,7 +457,7 @@
    display: flex;
    justify-content: center;
    align-items: center;
-   color: #D8D8D8;
+   color: #BBBCC4;
 
    &::before {
      content: "\e6cb";
@@ -540,6 +562,49 @@
  .iconfont {
    font-size: 30px;
    margin-right: 11px;
+ }
+
+
+ .el-message-box {
+   width: 500px;
+   height: 220px;
+   padding: 10px 40px;
+
+   .el-message-box__header {
+     height: 70px;
+     display: flex;
+     align-items: center;
+     font-weight: bold;
+     color: #42475F;
+     font-size: 20px;
+     font-size: 16px;
+
+     .el-message-box__headerbtn {
+       top: 28px;
+     }
+   }
+
+   .el-message-box__status+.el-message-box__message {
+     font-size: 16px;
+     font-weight: 500;
+     color: #42475F;
+   }
+
+   .el-icon-warning:before {
+     content: '\e6a4';
+     font-family: "iconfont" !important;
+   }
+
+   .el-message-box__btns {
+     padding-top: 36px;
+     padding-right: 0;
+
+     .el-button {
+       height: 40px;
+       width: 76px;
+     }
+   }
+
  }
 
  //  .el-select__tags {

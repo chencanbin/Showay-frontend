@@ -39,6 +39,7 @@ export default {
     confirmButton: 'OK',
     cancelButton: 'Cancel',
     submitButton: 'Submit',
+    returnButton: 'Go Back',
     saveButton: 'Save',
     remarks: 'Remarks',
     remarks_placeholder: 'Remarks',

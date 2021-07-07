@@ -39,6 +39,7 @@ export default {
     confirmButton: '确定',
     cancelButton: '取消',
     submitButton: '提交',
+    returnButton: '返回',
     saveButton: '保存',
     remarks: '备注',
     remarks_placeholder: '请输入备注',

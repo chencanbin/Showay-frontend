@@ -4,6 +4,7 @@
       {{ $t("common.edit") }}
     </el-button> -->
     <!-- <el-dialog id="channelCommissionTableDialog" :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="title" center append-to-body> -->
+    <div class="title">{{channelName}}</div>
     <el-table v-loading="loading" id="channelCommissionTable" :data="policies" :max-height="tableHeight" stripe row-key="id">
       <el-table-column :label="$t('product.channel.set.priority')" type="index" width="120" />
       <el-table-column :label="$t('product.channel.set.name')" prop="name" min-width="300">
@@ -46,6 +47,7 @@
     <div class="table-bottom">
       <addPolicy @addPolicy="onAddPolicy" />
       <div class="action-bottom" style="text-align: center">
+        <el-button :loading="saveLoading" @click="goBack">{{ $t("common.returnButton") }}</el-button>
         <el-button type="primary" @click="timeDialogVisible = true">{{$t("common.submitButton")}}</el-button>
       </div>
     </div>
@@ -170,6 +172,9 @@ export default {
           this.loading = false;
           this.dialogVisible = false;
         });
+    },
+    goBack() {
+      this.$router.go(-1)
     },
     // 格式化策略数据, 原始策略数据的conditions 只提供缩减版的数组，需要将数据进行展开
     formatterData(policies) {
@@ -308,6 +313,12 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 #edit-commission-table {
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-left: 12px;
+    padding-bottom: 20px;
+  }
   .action-bottom {
     display: flex;
     align-items: center;

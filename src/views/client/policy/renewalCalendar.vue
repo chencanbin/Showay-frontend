@@ -95,7 +95,9 @@
               <el-collapse-item name="overdue" v-if="currentDay.events && currentDay.events.length  > 0">
                 <template slot="title">
                   <div class="title_wrapper overdue_title">
-                    <span class="iconfont icon_time"></span> <span class="title">逾期</span><i class="overdue_icon"></i>
+                    <svg slot="reference" class="iconfont" aria-hidden="true">
+                      <use xlink:href="#icon_time_jinji"></use>
+                    </svg><span class="title">逾期</span><i class="overdue_icon"></i>
                   </div>
                 </template>
                 <div class="events-wrapper">
@@ -135,8 +137,11 @@
               </el-collapse-item>
               <el-collapse-item name="ordinary" v-if="currentDay.events && currentDay.events.length  > 0">
                 <template slot="title">
-                  <div class="title_wrapper">
-                    <span class="iconfont icon_time"></span> <span class="title">普通</span><i class="ordinary_icon"></i>
+                  <div class="title_wrapper normal_title">
+                    <svg slot="reference" class="iconfont" aria-hidden="true">
+                      <use xlink:href="#icon_time_normall"></use>
+                    </svg>
+                    <span class="title">普通</span><i class="ordinary_icon"></i>
                     <span class="event_count" v-if="currentDay.events">{{currentDay.events.length}}</span>
                   </div>
                 </template>
@@ -345,6 +350,9 @@ export default {
             left: 39px;
           }
         }
+        .overdue_title {
+          color: red;
+        }
       }
     }
   }
@@ -457,30 +465,49 @@ export default {
               font-weight: bold;
               font-size: 18px;
               width: 100%;
+              display: flex;
+              align-items: center;
+              position: relative;
               .title {
                 margin-right: 8px;
               }
-              .icon_time {
-                font-size: 30px;
-                color: $--purple !important;
-                vertical-align: middle;
+              &.overdue_title {
+                .icon_time {
+                  font-size: 30px;
+                  color: #f77142;
+                  vertical-align: middle;
+                }
               }
+              &.normal_title {
+                .icon_time {
+                  font-size: 30px;
+                  color: $--purple;
+                  vertical-align: middle;
+                }
+              }
+
               .event_count {
                 padding-left: 6px;
                 padding-right: 6px;
-                float: right;
-                margin-right: 10px;
-                margin-top: 18px;
                 height: 16px;
                 line-height: 16px;
                 display: inline-block;
                 color: $--purple;
                 background: $--purple-assist;
-                border: 0.5px solid $--purple;
+                border: 1px solid rgba(81, 92, 195, 0.2);
                 border-radius: 8px;
                 font-weight: bold;
                 font-size: 10px;
+                position: absolute;
+                right: 4px;
+                top: 18px;
               }
+            }
+            .el-icon-arrow-right::before {
+              font-family: "iconfont" !important;
+              font-size: 0.15625rem;
+              font-style: normal;
+              content: "\E6C";
             }
           }
           .el-collapse-item__wrap {
@@ -553,7 +580,7 @@ export default {
     width: 10px;
     height: 10px;
     border-radius: 100%;
-    background: $--yellow;
+    background: #f77142;
     display: inline-block;
     margin-right: 12px;
   }

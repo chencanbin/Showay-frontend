@@ -84,15 +84,8 @@ export default {
     getIcon(item) {
       const name = item.name
       console.log(name)
-      // if (item.children) {
-      //   return;
-      // }
-      // if (this.$route.name === name) {
-      //   return item.meta.activeIcon
-      // } else {
-      //   return item.meta.icon
-      // }
-      const icon = this.$route.name === name ? item.meta.activeIcon : item.meta.icon;
+      console.log(this.$route.name)
+      const icon = this.$route.name === name || this.$route.meta.parentName === name ? item.meta.activeIcon : item.meta.icon;
       return icon
     },
     hasOneShowingChild(children, parent) {

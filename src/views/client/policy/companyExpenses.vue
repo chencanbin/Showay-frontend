@@ -113,9 +113,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" type="text/scss">
 .company_expenses {
-  .el-dialog__body {
-    padding: 10px;
-  }
   .header {
     text-align: right;
     padding-top: 12px;

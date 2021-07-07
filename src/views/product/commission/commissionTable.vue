@@ -1,5 +1,6 @@
 <template>
   <span class="demo">
+    <el-button @click="initForm()" type="text">{{ $t("common.edit") }}</el-button>
     <el-dialog id="commissionTableDialog" :fullscreen="fullscreen" :visible="commissionTableDialogVisible" :before-close="handleClose" class="dialog-body" append-to-body>
       <!--<el-button icon="el-icon-plus" type="text" @click="addNewRow">添加新行</el-button>-->
       <el-row slot="title" class="title" style="position: relative">

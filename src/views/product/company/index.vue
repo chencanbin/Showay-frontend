@@ -313,7 +313,7 @@ export default {
     gotoContact(row) {
       // this.getContact();
       // this.dialogVisible = true;
-      this.$router.push({ path: `/product/company/contact?id=${row.id}` })
+      this.$router.push({ path: `/product/company/contact?id=${row.id}&title=${row.name}` })
     },
   },
 };
@@ -331,7 +331,7 @@ export default {
       font-size: 18px;
     }
     .list_item {
-      width: 455px;
+      width: 520px;
       padding: 8px 20px;
       border-radius: 8px;
       border: 1px solid #e9e8f0;
