@@ -22,7 +22,9 @@ export default {
     system: '系统',
     user: '用户',
     role: '角色',
-    template: '模板'
+    template: '模板',
+    training: '培训',
+    course: '课程'
   },
   common: {
     action: '操作',
@@ -566,6 +568,31 @@ export default {
     send_success: '邮件已发送', // Message is sent
     set: {
       template: '请选择邮件模板'
+    }
+  },
+  course: {
+    title: '课程名称',
+    quota: '可预约数量',
+    coverImage: '封面',
+    attachments: '附件',
+    description: '培训地址',
+    deadline: '培训时间',
+    type: '培训类型',
+    core: '核心分数',
+    elective: '非核心分数',
+    other: '其他分数',
+    online: '线上',
+    offline: '线下',
+    set: {
+      add_title: '创建课程',
+      edit_title: '修改课程',
+      title: '请输入课程名称',
+      attachments: '请上传课程附件',
+      coverImage: '请上传课程封面',
+      quota: '请输入可预约数'
+    },
+    tooltip: {
+      delete: '是否删除该课程'
     }
   }
 }

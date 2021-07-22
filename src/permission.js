@@ -32,7 +32,7 @@ function hasPermission(actions, paymentStatuses, id) {
   return false;
 }
 
-const whiteList = ['/login', '/auth-redirect'];// no redirect whitelist
+const whiteList = ['/login', '/auth-redirect', '/training/course'];// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
   NProgress.start(); // start progress bar

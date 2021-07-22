@@ -52,7 +52,7 @@
             </div>
           </el-row>
           <el-table v-loading="commissionCreditLoading" stripe :data="commissionCredit.list" :row-class-name="tableRowClassName" border @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="80" align="center" />
+            <el-table-column type="selection" width="80" align="center" v-if="activeName !== '-1'" />
             <el-table-column :label="$t('client.insurance_policy.number')" prop="insurancePolicy.number" min-width="100px" show-overflow-tooltip>
               <template slot-scope="scope">
                 <policy-detail :policy-number="scope.row.insurancePolicy.number" :id="scope.row.insurancePolicy.id" />
@@ -73,14 +73,14 @@
             <el-table-column :label="$t('commission.credit.year')" prop="year" align="center" />
             <el-table-column :formatter="formatterSubmitDate" :label="$t('client.insurance_policy.submitDate')" prop="insurancePolicy.submitDate" min-width="120" show-overflow-tooltip />
             <el-table-column :formatter="formatterIssueDate" :label="$t('client.insurance_policy.issueDate')" prop="insurancePolicy.issueDate" min-width="100" show-overflow-tooltip />
-            <el-table-column :label="$t('common.calculatedAmount')" min-width="120">
+            <el-table-column :label="$t('common.calculatedAmount')" min-width="120" v-if="activeName !== '-1'">
               <template slot-scope="scope">
                 <span class="left_text">{{ getSymbol(scope.row.currency) }}</span><span class="right_text">{{
                 formatterCurrency(scope.row.calculatedAmount)
               }}</span>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('common.amount')" prop="amount" min-width="120">
+            <el-table-column :label="$t('common.amount')" prop="amount" min-width="120" v-if="activeName !== '-1'">
               <template slot-scope="scope">
                 <span class="left_text">HK$ </span>
                 <span class="right_text">{{
@@ -88,7 +88,7 @@
               }}</span>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('common.status')" min-width="80" align="center">
+            <el-table-column :label="$t('common.status')" min-width="80" align="center" v-if="activeName !== '-1'">
               <template slot-scope="scope">
                 <el-tag v-if="scope.row.status === 0" class="primary_status">{{
                   statusFormatter(scope.row.status)
@@ -102,14 +102,25 @@
                 <el-tag v-if="scope.row.status === 3" type="success">{{
                   statusFormatter(scope.row.status)
                 }}</el-tag>
-                <!--<statusBadge v-if="scope.row.status === 0" :text="statusFormatter(scope.row.status)" type="processing-badge"/>-->
-                <!--<statusBadge v-if="scope.row.status === 1" :text="statusFormatter(scope.row.status)" type="warning-badge"/>-->
-                <!--<statusBadge v-if="scope.row.status === 2" :text="statusFormatter(scope.row.status)" type="error-badge"/>-->
-                <!--<statusBadge v-if="scope.row.status === 3" :text="statusFormatter(scope.row.status)" type="success-badge"/>-->
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('common.status')" min-width="200" align="center">
+              <template slot-scope="scope">
+                <el-tag class="primary_status">{{
+                  statusFormatter(0)
+                }}</el-tag>
+                <div class="horizontal-line" :class="scope.row.status <= 0 ? 'info_bg': ''"></div>
+                <el-tag :class="scope.row.status <= 0 ? 'info_tag': 'warning_tag'">{{
+                  statusFormatter(1)
+                }}</el-tag>
+                <div class="horizontal-line" :class="scope.row.status <= 1 ? 'info_bg': ''"></div>
+                <el-tag :class="scope.row.status <= 1 ? 'info_tag': 'success_tag'">{{
+                  statusFormatter(2)
+                }}</el-tag>
               </template>
             </el-table-column>
             <!--<el-table-column label="备注" prop="remarks" min-width="140"/>-->
-            <el-table-column v-if="activeName !== '2'" :label="$t('common.action')" width="100">
+            <el-table-column v-if="activeName !== '2' && activeName !== '-1'" :label="$t('common.action')" width="100">
               <template slot-scope="scope">
                 <edit v-if="scope.row.status === 0" :commission-credit="scope.row" :wildcard="wildcard" :date-range="dateRange" :active-name="activeName" :key="scope.row.id" :sort="sort" :order="order" :term="term" :list-query="listQuery" />
                 <audit v-if="scope.row.status === 1" :commission-credit="scope.row" :active-name="activeName" :wildcard="wildcard" :date-range="dateRange" :sort="sort" :order="order" :list-query="listQuery" />
@@ -262,7 +273,7 @@ export default {
       selectSumText: "",
       creditStatus,
       language: Cookies.get("language") || "zh-CN",
-      activeName: "0",
+      activeName: "-1",
       wildcard: "",
       sum: 0,
       total: 0,
@@ -316,7 +327,10 @@ export default {
       this.getCommissionCreditList({ wildcard: this.wildcard });
     }, 500),
     getCommissionCreditSum(params) {
-      let data = { status: this.activeName, wildcard: this.wildcard };
+      let data = { wildcard: this.wildcard };
+      if (this.activeName !== '-1') {
+        data['status'] = this.activeName
+      }
       if (this.dateRange) {
         data = _.assign(data, {
           geDueDate: this.dateRange[0],
@@ -332,6 +346,9 @@ export default {
       });
     },
     getCommissionCreditList(params) {
+      if (this.activeName === '-1') {
+        delete this.queryCondition.status
+      }
       if (this.dateRange) {
         this.queryCondition = _.assign(this.queryCondition, {
           geDueDate: this.dateRange[0],
@@ -629,6 +646,15 @@ export default {
     width: 100%;
     height: 60px;
   }
+  .horizontal-line {
+    width: 30px;
+    height: 1px;
+    background: $--purple;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 4px;
+    margin-right: 4px;
+  }
 }
 
 .tag-sum {
@@ -659,5 +685,24 @@ export default {
 .primary_status {
   color: $--purple;
   background: $--purple-assist;
+  border: 0;
+}
+.info_tag {
+  color: $--label;
+  background: #f6f6f7;
+  border: 0;
+}
+.warning_tag {
+  color: $--orange;
+  background: $--orange-assist;
+  border: 0;
+}
+.success_tag {
+  color: $--green;
+  background: $--green-assist;
+  border: 0;
+}
+.info_bg {
+  background: #e3e2eb !important;
 }
 </style>

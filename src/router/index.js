@@ -41,6 +41,7 @@ export const constantRouterMap = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
+
   {
     path: '/auth-redirect',
     component: () => import('@/views/login/authredirect'),
@@ -55,7 +56,20 @@ export const constantRouterMap = [
     path: '/401',
     component: () => import('@/views/errorPage/401'),
     hidden: true
-  }
+  },
+  {
+    path: '/training',
+    component: Layout,
+    redirect: 'noRedirect',
+    children: [
+      {
+        path: 'course',
+        name: 'course',
+        component: () => import('@/views/training/course/index'),
+        meta: { title: 'course', icon: 'icon_home_baodan_nor', activeIcon: 'icon_home_baodan_select', noCache: true, id: 100049 }
+      }
+    ]
+  },
 ];
 
 export default new Router({

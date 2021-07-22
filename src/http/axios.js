@@ -3,6 +3,7 @@ import config from './config'
 import router from '@/router'
 import lang from './lang'
 import Cookies from 'js-cookie'
+import { getToken } from '@/utils/auth'
 import { Message, MessageBox, Notification } from 'element-ui'
 // 使用vuex做全局loading时使用
 import store from '@/store'
@@ -53,6 +54,8 @@ export default function $axios(options) {
     // request 拦截器
     instance.interceptors.request.use(
       config => {
+        // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
+        config.headers['Authorization'] = getToken()
         if (config.data) {
           config.data = _.omitBy(config.data, _.isNull)
         }
@@ -106,31 +109,31 @@ export default function $axios(options) {
         }
         if (data.status !== 0) {
           // 4003 :令牌超时;
-          if (data.status === 4003 || data.status === 50012 || data.status === 50014) {
-            // 请自行在引入 MessageBox
-            MessageBox.confirm(lang.timeout[language], lang.logout[language], {
-              confirmButtonText: lang.confirm[language],
-              showCancelButton: false,
-              closeOnClickModal: false,
-              closeOnPressEscape: false,
-              type: 'warning'
-            }).then(() => {
-              store.dispatch('FedLogOut').then(() => {
-                location.reload() // 为了重新实例化vue-router对象 避免bug
-              })
-            })
-          } else {
-            if (errorMessage) {
-              errorMessage.close()
-            }
-            errorMessage = Message({
-              message: data.message,
-              type: 'error',
-              showClose: true,
-              duration: 5 * 1000
-            })
-            return reject(data)
-          }
+          // if (data.status === 4003 || data.status === 50012 || data.status === 50014) {
+          //   // 请自行在引入 MessageBox
+          //   MessageBox.confirm(lang.timeout[language], lang.logout[language], {
+          //     confirmButtonText: lang.confirm[language],
+          //     showCancelButton: false,
+          //     closeOnClickModal: false,
+          //     closeOnPressEscape: false,
+          //     type: 'warning'
+          //   }).then(() => {
+          //     store.dispatch('FedLogOut').then(() => {
+          //       location.reload() // 为了重新实例化vue-router对象 避免bug
+          //     })
+          //   })
+          // } else {
+          //   if (errorMessage) {
+          //     errorMessage.close()
+          //   }
+          //   errorMessage = Message({
+          //     message: data.message,
+          //     type: 'error',
+          //     showClose: true,
+          //     duration: 5 * 1000
+          //   })
+          //   return reject(data)
+          // }
         } else {
           return data
         }

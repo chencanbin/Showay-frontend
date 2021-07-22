@@ -86,6 +86,12 @@ export const commissionStatus = [
 
 export const creditStatus = [
   {
+    id: '-1',
+    'zh-TW': '匯總',
+    'zh-CN': '汇总',
+    'en': 'summary'
+  },
+  {
     id: 0,
     'zh-TW': '待收',
     'zh-CN': '待收',

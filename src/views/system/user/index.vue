@@ -2,46 +2,6 @@
   <div id="user" class="table-container">
     <basic-container>
       <el-table v-loading="userLoading" :data="users.list" :row-class-name="setClassName" @row-click="expandChange" row-key="id" stripe>
-        <!-- <el-table-column v-if="hasPermission(100108)" type="expand">
-          <template slot-scope="scope">
-            <div v-loading="channelHierarchyLoading" class="clearfix">
-              <el-timeline id="channelCommissionTableList">
-                <div v-if="
-                    channelHierarchy.list && channelHierarchy.list.length === 0
-                  " style="text-align: center; color: #909399">
-                  {{ $t("user.set.none_superior") }}
-                </div>
-                <el-timeline-item v-for="(item, index) in channelHierarchy.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
-                  <el-dropdown class="action-dropdown">
-                    <el-button type="primary" plain size="mini">
-                      <i class="el-icon-more" />
-                    </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>
-                        <edit-channel-hierarchy :hierarchy="item" />
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <el-button type="text" size="small" @click="handleDeleteChannelHierarchy(item.id)">{{ $t("common.delete") }}</el-button>
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                  <el-card>
-                    <div class="bottom clearfix">
-                      <p style="display: inline-block; margin-left: 12px">
-                        {{ $t("user.superior") }} :
-                        {{ item.superior ? item.superior.name : "-" }}
-                      </p>
-                      <p style="display: inline-block; margin: 0 0 0 20px">
-                        {{ $t("common.remarks") }} : {{ item.remarks }}
-                      </p>
-                    </div>
-                  </el-card>
-                </el-timeline-item>
-              </el-timeline>
-              <add-channel-hierarchy :user="scope.row" />
-            </div>
-          </template>
-        </el-table-column> -->
         <el-table-column :label="$t('user.name')" prop="name" show-overflow-tooltip />
         <el-table-column :label="$t('user.acronym')" prop="acronym" show-overflow-tooltip />
         <el-table-column :label="$t('user.account')" prop="login" />
@@ -103,7 +63,7 @@
       <div class="user-detail">
         <el-timeline v-loading="channelHierarchyLoading">
           <div v-if="channelHierarchy.list && channelHierarchy.list.length === 0" style="text-align: center; color: #909399">
-            {{$t("common.no_data")}}
+            {{ $t("common.no_data") }}
           </div>
           <el-timeline-item v-for="(item, index) in channelHierarchy.list" :key="index" :timestamp="getFormattedDate(item.effectiveDate)" placement="top">
             <el-dropdown class="action-dropdown">
@@ -121,7 +81,7 @@
             </el-dropdown>
             <div v-if="item.remarks" class="timeline_content">
               <div class="row">
-                <span class="label">{{ $t('user.superior') }}:</span>
+                <span class="label">{{ $t("user.superior") }}:</span>
                 <span class="value"> {{ item.superior.acronym }}</span>
               </div>
               <div class="row">
@@ -173,8 +133,8 @@ export default {
         limit: 50,
       },
       drawer: false,
-      direction: 'rtl',
-      currentRow: ''
+      direction: "rtl",
+      currentRow: "",
     };
   },
   computed: {
@@ -226,7 +186,7 @@ export default {
             done();
           }
         },
-      }).then(() => { });
+      }).then(() => {});
     },
     handleDeleteChannelHierarchy(id) {
       this.$confirm(
@@ -259,7 +219,7 @@ export default {
             }
           },
         }
-      ).then(() => { });
+      ).then(() => {});
     },
     dateFormat(row, column) {
       const date = row[column.property];
@@ -275,9 +235,9 @@ export default {
       return parseTime(value, "{y}-{m}-{d}");
     },
     expandChange(row, column) {
-      const { property } = column
-      if (property === 'locked' || property === 'action') {
-        return false
+      const { property } = column;
+      if (property === "locked" || property === "action") {
+        return false;
       }
       this.currentRow = row;
       this.getChannelHierarchy({ owner: row.id });

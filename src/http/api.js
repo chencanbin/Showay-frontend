@@ -13,6 +13,7 @@ import * as document from './modules/document'
 import * as statistics from './modules/statistics'
 import * as config from './modules/config'
 import * as template from './modules/template'
+import * as course from './modules/course'
 // 默认全部导出
 export default {
   login,
@@ -26,5 +27,6 @@ export default {
   document,
   statistics,
   config,
-  template
+  template,
+  course
 }

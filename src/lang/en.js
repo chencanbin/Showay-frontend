@@ -22,7 +22,9 @@ export default {
     system: 'System',
     user: 'User',
     role: 'Role',
-    template: 'Template'
+    template: 'Template',
+    training: 'Training',
+    course: 'Course'
   },
   common: {
     action: '',

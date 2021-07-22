@@ -22,7 +22,9 @@ export default {
     system: '系統',
     user: '用戶',
     role: '角色',
-    template: '模板'
+    template: '模板',
+    training: '培訓',
+    course: '課程'
   },
   common: {
     action: '操作',

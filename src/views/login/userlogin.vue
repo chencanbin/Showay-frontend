@@ -71,7 +71,7 @@ export default {
         id: [{ required: true, message: "请输入用户名", trigger: "blur" }],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, message: "密码长度最少为6位", trigger: "blur" },
+          { min: 4, message: "密码长度最少为4位", trigger: "blur" },
         ],
         code: [
           { required: true, message: "请输入验证码", trigger: "blur" },
@@ -124,6 +124,7 @@ export default {
               this.$router.push({ path: this.redirect || "/home" });
             })
             .catch((_) => {
+              //TODO 上线需要删除
               this.loginLoading = false;
               this.loginForm.code = "";
               this.refreshCode();

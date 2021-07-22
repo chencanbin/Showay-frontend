@@ -1,7 +1,6 @@
 import { logout, getUserInfo, loginByUsername } from '@/http/modules/login'
 import { fetchUserList, fetchChannelHierarchy } from '@/http/modules/user'
-import { setLoginStatus, removeLoginStatus, setUserId } from '@/utils/auth'
-
+import { setLoginStatus, removeLoginStatus, setUserId, setToken } from '@/utils/auth'
 const user = {
   state: {
     user: '',
@@ -83,6 +82,7 @@ const user = {
         loginByUsername(userInfo).then(res => {
           setLoginStatus(true)
           setUserId(res.data.id)
+          setToken(res.data.token)
           resolve(res)
         }).catch(error => {
           reject(error)
