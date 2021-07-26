@@ -108,32 +108,32 @@ export default function $axios(options) {
           data = response.data
         }
         if (data.status !== 0) {
-          // 4003 :令牌超时;
-          // if (data.status === 4003 || data.status === 50012 || data.status === 50014) {
-          //   // 请自行在引入 MessageBox
-          //   MessageBox.confirm(lang.timeout[language], lang.logout[language], {
-          //     confirmButtonText: lang.confirm[language],
-          //     showCancelButton: false,
-          //     closeOnClickModal: false,
-          //     closeOnPressEscape: false,
-          //     type: 'warning'
-          //   }).then(() => {
-          //     store.dispatch('FedLogOut').then(() => {
-          //       location.reload() // 为了重新实例化vue-router对象 避免bug
-          //     })
-          //   })
-          // } else {
-          //   if (errorMessage) {
-          //     errorMessage.close()
-          //   }
-          //   errorMessage = Message({
-          //     message: data.message,
-          //     type: 'error',
-          //     showClose: true,
-          //     duration: 5 * 1000
-          //   })
-          //   return reject(data)
-          // }
+          //4003: 令牌超时;
+          if (data.status === 4003 || data.status === 50012 || data.status === 50014) {
+            // 请自行在引入 MessageBox
+            MessageBox.confirm(lang.timeout[language], lang.logout[language], {
+              confirmButtonText: lang.confirm[language],
+              showCancelButton: false,
+              closeOnClickModal: false,
+              closeOnPressEscape: false,
+              type: 'warning'
+            }).then(() => {
+              store.dispatch('FedLogOut').then(() => {
+                location.reload() // 为了重新实例化vue-router对象 避免bug
+              })
+            })
+          } else {
+            if (errorMessage) {
+              errorMessage.close()
+            }
+            errorMessage = Message({
+              message: data.message,
+              type: 'error',
+              showClose: true,
+              duration: 5 * 1000
+            })
+            return reject(data)
+          }
         } else {
           return data
         }

@@ -23,16 +23,16 @@ function hasPermission(actions, paymentStatuses, id) {
   if (!id) {
     return true;
   }
-  if (actions.some(action => action.id === id)) {
+  if (actions && actions.some(action => action.id === id)) {
     return true;
   }
-  if (paymentStatuses.some(paymentStatus => paymentStatus.id === id)) {
+  if (paymentStatuses && paymentStatuses.some(paymentStatus => paymentStatus.id === id)) {
     return true;
   }
   return false;
 }
 
-const whiteList = ['/login', '/auth-redirect', '/training/course'];// no redirect whitelist
+const whiteList = ['/login', '/auth-redirect', '/training/course', '/enterprise'];// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
   NProgress.start(); // start progress bar

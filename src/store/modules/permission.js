@@ -17,7 +17,7 @@ function hasPermission(actions, paymentStatuses, route) {
     if (actions.some(action => action.id === route.meta.id)) {
       return true
     }
-    if (paymentStatuses.some(paymentStatus => paymentStatus.id === route.meta.id)) {
+    if (paymentStatuses && paymentStatuses.some(paymentStatus => paymentStatus.id === route.meta.id)) {
       return true
     }
   } else {

@@ -24,7 +24,8 @@ export default {
     role: '角色',
     template: '模板',
     training: '培训',
-    course: '课程'
+    course: '课程',
+    enterprise: '企业'
   },
   common: {
     action: '操作',
@@ -590,6 +591,22 @@ export default {
       attachments: '请上传课程附件',
       coverImage: '请上传课程封面',
       quota: '请输入可预约数'
+    },
+    tooltip: {
+      delete: '是否删除该课程'
+    }
+  },
+  enterprise: {
+    name: '企业名称',
+    account: '企业账号',
+    email: '邮箱',
+    certificate: '证件',
+    set: {
+      add_title: '创建企业',
+      edit_title: '修改企业',
+      email: '请输入邮箱',
+      account: '请输入企业账号',
+      attachments: '请上传企业证件',
     },
     tooltip: {
       delete: '是否删除该课程'

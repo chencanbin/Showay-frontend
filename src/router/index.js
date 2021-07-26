@@ -70,6 +70,19 @@ export const constantRouterMap = [
       }
     ]
   },
+  {
+    path: '/enterprise',
+    component: Layout,
+    redirect: 'enterprise',
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/enterprise/index'),
+        name: 'enterprise',
+        meta: { title: 'enterprise', icon: 'icon_home_nor', activeIcon: 'icon_home_select', noCache: true, id: 100001 }
+      }
+    ]
+  },
 ];
 
 export default new Router({

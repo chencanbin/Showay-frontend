@@ -118,24 +118,21 @@ export default {
           const userInfo = Object.assign({}, this.loginForm);
           userInfo.password = sha256(userInfo.password);
           this.loginLoading = true;
-          this.$store
-            .dispatch("LoginByUsername", userInfo)
-            .then((_) => {
-              this.$router.push({ path: this.redirect || "/home" });
-            })
-            .catch((_) => {
-              //TODO 上线需要删除
-              this.loginLoading = false;
-              this.loginForm.code = "";
-              this.refreshCode();
-            });
-          // this.$api.login.loginByUsername(this.loginForm).then(() => {
-          //   this.$store.commit('HIDE_LOADING')
-          //   setLoginStatus(true)
-          //   this.$router.push({ path: this.redirect || '/' })
-          // }).catch(() => {
-          //   this.$store.commit('HIDE_LOADING')
-          // })
+          this.$store.dispatch("LoginByUsername", userInfo).then((_) => {
+            this.$router.push({ path: this.redirect || "/home" });
+          }).catch((_) => {
+            //TODO 上线需要删除
+            this.loginLoading = false;
+            this.loginForm.code = "";
+            this.refreshCode();
+          });
+          this.$api.login.loginByUsername(this.loginForm).then(() => {
+            this.$store.commit('HIDE_LOADING')
+            setLoginStatus(true)
+            this.$router.push({ path: this.redirect || '/' })
+          }).catch(() => {
+            this.$store.commit('HIDE_LOADING')
+          })
         } else {
           return false;
         }

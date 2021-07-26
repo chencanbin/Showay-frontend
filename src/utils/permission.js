@@ -33,16 +33,26 @@ export function hasPermission(id) {
 
 export function hasStatItems(id) {
   const statItems = store.getters && store.getters.statItems
-  return statItems.some(statItem => {
-    return statItem.id === id
-  })
+  if (statItems) {
+    return statItems.some(statItem => {
+      return statItem.id === id
+    })
+  } else {
+    return false;
+  }
+
 }
 
 export function hasPaymentStatuses(id) {
   const paymentStatuses = store.getters && store.getters.paymentStatuses
-  return paymentStatuses.some(paymentStatuse => {
-    return paymentStatuse.id === id
-  })
+  if (paymentStatuses) {
+    return paymentStatuses.some(paymentStatuse => {
+      return paymentStatuse.id === id
+    })
+  } else {
+    return false
+  }
+
 }
 
 export function hasRoles(value) {
