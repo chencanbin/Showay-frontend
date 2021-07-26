@@ -1,38 +1,88 @@
 <template>
-  <div id="policy-file-list" class="table-container">
+  <div 
+    id="policy-file-list" 
+    class="table-container">
     <basic-container>
       <div class="policy-file-list">
         <div class="file-menu-wrapper">
-          <el-tree ref="tree" :load="loadFolder" :data="folderTree" :key="randomKey" :props="props" :default-expanded-keys="expandArray" node-key="id" auto-expand-parent lazy @node-click="nodeExpand">
-            <span slot-scope="{ node, data }" :title="data.name" class="tree-item-wrapper">
-              <span v-if="!data.extention" class="iconfont icon_file_select" />
-              <span v-else class="iconfont" :class="getFileType(data.extention)" />
+          <el-tree 
+            ref="tree" 
+            :load="loadFolder" 
+            :data="folderTree" 
+            :key="randomKey" 
+            :props="props" 
+            :default-expanded-keys="expandArray" 
+            node-key="id" 
+            auto-expand-parent 
+            lazy 
+            @node-click="nodeExpand">
+            <span 
+              slot-scope="{ node, data }" 
+              :title="data.name" 
+              class="tree-item-wrapper">
+              <span 
+                v-if="!data.extention" 
+                class="iconfont icon_file_select" />
+              <span 
+                v-else 
+                :class="getFileType(data.extention)" 
+                class="iconfont" />
               <a class="folderLink">{{ data.name }}</a>
             </span>
           </el-tree>
         </div>
 
-        <div class="file-list-wrapper" id="file-list-wrapper" @drop.native="onUploadFile(event)">
+        <div 
+          id="file-list-wrapper" 
+          class="file-list-wrapper" 
+          @drop.native="onUploadFile(event)">
           <el-row class="file-list-header">
-            <el-breadcrumb separator-class="el-icon-arrow-right" style="font-size: 14px">
-              <el-breadcrumb-item v-for="item in levelList" :key="item.id">
-                <a class="folderLink" @click="handleFolderClick(item)">{{
-                  item.data.name
-                }}</a>
+            <el-breadcrumb 
+              separator-class="el-icon-arrow-right" 
+              style="font-size: 14px">
+              <el-breadcrumb-item 
+                v-for="item in levelList" 
+                :key="item.id">
+                <a 
+                  class="folderLink" 
+                  @click="handleFolderClick(item)">{{
+                    item.data.name
+                  }}</a>
               </el-breadcrumb-item>
             </el-breadcrumb>
-            <add v-if="hasPermission(100092)" :folder-id="folderId" @afterAddFolder="afterAddFolder" />
+            <add 
+              v-if="hasPermission(100092)" 
+              :folder-id="folderId" 
+              @afterAddFolder="afterAddFolder" />
           </el-row>
           <div class="content-wrapper">
             <div class="table-wrapper">
-              <el-table v-loading="fileLoading" :data="folder.items" :show-header="false" stripe>
-                <el-table-column show-overflow-tooltip prop="name" min-width="300">
+              <el-table 
+                v-loading="fileLoading" 
+                :data="folder.items" 
+                :show-header="false" 
+                stripe>
+                <el-table-column 
+                  show-overflow-tooltip 
+                  prop="name" 
+                  min-width="300">
                   <template slot-scope="scope">
                     <div class="file-item-wrapper">
-                      <span v-if="!scope.row.extention" class="iconfont icon_file_nor" />
-                      <span v-else class="iconfont" :class="getFileType(scope.row.extention)" />
-                      <a v-if="!scope.row.resourceKey" class="folderLink" @click="handleTableFolderClick(scope.row.id)">{{ scope.row.name }}</a>
-                      <a v-else-if="scope.row.resourceKey && scope.row.extention === 'application/pdf'" class="folderLink" @click="viewPdf(scope.row)">{{ scope.row.name }}</a>
+                      <span 
+                        v-if="!scope.row.extention" 
+                        class="iconfont icon_file_nor" />
+                      <span 
+                        v-else 
+                        :class="getFileType(scope.row.extention)" 
+                        class="iconfont" />
+                      <a 
+                        v-if="!scope.row.resourceKey" 
+                        class="folderLink" 
+                        @click="handleTableFolderClick(scope.row.id)">{{ scope.row.name }}</a>
+                      <a 
+                        v-else-if="scope.row.resourceKey && scope.row.extention === 'application/pdf'" 
+                        class="folderLink" 
+                        @click="viewPdf(scope.row)">{{ scope.row.name }}</a>
                       <span v-else>{{ scope.row.name }}</span>
                     </div>
                   </template>
@@ -43,23 +93,44 @@
                     {{ scope.row.size && bytesToSize(scope.row.size) }}
                   </template>
                 </el-table-column>
-                <el-table-column :formatter="dateFormat" prop="creationDate" width="200px" />
-                <el-table-column :label="$t('common.action')" width="100" align="center">
+                <el-table-column 
+                  :formatter="dateFormat" 
+                  prop="creationDate" 
+                  width="200px" />
+                <el-table-column 
+                  :label="$t('common.action')" 
+                  width="100" 
+                  align="center">
                   <template slot-scope="scope">
                     <el-dropdown>
-                      <el-button type="primary" plain size="mini">
+                      <el-button 
+                        type="primary" 
+                        plain 
+                        size="mini">
                         <i class="el-icon-more" />
                       </el-button>
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item v-if="hasPermission(100078) && scope.row.resourceKey">
-                          <el-button v-if="hasPermission(100078) && scope.row.resourceKey" type="text" size="small" @click="handleDownload(scope.$index, scope.row)">{{ $t("common.download") }}
+                          <el-button 
+                            v-if="hasPermission(100078) && scope.row.resourceKey" 
+                            type="text" 
+                            size="small" 
+                            @click="handleDownload(scope.$index, scope.row)">{{ $t("common.download") }}
                           </el-button>
                         </el-dropdown-item>
                         <el-dropdown-item>
-                          <edit v-if="hasPermission(100080)" :data="scope.row" :folder-id="folderId" @afterEdit="afterEdit" />
+                          <edit 
+                            v-if="hasPermission(100080)" 
+                            :data="scope.row" 
+                            :folder-id="folderId" 
+                            @afterEdit="afterEdit" />
                         </el-dropdown-item>
                         <el-dropdown-item>
-                          <el-button v-if="hasPermission(100079)" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
+                          <el-button 
+                            v-if="hasPermission(100079)" 
+                            type="text" 
+                            size="small" 
+                            @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}
                           </el-button>
                         </el-dropdown-item>
                       </el-dropdown-menu>
@@ -68,7 +139,9 @@
                 </el-table-column>
               </el-table>
             </div>
-            <file-upload v-if="hasPermission(100077)" @afterComplete="afterComplete" />
+            <file-upload 
+              v-if="hasPermission(100077)" 
+              @afterComplete="afterComplete" />
           </div>
         </div>
       </div>

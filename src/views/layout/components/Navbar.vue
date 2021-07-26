@@ -1,6 +1,11 @@
 <template>
-  <div class="navbar" :class="!sidebar.opened && 'mobile_navbar'">
-    <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container" />
+  <div 
+    :class="!sidebar.opened && 'mobile_navbar'" 
+    class="navbar">
+    <hamburger 
+      :toggle-click="toggleSideBar" 
+      :is-active="sidebar.opened" 
+      class="hamburger-container" />
 
     <breadcrumb class="breadcrumb-container" />
 
@@ -16,20 +21,38 @@
           <theme-picker class="theme-switch right-menu-item" />
         </el-tooltip> -->
       </template>
-      <el-tooltip content="首页配置" effect="dark" placement="bottom">
+      <el-tooltip 
+        content="首页配置" 
+        effect="dark" 
+        placement="bottom">
         <div class="setting_class right-menu-item">
-          <svg class="iconfont" aria-hidden="true" @click="showHomePageSetting = true">
-            <use xlink:href="#icon_shouye_peizhi"></use>
+          <svg 
+            class="iconfont" 
+            aria-hidden="true" 
+            @click="showHomePageSetting = true">
+            <use xlink:href="#icon_shouye_peizhi"/>
           </svg>
         </div>
       </el-tooltip>
-      <el-badge :hidden="credit.total + payment.total === 0" :value="credit.total + payment.total" :max="99" class="right-menu-item">
-        <el-popover width="150" trigger="click">
-          <div v-if="hasPermission(100055)" class="notification-list-item">
-            <a @click="handleCreditClick" class="notification-content-wrapper">
+      <el-badge 
+        :hidden="credit.total + payment.total === 0" 
+        :value="credit.total + payment.total" 
+        :max="99" 
+        class="right-menu-item">
+        <el-popover 
+          width="150" 
+          trigger="click">
+          <div 
+            v-if="hasPermission(100055)" 
+            class="notification-list-item">
+            <a 
+              class="notification-content-wrapper" 
+              @click="handleCreditClick">
               <div class="notification-content">
-                <svg class="iconfont" aria-hidden="true">
-                  <use xlink:href="#icon_collect_money"></use>
+                <svg 
+                  class="iconfont" 
+                  aria-hidden="true">
+                  <use xlink:href="#icon_collect_money"/>
                 </svg>
                 {{ credit.desc }}
               </div>
@@ -38,11 +61,17 @@
               </div>
             </a>
           </div>
-          <div v-if="hasPaymentStatuses(130000)" class="notification-list-item">
-            <a @click="handlePaymentClick" class="notification-content-wrapper">
+          <div 
+            v-if="hasPaymentStatuses(130000)" 
+            class="notification-list-item">
+            <a 
+              class="notification-content-wrapper" 
+              @click="handlePaymentClick">
               <div class="notification-content">
-                <svg class="iconfont" aria-hidden="true">
-                  <use xlink:href="#icon-60"></use>
+                <svg 
+                  class="iconfont" 
+                  aria-hidden="true">
+                  <use xlink:href="#icon-60"/>
                 </svg>
                 {{ payment.desc }}
               </div>
@@ -51,32 +80,46 @@
               </div>
             </a>
           </div>
-          <svg slot="reference" class="iconfont" aria-hidden="true">
-            <use xlink:href="#icon_notice"></use>
+          <svg 
+            slot="reference" 
+            class="iconfont" 
+            aria-hidden="true">
+            <use xlink:href="#icon_notice"/>
           </svg>
         </el-popover>
       </el-badge>
-      <el-tooltip v-if="hasPermission(100105)" :enterable="false" :content="$t('navbar.calendar')" effect="dark" placement="bottom">
+      <el-tooltip 
+        v-if="hasPermission(100105)" 
+        :enterable="false" 
+        :content="$t('navbar.calendar')" 
+        effect="dark" 
+        placement="bottom">
         <renewal-calendar class="calendar right-menu-item" />
       </el-tooltip>
       <div class="split-line" />
       <el-dropdown class="avatar-container right-menu-item">
         <div class="el-dropdown-link">
           <span class="avatar-name">{{ name }}</span>
-          <svg class="iconfont action-icon" aria-hidden="true">
-            <use xlink:href="#icon_top_caozuo"></use>
+          <svg 
+            class="iconfont action-icon" 
+            aria-hidden="true">
+            <use xlink:href="#icon_top_caozuo"/>
           </svg>
         </div>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="handleOpenUpdateUserDialog">
-            <svg class="iconfont password-icon" aria-hidden="true">
-              <use xlink:href="#icon_password"></use>
+            <svg 
+              class="iconfont password-icon" 
+              aria-hidden="true">
+              <use xlink:href="#icon_password"/>
             </svg>
             <span>{{ $t("navbar.password") }}</span>
           </el-dropdown-item>
           <el-dropdown-item @click.native="logout">
-            <svg class="iconfont logout-icon" aria-hidden="true">
-              <use xlink:href="#icon_sign_out"></use>
+            <svg 
+              class="iconfont logout-icon" 
+              aria-hidden="true">
+              <use xlink:href="#icon_sign_out"/>
             </svg>
             <span>{{ $t("navbar.logOut") }}</span>
           </el-dropdown-item>
@@ -85,36 +128,81 @@
     </div>
 
     <!--修改密码弹窗 -->
-    <el-dialog :visible="showEditPasswordDialog" :title="$t('navbar.password')" width="2.6rem" class="passwordDialog" @close="handleCloseUpdateUserDialog" append-to-body>
-      <el-form ref="password" :rules="rulePassword" :model="form" label-width="80px">
-        <el-form-item :label="$t('navbar.oldPassword')" prop="oldPassword">
-          <el-input v-model="form.oldPassword" :placeholder="$t('navbar.password_tip.oldPassword')" type="password" />
+    <el-dialog 
+      :visible="showEditPasswordDialog" 
+      :title="$t('navbar.password')" 
+      width="2.6rem" 
+      class="passwordDialog" 
+      append-to-body 
+      @close="handleCloseUpdateUserDialog">
+      <el-form 
+        ref="password" 
+        :rules="rulePassword" 
+        :model="form" 
+        label-width="80px">
+        <el-form-item 
+          :label="$t('navbar.oldPassword')" 
+          prop="oldPassword">
+          <el-input 
+            v-model="form.oldPassword" 
+            :placeholder="$t('navbar.password_tip.oldPassword')" 
+            type="password" />
         </el-form-item>
-        <el-form-item :label="$t('navbar.newPassword')" prop="password">
-          <el-input v-model.trim="form.password" :placeholder="$t('navbar.password_tip.password')" type="password" />
+        <el-form-item 
+          :label="$t('navbar.newPassword')" 
+          prop="password">
+          <el-input 
+            v-model.trim="form.password" 
+            :placeholder="$t('navbar.password_tip.password')" 
+            type="password" />
         </el-form-item>
-        <el-form-item :label="$t('navbar.confirmPassword')" prop="password_confirm">
-          <el-input v-model.trim="form.password_confirm" :placeholder="$t('navbar.password_tip.password_confirm')" type="password" />
+        <el-form-item 
+          :label="$t('navbar.confirmPassword')" 
+          prop="password_confirm">
+          <el-input 
+            v-model.trim="form.password_confirm" 
+            :placeholder="$t('navbar.password_tip.password_confirm')" 
+            type="password" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div 
+        slot="footer" 
+        class="dialog-footer">
         <el-button @click="handleCloseUpdateUserDialog">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button :loading="loading" type="primary" @click="handleUpdatePassword">{{ $t("common.submitButton") }}</el-button>
+        <el-button 
+          :loading="loading" 
+          type="primary" 
+          @click="handleUpdatePassword">{{ $t("common.submitButton") }}</el-button>
       </div>
     </el-dialog>
 
     <!-- 首页配置弹窗 -->
-    <el-dialog :visible="showHomePageSetting" title="首页配置" width="500px" @close="showHomePageSetting = false" append-to-body>
+    <el-dialog 
+      :visible="showHomePageSetting" 
+      title="首页配置" 
+      width="500px" 
+      append-to-body 
+      @close="showHomePageSetting = false">
       <el-checkbox-group v-model="homePageSetting">
-        <el-checkbox v-for="item in allHomePageSetting" :key="item.id" :label="item.id" class="config-item-checkbox" style="">{{ $t(item.name) }}</el-checkbox>
+        <el-checkbox 
+          v-for="item in allHomePageSetting" 
+          :key="item.id" 
+          :label="item.id" 
+          class="config-item-checkbox" 
+          style="">{{ $t(item.name) }}</el-checkbox>
       </el-checkbox-group>
-      <div slot="footer" class="dialog-footer">
+      <div 
+        slot="footer" 
+        class="dialog-footer">
         <el-button @click="showHomePageSetting = false">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button :loading="homePageConfigLoading" type="primary" @click="handleUpdateHomePageSetting">{{ $t("common.submitButton") }}</el-button>
+        <el-button 
+          :loading="homePageConfigLoading" 
+          type="primary" 
+          @click="handleUpdateHomePageSetting">{{ $t("common.submitButton") }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -408,6 +496,9 @@ export default {
       outline: none;
     }
     .right-menu-item {
+      span {
+        display: flex;
+      }
       margin-right: 34px;
       .iconfont {
         color: rgba(203, 206, 237, 1) !important;
