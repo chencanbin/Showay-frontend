@@ -1,38 +1,97 @@
 <template>
   <span>
     <!--<div class="el-table-add-row" @click="initForm"><span>+ 添加</span></div>-->
-    <el-button type="text" size="small" @click="initForm">{{
-      this.$t("common.edit")
-    }}</el-button>
-    <el-dialog v-el-drag-dialog append-to-body :close-on-click-modal="false" :visible="dialogVisible" :before-close="handleClose" :title="$t('course.set.add_title')" width="500px">
-      <el-form ref="course" :model="course" :rules="ruleCourse" label-width="90px">
-        <el-form-item :label="$t('course.title')" prop="title">
-          <el-input v-model="course.title" :placeholder="$t('course.title')" />
+    <el-button 
+      type="text" 
+      size="small" 
+      @click="initForm">{{
+        this.$t("common.edit")
+      }}</el-button>
+    <el-dialog 
+      v-el-drag-dialog 
+      :close-on-click-modal="false" 
+      :visible="dialogVisible" 
+      :before-close="handleClose" 
+      :title="$t('course.set.add_title')" 
+      append-to-body 
+      width="500px">
+      <el-form 
+        ref="course" 
+        :model="course" 
+        :rules="ruleCourse" 
+        label-width="90px">
+        <el-form-item 
+          :label="$t('course.title')" 
+          prop="title">
+          <el-input 
+            v-model="course.title" 
+            :placeholder="$t('course.title')" />
         </el-form-item>
-        <el-form-item :label="$t('course.coverImage')" prop="deadline">
-          <el-upload class="avatar-uploader" :show-file-list="false" action="" :auto-upload="false" :on-change="handleFileUploaderChange">
-            <img v-if="course.coverImage" :src="course.coverImage" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        <el-form-item 
+          :label="$t('course.coverImage')" 
+          prop="deadline">
+          <el-upload 
+            :show-file-list="false" 
+            :auto-upload="false" 
+            :on-change="handleFileUploaderChange" 
+            class="avatar-uploader" 
+            action="">
+            <img 
+              v-if="course.coverImage" 
+              :src="course.coverImage" 
+              class="avatar" >
+            <i 
+              v-else 
+              class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
-        <el-form-item :label="$t('course.type')" prop="online">
+        <el-form-item 
+          :label="$t('course.type')" 
+          prop="online">
           <el-radio-group v-model="course.online">
             <el-radio :label="true">{{ $t("course.online") }}</el-radio>
             <el-radio :label="false">{{ $t("course.offline") }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item :label="$t('course.deadline')" prop="deadline" v-if="!course.online">
-          <el-date-picker v-model="course.deadline" value-format="timestamp" :placeholder="$t('course.deadline')" style="width: 100%" type="datetime" />
+        <el-form-item 
+          v-if="!course.online" 
+          :label="$t('course.deadline')" 
+          prop="deadline">
+          <el-date-picker 
+            v-model="course.deadline" 
+            :placeholder="$t('course.deadline')" 
+            value-format="timestamp" 
+            style="width: 100%" 
+            type="datetime" />
         </el-form-item>
 
-        <el-form-item :label="$t('course.description')" prop="description" v-if="!course.online">
-          <el-input v-model="course.description" :placeholder="$t('course.description')" />
+        <el-form-item 
+          v-if="!course.online" 
+          :label="$t('course.description')" 
+          prop="description">
+          <el-input 
+            v-model="course.description" 
+            :placeholder="$t('course.description')" />
         </el-form-item>
-        <el-form-item :label="$t('course.quota')" prop="quota" v-if="!course.online">
-          <el-input v-model="course.quota" :placeholder="$t('course.set.quota')" />
+        <el-form-item 
+          v-if="!course.online" 
+          :label="$t('course.quota')" 
+          prop="quota">
+          <el-input 
+            v-model="course.quota" 
+            :placeholder="$t('course.set.quota')" />
         </el-form-item>
-        <el-form-item :label="$t('course.attachments')" prop="deadline" v-if="course.online">
-          <el-upload v-loading="loading" :disabled="disabled" :http-request="uploadFile" :show-file-list="false" class="file-upload" action="">
+        <el-form-item 
+          v-if="course.online" 
+          :label="$t('course.attachments')" 
+          prop="deadline">
+          <el-upload 
+            v-loading="loading" 
+            :disabled="disabled" 
+            :http-request="uploadFile" 
+            :show-file-list="false" 
+            class="file-upload" 
+            action="">
             <el-button type="text">{{
               attachmentName || "+点击上传附件"
             }}</el-button>
@@ -43,11 +102,16 @@
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="dialog-footer">
+      <div 
+        slot="footer" 
+        class="dialog-footer">
         <el-button @click="handleClose">{{
           $t("common.cancelButton")
         }}</el-button>
-        <el-button :loading="buttonLoading" type="primary" @click="handleSubmit">{{ $t("common.submitButton") }}</el-button>
+        <el-button 
+          :loading="buttonLoading" 
+          type="primary" 
+          @click="handleSubmit">{{ $t("common.submitButton") }}</el-button>
       </div>
     </el-dialog>
   </span>
@@ -108,7 +172,6 @@ export default {
       this.loading = true;
       this.disabled = true;
       this.buttonText = "正在上传...";
-      debugger;
       const _file = params.file;
       const isLt100M = _file.size / 1024 / 1024 < 100;
       // 通过 FormData 对象上传文件
@@ -164,7 +227,6 @@ export default {
           }
         })
         .catch((error) => {
-          debugger;
           if (error && error.response) {
             console.log(error.response);
           }

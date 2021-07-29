@@ -157,7 +157,6 @@ export default {
           userInfo.password = sha256(userInfo.password);
           this.loginLoading = true;
           this.$store.dispatch("LoginByUsername", userInfo).then((_) => {
-            debugger;
             this.$router.push({ path: this.redirect || "/home" });
           }).catch((_) => {
              this.loginLoading = false;
