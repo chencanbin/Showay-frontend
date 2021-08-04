@@ -2,7 +2,7 @@
   <div>
     <div class="comp-full-calendar">
       <!-- header pick month -->
-      <fc-header :current-month="currentMonth" :first-day="firstDay" :locale="locale" @change="emitChangeMonth">
+      <fc-header :current-month="currentMonth" :first-day="firstDay" :locale="locale" @change="emitChangeMonth" @closeWindow="closeWindow">
       </fc-header>
       <!-- body display date day and events -->
       <div class="full-calendar-body" @click="showMore = false">
@@ -326,6 +326,9 @@ export default {
       policy.currency = event.detail.currency;
       this.$refs.sendEmail.openEmailDialog(policy);
     },
+    closeWindow() {
+      this.$emit('closeWindow')
+    }
   },
 };
 </script>

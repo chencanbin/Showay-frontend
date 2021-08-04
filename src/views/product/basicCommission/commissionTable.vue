@@ -27,20 +27,7 @@
         </el-col>
       </el-row>
       <div @click="onPageClicked()" @mousemove="onPageClicked()" @keyup="onPageClicked()">
-        <el-tabs v-model="activeName" type="border-card" tab-position="bottom">
-          <el-tab-pane :label="$t('product.commission.commission_table.basic_tab')" name="basic">
-            <hot-table v-loading="loading" ref="basicTable" :settings="settings" />
-          </el-tab-pane>
-          <el-tab-pane :label="$t('product.commission.commission_table.override_tab')" name="override">
-            <hot-table v-loading="loading" ref="overrideTable" :settings="settings" />
-          </el-tab-pane>
-          <el-tab-pane :label="$t('product.commission.commission_table.overall_tab')" name="overall">
-            <span style="margin-bottom: 10px; display: inline-block">
-              <el-checkbox v-model="ffyap" label="FFYAP" @change="ffyapChange" />
-            </span>
-            <hot-table v-loading="loading" ref="overallTable" :settings="overAllSettings" />
-          </el-tab-pane>
-        </el-tabs>
+        <hot-table v-loading="loading" ref="basicTable" :settings="settings" />
       </div>
       <el-dialog :close-on-click-modal="false" :visible.sync="timeDialogVisible" :title="$t('product.commission.commission_table.effectDateTitle')" width="400px" append-to-body>
         <el-form ref="configForm" label-width="70px">
@@ -53,13 +40,6 @@
         </el-form>
         <div slot="footer" class="dialog-footer" style="text-align: center">
           <el-button :loading="buttonLoading" type="primary" @click="handlePublish">{{ $t("common.submitButton") }}</el-button>
-        </div>
-      </el-dialog>
-
-      <el-dialog id="setOverrideDialog" :close-on-click-modal="false" :title="overrideTitle" :visible.sync="setOverrideDialogVisible" width="90%" append-to-body>
-        <hot-table v-loading="loading" ref="setOverrideHotInstance" :settings="setOverrideSettings" />
-        <div slot="footer" class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="handleCloseSetOverrideDialog">{{ $t("common.submitButton") }}</el-button>
         </div>
       </el-dialog>
       <div slot="footer" class="dialog-footer">
@@ -135,45 +115,6 @@ export default {
       loading: false,
       buttonLoading: false,
       basicHotInstance: "",
-      overrideHotInstance: "",
-      overallHotInstance: "",
-      setOverrideHotInstance: "",
-      setOverrideSettings: {
-        columns: [],
-        startCols: 15,
-        startRows: 1,
-        colHeaders: [],
-        height: 120,
-        stretchH: "all",
-        rowHeights: 45,
-        columnHeaderHeight: 45,
-        afterChange: (changes, source) => {
-          if (source === "loadData") {
-            return;
-          }
-          if (changes) {
-            const data = [];
-            let value;
-            changes.forEach(([row, column, oldValue, newValue]) => {
-              column = column + 4;
-              if (newValue) {
-                value = _.toString(newValue);
-              }
-              if (value && value.substr(-1) === "%") {
-                value = value.substr(0, value.length - 1);
-              }
-              _.forEach(this.selectedRows, (row) => {
-                data.push({ row, column, value });
-              });
-            });
-            this.$api.commission
-              .commissionTableDraft(this.id, { data, type: 1 })
-              .catch((_) => {
-                this.setOverrideHotInstance.redo();
-              });
-          }
-        },
-      },
       settings: {
         colWidths: [250, 250, 120, 70],
         colHeaders: [],
@@ -192,7 +133,7 @@ export default {
           }
           TD.innerHTML = value;
         },
-        height: document.body.offsetHeight - 222,
+        height: document.body.offsetHeight - 160,
         stretchH: "all",
         autoWrapRow: false,
         autoWrapCol: false,
@@ -210,39 +151,21 @@ export default {
               type = 2;
             }
             if (key === "row_above") {
-              this.$api.commission
+              this.$api.basicCommission
                 .commissionTableDraft(this.id, {
                   data: [{ row: selection[0].start.row - 1, value: 1 }],
                   action: "insertRow",
                   type,
-                })
-                .then((res) => {
-                  if (this.activeName === "basic") {
-                    this.overrideHotInstance.alter(
-                      "insert_row",
-                      selection[0].start.row
-                    );
-                  }
-                })
-                .catch((_) => {
+                }).catch((_) => {
                   this.basicHotInstance.undo();
                 });
             } else if (key === "row_below") {
-              this.$api.commission
+              this.$api.basicCommission
                 .commissionTableDraft(this.id, {
                   data: [{ row: selection[0].start.row, value: 1 }],
                   action: "insertRow",
                   type,
-                })
-                .then((res) => {
-                  if (this.activeName === "basic") {
-                    this.overrideHotInstance.alter(
-                      "insert_row",
-                      selection[0].start.row + 1
-                    );
-                  }
-                })
-                .catch((_) => {
+                }).catch((_) => {
                   this.basicHotInstance.undo();
                 });
             } else if (key === "remove_row") {
@@ -255,19 +178,11 @@ export default {
                   data.push({ row: item.start.row, value });
                 }
               });
-              this.$api.commission
-                .commissionTableDraft(this.id, {
-                  data,
-                  type,
-                  action: "deleteRow",
-                })
-                .then((res) => {
-                  data.forEach((item) => {
-                    if (this.activeName === "basic") {
-                      this.overrideHotInstance.alter("remove_row", item.row);
-                    }
-                  });
-                })
+              this.$api.basicCommission.commissionTableDraft(this.id, {
+                data,
+                type,
+                action: "deleteRow",
+              })
                 .catch((_) => {
                   this.basicHotInstance.undo();
                 });
@@ -282,55 +197,7 @@ export default {
             },
             remove_row: {
               name: this.$t("product.commission.commission_table.remove_row"),
-            },
-            override: {
-              // Own custom option
-              name: this.$t(
-                "product.commission.commission_table.override_setting"
-              ),
-              callback: (key, selection, clickEvent) => {
-                const serialNumberArray = [];
-                const rowLengthArray = [];
-                this.selectedRows = [];
-                let flag = true; // 作为标记，判断是否打开批量设置override的弹框
-                selection.forEach((item) => {
-                  if (item.start.row === item.end.row) {
-                    this.selectedRows = _.union(this.selectedRows, [
-                      item.start.row,
-                    ]);
-                  } else {
-                    this.selectedRows = _.union(
-                      this.selectedRows,
-                      _.range(item.start.row, item.end.row + 1)
-                    );
-                  }
-                });
-                this.selectedRows.forEach((row) => {
-                  const result = _.compact(
-                    this.basicHotInstance.getDataAtRow(row)
-                  );
-
-                  // 判断最后一个column FFYAP有没有值， 如果有, 将结果的长度减1
-                  if (this.basicHotInstance.getDataAtCell(row, 20)) {
-                    rowLengthArray.push(result.length - 1);
-                  } else {
-                    rowLengthArray.push(result.length);
-                  }
-                  serialNumberArray.push(
-                    this.basicHotInstance.getDataAtCell(row, 2)
-                  );
-
-                  if (!this.basicHotInstance.getDataAtCell(row, 3)) {
-                    flag = false;
-                  }
-                });
-                if (flag) {
-                  console.log(_.min(rowLengthArray));
-                  this.overrideTitle = _.join(serialNumberArray, ", ");
-                  this.showSetOverrideDialogVisible(_.min(rowLengthArray));
-                }
-              },
-            },
+            }
           },
         },
         afterBeginEditing: (row, coloumn) => {
@@ -370,7 +237,7 @@ export default {
             this.editStatus = this.$t(
               "product.commission.commission_table.edit_status.saving"
             );
-            this.$api.commission
+            this.$api.basicCommission
               .commissionTableDraft(this.id, { data, type })
               .then((res) => {
                 const date = new Date();
@@ -385,10 +252,11 @@ export default {
                   ]
                 );
               })
-              .catch((_) => {
+              .catch((error) => {
+                debugger
+                console.log('...........................')
+                console.log(error)
                 this.basicHotInstance.undo();
-                this.overallHotInstance.undo();
-                this.overrideHotInstance.undo();
                 this.editStatus = "";
               });
           }
@@ -398,108 +266,16 @@ export default {
             // 为了解决scrollTop 偶尔为0的情况
             setTimeout(() => {
               const scrollTop = document.querySelector(".wtHolder").scrollTop;
-              const clientHeight = document.querySelector(".wtHolder")
-                .clientHeight;
-              const scrollHeight = document.querySelector(".wtHolder")
-                .scrollHeight;
+              const clientHeight = document.querySelector(".wtHolder").clientHeight;
+              const scrollHeight = document.querySelector(".wtHolder").scrollHeight;
               if (scrollTop + clientHeight >= scrollHeight) {
                 this.basicHotInstance.alter("insert_row");
-                this.overrideHotInstance.alter("insert_row");
-              }
-            }, 0);
-          });
-        },
-      },
-      overAllSettings: {
-        colWidths: [250, 250, 120, 70],
-        colHeaders: [],
-        startCols: 20,
-        startRows: 20,
-        search: true,
-        height: document.body.clientHeight - 235,
-        stretchH: "all",
-        autoWrapRow: false,
-        autoWrapCol: false,
-        rowHeaders: true,
-        rowHeaderWidth: 65,
-        fixedColumnsLeft: 1,
-        columnHeaderHeight: 45,
-        rowHeights: 45,
-        renderer: function (instance, TD, row, col, prop, value) {
-          if (row % 2 === 0) {
-            TD.style.backgroundColor = "#E7E8F5";
-          } else {
-            TD.style.backgroundColor = "#fafafa";
-          }
-          TD.innerHTML = value;
-        },
-        contextMenu: {
-          items: {
-            override: {
-              // Own custom option
-              name: this.$t(
-                "product.commission.commission_table.override_setting"
-              ),
-              callback: (key, selection, clickEvent) => {
-                const serialNumberArray = [];
-                const rowLengthArray = [];
-                this.selectedRows = [];
-                selection.forEach((item) => {
-                  if (item.start.row === item.end.row) {
-                    this.selectedRows = _.union(this.selectedRows, [
-                      item.start.row,
-                    ]);
-                  } else {
-                    this.selectedRows = _.union(
-                      this.selectedRows,
-                      _.range(item.start.row, item.end.row + 1)
-                    );
-                  }
-                });
-                this.selectedRows.forEach((row) => {
-                  const result = _.compact(
-                    this.basicHotInstance.getDataAtRow(row)
-                  );
-                  serialNumberArray.push(result[0]);
-                  rowLengthArray.push(result.length);
-                });
-                this.overrideTitle = _.join(serialNumberArray, ", ");
-                this.showSetOverrideDialogVisible(_.min(rowLengthArray));
-              },
-            },
-          },
-        },
-        afterScrollVertically: (_) => {
-          this.$nextTick(function () {
-            // 为了解决scrollTop 偶尔为0的情况
-            setTimeout(() => {
-              const scrollTop = document.querySelector(".wtHolder").scrollTop;
-              const clientHeight = document.querySelector(".wtHolder")
-                .clientHeight;
-              const scrollHeight = document.querySelector(".wtHolder")
-                .scrollHeight;
-              if (scrollTop + clientHeight >= scrollHeight) {
-                this.overallHotInstance.alter("insert_row");
               }
             }, 0);
           });
         },
       },
     };
-  },
-  watch: {
-    activeName(val) {
-      if (val === "basic") {
-        this.loadBasicData();
-        // this.basicHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
-      } else if (val === "override") {
-        this.loadOverrideData();
-        // this.overrideHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
-      } else if (val === "overall") {
-        this.loadOverallData();
-        // this.overallHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
-      }
-    },
   },
   created() {
     console.log(document.body.offsetHeight);
@@ -536,88 +312,6 @@ export default {
       this.settings.colHeaders = colHeaders;
       this.settings.colWidths = _.concat(this.settings.colWidths, colWidths);
       this.settings.columns = columns;
-    },
-    initOverAll() {
-      const colHeaders = [
-        this.$t("product.commission.commission_table.col_header.product_name"),
-        this.$t("product.commission.commission_table.col_header.ENG_name"),
-        this.$t("product.commission.commission_table.col_header.product_id"),
-        this.$t("product.commission.commission_table.col_header.period"),
-      ];
-      const columns = [
-        { renderer: this.textFormatter, readOnly: true },
-        { renderer: this.textFormatter, readOnly: true },
-        { readOnly: true },
-        { readOnly: true },
-      ];
-      const colWidths = [];
-      for (let i = 1; i <= 15; i++) {
-        colWidths.push(85);
-        colHeaders.push(
-          this.$t("product.commission.commission_table.col_header.year", [i])
-        );
-        columns.push({ renderer: this.toPercent, readOnly: true });
-      }
-      colWidths.push(85);
-      colHeaders.push(
-        this.$t("product.commission.commission_table.col_header.after_15_year")
-      );
-      columns.push({ renderer: this.toPercent, readOnly: true });
-      this.overAllSettings.colHeaders = colHeaders;
-      this.overAllSettings.colWidths = _.concat(
-        this.settings.colWidths,
-        colWidths
-      );
-      this.overAllSettings.columns = columns;
-    },
-    // 显示批量设置Override的弹框
-    showSetOverrideDialogVisible(minLength) {
-      this.setOverrideDialogVisible = true;
-      this.$nextTick(() => {
-        const overrideHeaders = [];
-        const overrideColumns = [];
-        this.setOverrideHotInstance = this.$refs.setOverrideHotInstance.hotInstance;
-        console.log(_.range(1, minLength - 3, 1));
-        _.forEach(_.range(1, minLength - 3, 1), (i) => {
-          if (i > 15) {
-            overrideHeaders.push(
-              this.$t(
-                "product.commission.commission_table.col_header.after_15_year"
-              )
-            );
-            overrideColumns.push({ renderer: this.toPercent });
-          } else {
-            overrideHeaders.push(
-              this.$t("product.commission.commission_table.col_header.year", [
-                i,
-              ])
-            );
-            overrideColumns.push({ renderer: this.toPercent });
-          }
-        });
-        this.setOverrideSettings.colHeaders = overrideHeaders;
-        this.setOverrideSettings.columns = overrideColumns;
-        const result = [];
-        // 批量设置完override后，清空override 表数据
-        _.forEach(_.range(0, minLength - 4), (i) => {
-          result.push([1, i, ""]);
-          // this.setOverrideHotInstance.setDataAtCell(0, i, '', 'loadData')
-        });
-
-        this.basicHotInstance.setDataAtRowProp(result, "loadData");
-      });
-    },
-    handleTabClick(tab, event) {
-      if (this.activeName === "basic") {
-        this.loadBasicData();
-        // this.basicHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
-      } else if (this.activeName === "override") {
-        this.loadOverrideData();
-        // this.overrideHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
-      } else if (this.activeName === "overall") {
-        this.loadOverallData();
-        // this.overallHotInstance.updateSettings({ data: Handsontable.helper.createSpreadsheetData(800, 20) })
-      }
     },
     // 格式化百分比的cell
     toPercent(instance, td, row, col, prop, value, cellProperties) {
@@ -656,21 +350,23 @@ export default {
     initForm() {
       const that = this;
       window.onbeforeunload = function (e) {
-        that.$api.commission.commissionTableDraft(that.id, {
+        that.$api.basicCommission.commissionTableDraft(that.id, {
           releaseLock: true,
         });
         return "关闭提示";
       };
+      window.onresize = function (e) {
+        that.basicHotInstance.updateSettings({
+          height: document.body.offsetHeight - 160
+        });
+      };
       this.commissionTableDialogVisible = true;
       this.initColumn();
-      this.initOverAll();
       this.activeName = "basic";
       this.editStatus = "";
       this.remarks = this.commissionRemarks;
       this.$nextTick(() => {
         this.basicHotInstance = this.$refs.basicTable.hotInstance;
-        this.overrideHotInstance = this.$refs.overrideTable.hotInstance;
-        this.overallHotInstance = this.$refs.overallTable.hotInstance;
         this.loadBasicData();
       });
     },
@@ -691,7 +387,7 @@ export default {
         colHeaders: this.settings.colHeaders,
         columns: this.settings.columns,
       });
-      this.$api.commission
+      this.$api.basicCommission
         .fetchCommissionList(this.id)
         .then((res) => {
           const result = [];
@@ -705,6 +401,7 @@ export default {
             res.data.list.forEach((item) => {
               result.push([item.row, item.column, item.value.basic]);
             });
+
           }
           this.basicHotInstance.setDataAtRowProp(result, "loadData");
           this.basicHotInstance.render();
@@ -715,57 +412,6 @@ export default {
           this.commissionTableDialogVisible = false;
         });
     },
-    loadOverrideData() {
-      this.loading = true;
-      this.settings.colWidths.pop();
-      this.settings.colHeaders.pop();
-      this.settings.columns.pop();
-      this.basicHotInstance.updateSettings({
-        colWidths: this.settings.colWidths,
-        colHeaders: this.settings.colHeaders,
-        columns: this.settings.columns,
-      });
-      this.$api.commission
-        .fetchCommissionList(this.id)
-        .then((res) => {
-          const result = [];
-          res.data.list.forEach((item) => {
-            result.push([item.row, item.column, item.value.override]);
-          });
-
-          this.overrideHotInstance.setDataAtRowProp(result, "loadData");
-          this.overrideHotInstance.render();
-          this.loading = false;
-        })
-        .catch((_) => {
-          this.loading = false;
-        });
-    },
-    loadOverallData() {
-      this.loading = true;
-      // const initData = []
-      // for (let x = 0; x < 21; x++) {
-      //   for (let y = 0; y < 1000; y++) {
-      //     initData.push([y, x, ''])
-      //   }
-      // }
-      // this.overallHotInstance.setDataAtRowProp(initData, 'loadData')
-      this.$api.commission
-        .fetchCommissionList(this.id, { ffyap: this.ffyap })
-        .then((res) => {
-          const result = [];
-          res.data.list.forEach((item) => {
-            result.push([item.row, item.column, item.value.overall]);
-            // this.overallHotInstance.setDataAtCell(item.row, item.column, item.value.overall, 'loadData')
-          });
-          this.overallHotInstance.setDataAtRowProp(result, "loadData");
-          this.overallHotInstance.render();
-          this.loading = false;
-        })
-        .catch((_) => {
-          this.loading = false;
-        });
-    },
     handleClose() {
       this.$confirm(this.$t("common.tooltip.close"), this.$t("common.prompt"), {
         confirmButtonText: this.$t("common.confirmButton"),
@@ -773,10 +419,10 @@ export default {
         type: "warning",
       }).then(() => {
         this.wildcard = "";
-        this.$api.commission
+        this.$api.basicCommission
           .commissionTableDraft(this.id, { releaseLock: true })
           .then((res) => {
-            this.$store.dispatch("commission/FetchCommissionTableList", {
+            this.$store.dispatch("commission/FetchBasicCommissionTableList", {
               id: this.companyId,
             });
             this.commissionTableDialogVisible = false;
@@ -804,13 +450,13 @@ export default {
         commentsPlugin.removeCommentAtCell(item.row, item.column);
       });
       this.buttonLoading = true;
-      this.$api.commission
+      this.$api.basicCommission
         .publishCommissionTableDraft(this.id, this.effectiveDate, this.remarks)
         .then((res) => {
           this.buttonLoading = false;
           this.timeDialogVisible = false;
           this.commissionTableDialogVisible = false;
-          this.$store.dispatch("commission/FetchCommissionTableList", {
+          this.$store.dispatch("commission/FetchBasicCommissionTableList", {
             id: this.companyId,
           });
         })
@@ -840,14 +486,7 @@ export default {
         });
     },
     searchAction() {
-      let hotInstance;
-      if (this.activeName === "basic") {
-        hotInstance = this.basicHotInstance;
-      } else if (this.activeName === "override") {
-        hotInstance = this.overrideHotInstance;
-      } else {
-        hotInstance = this.overallHotInstance;
-      }
+      const hotInstance = this.basicHotInstance;;
       const search = hotInstance.getPlugin("search");
       this.searchResult = search.query(this.wildcard);
       if (this.searchResult.length > 0) {
@@ -868,14 +507,7 @@ export default {
       this.searchAction();
     }, 500),
     searchNext() {
-      let hotInstance;
-      if (this.activeName === "basic") {
-        hotInstance = this.basicHotInstance;
-      } else if (this.activeName === "override") {
-        hotInstance = this.overrideHotInstance;
-      } else {
-        hotInstance = this.overallHotInstance;
-      }
+      const hotInstance = this.basicHotInstance;
       if (this.currentCount >= this.matchCount) {
         hotInstance.toVisualRow(this.searchResult[this.matchCount - 1].row);
         hotInstance.selectRows(this.searchResult[this.matchCount - 1].row);
@@ -890,14 +522,7 @@ export default {
       }
     },
     searchLast() {
-      let hotInstance;
-      if (this.activeName === "basic") {
-        hotInstance = this.basicHotInstance;
-      } else if (this.activeName === "override") {
-        hotInstance = this.overrideHotInstance;
-      } else {
-        hotInstance = this.overallHotInstance;
-      }
+      const hotInstance = this.basicHotInstance;
       if (this.currentCount <= 1) {
         hotInstance.toVisualRow(this.searchResult[0].row);
         hotInstance.selectRows(this.searchResult[0].row);
@@ -931,6 +556,10 @@ export default {
   color: #3a4735;
   font-weight: bold;
   vertical-align: bottom;
+}
+.handsontable input,
+.handsontable textarea {
+  line-height: 45px;
 }
 .handsontable td,
 .handsontable th {

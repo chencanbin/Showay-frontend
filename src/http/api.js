@@ -6,6 +6,7 @@ import * as user from './modules/user'
 import * as role from './modules/role'
 import * as company from './modules/company'
 import * as commission from './modules/commission'
+import * as basicCommission from './modules/basicCommission'
 import * as client from './modules/client'
 import * as product from './modules/product'
 import * as channel from './modules/channel'
@@ -14,6 +15,7 @@ import * as statistics from './modules/statistics'
 import * as config from './modules/config'
 import * as template from './modules/template'
 import * as course from './modules/course'
+import * as broker from './modules/broker'
 // 默认全部导出
 export default {
   login,
@@ -21,6 +23,7 @@ export default {
   role,
   company,
   commission,
+  basicCommission,
   client,
   product,
   channel,
@@ -28,5 +31,6 @@ export default {
   statistics,
   config,
   template,
-  course
+  course,
+  broker
 }

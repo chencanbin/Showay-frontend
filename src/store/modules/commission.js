@@ -1,5 +1,5 @@
 import { fetchCommissionTableList, fetchCommissionCredit, fetchAuditPayment, fetchMergedPayment, fetchCommissionPolicy, fetchCleared } from '@/http/modules/commission'
-
+import * as basicCommission from '@/http/modules/basicCommission'
 const commission = {
   namespaced: true,
   state: {
@@ -75,6 +75,16 @@ const commission = {
     }
   },
   actions: {
+    FetchBasicCommissionTableList({ commit }, { id, params }) {
+      commit('SHOW_COMMISSION_TABLE_LIST_LOADING')
+      commit('SET_COMMISSION_TABLE_LIST', [])
+      return basicCommission.fetchCommissionTableList(id, params).then(res => {
+        commit('SET_COMMISSION_TABLE_LIST', res.data)
+        commit('HIDE_COMMISSION_TABLE_LIST_LOADING')
+      }).catch(_ => {
+        commit('HIDE_COMMISSION_TABLE_LIST_LOADING')
+      })
+    },
     FetchCommissionTableList({ commit }, { id, params }) {
       commit('SHOW_COMMISSION_TABLE_LIST_LOADING')
       commit('SET_COMMISSION_TABLE_LIST', [])

@@ -17,7 +17,8 @@ module.exports = {
         //target: 'http://192.168.1.106:8080',
         //target: 'http://111.231.112.104:8080/', // production
         //target: 'http://111.231.112.104:8888/',
-        target: 'http://111.231.112.104:8080',
+        target: 'http://111.231.112.104:8081',
+        //target: 'http://192.168.31.195:8080',
         secure: false,
         changeOrigin: true
       }

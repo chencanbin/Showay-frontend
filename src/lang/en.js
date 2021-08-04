@@ -5,6 +5,7 @@ export default {
     company: 'Partner',
     companyContact: 'Contact',
     productCommission: 'Plan Commission',
+    productBasicCommission: 'Basic Commission',
     channelCommission: 'Channel Commission',
     client: 'Client',
     insurancePolicy: 'Policy',
@@ -24,7 +25,8 @@ export default {
     role: 'Role',
     template: 'Template',
     training: 'Training',
-    course: 'Course'
+    course: 'Course',
+    broker: 'Broker'
   },
   common: {
     action: '',
@@ -226,9 +228,11 @@ export default {
       add: {
         title: 'Add Commission Table',
         company: 'Partner',
+        broker: 'Broker',
         template: 'Template',
         template_placeholder: 'Select a template or create a blank one',
         company_rule_message: 'Select a partner',
+        broker_rule_message: 'Select a broker',
         generate_commission_rate: 'Include Rates'
       }
     },
@@ -567,6 +571,52 @@ export default {
     send_success: 'Message is sent', // Message is sent
     set: {
       template: 'Select Template'
+    }
+  },
+  course: {
+    title: '课程名称',
+    quota: '可预约数量',
+    coverImage: '封面',
+    attachments: '附件',
+    description: '培训地址',
+    deadline: '培训时间',
+    type: '培训类型',
+    core: '核心分数',
+    elective: '非核心分数',
+    other: '其他分数',
+    online: '线上',
+    offline: '线下',
+    set: {
+      add_title: '创建课程',
+      edit_title: '修改课程',
+      title: '请输入课程名称',
+      attachments: '请上传课程附件',
+      coverImage: '请上传课程封面',
+      quota: '请输入可预约数'
+    },
+    tooltip: {
+      delete: 'Are you sure you want to delete the insurance course?'
+    }
+  },
+  broker: {
+    name: 'Name',
+    name_en: 'English Name',
+    name_zh: 'Chinese Name',
+    email: 'Email',
+    set: {
+      add_title: 'Add Broker',
+      edit_title: 'Edit Broker',
+      name_en: 'En name',
+      name_zh: 'Zh name',
+      email: 'Email',
+    },
+    verify_message: {
+      name_en: 'Empty English Name',
+      name_zh: 'Empty Chinese Name',
+      email: 'Empty Email Name'
+    },
+    tooltip: {
+      delete: 'Are you sure you want to delete the broker'
     }
   }
 }

@@ -5,6 +5,7 @@ export default {
     company: '合作机构',
     companyContact: '联系人列表',
     productCommission: '产品佣金',
+    productBasicCommission: '基础佣金',
     channelCommission: '渠道佣金',
     client: '客户',
     insurancePolicy: '保单',
@@ -25,7 +26,7 @@ export default {
     template: '模板',
     training: '培训',
     course: '课程',
-    enterprise: '企业'
+    broker: '经纪公司'
   },
   common: {
     action: '操作',
@@ -227,8 +228,10 @@ export default {
       add: {
         title: '添加佣金表',
         company: '供应商',
+        broker: '经纪公司',
         template: '佣金模板',
         template_placeholder: '请选择佣金模板(不选默认创建空白佣金表)',
+        broker_rule_message: '请选择经纪公司',
         company_rule_message: '请选择供应商',
         generate_commission_rate: '生成佣金率'
       }
@@ -596,20 +599,26 @@ export default {
       delete: '是否删除该课程'
     }
   },
-  enterprise: {
-    name: '企业名称',
-    account: '企业账号',
+  broker: {
     email: '邮箱',
-    certificate: '证件',
+    name: '经纪公司',
+    name_en: '经纪公司(英文)',
+    name_zh: '经纪公司(中文)',
+    email: '邮箱',
     set: {
-      add_title: '创建企业',
-      edit_title: '修改企业',
+      add_title: '创建经纪公司',
+      edit_title: '修改经纪公司',
+      name_en: '请输入经纪公司(英文)',
+      name_zh: '请输入经纪公司(中文)',
       email: '请输入邮箱',
-      account: '请输入企业账号',
-      attachments: '请上传企业证件',
+    },
+    verify_message: {
+      name_en: '经纪公司名(英文)必须填',
+      name_zh: '经纪公司名(中文)必须填',
+      email: '电子邮箱必须填'
     },
     tooltip: {
-      delete: '是否删除该课程'
+      delete: '是否删除该经纪公司'
     }
   }
 }

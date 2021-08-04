@@ -193,7 +193,8 @@
  //  padding: 5px 0!important;
  //}
  .el-table-add-col {
-   padding: 10px
+   padding: 10px;
+   width: 900px;
  }
 
 
@@ -442,7 +443,7 @@
  }
 
  .el-input__inner {
-   padding-left: 11px !important;
+   padding-left: 15px !important;
    padding-right: 0 !important;
  }
 
@@ -605,6 +606,13 @@
      }
    }
 
+ }
+
+ .el-tag.el-tag--info {
+   display: flex !important;
+   justify-content: center !important;
+   align-items: center;
+   padding: 14px;
  }
 
  //  .el-select__tags {

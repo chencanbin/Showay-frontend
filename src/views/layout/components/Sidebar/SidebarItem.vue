@@ -83,8 +83,6 @@ export default {
   methods: {
     getIcon(item) {
       const name = item.name
-      console.log(name)
-      console.log(this.$route.name)
       const icon = this.$route.name === name || this.$route.meta.parentName === name ? item.meta.activeIcon : item.meta.icon;
       return icon
     },

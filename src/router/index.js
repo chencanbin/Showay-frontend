@@ -56,33 +56,7 @@ export const constantRouterMap = [
     path: '/401',
     component: () => import('@/views/errorPage/401'),
     hidden: true
-  },
-  {
-    path: '/training',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: 'course',
-        name: 'course',
-        component: () => import('@/views/training/course/index'),
-        meta: { title: 'course', icon: 'icon_home_baodan_nor', activeIcon: 'icon_home_baodan_select', noCache: true, id: 100049 }
-      }
-    ]
-  },
-  {
-    path: '/enterprise',
-    component: Layout,
-    redirect: 'enterprise',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/enterprise/index'),
-        name: 'enterprise',
-        meta: { title: 'enterprise', icon: 'icon_home_nor', activeIcon: 'icon_home_select', noCache: true, id: 100001 }
-      }
-    ]
-  },
+  }
 ];
 
 export default new Router({
@@ -106,6 +80,19 @@ export const asyncRouterMap = [
         component: () => import('@/views/dashboard/index'),
         name: 'home',
         meta: { title: 'home', icon: 'icon_home_nor', activeIcon: 'icon_home_select', noCache: true, id: 100001 }
+      }
+    ]
+  },
+  {
+    path: '/broker',
+    component: Layout,
+    redirect: 'broker',
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/broker/index'),
+        name: 'broker',
+        meta: { title: 'broker', icon: 'icon_broker_nor', activeIcon: 'icon_broker', noCache: true, id: 100001 }
       }
     ]
   },
@@ -135,16 +122,22 @@ export const asyncRouterMap = [
         meta: { title: 'productCommission', icon: 'icon_commission_nor', activeIcon: 'icon_commission_select', noCache: true, id: 100016 }
       },
       {
+        path: 'productBasicCommission',
+        component: () => import('@/views/product/basicCommission/index'),
+        name: 'productBasicCommission',
+        meta: { title: 'productBasicCommission', icon: 'icon_commission_nor', activeIcon: 'icon_commission_select', noCache: true, id: 100016 }
+      },
+      {
         path: 'channelCommission',
         component: () => import('@/views/product/channel/index'),
         name: 'channelCommission',
         meta: { title: 'channelCommission', showChild: true, icon: 'icon_qudaoyj_nor', activeIcon: 'icon_qudaoyj_select', noCache: true, id: 100082 },
         children: [{
-          path: 'contact',
+          path: 'channelCommission',
           component: () => import('@/views/product/channel/editChannelCommissionTable'),
           name: 'channelCommissionTable',
           hidden: true,
-          meta: { title: 'riderBenefits', parentName: 'channelCommission', showChild: false, noCache: true, activeMenu: '/product/channelCommission' }
+          meta: { title: 'channelCommission', parentName: 'channelCommission', showChild: false, noCache: true, activeMenu: '/product/channelCommission' }
         }]
       }
     ]
@@ -271,6 +264,19 @@ export const asyncRouterMap = [
         component: () => import('@/views/document/companyDocument'),
         name: 'companyDocument',
         meta: { title: 'companyDocument', icon: 'icon_commission-43_nor', activeIcon: 'icon_commission_select-43', noCache: true, id: 100074 }
+      }
+    ]
+  },
+  {
+    path: '/training',
+    component: Layout,
+    redirect: 'noRedirect',
+    children: [
+      {
+        path: 'course',
+        name: 'course',
+        component: () => import('@/views/training/course/index'),
+        meta: { title: 'course', icon: 'icon_course_nor', activeIcon: 'icon_course', noCache: true, id: 100049 }
       }
     ]
   },

@@ -274,11 +274,7 @@ export default {
   .el-dialog.is-fullscreen {
     overflow: hidden;
   }
-  .el-tag.el-tag--info {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center;
-  }
+
   .el-select {
     width: 300px;
     margin-right: 20px;

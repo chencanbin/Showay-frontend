@@ -1,53 +1,75 @@
 <template>
-  <div 
-    id="company" 
-    class="table-container">
-    <router-view/>
+  <div id="company" class="table-container">
+    <router-view />
     <div v-show="$route.meta.showContact">
       <div class="header">
-        <el-form 
-          :inline="true" 
-          class="search-input" 
-          @submit.native.prevent>
-          <el-form-item 
-            label="" 
-            prop="wildcard">
-            <el-input 
-              v-model="wildcard" 
-              :placeholder="$t('product.company.search_company_placeholder')" 
-              clearable 
-              @input="search">
-              <i 
-                slot="prefix" 
-                class="el-input__icon el-icon-search" />
+        <el-form :inline="true" class="search-input" @submit.native.prevent>
+          <el-form-item label="" prop="wildcard">
+            <el-input v-model="wildcard" :placeholder="$t('product.company.search_company_placeholder')" clearable @input="search">
+              <i slot="prefix" class="el-input__icon el-icon-search" />
             </el-input>
           </el-form-item>
-          <el-button 
-            type="primary" 
-            @click="search">搜索</el-button>
+          <el-button type="primary" @click="search">搜索</el-button>
         </el-form>
       </div>
       <basic-container>
-        <!-- <el-table v-loading="companyLoading" :data="companyList.list" :height="height" :expand-row-keys="expandKeys" row-key="id" stripe @expand-change="expandChange">
-        <el-table-column type="expand">
-          <template slot-scope="scope">
-            <el-form id="policy-table-expand" label-position="left" inline>
-              <el-form-item :label="$t('product.company.table_header.address')" class="company-form-item" style="width: 100%">
-                <span>{{ scope.row.address }}</span>
-              </el-form-item>
-              <el-form-item v-for="(item, index) in scope.row.websites" :key="index" :label="
-                  $t('product.company.table_header.website') + (index + 1)
-                " class="company-form-item">
-                <div v-if="item.split('-').length > 1">
-                  <a :href="item" class="link">{{ item.split("-")[0] }}</a> (
-                  {{ item.split("-")[1] }} )
-                </div>
-                <div v-else>
-                  <a :href="item" class="link">{{ item }}</a>
-                </div>
-              </el-form-item>
-              <br>
-              <el-form-item v-for="(item, index) in scope.row.contacts" :key="index" :label="$t('product.company.set.contacts') + (index + 1)" class="company-form-item" style="width: 30%">
+        <el-scrollbar>
+          <div v-loading="companyLoading" class="list">
+            <div v-for="row in companyList.list" :key="row.id" class="list_item">
+              <div class="row" style="height: 60px; line-height: 60px">
+                <span class="company_name">{{ row.acronym }} - {{ row.name }}</span>
+                <span>
+                  <el-dropdown>
+                    <el-button type="primary" plain size="mini">
+                      <i class="el-icon-more" />
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item>
+                        <edit v-if="hasPermission(100008)" :id="row.id" />
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <!-- <contact v-if="hasPermission(100123)" :company="row" /> -->
+                        <el-button type="text" size="small" @click="gotoContact(row)">
+                          {{ $t("product.company.set.edit_contact_title") }}
+                        </el-button>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <el-button v-if="hasPermission(100009)" :loading="deleteLoading" size="small" type="text" @click="handleDelete(row)">{{ $t("common.delete") }}</el-button>
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </span>
+              </div>
+              <div class="row">
+                <span class="label">{{ $t('product.company.table_header.level') }}:</span>
+                <span class="content">
+                  <el-tag v-if="row.secondary" type="warning">{{
+                    $t("product.company.levelTab.level2")
+                  }}</el-tag>
+                  <el-tag v-else type="success">{{
+                    $t("product.company.levelTab.level1")
+                  }}</el-tag>
+                </span>
+              </div>
+              <!-- <div class="row">
+            <span class="label">{{$t('product.company.table_header.name')}}:</span>
+            <span class="content">{{ row.acronym }} - {{ row.name }}:</span>
+          </div> -->
+              <div class="row">
+                <span class="label">{{ $t('product.company.table_header.phone') }}:</span>
+                <span class="content">{{ row.phone }}</span>
+              </div>
+              <div class="row">
+                <span class="label">{{ $t('product.company.table_header.email') }}:</span>
+                <span class="content">{{ row.email }}</span>
+              </div>
+              <div class="row">
+                <span class="label">{{ $t('product.company.table_header.contractEffectiveDate') }}:</span>
+                <span class="content">{{ row.contractEffectiveDate }}</span>
+              </div>
+              <div v-for="(item, index) in row.contacts" :key="item.id" :label="$t('product.company.set.contacts') + (index + 1)" class="row">
+                <span class="label">{{ $t('product.company.set.contacts') + (index + 1) }}:</span>
+
                 <el-popover placement="top-start" trigger="hover">
                   <el-card style="padding: 10px">
                     <el-form label-width="80px">
@@ -65,205 +87,31 @@
                       </el-form-item>
                     </el-form>
                   </el-card>
-                  <span slot="reference">
-                    {{ item.name }}
-                  </span>
+                  <span slot="reference" class="content">{{ item.name }}</span>
                 </el-popover>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('product.company.table_header.name')" prop="name" min-width="150px" show-overflow-tooltip>
-          <template slot-scope="scope">
-            {{ scope.row.acronym }} - {{ scope.row.name }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('product.company.table_header.level')" prop="level" width="150px">
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.secondary" type="warning">{{
-                $t("product.company.levelTab.level2")
-              }}</el-tag>
-            <el-tag v-else type="success">{{
-                $t("product.company.levelTab.level1")
-              }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('product.company.table_header.phone')" prop="phone" show-overflow-tooltip />
-        <el-table-column :label="$t('product.company.table_header.email')" prop="email" show-overflow-tooltip />
-        <el-table-column :formatter="dateFormat" :label="$t('product.company.table_header.contractEffectiveDate')" prop="contractEffectiveDate" min-width="100px" />
-        <el-table-column :label="$t('common.action')" width="80px">
-          <template slot-scope="scope">
-            <el-dropdown>
-              <el-button type="primary" plain size="mini">
-                <i class="el-icon-more" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <edit v-if="hasPermission(100008)" :id="scope.row.id" />
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <contact v-if="hasPermission(100123)" :company="scope.row" />
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <el-button v-if="hasPermission(100009)" :loading="deleteLoading" size="small" type="text" @click="handleDelete(scope.row)">{{ $t("common.delete") }}</el-button>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <edit :id="scope.row.id" />
-          </template>
-        </el-table-column>
-      </el-table> -->
-        <div 
-          v-loading="companyLoading" 
-          class="list">
-          <div 
-            v-for="row in companyList.list" 
-            :key="row.id" 
-            class="list_item">
-            <div 
-              class="row" 
-              style="height: 60px; line-height: 60px">
-              <span class="company_name">{{ row.acronym }} - {{ row.name }}</span>
-              <span>
-                <el-dropdown>
-                  <el-button 
-                    type="primary" 
-                    plain 
-                    size="mini">
-                    <i class="el-icon-more" />
-                  </el-button>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>
-                      <edit 
-                        v-if="hasPermission(100008)" 
-                        :id="row.id" />
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <!-- <contact v-if="hasPermission(100123)" :company="row" /> -->
-                      <el-button 
-                        type="text" 
-                        size="small" 
-                        @click="gotoContact(row)">
-                        {{ $t("product.company.set.edit_contact_title") }}
-                      </el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button 
-                        v-if="hasPermission(100009)" 
-                        :loading="deleteLoading" 
-                        size="small" 
-                        type="text" 
-                        @click="handleDelete(row)">{{ $t("common.delete") }}</el-button>
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </span>
+              </div>
+              <div v-for="(item, index) in row.websites" :key="item.id" class="row">
+                <span class="label">{{ $t('product.company.table_header.website') + (index + 1) }}:</span>
+                <span v-if="item.split('-').length > 1" class="content">
+                  <a :href="item" class="link"><span class="link_remark">({{ item.split("-")[1] }})</span>{{ item.split("-")[0] }}</a>
+                </span>
+                <span v-else class="content">
+                  <a :href="item" class="link">{{ item }}</a>
+                </span>
+              </div>
             </div>
-            <div class="row">
-              <span class="label">{{ $t('product.company.table_header.level') }}:</span>
-              <span class="content">
-                <el-tag 
-                  v-if="row.secondary" 
-                  type="warning">{{
-                    $t("product.company.levelTab.level2")
-                  }}</el-tag>
-                <el-tag 
-                  v-else 
-                  type="success">{{
-                    $t("product.company.levelTab.level1")
-                  }}</el-tag>
-              </span>
-            </div>
-            <!-- <div class="row">
-            <span class="label">{{$t('product.company.table_header.name')}}:</span>
-            <span class="content">{{ row.acronym }} - {{ row.name }}:</span>
-          </div> -->
-            <div class="row">
-              <span class="label">{{ $t('product.company.table_header.phone') }}:</span>
-              <span class="content">{{ row.phone }}</span>
-            </div>
-            <div class="row">
-              <span class="label">{{ $t('product.company.table_header.email') }}:</span>
-              <span class="content">{{ row.email }}</span>
-            </div>
-            <div class="row">
-              <span class="label">{{ $t('product.company.table_header.contractEffectiveDate') }}:</span>
-              <span class="content">{{ row.contractEffectiveDate }}</span>
-            </div>
-            <div 
-              v-for="(item, index) in row.contacts" 
-              :key="item.id" 
-              :label="$t('product.company.set.contacts') + (index + 1)" 
-              class="row">
-              <span class="label">{{ $t('product.company.set.contacts') + (index + 1) }}:</span>
-
-              <el-popover 
-                placement="top-start" 
-                trigger="hover">
-                <el-card style="padding: 10px">
-                  <el-form label-width="80px">
-                    <el-form-item 
-                      :label="$t('product.company.set.contacts_title')" 
-                      class="detail-item">
-                      {{ item.title }}
-                    </el-form-item>
-                    <el-form-item 
-                      :label="$t('product.company.set.contacts_phone')" 
-                      class="detail-item">
-                      {{ item.phone }}
-                    </el-form-item>
-                    <el-form-item 
-                      :label="$t('product.company.set.contacts_email')" 
-                      class="detail-item">
-                      {{ item.email }}
-                    </el-form-item>
-                    <el-form-item 
-                      :label="$t('product.company.set.address')" 
-                      class="detail-item">
-                      {{ item.address }}
-                    </el-form-item>
-                  </el-form>
-                </el-card>
-                <span 
-                  slot="reference" 
-                  class="content">{{ item.name }}</span>
-              </el-popover>
-            </div>
-            <div 
-              v-for="(item, index) in row.websites" 
-              :key="item.id" 
-              class="row">
-              <span class="label">{{ $t('product.company.table_header.website') + (index + 1) }}:</span>
-              <span 
-                v-if="item.split('-').length > 1" 
-                class="content">
-                <a 
-                  :href="item" 
-                  class="link"><span class="link_remark">({{ item.split("-")[1] }})</span>{{ item.split("-")[0] }}</a>
-              </span>
-              <span 
-                v-else 
-                class="content">
-                <a 
-                  :href="item" 
-                  class="link">{{ item }}</a>
-              </span>
+            <div class="list_item_empty"></div>
+            <div class="list_item_empty"></div>
+            <div v-if="companyList.list && companyList.list.length === 0" class="list_empty">
+              <img class="no-data-image" src="https://perfectdiary-public-dev.oss-cn-shenzhen.aliyuncs.com/material/image/2021/07/7ae9b327b8eb4e29a712b87518049e78.png" />
+              數據為空
             </div>
           </div>
-          <div 
-            v-if="companyList.list.length === 0" 
-            class="list_item_empty">數據為空</div>
-        </div>
-        <div class="table-bottom">
-          <add v-if="hasPermission(100005)" />
-          <pagination 
-            :total="companyList.total" 
-            :page="listQuery.page" 
-            :limit="listQuery.limit" 
-            @pagination="pagination" 
-            @updatme:page="updatePage" 
-            @update:limit="updateLimit" />
-        </div>
+          <div class="table-bottom">
+            <add v-if="hasPermission(100005)" />
+            <pagination :total="companyList.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @updatme:page="updatePage" @update:limit="updateLimit" />
+          </div>
+        </el-scrollbar>
       </basic-container>
     </div>
   </div>
@@ -399,7 +247,8 @@ export default {
     flex-wrap: wrap;
     justify-content: space-between;
     box-sizing: border-box;
-    min-height: 70vh;
+    max-height: 70vh;
+    overflow: auto;
     .company_name {
       font-weight: bold;
       color: $--content;
@@ -411,6 +260,7 @@ export default {
       border-radius: 8px;
       border: 1px solid #e9e8f0;
       margin-bottom: 24px;
+      max-height: 1000px;
       .row {
         display: flex;
         justify-content: space-between;
@@ -446,10 +296,21 @@ export default {
       }
     }
     .list_item_empty {
+      width: 520px;
+    }
+    .list_empty {
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+      color: #e9e8f0;
+      font-size: 18px;
+      margin-top: 160px;
+      image {
+        width: 280px;
+        height: 280px;
+      }
     }
   }
 }

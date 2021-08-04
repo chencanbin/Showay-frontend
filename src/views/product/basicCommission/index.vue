@@ -69,6 +69,7 @@
                   <el-dropdown-item v-if="hasPermission(100018)">
                     <commission-table :company-id="currentRow.id" :id="commissionTable.id" :commission-remarks="commissionTable.remarks" :title="commissionTable.company.name" :effective-date="
                             getFormattedDate(commissionTable.effectiveDate)" />
+
                   </el-dropdown-item>
                   <el-dropdown-item v-if="hasPermission(100020) && commissionTable.status !== 0">
                     <el-button :ref="`export_${commissionTable.id}`" size="small" type="text" @click="exportExcel(commissionTable)">{{ $t("common.export") }}</el-button>
@@ -157,6 +158,13 @@ export default {
       companyList: (state) => state.company.companyList,
       commissionTableList: (state) => state.commission.commissionTableList,
     }),
+    isSuperAdmin() {
+      if (this.$store.getters.roles[0].id = 1) {
+        return true
+      } else {
+        return false
+      }
+    }
   },
   mounted() {
     this.getCompanyList();
@@ -167,7 +175,12 @@ export default {
       this.getCompanyList({ wildcard: this.wildcard });
     }, 500),
     getCommissionTableList(id, params) {
-      this.$store.dispatch("commission/FetchCommissionTableList", { id, params });
+      if (this.isSuperAdmin) {
+        this.$store.dispatch("commission/FetchBasicCommissionTableList", { id, params });
+      } else {
+        this.$store.dispatch("commission/FetchCommissionTableList", { id, params });
+      }
+
     },
     getCompanyList(param) {
       this.$store.dispatch("company/FetchCompanyList", param);

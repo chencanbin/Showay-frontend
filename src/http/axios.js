@@ -30,6 +30,9 @@ const cancelPending = (config) => {
     if (item.u.indexOf('commissionTableDraft') !== -1) {
       return
     }
+    if (item.u.indexOf('basicTable') !== -1) {
+      return
+    }
     if (config) {
       if (item.u === config.url) {
         item.f() // 取消请求

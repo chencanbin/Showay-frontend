@@ -3,12 +3,13 @@ export default {
     home: '首頁',
     product: '產品',
     company: '合作機構',
-    companyContact: '聯繫人列表',
+    companyContact: '聯繫人列錶',
     productCommission: '產品傭金',
+    productBasicCommission: '基础佣金',
     channelCommission: '渠道傭金',
     client: '客戶',
     insurancePolicy: '保單',
-    riderBenefits: '副險列表',
+    riderBenefits: '副險列錶',
     policyFile: '保單文件',
     clientInfo: '客戶資料',
     commission: '傭金',
@@ -19,12 +20,13 @@ export default {
     document: '文檔',
     internalDocument: '內部文檔',
     companyDocument: '公司文檔',
-    system: '系統',
+    system: '係統',
     user: '用戶',
     role: '角色',
-    template: '模板',
+    template: '模闆',
     training: '培訓',
-    course: '課程'
+    course: '課程',
+    broker: '經紀公司'
   },
   common: {
     action: '操作',
@@ -59,7 +61,7 @@ export default {
     tooltip: {
       close: '是否需要關閉此窗口?'
     },
-    password_verify: '身份认证',
+    password_verify: '身份認證',
     reset_password: '重置密碼',
     password_verify_text: '此操作需要驗證身份才能繼續進行',
     company_placeholder: '請選擇供應商',
@@ -71,25 +73,25 @@ export default {
   navbar: {
     logOut: '退出登錄',
     password: '修改密碼',
-    oldPassword: '旧密码',
-    newPassword: '新密码',
-    confirmPassword: '密码确认',
+    oldPassword: '舊密碼',
+    newPassword: '新密碼',
+    confirmPassword: '密碼確認',
     password_tip: {
       oldPassword: '舊密碼必須填',
       password: '新密碼必須填',
       password_confirm: '密碼確認必須填',
       enter_password_again: '請再次輸入密碼',
-      difference_password: '兩次輸入密碼不壹致'
+      difference_password: '兩次輸入密碼不壹緻'
     },
     screenfull: '全屏',
     theme: '換膚',
-    size: '布局大小',
+    size: '佈局大小',
     calendar: '續保日歷',
     credit: '待收',
     payment: '待發'
   },
   login: {
-    title: '系統登錄',
+    title: '係統登錄',
     logIn: '登錄',
     username: '賬號',
     password: '密碼',
@@ -111,11 +113,11 @@ export default {
     month: '月度',
     quarter: '季度',
     year: '年度',
-    sale: '数额',
+    sale: '數額',
     comparison: '公司業績同比',
     count: '出單量',
     channelPerformanceTop: '渠道業績Top5',
-    channelPerformanceScale: '渠道業績比例分布'
+    channelPerformanceScale: '渠道業績比例分佈'
   },
   product: {
     company: {
@@ -132,7 +134,7 @@ export default {
         contractEffectiveDate: '簽約時間',
         phone: '聯繫電話',
         email: '電子郵件',
-        website: '系統地址',
+        website: '係統地址',
         address: '聯繫地址',
         action: '操作'
       },
@@ -148,7 +150,7 @@ export default {
         secondary: '二級供應商',
         phone: '聯繫電話',
         email: '電子郵件',
-        website: '系統地址',
+        website: '係統地址',
         address: '聯繫地址',
         contacts: '聯繫人',
         contacts_name: '姓名',
@@ -168,32 +170,32 @@ export default {
     },
     commission: {
       commission_table_list: {
-        no_commission_table: '無傭金表',
+        no_commission_table: '無傭金錶',
         status: '狀態',
-        status_info: '未發布',
-        status_success: '已發布',
+        status_info: '未發佈',
+        status_success: '已發佈',
         status_warning: '有改動',
         product_count: '產品數'
       },
       tooltip: {
-        delete: '此操作將永久刪除該傭金表, 是否繼續?',
-        export: '導出的部分不包含未發布的內容, 是否繼續導出?',
+        delete: '此操作將永久刪除該傭金錶, 是否繼續?',
+        export: '導出的部分不包含未發佈的內容, 是否繼續導出?',
         download: '導出文件需要較多時間, 是否繼續導出?'
       },
       commission_table: {
-        title: '{0} 傭金策略表',
-        text: '{0}傭金策略表',
+        title: '{0} 傭金策略錶',
+        text: '{0}傭金策略錶',
         search_placeholder: '請輸入搜索內容',
-        basic_tab: '基礎傭金表',
-        override_tab: 'Override傭金表',
-        overall_tab: '總傭金表',
-        effectDateTitle: '設置佣金錶生效時間',
+        basic_tab: '基礎傭金錶',
+        override_tab: 'Override傭金錶',
+        overall_tab: '總傭金錶',
+        effectDateTitle: '設置傭金錶生效時間',
         effectDate: '生效時間',
         override_setting: '設置Override',
-        row_above: '向上插入一行',
-        row_below: '向下插入一行',
+        row_above: '嚮上插入一行',
+        row_below: '嚮下插入一行',
         remove_row: '移除整行',
-        publish_button: '發布',
+        publish_button: '發佈',
         edit_status: {
           modifying: '正在修改.....',
           saving: '正在保存.....',
@@ -211,23 +213,25 @@ export default {
       },
       view: {
         search: '搜索 (編號 | 中文 | 英文)',
-        basic_tab: '基礎傭金表',
-        overall_tab: '總傭金表',
+        basic_tab: '基礎傭金錶',
+        overall_tab: '總傭金錶',
         table_header: {
           acronym: '編號',
           name: '產品名稱(中文)',
           enName: '產品名稱(英文)',
           period: '年期'
         },
-        title: '{0} 傭金表',
+        title: '{0} 傭金錶',
         year: '第{0}年',
         after_15_year: '15年以後'
       },
       add: {
-        title: '添加傭金表',
+        title: '添加傭金錶',
         company: '供應商',
-        template: '傭金模板',
-        template_placeholder: '請選擇傭金模板(不選默認創建空白傭金表)',
+        broker: '經紀公司',
+        template: '傭金模闆',
+        template_placeholder: '請選擇傭金模闆(不選默認創建空白傭金錶)',
+        broker_rule_message: '請選擇經紀公司',
         company_rule_message: '請選擇供應商',
         generate_commission_rate: '生成傭金率'
       }
@@ -245,10 +249,10 @@ export default {
         remarks: '備註'
       },
       policy_button: '渠道策略',
-      commission_policy_button: '佣金策略',
+      commission_policy_button: '傭金策略',
       tooltip: {
         delete: '此操作將永久刪除該渠道賬號, 是否繼續?',
-        delete_channel_commission_table: '此操作將永久刪除該渠道傭金表, 是否繼續?'
+        delete_channel_commission_table: '此操作將永久刪除該渠道傭金錶, 是否繼續?'
       },
       view: {
         search: '搜索 (供應商 | 產品)',
@@ -259,8 +263,8 @@ export default {
         exclude_company: '排除供應商'
       },
       set: {
-        add_title: '添加渠道傭金策略表',
-        edit_title: '編輯渠道傭金策略表',
+        add_title: '添加渠道傭金策略錶',
+        edit_title: '編輯渠道傭金策略錶',
         edit_commission_policy_title: '編輯傭金策略',
         priority: '優先級',
         name: '供應商 / 產品',
@@ -269,7 +273,7 @@ export default {
         effectiveDate: '生效時間',
         remarks_placeholder: '請輸入備註',
         tooltip: {
-          close: '是否需要關閉次頁面?'
+          close: '是否需要關閉次頁麵?'
         },
         add_policy: {
           title: '添加策略',
@@ -313,8 +317,8 @@ export default {
     set: {
       add_channel_title: '創建渠道',
       edit_channel_title: '編輯渠道',
-      add_channel_superior: '添加渠道上级',
-      edit_channel_superior: '编辑渠道上级',
+      add_channel_superior: '添加渠道上級',
+      edit_channel_superior: '編輯渠道上級',
       add_title: '創建用戶',
       edit_title: '編輯用戶',
       name: '請輸入用戶名',
@@ -336,14 +340,14 @@ export default {
     create_time: '創建時間'
   },
   template: {
-    title: '模板名',
+    title: '模闆名',
     subject: '主題',
     tooltip: {
-      delete: '此操作将永久删除该模板, 是否继续?'
+      delete: '此操作將永久刪除該模闆, 是否繼續?'
     },
     set: {
-      add_template: '添加模板',
-      edit_template: '编辑模板'
+      add_template: '添加模闆',
+      edit_template: '編輯模闆'
     }
   },
   client: {
@@ -358,7 +362,7 @@ export default {
       locale: '國家/地區',
       sex: '性別',
       birthday: '出生日期',
-      established_time: '成立时间',
+      established_time: '成立時間',
       phone: '電話號碼',
       email: '電子郵箱',
       male: '男',
@@ -409,7 +413,7 @@ export default {
       company: '供應商',
       product: '產品',
       riderBenefits: '副險',
-      riderBenefits_title: '副險列表',
+      riderBenefits_title: '副險列錶',
       riderBenefits_product: '產品',
       riderBenefits_status: '副險狀態',
       detail_title: '保險詳情',
@@ -438,7 +442,7 @@ export default {
         edit_title: '編輯保單',
         channel_expense: '渠道支出',
         company_expense: '公司支出',
-        expense_item: '支出项目',
+        expense_item: '支出項目',
         riderBenefits_status: '請選擇副險狀態',
         number: '請輸入保單號',
         submitDate: '選擇申請日期',
@@ -447,7 +451,7 @@ export default {
         applicant_name: '請選擇申請人',
         insured_name: '請選擇受保人',
         beneficiary_name: '請選擇受益人',
-        percentage: '比例必须填',
+        percentage: '比例必須填',
         currency: '請選中幣種',
         company_name: '請選擇供應商',
         product_name: '請輸入產品名或產品編號',
@@ -512,8 +516,8 @@ export default {
       calculatedAmount: '預發',
       generated_commission: '待發放傭金',
       audit_commission: '待審核傭金',
-      generated_list: '待發放列表',
-      audit_list: '待審核列表',
+      generated_list: '待發放列錶',
+      audit_list: '待審核列錶',
       submit_audit: '提交審核',
       cleared_title: '結清傭金',
       payment_detail: '支付詳情',
@@ -522,8 +526,8 @@ export default {
       tooltip: {
         audit: '此操作會將選中的渠道傭金記錄提交審核, 是否繼續?',
         approve: '審核通過之後, 將無法再修改發放金額, 是否繼續?',
-        reject: '拒絕審核之後, 這些記錄將回到待發放列表, 需要重新提交審核, 是否繼續?',
-        clear: '请确认上述信息是否正确, 一旦确认, 将无法再继续编辑支票内容, 是否继续?'
+        reject: '拒絕審核之後, 這些記錄將回到待發放列錶, 需要重新提交審核, 是否繼續?',
+        clear: '請確認上述信息是否正確, 一旦確認, 將無法再繼續編輯支票內容, 是否繼續?'
       },
       set: {
         chequeNumber: '請輸入支票號碼',
@@ -533,8 +537,8 @@ export default {
   },
   audit: {
     search: '請輸入搜索內容',
-    detail: '審計列表',
-    detail_title: '保單審計列表',
+    detail: '審計列錶',
+    detail_title: '保單審計列錶',
     doer: '操作者'
   },
   document: {
@@ -562,12 +566,58 @@ export default {
     content: '內容',
     attachment: '附件',
     select_attachment: '選擇文件',
-    select_template_title: '選擇模板',
-    template: '郵箱模板',
+    select_template_title: '選擇模闆',
+    template: '郵箱模闆',
     placeholder: '佔位符',
     send_success: '郵件已發送', // Message is sent
     set: {
-      template: '請選擇郵件模板'
+      template: '請選擇郵件模闆'
+    }
+  },
+  course: {
+    title: '課程名稱',
+    quota: '可預約數量',
+    coverImage: '封麵',
+    attachments: '附件',
+    description: '培訓地址',
+    deadline: '培訓時間',
+    type: '培訓類型',
+    core: '核心分數',
+    elective: '非核心分數',
+    other: '其他分數',
+    online: '線上',
+    offline: '線下',
+    set: {
+      add_title: '創建課程',
+      edit_title: '修改課程',
+      title: '請輸入課程名稱',
+      attachments: '請上傳課程附件',
+      coverImage: '請上傳課程封麵',
+      quota: '請輸入可預約數'
+    },
+    tooltip: {
+      delete: '是否刪除該課程'
+    }
+  },
+  broker: {
+    name: '經紀公司',
+    email: '郵箱',
+    name_en: '經紀公司(英文)',
+    name_zh: '經紀公司(中文)',
+    set: {
+      add_title: '創建經紀公司',
+      edit_title: '修改經紀公司',
+      name_en: '經紀公司(英文)',
+      name_zh: '經紀公司(中文)',
+      email: '請輸入郵箱',
+    },
+    verify_message: {
+      name_en: '經紀公司名(英文)必須填',
+      name_zh: '經紀公司名(中文)必須填',
+      email: '電子郵箱必須填'
+    },
+    tooltip: {
+      delete: '是否刪除該經紀公司'
     }
   }
 }

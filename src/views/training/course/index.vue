@@ -1,50 +1,83 @@
 <template>
   <div id="course" class="table-container">
-    <basic-container>
-      <el-table :data="course.list" v-loading="loading" stripe>
-        <el-table-column :label="$t('course.title')" prop="title" min-width="100">
-        </el-table-column>
-        <el-table-column :label="$t('course.coverImage')" prop="coverImage" align="center">
-          <template slot-scope="{ row }">
-            <img :src="row.coverImage" class="cover-image" />
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('course.type')" prop="online" align="center">
-          <template slot-scope="{ row }">
-            <div v-if="row.online">{{ $t("course.online") }}</div>
-            <div v-else>{{ $t("course.offline") }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('course.deadline')" prop="deadline" show-overflow-tooltip>
-          <template slot-scope="{ row }">
-            <div>{{ row.deadline }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('course.description')" prop="description" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('course.quota')" prop="quota" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('common.action')" prop="action" width="80px">
-          <template slot-scope="scope">
-            <el-dropdown v-if="!scope.row.isBuiltin">
-              <el-button type="primary" plain size="mini">
-                <i class="el-icon-more" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <edit :course="scope.row" />
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <el-button type="text" size="small" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}</el-button>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="table-bottom">
-        <add @fetchDate="courseList" />
-        <pagination :total="course.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
-      </div>
-    </basic-container>
+    <el-tabs v-model="activeName" @tab-click="handleTabClick">
+      <el-tab-pane name="online" label="線上課程">
+        <basic-container>
+          <el-table :data="course.list" v-loading="loading" stripe>
+            <el-table-column :label="$t('course.title')" prop="title">
+            </el-table-column>
+            <el-table-column :label="$t('course.coverImage')" prop="coverImage" align="center">
+              <template slot-scope="{ row }">
+                <img :src="row.coverImage" class="cover-image" />
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('course.deadline')" prop="deadline" show-overflow-tooltip>
+              <template slot-scope="{ row }">
+                <div>{{ row.deadline }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('course.description')" prop="description" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('course.quota')" prop="quota" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('common.action')" prop="action" width="80px">
+              <template slot-scope="scope">
+                <el-dropdown v-if="!scope.row.isBuiltin">
+                  <el-button type="primary" plain size="mini">
+                    <i class="el-icon-more" />
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>
+                      <edit :course="scope.row" />
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button type="text" size="small" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}</el-button>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="table-bottom">
+            <add @fetchDate="courseList" />
+            <pagination :total="course.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+          </div>
+        </basic-container>
+      </el-tab-pane>
+      <el-tab-pane name="offline" label="線下課程">
+        <basic-container>
+          <el-table :data="course.list" v-loading="loading" stripe>
+            <el-table-column :label="$t('course.title')" prop="title">
+            </el-table-column>
+            <el-table-column :label="$t('course.coverImage')" prop="coverImage" align="center">
+              <template slot-scope="{ row }">
+                <img :src="row.coverImage" class="cover-image" />
+              </template>
+            </el-table-column>
+            <el-table-column label="課程文件" prop="file"></el-table-column>
+            <el-table-column :label="$t('common.action')" prop="action" width="80px">
+              <template slot-scope="scope">
+                <el-dropdown v-if="!scope.row.isBuiltin">
+                  <el-button type="primary" plain size="mini">
+                    <i class="el-icon-more" />
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>
+                      <edit :course="scope.row" />
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button type="text" size="small" @click="handleDelete(scope.$index, scope.row)">{{ $t("common.delete") }}</el-button>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="table-bottom">
+            <add @fetchDate="courseList" />
+            <pagination :total="course.total" :page="listQuery.page" :limit="listQuery.limit" @pagination="pagination" @update:page="updatePage" @update:limit="updateLimit" />
+          </div>
+        </basic-container>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>
@@ -54,6 +87,7 @@ import edit from "./edit";
 export default {
   data() {
     return {
+      activeName: 'online',
       loading: false,
       course: {},
       listQuery: {
@@ -127,7 +161,36 @@ export default {
 };
 </script>
 <style lang="scss">
-.cover-image {
-  width: 200px;
+#course {
+  .el-tabs__nav {
+    .el-tabs__item {
+      background: #fff;
+      width: 100px;
+      text-align: center;
+      border: 1px solid #edf1f8;
+      padding-right: 0;
+      padding-left: 0;
+    }
+    .el-tabs__item:nth-child(2) {
+      border-radius: 6px 0px 0px 6px;
+      border-right: 0;
+    }
+    .el-tabs__item:last-of-type {
+      border-radius: 0px 6px 6px 0px;
+      border-left: 0;
+    }
+    .el-tabs__active-bar {
+      width: 15px !important;
+      height: 4px;
+      border-radius: 3px 3px 0px 0px;
+      left: 42.5px;
+    }
+  }
+  .el-tabs__nav-wrap::after {
+    display: none;
+  }
+  .cover-image {
+    width: 200px;
+  }
 }
 </style>

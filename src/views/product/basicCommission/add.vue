@@ -95,14 +95,10 @@ export default {
       } else {
         return true;
       }
-    },
-    ...mapState({
-      companyList: (state) => state.company.companyList.list,
-    }),
+    }
   },
   methods: {
     initForm() {
-      this.$store.dispatch("company/FetchCompanyList", {});
       this.fetchBrokerList();
       this.dialogVisible = true;
       this.getCommissionTableList(this.companyId)
@@ -113,7 +109,7 @@ export default {
       })
     },
     getCommissionTableList(id, params) {
-      this.$api.commission.fetchCommissionTableList(id, params).then((res) => {
+      this.$api.basicCommission.fetchCommissionTableList(id, params).then((res) => {
         this.commissionTableList = res.data.list;
       });
     },
@@ -129,12 +125,6 @@ export default {
       }
       return parseTime(value, "{y}-{m}-{d}");
     },
-    onCompanyChange() {
-      this.getCommissionTableList("", {
-        company: this.commission.companyId,
-        neStatus: 0,
-      });
-    },
     handleClose() {
       this.$refs["commission"].resetFields();
       this.dialogVisible = false;
@@ -147,7 +137,7 @@ export default {
           if (this.commission.template || this.commission.template === 0) {
             data.template = this.commission.template;
           }
-          let api = this.$api.commission.addCommission;
+          let api = this.$api.basicCommission.addCommission;
           if (this.commission.generateRates) {
             data.generateRates = this.commission.generateRates;
           }
@@ -162,7 +152,7 @@ export default {
               type: "success",
               duration: 5 * 1000,
             });
-            this.$store.dispatch("commission/FetchCommissionTableList", {
+            this.$store.dispatch("commission/FetchBasicCommissionTableList", {
               id: this.commission.companyId,
             });
             this.handleClose();

@@ -12,9 +12,9 @@ export function fetchCommissionTableList(id, params) {
   })
 }
 
-export function fetchCommissionList(companyId, params) {
+export function fetchCommissionList(id, params) {
   return request({
-    url: `/commissionTableDraft/${companyId}`,
+    url: `/commissionTableDraft/${id}`,
     method: 'get',
     params
   })
@@ -27,6 +27,7 @@ export function fetchCommissionTable(commissionTableId, params) {
     params
   })
 }
+
 
 export function getChannelCommissionTable(id, params) {
   return request({
@@ -44,6 +45,7 @@ export function commissionTableDraft(id, data) {
   })
 }
 
+
 export function publishCommissionTableDraft(id, effectiveDate, remarks) {
   return request({
     url: `/commissionTableDraft/${id}/publish`,
@@ -55,6 +57,8 @@ export function publishCommissionTableDraft(id, effectiveDate, remarks) {
   })
 }
 
+
+
 export function addCommission(data) {
   return request({
     url: `/commissionTable`,
@@ -62,6 +66,7 @@ export function addCommission(data) {
     data
   })
 }
+
 
 export function deleteCommission(id, password) {
   return request({

@@ -8,13 +8,14 @@
     </el-badge>
     <el-dialog id="renewalCalendar" :visible="dialogVisible" :before-close="handleClose" :fullscreen="true" :title="$t('client.insurance_policy.renewal_calendar')" append-to-body>
       <!-- // renewal: 续保 reservation： 预约 -->
+
       <div class="calendar-wrapper">
         <div class="calendar">
           <div class="tabs__header">
             <span class="tabs_item" :class="activeName === 'renewal' ? 'active': ''" @click="switchTab('renewal')">{{$t('client.insurance_policy.renewal_calendar')}}</span>
             <span class="tabs_item" :class="activeName === 'reservation：' ? 'active': ''" @click="switchTab('reservation：')">预约日历</span>
           </div>
-          <full-calendar ref="fullCalendar" :events="events" locale="zh-cn" @triggerDay="triggerDay" @changeMonth="changeMonth">
+          <full-calendar ref="fullCalendar" :events="events" locale="zh-cn" @triggerDay="triggerDay" @changeMonth="changeMonth" @closeWindow="closeDetail">
             <template slot="fc-event-more-item" slot-scope="p">
               <el-popover placement="top-start" trigger="click">
                 <el-card style="padding: 10px">
@@ -306,7 +307,7 @@ export default {
     closeDetail() {
       // this.currentDay = ""
       this.dialogVisible = false;
-    }
+    },
   },
 };
 </script>
@@ -376,7 +377,6 @@ export default {
           background: #fff;
           color: #42475f;
           font-size: 14px;
-          position: absolute;
           right: 48px;
           height: 40px;
           padding-left: 16px;

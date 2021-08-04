@@ -1,21 +1,24 @@
 <template>
-  <div class="full-calendar-header">
-    <div class="header-left">
-      <slot name="header-left" />
+  <div class="header-wrapper">
+    <div class="full-calendar-header">
+      <div class="header-left">
+        <slot name="header-left" />
+      </div>
+      <div class="header-center">
+        <svg class="prev-month iconfont" aria-hidden="true" @click.stop="goPrev">
+          <use xlink:href="#icon-61" />
+        </svg>
+        <!--<span class="title">{{ title }}</span>-->
+        <el-date-picker :editable="false" :clearable="false" v-model="currentMonth" prefix-icon="false" type="month" placeholder="选择日期" style="width: 100px" @change="handleDateChange" />
+        <svg class="next-month iconfont" aria-hidden="true" @click.stop="goNext">
+          <use xlink:href="#icon-61" />
+        </svg>
+      </div>
+      <div class="header-right">
+        <slot name="header-right" />
+      </div>
     </div>
-    <div class="header-center">
-      <svg class="prev-month iconfont" aria-hidden="true" @click.stop="goPrev">
-        <use xlink:href="#icon-61" />
-      </svg>
-      <!--<span class="title">{{ title }}</span>-->
-      <el-date-picker :editable="false" :clearable="false" v-model="currentMonth" prefix-icon="false" type="month" placeholder="选择日期" style="width: 100px" @change="handleDateChange" />
-      <svg class="next-month iconfont" aria-hidden="true" @click.stop="goNext">
-        <use xlink:href="#icon-61" />
-      </svg>
-    </div>
-    <div class="header-right">
-      <slot name="header-right" />
-    </div>
+    <i class="el-icon-close icon-closeFc" @click="closeWindow"></i>
   </div>
 </template>
 <script type="text/babel">
@@ -69,6 +72,9 @@ export default {
     },
   },
   methods: {
+    closeWindow() {
+      this.$emit('closeWindow');
+    },
     goPrev() {
       const newMonth = moment(this.currentMonth)
         .subtract(1, "months")
@@ -89,6 +95,14 @@ export default {
 };
 </script>
 <style lang="scss" type="text/scss">
+.header-wrapper {
+  position: absolute;
+  right: 55px;
+  top: 33px;
+  display: flex;
+  width: 250px;
+  justify-content: space-between;
+}
 .full-calendar-header {
   display: flex;
   align-items: center;

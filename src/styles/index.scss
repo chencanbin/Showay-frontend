@@ -223,7 +223,8 @@ input[type=button] {
 }
 
 .table-container {
-  padding: 0 16px;
+  padding: 16px 16px 0 16px;
+  box-sizing: border-box;
   background: #eff0f3;
 
   .header {
